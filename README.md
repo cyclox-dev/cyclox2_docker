@@ -60,6 +60,8 @@ SELECT user,host FROM user;
 ```
 GRANT ALL PRIVILEGES ON *.* TO cyclox2@'172.24.0.2' IDENTIFIED BY 'mku95w6Fx' WITH GRANT OPTION;
 SELECT user,host FROM user;
+GRANT ALL PRIVILEGES ON *.* TO root@'172.24.0.3' IDENTIFIED BY 'Yamaken0' WITH GRANT OPTION;
+SELECT user,host FROM user;
 ```
 ### 5. Databaseレストア用ダンプファイル配置
 - リポジトリをcloneしたあと、下記のディレクトリにダンプファイルを置いてください。(dumpファイル本体はgit上にはありません)
@@ -75,8 +77,14 @@ cd /var/tmp/
 mysql -uroot -p cyclox2 < 20220715_after_dump.sql
 ```
 
-### 参考
-#### オレオレ系ssl設定
+## アクセス
+- cyclox2
+> http://localhost/
+- phpmyadmin
+> http://localhost:4040/
+
+## 参考
+### オレオレ系ssl設定
 > https://www.server-world.info/query?os=CentOS_7&p=ssl&fbclid=IwAR0iDQgnvIRrD2t63uOBiUsXWqxUqhaZkZ4gQSndpMClvHB5O4tyQBLeKd0
-#### MySQL日本語化のチェック
+### MySQL日本語化のチェック
 > https://server-recipe.com/1867/#toc2
