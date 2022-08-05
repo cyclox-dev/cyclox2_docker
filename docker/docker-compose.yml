@@ -39,6 +39,8 @@ services:
       - 3306:3306
     volumes:
       - ./cyclox2_mysql/mysql:/var/lib/mysql
+      - ./cyclox2_mysql/dump:/var/tmp
+      - ./cyclox2_mysql/conf/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: Yamaken0
       MYSQL_PORT: 3306
