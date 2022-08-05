@@ -35,6 +35,7 @@
 - docker exec -it cyclox2_mysql bash
 #### mysqlにroot権限でログイン
 - mysql -uroot -p
+- rootの初期パスワードはここで設定しているので、適宜変更してコンテナ起動すること　https://github.com/kyamady/cyclox2_docker/blob/dev/docker/docker-compose.yml#L46
 #### database作成
 - CREATE DATABASE cyclox2;
 - SHOW DATABASES;
