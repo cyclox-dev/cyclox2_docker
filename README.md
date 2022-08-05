@@ -1,11 +1,12 @@
 # Cyclox2_svr & Cyclox2_mysql Docker版　
 
-## Version
+## Software Version
+- Docker 20.10.14
+- Apache 2.4.53
 - PHP 5.6.40
 - CakePHP 2.10.0
-- MySQL 5.7.23
-- httpd 2.4
-- Docker 20.10.14
+- MySQL 5.7.39
+- phpMyAdmin 5.2.0
 
 ## 構築手順
 
