@@ -12,10 +12,11 @@ services:
     image: "docker_cyclox2_svr"
     container_name: "cyclox2_svr"
     ports:
-      - 80:8080
-      - 8443:8443
+      - 80:80
+      - 443:8443
     volumes:
       - ./cyclox2_svr/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./cyclox2_svr/httpd/conf/magic:/etc/httpd/conf/magic
       - ./cyclox2_svr/httpd/conf.d/ssl.conf:/etc/httpd/conf.d/ssl.conf
       - ./cyclox2_svr/php/php.ini:/usr/local/etc/php/php.ini
       - ./cyclox2_svr/pki/tls/certs/server.key:/etc/pki/tls/certs/server.key
