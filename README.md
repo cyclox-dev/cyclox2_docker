@@ -62,11 +62,14 @@ GRANT ALL PRIVILEGES ON *.* TO cyclox2@'172.24.0.2' IDENTIFIED BY 'mku95w6Fx' WI
 SELECT user,host FROM user;
 ```
 ### 5. Databaseレストア用ダンプファイル配置
-```
-cd ~/github/kyamady/cyclox2_docker/docker/cyclox2_mysql
-cp dump/20220715_after_dump.sql mysql/20220715_after_dump.sql
-```
+- リポジトリをcloneしたあと、下記のディレクトリにダンプファイルを置いてください。(dumpファイル本体はgit上にはありません)
+> ~/github/kyamady/cyclox2_docker/docker/cyclox2_mysql/dump
 ### 6. Databaseレストア
+#### cyclox2_mysqlにログイン
+```
+docker exec -it cyclox2_mysql bash
+```
+#### 以下はコンテナ内でのコマンド実行
 ```
 cd /var/tmp/
 mysql -uroot -p cyclox2 < 20220715_after_dump.sql
