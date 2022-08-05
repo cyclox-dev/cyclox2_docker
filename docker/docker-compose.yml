@@ -48,3 +48,20 @@ services:
     networks:
       fixed_compose_network:
         ipv4_address: 172.24.0.3
+
+  cyclox2_mysql_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=cyclox2_mysql #mysqlサービス名を指定
+      - PMA_USER=root
+      - PMA_PASSWORD=Yamaken0
+    links:
+      - cyclox2_mysql
+    ports:
+      - 4040:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+    networks:
+      fixed_compose_network:
+        ipv4_address: 172.24.0.4
