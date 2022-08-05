@@ -3,14 +3,30 @@ PHP 5.6.40
 MySQL 5.7.23
 httpd 2.4
 
-[cyclox2_svr(PHP5.6-centos7) dockerイメージ作成]
+構築手順
+
+[1. cyclox2_svr(PHP5.6-centos7) dockerイメージ作成]
 s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=/5.6/test/test-app/ centos/php-56-centos7 docker-cyclox2-svr
 
-[docker-comppose]
-cyclox2_docker/docker/docker-compose.yml
+[2. cyclox2_svr向け設定ファイル配置]
+cd ~/github/kyamady/cyclox2_docker/docker/cyclox2_svr
+cp cyclox2_conf/htaccess_cyclox2 cyclox2/.htaccess
+cp cyclox2_conf/htaccess_app cyclox2/app/.htaccess
+cp cyclox2_conf/htaccess_webroot cyclox2/app/webroot/.htaccess
+cp cyclox2_conf/database.php cyclox2/app/Config/database.php
+
+[3. MySQL resutore用ダンプファイル配置]
+cd ~/github/kyamady/cyclox2_docker/docker/cyclox2_mysql
+cp dump/20220715_after_dump.sql mysql/20220715_after_dump.sql
+
+[4. cyclox2_svr / cyclox2_mysql コンテナビルド＆起動]
+cd ~/github/kyamady/cyclox2_docker/docker
 docker-compose down ; docker-compose up -d
 
-[cyclox2_mysql]
+[5. MySQL dumpファイルレストア]
+
+
+
 docker_compose.yml
 GRANT ALL PRIVILEGES ON *.* TO cyclox2@'172.24.0.2' IDENTIFIED BY 'mku95w6Fx' WITH GRANT OPTION;
 
