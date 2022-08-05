@@ -1,0 +1,3 @@
+[submodule "docker/cyclox2_svr/cyclox2"]
+	path = docker/cyclox2_svr/cyclox2
+	url = ssh://gituser@160.16.109.64:10064/var/lib/git/public_git/cyclox2.git
