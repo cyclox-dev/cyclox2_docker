@@ -1,0 +1,47 @@
+version: "3.7"
+
+networks:
+  fixed_compose_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.24.0.0/24
+
+services:
+  cyclox2_svr:
+    image: "docker_cyclox2_svr"
+    container_name: "cyclox2_svr"
+    ports:
+      - 80:8080
+      - 8443:8443
+    volumes:
+      - ./cyclox2_svr/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./cyclox2_svr/httpd/conf.d/ssl.conf:/etc/httpd/conf.d/ssl.conf
+      - ./cyclox2_svr/php/php.ini:/usr/local/etc/php/php.ini
+      - ./cyclox2_svr/pki/tls/certs/server.key:/etc/pki/tls/certs/server.key
+      - ./cyclox2_svr/pki/tls/certs/server.csr:/etc/pki/tls/certs/server.csr
+      - ./cyclox2_svr/pki/tls/certs/server.crt:/etc/pki/tls/certs/server.crt
+      - ./cyclox2_svr/cyclox2:/var/www/html
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_cyclox2:/var/www/html/.htaccess
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_webroot:/var/www/html/app/webroot/.htaccess
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/database.php:/var/www/html/app/Config/database.php
+    depends_on:
+      - cyclox2_mysql
+    user: 0:0
+    networks:
+      fixed_compose_network:
+        ipv4_address: 172.24.0.2
+
+  cyclox2_mysql:
+    build: ./cyclox2_mysql/
+    container_name: "cyclox2_mysql"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./cyclox2_mysql/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Yamaken0
+      MYSQL_PORT: 3306
+    networks:
+      fixed_compose_network:
+        ipv4_address: 172.24.0.3
