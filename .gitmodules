@@ -1,3 +1,0 @@
-[submodule "docker/cyclox2_svr/cyclox2"]
-	path = docker/cyclox2_svr/cyclox2
-	url = ssh://github.com.sub/cyclox2-dev/cyclox2web.git
