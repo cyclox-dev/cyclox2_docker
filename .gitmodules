@@ -1,0 +1,3 @@
+[submodule "cyclox2_svr/cyclox2"]
+	path = cyclox2_svr/cyclox2
+	url = git@github.com.sub:cyclox2-dev/cyclox2web.git
