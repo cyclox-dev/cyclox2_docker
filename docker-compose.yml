@@ -22,6 +22,7 @@ services:
       - ./cyclox2_svr/pki/tls/certs/server.key:/etc/pki/tls/certs/server.key
       - ./cyclox2_svr/pki/tls/certs/server.csr:/etc/pki/tls/certs/server.csr
       - ./cyclox2_svr/pki/tls/certs/server.crt:/etc/pki/tls/certs/server.crt
+      - ./cyclox2_svr/cyclox2/app/tmp/logs:/var/www/html/logs
       - ./cyclox2_svr/cyclox2:/var/www/html
 #      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_cyclox2:/var/www/html/.htaccess
 #      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_webroot:/var/www/html/app/webroot/.htaccess
