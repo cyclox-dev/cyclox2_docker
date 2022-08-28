@@ -1,2 +1,2 @@
-docker/cyclox2_mysql/dump/*
-docker/cyclox2_mysql/mysql/*
+cyclox2_mysql/dump/*
+cyclox2_mysql/mysql/*
