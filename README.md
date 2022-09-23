@@ -19,7 +19,7 @@
 
 ### 1. cyclox2_svr(PHP5.6-centos7) dockerイメージ作成]
 ```
-s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=/5.6/test/test-app/ centos/php-56-centos7 cyclox2_svr
+s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=/5.6/test/test-app/ centos/php-56-centos7 img_cyclox2_svr
 ```
 ### 2. cyclox2_svr向け設定ファイル配置
 ```
