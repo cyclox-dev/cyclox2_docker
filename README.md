@@ -1,10 +1,12 @@
 # Cyclox2_svr & Cyclox2_mysql Docker版　
 
-## Version
-- PHP 5.6.40
-- MySQL 5.7.23
-- httpd 2.4
+## Software Version
 - Docker 20.10.14
+- Apache 2.4.53
+- PHP 5.6.40
+- CakePHP 2.10.0
+- MySQL 5.7.39
+- phpMyAdmin 5.2.0
 
 ## 構築手順
 
@@ -17,7 +19,7 @@
 
 ### 1. cyclox2_svr(PHP5.6-centos7) dockerイメージ作成]
 ```
-s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=/5.6/test/test-app/ centos/php-56-centos7 docker_cyclox2_svr
+s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=/5.6/test/test-app/ centos/php-56-centos7 img_cyclox2_svr
 ```
 ### 2. cyclox2_svr向け設定ファイル配置
 ```
@@ -60,6 +62,8 @@ SELECT user,host FROM user;
 ```
 GRANT ALL PRIVILEGES ON *.* TO cyclox2@'172.24.0.2' IDENTIFIED BY 'mku95w6Fx' WITH GRANT OPTION;
 SELECT user,host FROM user;
+GRANT ALL PRIVILEGES ON *.* TO root@'172.24.0.3' IDENTIFIED BY 'Yamaken0' WITH GRANT OPTION;
+SELECT user,host FROM user;
 ```
 ### 5. Databaseレストア用ダンプファイル配置
 - リポジトリをcloneしたあと、下記のディレクトリにダンプファイルを置いてください。(dumpファイル本体はgit上にはありません)
@@ -75,8 +79,14 @@ cd /var/tmp/
 mysql -uroot -p cyclox2 < 20220715_after_dump.sql
 ```
 
-### 参考
-#### オレオレ系ssl設定
+## アクセス
+- cyclox2
+> http://localhost/
+- phpmyadmin
+> http://localhost:4040/
+
+## 参考
+### オレオレ系ssl設定
 > https://www.server-world.info/query?os=CentOS_7&p=ssl&fbclid=IwAR0iDQgnvIRrD2t63uOBiUsXWqxUqhaZkZ4gQSndpMClvHB5O4tyQBLeKd0
-#### MySQL日本語化のチェック
+### MySQL日本語化のチェック
 > https://server-recipe.com/1867/#toc2
