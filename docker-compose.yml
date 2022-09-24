@@ -9,7 +9,7 @@ networks:
 
 services:
   cyclox2_svr:
-    image: "docker_cyclox2_svr"
+    image: "img_cyclox2_svr"
     container_name: "cyclox2_svr"
     ports:
       - 80:80
@@ -35,7 +35,8 @@ services:
         ipv4_address: 172.24.0.2
 
   cyclox2_mysql:
-    build: ./cyclox2_mysql/
+    build: "./cyclox2_mysql/"
+    image: "img_cyclox2_mysql"
     container_name: "cyclox2_mysql"
     ports:
       - 3306:3306
@@ -52,6 +53,7 @@ services:
 
   cyclox2_mysql_phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: "cyclox2_phpmyadmin"
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=cyclox2_mysql #mysqlサービス名を指定
