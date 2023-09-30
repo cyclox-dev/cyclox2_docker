@@ -60,9 +60,9 @@ SELECT user,host FROM user;
 ```
 #### user権限追加
 ```
-GRANT ALL PRIVILEGES ON *.* TO cyclox2@'172.24.0.2' IDENTIFIED BY 'mku95w6Fx' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON cyclox2.* TO 'cyclox2'@'%' IDENTIFIED BY 'mku95w6Fx' WITH GRANT OPTION;
 SELECT user,host FROM user;
-GRANT ALL PRIVILEGES ON *.* TO root@'172.24.0.3' IDENTIFIED BY 'Yamaken0' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO root@'%' IDENTIFIED BY 'Yamaken0' WITH GRANT OPTION;
 SELECT user,host FROM user;
 ```
 ### 5. Databaseレストア用ダンプファイル配置
