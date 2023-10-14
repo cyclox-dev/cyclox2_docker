@@ -10,7 +10,7 @@ networks:
 services:
   cyclox2_svr:
     build: "./cyclox2_svr/"
-    image: "img_cyclox2_svr"
+    image: "kyamady/img_cyclox2_svr"
     container_name: "cyclox2_svr"
     ports:
       - 80:80
@@ -37,7 +37,7 @@ services:
 
   cyclox2_mysql:
     build: "./cyclox2_mysql/"
-    image: "img_cyclox2_mysql"
+    image: "kyamady/img_cyclox2_mysql"
     container_name: "cyclox2_mysql"
     ports:
       - 3306:3306
