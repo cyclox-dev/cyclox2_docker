@@ -69,3 +69,31 @@ services:
     networks:
       fixed_compose_network:
         ipv4_address: 172.24.0.4
+
+  cyclox2_ressys:
+    build: "./cyclox2_ressys/"
+    image: "kyamady/img_cyclox2_ressys"
+    container_name: "cyclox2_ressys"
+    ports:
+      - 80:8080
+      - 443:8443
+#    volumes:
+#      - ./cyclox2_ressys/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+#      - ./cyclox2_ressys/httpd/conf/magic:/etc/httpd/conf/magic
+#      - ./cyclox2_ressys/httpd/conf/.htpasswd:/etc/httpd/conf/.htpasswd
+#      - ./cyclox2_svr/php/php.ini:/usr/local/etc/php/php.ini
+#      - ./cyclox2_svr/pki/tls/certs/server.key:/etc/pki/tls/certs/server.key
+#      - ./cyclox2_svr/pki/tls/certs/server.csr:/etc/pki/tls/certs/server.csr
+#      - ./cyclox2_svr/pki/tls/certs/server.crt:/etc/pki/tls/certs/server.crt
+#      - ./cyclox2_svr/cyclox2/app/tmp/logs:/var/www/html/logs
+#      - ./cyclox2_ressys/cyclox2res-sys:/var/www/html
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_cyclox2:/var/www/html/.htaccess
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_webroot:/var/www/html/app/webroot/.htaccess
+#      - ./cyclox2_svr/cyclox2/cyclox2_conf/database.php:/var/www/html/app/Config/database.php
+    depends_on:
+      - cyclox2_mysql
+    user: 0:0
+    networks:
+      fixed_compose_network:
+        ipv4_address: 172.24.0.5
+
