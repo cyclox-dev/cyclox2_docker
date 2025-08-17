@@ -25,9 +25,9 @@ services:
       - ./cyclox2_svr/pki/tls/certs/server.crt:/etc/pki/tls/certs/server.crt
       - ./cyclox2_svr/cyclox2/app/tmp/logs:/var/www/html/logs
       - ./cyclox2_svr/cyclox2:/var/www/html
-#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_cyclox2:/var/www/html/.htaccess
-#      - ./cyclox2_svr/cyclox2/cyclox2_conf/.htaccess_webroot:/var/www/html/app/webroot/.htaccess
-#      - ./cyclox2_svr/cyclox2/cyclox2_conf/database.php:/var/www/html/app/Config/database.php
+      - ./cyclox2_svr/cyclox2_conf/htaccess_cyclox2:/var/www/html/.htaccess
+      - ./cyclox2_svr/cyclox2_conf/htaccess_webroot:/var/www/html/app/webroot/.htaccess
+      - ./cyclox2_svr/cyclox2_conf/database.php:/var/www/html/app/Config/database.php
     depends_on:
       - cyclox2_mysql
     user: 0:0
@@ -42,8 +42,8 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./cyclox2_mysql/mysql:/var/lib/mysql
-      - ./cyclox2_mysql/dump:/var/tmp
+      - ./cyclox2_mysql/var/mysql:/var/lib/mysql
+      - ./cyclox2_mysql/var/dump:/var/tmp
       - ./cyclox2_mysql/conf/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: Yamaken0
