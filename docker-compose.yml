@@ -69,3 +69,26 @@ services:
     networks:
       fixed_compose_network:
         ipv4_address: 172.24.0.4
+
+  cyclox2ressys_svr:
+    build: "./cyclox2ressys_svr/"
+    image: "kyamady/img_cyclox2ressys_svr"
+    container_name: "cyclox2ressys_svr"
+    ports:
+      - 8081:80
+    volumes:
+      - ./cyclox2ressys_svr/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./cyclox2ressys_svr/conf/database.php:/var/www/html/ajocc_xsys/application/config/database.php
+      - ./cyclox2ressys_svr/conf/config.php:/var/www/html/ajocc_xsys/application/config/config.php
+      - ./cyclox2ressys_svr/conf/index.php:/var/www/html/ajocc_xsys/public/index.php
+    environment:
+      DB_HOSTNAME: cyclox2_mysql
+      DB_USERNAME: root
+      DB_PASSWORD: Yamaken0
+      DB_DATABASE: cyclox2
+    depends_on:
+      - cyclox2_mysql
+    user: 0:0
+    networks:
+      fixed_compose_network:
+        ipv4_address: 172.24.0.5
