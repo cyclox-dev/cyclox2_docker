@@ -53,6 +53,9 @@ Skills are located in `.agents/skills/kiro-*/SKILL.md`
 - 3-phase approval workflow: Requirements → Design → Tasks → Implementation
 - Human review required each phase; use `-y` only for intentional fast-track
 - Keep steering current and verify alignment with `/kiro-spec-status`
+- When updating any `kiro-*` skill, update the corresponding files in both `.claude/skills/` and `.agents/skills/` in the same change so Claude Code and Codex remain aligned.
+- When changing project development rules, update both `CLAUDE.md` and `AGENTS.md` in the same change so both agents follow the same operating rules.
+- After changing agent rules or Kiro skills, verify alignment with `diff -qr .claude/skills .agents/skills` and `rg -n '\.Codex|\.claude|\.agents' CLAUDE.md AGENTS.md .claude/skills .agents/skills`; review any output and allow only intentional agent-specific path or handoff wording differences.
 - Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
 
 ## Steering Configuration
