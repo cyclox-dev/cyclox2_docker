@@ -107,7 +107,8 @@ docs/
 │   ├── workflow.md        #   開発フロー全体像
 │   ├── rules/
 │   │   ├── testing-policy.md    # テスト方針・TDD ルール
-│   │   └── commit-policy.md     # コミット方針
+│   │   ├── commit-policy.md     # コミット方針
+│   │   └── branching-policy.md  # ブランチ・PR ポリシー
 │   └── templates/               # 各種ドキュメントテンプレート
 │       ├── agreement-log.md
 │       ├── tech-requirements.md
