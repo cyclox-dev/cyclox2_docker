@@ -2,3 +2,4 @@ cyclox2_mysql/dump/*
 cyclox2_mysql/mysql/*
 phpmyadmin/*
 cyclox2_mysql/var/
+tmp/
