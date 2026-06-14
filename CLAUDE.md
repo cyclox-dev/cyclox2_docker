@@ -136,6 +136,9 @@ docs/
 5. 初回実装時は `docs/specs/<task-id>/tech-requirements.md` で技術要件を確認する。
 6. 実行テスト結果は `docs/specs/<task-id>/test-results.md` に記録する。
 7. 結合試験項目は `docs/specs/<task-id>/integration-test-checklist.md` に残す。
+8. **`main` への直接コミット禁止。** 必ずブランチを切ってから作業し、push 後に PR を発行する。
+   コミットのたびに「全コミットが完了したか」を人間に確認してから push・PR に進む。
+   詳細: [docs/sdd/rules/branching-policy.md](docs/sdd/rules/branching-policy.md)
 
 ## サービスアクセス先（開発環境）
 
