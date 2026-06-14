@@ -1,54 +1,65 @@
 # タスク: 2025-26 新ポイントテーブル ランキングシミュレーション
 
 タスクID: `point-sim-2025-26`
-作成日: 2026-06-14
-作業ブランチ: `cyclox2_svr/cyclox2` の `feat/point-table-ajocc-256-sim`
+作成日: 2026-06-14 / 最終更新: 2026-06-15
+ステータス: **完了**
+作業ブランチ:
+- アプリ本体（submodule cyclox2web）: `feat/point-table-ajocc-267-sim`（PR #12）
+- dockerリポ: `claude/romantic-lalande-4bb2be`（PR #8）
 
-## 実装タスク
+> 当初 `feat/point-table-ajocc-256-sim` を仮置きしたが、命名規則（26-27=267）に合わせ
+> `feat/point-table-ajocc-267-sim` で確定・コミットした。
 
-### T0: ベースライン退避（変更前の現行データ）
-- [ ] T0.1: 変更前に、現行（=25-26ルール）の AJOCCランキングCSV・JCF/JCXシリーズランキングCSV を出力・退避（26-27比較の基準）
-- [ ] 備考: 25-26テーブルは現行本番と完全一致のため、25-26用の改修作業は不要（合意#8）
+## 実装タスク（実績）
 
-### T1: 技術要件確認（初回実装）
-- [ ] `docs/specs/point-sim-2025-26/tech-requirements.md` を確認・記入
-- [ ] テスト実行方法（CakePHP 2.x / PHPUnit）の確認
+### T0: ベースライン退避（変更前の現行データ）✅
+- [x] 現行（=25-26ルール）の AJOCCランキングCSV(29)・JCF/JCXシリーズCSV(23) を退避
+- [x] 25-26テーブルは現行本番と完全一致のため 25-26用の改修は不要（合意#8）
 
-### T2: System① AJOCCポイント表の追加（TDD）
-- [ ] T2.1: テスト先行 — 新8区分表の人数境界テスト、新JCX列の順位テストを記述
-- [ ] T2.2: `__getAjoccPointMap` に `$divDate2025` 分岐と新表（8区分＋JCX列）を実装
-- [ ] T2.3: テストGREEN確認
+### T1: 技術要件確認 ✅
+- [x] `tech-requirements.md` を記入
+- [x] テスト方式を確定：PHPUnit非導入のため **Console製アサーション・ハーネス**でTDD
 
-### T3: System② シリーズ表の追加（TDD）
-- [ ] T3.1: テスト先行 — `AJOCC_267_TEST` 計算器の順位テスト（グレード非依存）
-- [ ] T3.2: `PointCalculator` に `AJOCC_267_TEST`(val=13)・`__calcAJOCC267Test`・table・switch分岐を実装
-- [ ] T3.3: テストGREEN確認
+### T2: System① AJOCCポイント表の追加（TDD）✅
+- [x] テスト先行（人数境界・JCX列順位）
+- [x] `__getAjoccPointMap` に `$divDate2025`(>=2025-08-01) 分岐＋新8区分表＋JCX列を実装
+- [x] テストGREEN
 
-### T4: 再計算バッチの実装
-- [ ] T4.1: `OneTimeShell::recalcSeason(seasonId)` 実装（キャッシュ破棄を含む）
-- [ ] T4.2: 少数カテゴリーで動作確認（ドライ的に1大会のみ）
+### T3: System② シリーズ計算器の追加（TDD）✅
+- [x] テスト先行（グレード非依存）
+- [x] `PointCalculator` に `AJOCC_267_TEST`(val=13)・`__calcAJOCC267Test`・table・switch を実装
+- [x] テストGREEN
 
-### T5: データ移行（DB）
-- [ ] T5.1: 2025-26 `calc_rule=11`→`13` UPDATE（事前に件数35を確認、`season_id=16`限定）
+### T4: 再計算バッチの実装 ✅
+- [x] `PointSimShell::recalcSeason(seasonId)` を実装（※OneTimeShellではなく専用シェルに集約）
+- [x] **カテゴリ毎に新インスタンス生成**（`__started`累積バグ対策）／リザルト有のみ対象／try-catch
+- [x] 単一カテゴリ(`recalcOne`)で値検証（24883→250, 26651→350）
 
-### T6: 再計算実行
-- [ ] T6.1: `recalcSeason 16` を実行（1,192カテゴリー）
-- [ ] T6.2: ログ確認、失敗カテゴリーの有無を確認
+### T5: データ移行（DB）✅
+- [x] 2025-26 `calc_rule=11`→`13` UPDATE（`season_id=16`限定、**23件**）
 
-### T7: 回帰確認
-- [ ] T7.1: 2024-25代表カテゴリーの `ajocc_pt` が不変であることを確認
+### T6: 再計算実行 ✅
+- [x] `recalcSeason 16` 実行 → `total=1170 ok=1170 skip=0 ng=0`
 
-### T8: ランキングCSV出力
-- [ ] T8.1: AJOCCランキングCSV出力（`download_ajocc_pt_csv` 同形式）
-- [ ] T8.2: JCF/JCXシリーズランキングCSV出力（`calcup`→`download_point_ranking_csv`）
-- [ ] T8.3: 出力CSVを成果物として保存
+### T7: 回帰確認 ✅
+- [x] 2024-25(season15)の `ajocc_pt` が旧3段階(180/150/100)のまま＝不変を確認
 
-### T9: 記録・結合試験
-- [ ] T9.1: `docs/specs/point-sim-2025-26/test-results.md` にテスト結果記録
-- [ ] T9.2: `docs/specs/point-sim-2025-26/integration-test-checklist.md` 作成
-- [ ] T9.3: agreement-log.md のフェーズゲート承認欄を更新
+### T8: ランキングCSV出力 ✅
+- [x] `PointSimShell::exportAjocc` でAJOCC29カテゴリ出力（既存`download_ajocc_pt_csv`同形式）
+- [x] `PointSimShell::exportSeries` でJCF/JCXシリーズ23本出力（`calcUpSeries`同形式）
+- [x] `outputs/baseline/` `outputs/after_2627/` に保存（git管理外）
 
-## コミット方針
-- フェーズ区切りでコミット推奨を提示（自動コミット切替可）。
-- `main` への直接コミット禁止。ブランチ→push→PR。
-- submodule（`cyclox2_svr/cyclox2`）側と docker側（`docs/`等）で別リポジトリのため、コミットは各々で行う。
+### T9: 記録・結合試験 ✅
+- [x] `test-results.md` 記録
+- [x] `integration-test-checklist.md` 作成
+- [x] `agreement-log.md` 承認欄・実績を更新
+
+### T10: 追加分析・クライアント提出（追加依頼）✅
+- [x] 降格ライン分析（公式規定 cyclocross.jp 準拠）：マスターズ点数基準／エリート順位基準
+- [x] `comparison-summary.md` に降格ライン分析を追記
+- [x] クライアント向けPPT `ranking_simulation_analysis.pptx` を作成（QA済み）
+- [x] 提出用フォルダ/zipを整理（Driveアップロードは人間側で対応）
+
+## コミット・反映（実績）
+- main直コミットなし。submodule・dockerとも作業ブランチ→push→PR で反映。
+- 生成物CSV/PPT（個人情報含む）は `docs/specs/*/outputs/` を `.gitignore` し履歴に含めない。

@@ -39,7 +39,7 @@
 | 変更ファイル① | `app/Controller/Component/ResultParamCalcComponent.php`（`__getAjoccPointMap`に日付分岐追加） |
 | 変更ファイル② | `app/Cyclox/Util/PointCalculator.php`（`AJOCC_267_TEST` val=13 追加） |
 | 新規ファイル | `app/Console/Command/PointSimShell.php`（テスト・再計算バッチ・CSV出力） |
-| DB変更 | 2025-26 `point_series.calc_rule` 11→13（season_id=16、35件） |
+| DB変更 | 2025-26 `point_series.calc_rule` 11→13（season_id=16、**23件**） |
 | マイグレーション | 不要（直接UPDATE、開発環境のみ） |
 
 ---
@@ -67,4 +67,10 @@
 ## 承認
 
 - [x] ClaudeCode が上記内容を確認した
-- [ ] 人間が技術要件を確認・承認した（2026-06-__）
+- [x] 人間が技術要件・テスト方式を確認し実装着手を承認（2026-06-14、「すすめて」）
+
+## 実績補足（2026-06-15）
+- 再計算バッチは `OneTimeShell` ではなく専用 `PointSimShell` に集約して実装。
+- 変更ファイル①②（PointCalculator / ResultParamCalcComponent）に加え、`resetAjoccPtCache()` を新設。
+- DB付替えは `calc_rule=11→13`（season_id=16、**23件**）で実施。
+- 詳細な結果は `test-results.md`、設計差分は `design.md`「実装結果・設計差分」を参照。
