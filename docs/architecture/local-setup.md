@@ -29,7 +29,23 @@ git submodule update --init --recursive
 
 ---
 
-## 3. MySQL データ準備
+## 3. シークレット設定（.env / database.php）
+
+認証情報は git 管理外。雛形をコピーして実値を設定する（実値は管理者から受領）。
+
+```bash
+cp .env.example .env
+cp cyclox2_svr/cyclox2_conf/database.php.example cyclox2_svr/cyclox2_conf/database.php
+```
+
+- `.env` … `docker-compose.yml` が参照する環境変数（`MYSQL_ROOT_PASSWORD` / `RESSYS_DB_*`）。
+- `cyclox2_svr/cyclox2_conf/database.php` … cyclox2web の DB 接続設定。
+
+> `.env` 未作成のまま `docker-compose up` するとパスワードが空になり MySQL 認証に失敗する。
+
+---
+
+## 4. MySQL データ準備
 
 ```bash
 # データ永続化・ダンプ投入用ディレクトリを作成（.gitignore 対象のため手動作成が必要）
@@ -41,7 +57,7 @@ SQLダンプファイル（本番環境等からエクスポート）を `cyclox
 
 ---
 
-## 4. コンテナのビルドと起動
+## 5. コンテナのビルドと起動
 
 ```bash
 docker-compose up -d --build
@@ -60,19 +76,21 @@ docker-compose ps -a
 
 ---
 
-## 5. データベースのリストア
+## 6. データベースのリストア
 
 ```bash
 # cyclox2_mysql コンテナに接続
 docker-compose exec cyclox2_mysql bash
 
-# コンテナ内でリストア実行（ファイル名は適宜変更）
-mysql -u root -pYamaken0 cyclox2 < /var/tmp/dump_file.sql
+# コンテナ内でリストア実行（<DB_USER> / ファイル名は実際の値に置き換え。-p のみ指定で対話入力）
+mysql -u <DB_USER> -p cyclox2 < /var/tmp/dump_file.sql
 ```
+
+> ユーザー名・パスワードは `.env` / `database.php` の値を参照。本ドキュメントには記載しません。
 
 ---
 
-## 6. アクセス確認
+## 7. アクセス確認
 
 | サービス | URL |
 |---|---|
@@ -114,10 +132,11 @@ docker-compose exec cyclox2_mysql bash
 
 | 項目 | cyclox2web | cyclox2res-sys |
 |---|---|---|
-| ホスト | 172.24.0.3 (固定IP) | env: DB_HOSTNAME (= cyclox2_mysql) |
-| ユーザー | cyclox2 | env: DB_USERNAME (= root) |
-| パスワード | mku95w6Fx | env: DB_PASSWORD (= Yamaken0) |
-| DB名 | cyclox2 | env: DB_DATABASE (= cyclox2) |
+| ホスト | 172.24.0.3 (固定IP) | env: DB_HOSTNAME |
+| ユーザー | `<DB_USER>` | env: DB_USERNAME |
+| パスワード | `<DB_PASSWORD>` | env: DB_PASSWORD |
+| DB名 | cyclox2 | env: DB_DATABASE |
 
-> **注意**: cyclox2web の接続設定は `cyclox2_svr/cyclox2_conf/database.php` で管理。
-> このファイルはコンテナ起動時にアプリの `app/Config/database.php` にマウントされる。
+> **注意**: 実際のユーザー名・パスワードは本ドキュメントに記載しません。
+> - cyclox2web の接続設定は `cyclox2_svr/cyclox2_conf/database.php` で管理（コンテナ起動時に `app/Config/database.php` へマウント）。
+> - cyclox2res-sys は `docker-compose.yml` の環境変数（`DB_USERNAME` / `DB_PASSWORD` 等）で設定。

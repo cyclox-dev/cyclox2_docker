@@ -63,7 +63,7 @@
 
 ### cyclox2_mysql（DBコンテナ）
 - **ベースイメージ**: `mysql:5.7.42`（linux/x86_64固定）
-- **環境変数**: `MYSQL_ROOT_PASSWORD=Yamaken0`
+- **環境変数**: `MYSQL_ROOT_PASSWORD=<DB_PASSWORD>`（実値は `docker-compose.yml` を参照）
 - **ボリューム**: `cyclox2_mysql/var/mysql` → `/var/lib/mysql`（データ永続化）、`cyclox2_mysql/var/dump` → `/var/tmp`（ダンプ投入用）
 
 ### cyclox2ressys_svr（成績閲覧コンテナ）

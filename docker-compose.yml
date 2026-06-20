@@ -46,7 +46,7 @@ services:
       - ./cyclox2_mysql/var/dump:/var/tmp
       - ./cyclox2_mysql/conf/my.cnf:/etc/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: Yamaken0
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_PORT: 3306
     networks:
       fixed_compose_network:
@@ -59,7 +59,7 @@ services:
       - PMA_ARBITRARY=1
       - PMA_HOST=cyclox2_mysql #mysqlサービス名を指定
       - PMA_USER=root
-      - PMA_PASSWORD=Yamaken0
+      - PMA_PASSWORD=${MYSQL_ROOT_PASSWORD}
     links:
       - cyclox2_mysql
     ports:
@@ -83,8 +83,8 @@ services:
       - ./cyclox2ressys_svr/conf/index.php:/var/www/html/ajocc_xsys/public/index.php
     environment:
       DB_HOSTNAME: cyclox2_mysql
-      DB_USERNAME: root
-      DB_PASSWORD: Yamaken0
+      DB_USERNAME: ${RESSYS_DB_USERNAME}
+      DB_PASSWORD: ${RESSYS_DB_PASSWORD}
       DB_DATABASE: cyclox2
     depends_on:
       - cyclox2_mysql
