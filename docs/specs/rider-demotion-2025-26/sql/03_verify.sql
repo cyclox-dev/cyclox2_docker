@@ -1,6 +1,6 @@
 -- =====================================================================
 -- 降格処理 最終検証（再利用可能）
--- 使い方: docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < 03_verify.sql'
+-- 使い方: docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < 03_verify.sql'
 -- ★毎年変更: @note（reason_note）, @apply（降格先 apply_date）
 -- =====================================================================
 SET @note  := '2025-26シーズン成績の降格処理による';
