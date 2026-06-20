@@ -33,7 +33,22 @@ git submodule update --init --recursive
 
 > `cyclox-dev` org への SSH アクセス権が必要です。このステップを飛ばすと `cyclox2_svr/cyclox2/` が空のままコンテナが起動し、アプリが動作しません。
 
-### 3. MySQL データ準備
+### 3. シークレット設定（.env / database.php）※必須
+
+認証情報は git 管理外です。雛形をコピーして実値を設定します（実値は管理者から受領）。
+
+```bash
+# 環境変数（docker-compose が参照）
+cp .env.example .env
+
+# cyclox2web の DB 接続設定
+cp cyclox2_svr/cyclox2_conf/database.php.example cyclox2_svr/cyclox2_conf/database.php
+```
+
+作成した `.env` と `database.php` を実際の値に編集します。
+> `.env` 未作成のまま起動するとパスワードが空になり MySQL 認証に失敗します。
+
+### 4. MySQL データ準備
 
 ```bash
 # .gitignore 対象のため手動作成が必要
@@ -42,7 +57,7 @@ mkdir -p cyclox2_mysql/var/mysql cyclox2_mysql/var/dump
 
 本番環境などからエクスポートした SQL ダンプを `cyclox2_mysql/var/dump/` に配置します。
 
-### 4. コンテナのビルドと起動
+### 5. コンテナのビルドと起動
 
 ```bash
 docker-compose up -d --build
@@ -51,18 +66,18 @@ docker-compose up -d --build
 docker-compose ps -a
 ```
 
-### 5. データベースのリストア
+### 6. データベースのリストア
 
 `cyclox2_mysql/var/dump/` は コンテナ内 `/var/tmp` にマウントされます。
 
 ```bash
 docker-compose exec cyclox2_mysql bash
 
-# コンテナ内で実行（dump_file.sql は配置したファイル名に置き換え）
-mysql -u root -pYamaken0 cyclox2 < /var/tmp/dump_file.sql
+# コンテナ内で実行（<DB_USER> / dump_file.sql は実際の値に置き換え）
+mysql -u <DB_USER> -p cyclox2 < /var/tmp/dump_file.sql
 ```
 
-> パスワードは `docker-compose.yml` の `MYSQL_ROOT_PASSWORD`（デフォルト `Yamaken0`）。
+> 接続ユーザー・パスワードは `.env` / `database.php` の値を参照してください（README には記載しません）。`-p` のみ指定すると対話的にパスワード入力を求められます。
 
 ---
 

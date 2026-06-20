@@ -1,0 +1,34 @@
+<?php
+/**
+ * Database configuration (cyclox2web / CakePHP 2.x).
+ *
+ * このファイルはサンプルです。コピーして database.php を作成し、
+ * 実際の接続情報を設定してください。
+ *   cp database.php.example database.php
+ * database.php は .gitignore 済み（実値をコミットしないこと）。
+ * 実値は管理者から受領すること。
+ */
+class DATABASE_CONFIG {
+
+	public $default = array(
+		'datasource' => 'Database/Mysql',
+		'persistent' => false,
+		'host' => '172.24.0.3',
+		'login' => '<DB_USER>',
+		'password' => '<DB_PASSWORD>',
+		'database' => 'cyclox2',
+		'prefix' => '',
+		//'encoding' => 'utf8',
+	);
+
+	public $test = array(
+		'datasource' => 'Database/Mysql',
+		'persistent' => false,
+		'host' => 'localhost',
+		'login' => '<DB_USER>',
+		'password' => '<DB_PASSWORD>',
+		'database' => 'test_database_name',
+		'prefix' => '',
+		//'encoding' => 'utf8',
+	);
+}
