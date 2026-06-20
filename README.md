@@ -58,11 +58,11 @@ docker-compose ps -a
 ```bash
 docker-compose exec cyclox2_mysql bash
 
-# コンテナ内で実行（dump_file.sql は配置したファイル名に置き換え）
-mysql -u root -pYamaken0 cyclox2 < /var/tmp/dump_file.sql
+# コンテナ内で実行（<DB_USER> / dump_file.sql は実際の値に置き換え）
+mysql -u <DB_USER> -p cyclox2 < /var/tmp/dump_file.sql
 ```
 
-> パスワードは `docker-compose.yml` の `MYSQL_ROOT_PASSWORD`（デフォルト `Yamaken0`）。
+> 接続ユーザー・パスワードは `docker-compose.yml` の `MYSQL_ROOT_PASSWORD` 等の環境変数を参照してください（README には記載しません）。`-p` のみ指定すると対話的にパスワード入力を求められます。
 
 ---
 
