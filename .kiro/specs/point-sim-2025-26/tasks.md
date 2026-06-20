@@ -1,8 +1,8 @@
 # タスク: 2025-26 新ポイントテーブル ランキングシミュレーション
 
 タスクID: `point-sim-2025-26`
-作成日: 2026-06-14 / 最終更新: 2026-06-15
-ステータス: **完了**
+作成日: 2026-06-14 / 最終更新: 2026-06-20
+ステータス: **完了**（2026-06-20 PR #12 レビュー対応として T11 本番隔離フラグを追補）
 作業ブランチ:
 - アプリ本体（submodule cyclox2web）: `feat/point-table-ajocc-267-sim`（PR #12）
 - dockerリポ: `claude/romantic-lalande-4bb2be`（PR #8）
@@ -59,6 +59,15 @@
 - [x] `comparison-summary.md` に降格ライン分析を追記
 - [x] クライアント向けPPT `ranking_simulation_analysis.pptx` を作成（QA済み）
 - [x] 提出用フォルダ/zipを整理（Driveアップロードは人間側で対応）
+
+### T11: 本番フロー隔離フラグ（PR #12 レビュー対応）✅ 2026-06-20
+- [x] 要件 R6 を追加（シミュレーション専用フラグ／本番デフォルト無効）
+- [x] `ResultParamCalcComponent` に `__simAjocc267` フラグ＋ `enableSimAjocc267()`/`disableSimAjocc267()` を実装
+- [x] `__getAjoccPointMap` の日付分岐を `$this->__simAjocc267 &&` でガード（本番は従来表へフォールバック）
+- [x] `PointSimShell`（startup / recalcSeason）で `enableSimAjocc267()` を呼ぶ（既存フローは無改修）
+- [x] `testTables` に「本番OFF=180/200 ⇔ シムON=350/1000」の対比アサーションを追加
+- [x] 実コードハーネス（PHP8.3）でフラグOFF=従来値・ON=267・回帰不変を検証（8/8 PASS）
+- [ ] Docker 上での `testTables` 再実行・Web 経由の最終確認（integration-test-checklist に記載、人間確認）
 
 ## コミット・反映（実績）
 - main直コミットなし。submodule・dockerとも作業ブランチ→push→PR で反映。
