@@ -80,7 +80,7 @@ Skills are located in `.agents/skills/kiro-*/SKILL.md`
 
 ```bash
 # 1. リポジトリ取得
-git clone git@github.com:kyamady-dorokid/cyclox2_docker.git
+git clone git@github.com:cyclox-dev/cyclox2_docker.git
 cd cyclox2_docker
 
 # 2. アプリ本体取得（SSH アクセス権が必要）

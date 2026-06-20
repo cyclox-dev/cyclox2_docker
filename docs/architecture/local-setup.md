@@ -11,7 +11,7 @@
 ## 1. リポジトリのクローン
 
 ```bash
-git clone git@github.com:kyamady-dorokid/cyclox2_docker.git
+git clone git@github.com:cyclox-dev/cyclox2_docker.git
 cd cyclox2_docker
 ```
 
