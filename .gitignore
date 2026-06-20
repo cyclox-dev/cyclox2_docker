@@ -3,3 +3,7 @@ cyclox2_mysql/mysql/*
 phpmyadmin/*
 cyclox2_mysql/var/
 tmp/
+
+# シークレット（実値はコミットしない。*.example を雛形として使用）
+.env
+cyclox2_svr/cyclox2_conf/database.php
