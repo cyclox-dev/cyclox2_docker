@@ -14,8 +14,11 @@ set -euo pipefail
 OUT="${1:?usage: bash 02_gen_koukaku.sh <出力先dir>}"
 mkdir -p "$OUT"
 
-DB_EXEC=(docker exec cyclox2_mysql sh -c)
-MYSQL='mysql -u root -pYamaken0 cyclox2 -N'
+# パスワードはハードコードしない。.env の MYSQL_ROOT_PASSWORD を環境変数 MYSQL_PWD に設定して渡す。
+#   例: export MYSQL_PWD="$(grep -E '^MYSQL_ROOT_PASSWORD=' .env | cut -d= -f2-)"
+: "${MYSQL_PWD:?set MYSQL_PWD to MYSQL_ROOT_PASSWORD (see .env / docker-compose.yml)}"
+DB_EXEC=(docker exec -e MYSQL_PWD cyclox2_mysql sh -c)
+MYSQL='mysql -u root cyclox2 -N'
 
 APPLY='2026-04-01'
 CANCEL='2026-03-31'

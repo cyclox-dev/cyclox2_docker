@@ -23,7 +23,7 @@
 | 項目 | 内容 |
 |---|---|
 | テストフレームワーク | なし（DB操作のため SQL 検証クエリで代替） |
-| テスト実行コマンド | `docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < <verify>.sql'` |
+| テスト実行コマンド | `docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < <verify>.sql'` |
 | テスト対象範囲 | 降格判定の件数・整合性、二重降格不在、旧所属終了 |
 | モック方針 | なし（本番同等ダンプをローカルに復元して実データで検証） |
 
@@ -47,7 +47,7 @@
 |---|---|
 | MySQL バージョン制約 | 5.7。JSON関数に頼らず `SUBSTRING_INDEX` で `sumup_json[0]` を抽出 |
 | Docker 環境での考慮事項 | SQLはコンテナ `/tmp` にコピーして `SOURCE`、または標準入力で投入 |
-| 接続情報 | `MYSQL_ROOT_PASSWORD=Yamaken0`（docker-compose.yml）、DB=`cyclox2` |
+| 接続情報 | DB=`cyclox2` / user=`root`。パスワードは `.env` の `MYSQL_ROOT_PASSWORD`（リポジトリに平文を書かない。環境変数 `MYSQL_PWD` 経由で渡す） |
 | 文字コード | utf8（`category_code`/`racer_code` は utf8_bin） |
 
 ---

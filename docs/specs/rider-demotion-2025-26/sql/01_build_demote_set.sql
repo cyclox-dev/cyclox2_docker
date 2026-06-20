@@ -2,7 +2,7 @@
 -- 降格判定セット生成（再利用可能）
 -- 出力: cyclox2.demote_all (racer_code, src, ord_rank, ord_pt)
 --        + 確認用カウント + 二重降格検出
--- 使い方: docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < 01_build_demote_set.sql'
+-- 使い方: docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < 01_build_demote_set.sql'
 --
 -- ★毎年変更するパラメータ（下記の @s / 期間 / 各ラインの数値）
 --   - @s     : 対象 season_id

@@ -23,11 +23,17 @@
 ## 1. 環境準備（ダンプ復元）
 
 ```bash
+# 接続情報: DB=cyclox2 / user=root。パスワードは .env の MYSQL_ROOT_PASSWORD を使用する
+#   （リポジトリにハードコードしない。下記のとおり環境変数 MYSQL_PWD 経由で渡す）
+export MYSQL_PWD="$(grep -E '^MYSQL_ROOT_PASSWORD=' .env | cut -d= -f2-)"
+
 # /tmp 等のダンプを cyclox2_mysql コンテナへ
 docker cp <dump>.sql cyclox2_mysql:/tmp/dump.sql
-docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < /tmp/dump.sql'
-# 接続情報: DB=cyclox2 / root / Yamaken0 (docker-compose.yml)
+docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/dump.sql'
 ```
+
+> 以降の `docker exec -e MYSQL_PWD ...` は、上で設定した環境変数 `MYSQL_PWD` を
+> コンテナへ引き渡してパスワードを供給する（コマンドラインや本書に平文を残さない）。
 
 ---
 
@@ -89,7 +95,7 @@ docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < /tmp/dump.sq
 ```bash
 # 5-1. 判定セットを作成（パラメータはファイル冒頭で年次調整）
 docker cp docs/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
-docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < /tmp/01_build_demote_set.sql'
+docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/01_build_demote_set.sql'
 
 # 5-2. downlist 出力（カテゴリー別 racer_code）
 #   demote_all テーブルから src 別に出力（runbook末尾の例参照）

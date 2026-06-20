@@ -16,7 +16,7 @@ OUT=docs/specs/rider-demotion-2025-26/outputs   # PII出力先(git管理外)
 
 # 1) 判定セット生成
 docker cp docs/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
-docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < /tmp/01_build_demote_set.sql'
+docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/01_build_demote_set.sql'
 #   → 二重降格が出たら 00_dup_fix.sql を作成し、該当racerを対応downlistから除外
 
 # 2) downlist + 降格SQL 生成
@@ -30,7 +30,7 @@ done
 
 # 4) 最終検証
 docker cp docs/specs/rider-demotion-2025-26/sql/03_verify.sql cyclox2_mysql:/tmp/
-docker exec cyclox2_mysql sh -c 'mysql -u root -pYamaken0 cyclox2 < /tmp/03_verify.sql'
+docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/03_verify.sql'
 ```
 
 ## 毎年変更する箇所
