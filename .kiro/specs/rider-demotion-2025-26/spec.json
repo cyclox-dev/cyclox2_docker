@@ -1,0 +1,15 @@
+{
+  "feature_name": "rider-demotion-2025-26",
+  "title": "2025-26シーズン ライダー降格処理",
+  "language": "ja",
+  "status": "completed",
+  "created": "2026-06-20",
+  "updated": "2026-06-20",
+  "phases": {
+    "requirements": { "approved": true },
+    "design": { "approved": true },
+    "tasks": { "approved": true },
+    "implementation": { "approved": true, "completed": true }
+  },
+  "notes": "ローカルコンテナで降格SQLを実行・検証済み。本番反映(A案: 同SQL適用)は別途人間が実施。次年度以降は docs/specs/rider-demotion-2025-26/runbook.md を参照。"
+}
