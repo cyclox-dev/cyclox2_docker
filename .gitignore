@@ -3,3 +3,5 @@ cyclox2_mysql/mysql/*
 phpmyadmin/*
 cyclox2_mysql/var/
 tmp/
+# シミュレーション生成物（個人情報含む・再生成可能なため履歴に残さない）
+docs/specs/*/outputs/
