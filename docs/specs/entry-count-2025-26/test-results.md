@@ -49,6 +49,49 @@
 
 ---
 
+## シーズン別 時系列（全期間・参照ファイル非依存の保全用）
+
+参照ファイル `tmp/20250416_entry_racers.xlsx` にのみ存在していた過去シーズンの値を、
+資料内で自己完結させるためここに転記する。**`build_xlsx.py` の `SERIES` 定数がこの表の正本**であり、
+来年以降は両者に1行ずつ追記する（値は Runbook の SQL で算出）。
+
+| シーズン | entry | started |
+|---|---|---|
+| 15-16 | 18,458 | 15,074 |
+| 16-17 | 20,088 | 16,411 |
+| 17-18 | 21,266 | 17,252 |
+| 18-19 | 21,716 | 18,721 |
+| 19-20 | 21,825 | 18,387 |
+| 20-21 | 11,973 | 10,511 |
+| 21-22 | 18,841 | 16,313 |
+| 22-23 | 21,508 | 18,962 |
+| 23-24 | 22,052 | 19,111 |
+| 24-25 | 21,644 | 19,094 |
+| 25-26 | 21,604 | 18,802 |
+
+> 20-21 が落ち込んでいるのは COVID-19 による大会中止・縮小の影響。
+> 前年比は `当年 − 前年`（entry同士・started同士）。
+
+---
+
+## 出力フォーマット仕様（「通しでカウント」シート）
+
+参照ファイルが無くてもシートを再現できるよう、列・行構成を明文化する。
+
+| 行 | B | C | D | E | F |
+|---|---|---|---|---|---|
+| 3 |  |  |  | `前年比` |  |
+| 4 |  | `entry` | `started` | `entry` | `started` |
+| 5〜 | シーズン | entry（数値） | started（数値） | 前年比entry（数式） | 前年比started（数式） |
+
+- データは**行5から**開始（15-16が行5）。1シーズン＝1行で下へ追加。
+- C・D・E・F は表示書式 `#,##0`。
+- E・F（前年比）は数式 `=C{r}-C{r-1}` / `=D{r}-D{r-1}`。**先頭行（行5）は前年が無いため空**。
+- 列幅: B=6.6 / C=7.6 / D=8.6 / E=7.2 / F=8.6。
+- ブックは `fullCalcOnLoad=True` を設定し、Excel起動時に数式を再計算させる。
+
+---
+
 ## Runbook（再現手順）
 
 任意のシーズンで再現可能。`$S`/`$E` を `YYYY-04-01` 形式で指定する（例: 25-26 は `S=2025-04-01`, `E=2026-04-01`）。
@@ -79,12 +122,67 @@ M "SELECT count(*) FROM entry_racers er
      AND at_date>'$S' AND at_date<'$E' AND er.entry_status=0 AND rr.status!=0 AND rr.deleted=0;"
 ```
 
-### Excel生成
+### Excel生成（2モード）
+
+`build_xlsx.py` は参照ファイルの有無に応じて2モードを持つ。集計値は同スクリプトの `SERIES` 定数を正本とする。
+
 ```bash
 cd /Users/kyamady/workspace/cyclox2_docker
-python3 docs/specs/entry-count-2025-26/build_xlsx.py
-# 出力: tmp/20260621_entry_racers.xlsx（「通しでカウント」シートに 25-26 行を追加）
+
+# (1) テンプレートモード（既定）: 既存ブック（参照 or 前年出力）に最新行を追記、全シート温存
+python3 docs/specs/entry-count-2025-26/build_xlsx.py --season 25-26
+#   出力: tmp/20260621_entry_racers.xlsx
+
+# (2) from-scratch モード: 参照ファイル不要。SERIES から「通しでカウント」を1枚ゼロ生成
+python3 docs/specs/entry-count-2025-26/build_xlsx.py --from-scratch
+#   出力: tmp/entry_racers_25-26_from_scratch.xlsx
 ```
+
+### 来年（26-27）の手順
+1. Runbook の SQL を `S=2026-04-01 E=2027-04-01` で実行し entry/started を算出。
+2. `build_xlsx.py` の `SERIES` と本資料「時系列」表に `("26-27", entry, started)` を追記。
+3. 前年（25-26）をローカルDBで再現して一致を確認（検算）。
+4. テンプレートモードは `--src` に**前年の出力ブック**を指定して追記、または from-scratch で再生成。
+   ```bash
+   python3 docs/specs/entry-count-2025-26/build_xlsx.py \
+     --src tmp/20260621_entry_racers.xlsx --season 26-27 --out tmp/26-27_entry_racers.xlsx
+   ```
+
+---
+
+## 参考: 大会×カテゴリ別 内訳クエリ（参照ファイル `sql` シート由来）
+
+「通しでカウント」の総数集計には不要だが、参照ファイルの「大会ごと/選手ごと」内訳シートを
+再現する際に使う（参照ファイル消失時の保全用に転記）。`group by` 以外は総数クエリと同条件。
+
+```sql
+-- entry 内訳（大会×カテゴリ）
+SELECT count(*), ec.races_category_code, meets.code, meets.short_name, meets.at_date
+FROM entry_racers er
+  INNER JOIN entry_categories ec ON ec.id=er.entry_category_id
+  INNER JOIN entry_groups eg ON eg.id=ec.entry_group_id
+  INNER JOIN meets ON meets.code=eg.meet_code
+  INNER JOIN racers ON racers.code=er.racer_code
+WHERE er.deleted=0 AND ec.deleted=0 AND eg.deleted=0 AND meets.deleted=0 AND racers.deleted=0
+  AND er.entry_status=0 AND at_date>'$S' AND at_date<'$E'
+GROUP BY meets.code, ec.races_category_code;
+
+-- started 内訳（大会×カテゴリ）: 上記に racer_results を内部結合
+SELECT count(*), ec.races_category_code, meets.code, meets.short_name, meets.at_date
+FROM entry_racers er
+  INNER JOIN entry_categories ec ON ec.id=er.entry_category_id
+  INNER JOIN entry_groups eg ON eg.id=ec.entry_group_id
+  INNER JOIN meets ON meets.code=eg.meet_code
+  INNER JOIN racer_results rr ON er.id=rr.entry_racer_id
+  INNER JOIN racers ON racers.code=er.racer_code
+WHERE er.deleted=0 AND ec.deleted=0 AND eg.deleted=0 AND meets.deleted=0 AND racers.deleted=0
+  AND er.entry_status=0 AND rr.deleted=0 AND rr.status!=0 AND at_date>'$S' AND at_date<'$E'
+GROUP BY meets.code, ec.races_category_code;
+```
+
+> 既知の注意（参照ファイルのメモより）: 内訳クエリで `racers` を内部結合 + `racers.deleted=0` とすると、
+> 削除済み/未登録選手のエントリーが除外され、年によっては総数クエリと内訳合計がずれる。
+> 25-26 は該当0件のため影響なし（テスト項目#7）。
 
 ---
 
