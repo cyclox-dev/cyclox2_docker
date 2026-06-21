@@ -1,0 +1,2067 @@
+======================================================================
+【レビュー材料 A】無所属として除外する値（決定#3）
+======================================================================
+   16,646  '(空文字)'
+    9,925  '-'
+    3,883  'なし'
+      183  '無し'
+      165  '0'
+      131  '<<NULL>>'
+      124  '無所属'
+       35  '福'
+       34  'M'
+       32  'ー'
+       26  '#'
+       24  '無所属新人'
+       23  '無'
+       23  '.'
+       20  '―'
+       18  '個人'
+       15  'チーム名なし\u3000に'
+       11  '--'
+       10  '−'
+        9  '‐'
+        8  '所属なし'
+        8  '廉'
+        8  '_'
+        7  '未定'
+        7  'なし。'
+        6  '無所属・新人'
+        5  'Ｍ'
+        4  'W'
+        4  '—'
+        4  '・'
+        4  '$'
+        4  '---'
+        4  '//'
+        3  'TEAM無所属'
+        3  '@'
+        3  '島'
+        3  '煌'
+        3  'チーム無所属'
+        3  '※'
+        3  '＿'
+        3  '無所属新人／おCX'
+        3  'a'
+        3  '/'
+        3  '─'
+        3  'フリー'
+        2  '個人参加'
+        2  '＊＊＊'
+        2  '（なし、個人）'
+        2  '東'
+        2  '翔'
+        2  '瑛'
+        2  '(なし)'
+        2  '馬'
+        2  '特になし'
+        2  '。'
+        2  'あ'
+        2  '隼'
+        2  '－'
+        1  '父'
+        1  '所属チームなし'
+        1  "'"
+        1  '??'
+        1  '*****'
+        1  'team 無所属'
+        1  's'
+        1  '∞'
+        1  '無所属新人/おCX/愛媛MTB'
+        1  '無所属新人/おcx/愛媛MTB'
+        1  '?'
+        1  'な'
+        1  '猫'
+        1  '磊'
+        1  '無所属出戻り'
+        1  '光'
+        1  '無所属うえだ'
+        1  'X'
+        1  '鴨'
+        1  'バイク買って２週間(個人)'
+  --- 無所属 合計エントリー件数: 31,492
+
+======================================================================
+【レビュー材料 B】正規化で“同一チーム”に統合される生名称グループ
+  （表記ゆれが本当に同一チームか、誤統合がないか確認してください）
+======================================================================
+  統合グループ数: 1948（2つ以上の生名称が1キーに収束）
+
+  [ベッキーシクロクロス]  'ベッキーシクロクロス'×1855 | 'ﾍﾞｯｷｰｼｸﾛｸﾛｽ'×2
+  [SHIDO-WORKS]  'SHIDO-WORKS'×1538 | 'SHIDO -WORKS'×14 | 'Shido-works'×6 | 'shido-works'×4 | 'SHIDO - WORKS'×3 | 'Shido-Works'×2 | 'SHiDO-WORKS'×1 | 'ＳＨＩＤＯ-ＷＯＲＫＳ'×1
+  [ヴィルベルヴィント]  'ヴィルベルヴィント'×1353 | 'ｳﾞｨﾙﾍﾞﾙｳﾞｨﾝﾄ'×9 | 'ヴィル  ベル  ヴィント'×9
+  [シマノドリンキング]  'シマノドリンキング'×1227 | 'ｼﾏﾉﾄﾞﾘﾝｷﾝｸﾞ'×1
+  [バルバクラブフクイ]  'バルバクラブフクイ'×1065 | 'バルバクラブ\u3000フクイ'×47 | 'バルバクラブ フクイ'×44
+  [岩井商会レーシング]  '岩井商会レーシング'×1141 | '岩井商会ﾚｰｼﾝｸﾞ'×1
+  [スワコレーシングチーム]  'スワコレーシングチーム'×1108 | 'ｽﾜｺﾚｰｼﾝｸﾞﾁｰﾑ'×18 | 'スワコレーシング チーム'×4
+  [662CCC]  '662CCC'×1021 | '662ccc'×95 | '６６２ｃｃｃ'×1 | '662ＣＣＣ'×1 | '662C C C'×1
+  [Rapha Cycling Club]  'Rapha Cycling Club'×1034 | 'RaphaCyclingClub'×20 | 'rapha cycling club'×14 | 'Rapha cycling club'×11 | 'RAPHA CYCLING CLUB'×9 | 'Rapha  Cycling Club'×7 | 'Rapha Cycling club'×2 | 'Raphacyclingclub'×1 | 'RAPHACyclingClub'×1 | 'Rapha Cycling  Club'×1
+  [ボナペティ]  'ボナペティ'×964 | 'ﾎﾞﾅﾍﾟﾃｨ'×15
+  [臼杵レーシング]  '臼杵レーシング'×974 | '臼杵ﾚｰｼﾝｸﾞ'×2
+  [Teamスクアドラ]  'Teamスクアドラ'×718 | 'Team スクアドラ'×145 | 'Ｔｅａｍスクアドラ'×22 | 'Team  スクアドラ'×14 | 'Ｔｅａｍ\u3000スクアドラ'×14 | 'TEAMスクアドラ'×11 | 'Team\u3000スクアドラ'×10 | 'teamスクアドラ'×7 | 'ＴＥＡＭ\u3000スクアドラ'×7 | 'Teamｽｸｱﾄﾞﾗ'×5 | 'Ｔeam スクアドラ'×1 | 'team  スクアドラ'×1
+  [SNEL]  'SNEL'×943 | 'snel'×7 | 'ＳＮＥＬ'×4
+  [京都MTB朝ライド]  '京都MTB朝ライド'×735 | '京都ＭＴＢ朝ライド'×213 | '京都ＭＴＢ朝ﾗｲﾄﾞ'×1
+  [AX cyclocross team]  'AX cyclocross team'×848 | 'AX Cyclocross Team'×21 | 'AXcyclocrossteam'×14 | 'AX cyclocross  team'×10 | 'AXcyclocross team'×8 | 'AX cyclocrossteam'×7 | 'AX cyclocross TEAM'×4 | 'Ax cyclocross team'×4 | 'AX  cyclocross team'×3 | 'AX Cyclocross team'×3 | 'AX  cyclocross  team'×2 | 'AX  Cyclocross Team'×1 | 'AX cyclo cross team'×1 | 'Axcyclocrossteam'×1
+  [GSJ-CX]  'GSJ-CX'×921 | 'GSJ -CX'×1
+  [オンザロード]  'オンザロード'×912 | 'ｵﾝｻﾞﾛｰﾄﾞ'×4
+  [TCKR]  'TCKR'×862 | 'ＴＣＫＲ'×44 | 'tckr'×1
+  [チーム泥んこプロレス]  'チーム泥んこプロレス'×815 | 'ﾁｰﾑ泥んこﾌﾟﾛﾚｽ'×51 | 'チーム泥んこﾌﾟﾛﾚｽ'×3
+  [カシャロ水曜夜練]  'カシャロ水曜夜練'×847 | 'カシャロ\u3000水曜夜練'×6 | 'ｶｼｬﾛ水曜夜練'×3
+  [FRIETEN]  'FRIETEN'×726 | 'Frieten'×89 | 'frieten'×19 | 'ＦＲＩＥＴＥＮ'×2
+  [グランデパール播磨]  'グランデパール播磨'×792 | 'ｸﾞﾗﾝﾃﾞﾊﾟｰﾙ播磨'×6
+  [チーム36隊]  'チーム36隊'×667 | 'チーム３６隊'×93
+  [Bike Team 回転木馬]  'Bike Team 回転木馬'×350 | 'BikeTeam回転木馬'×218 | 'Biketeam回転木馬'×103 | 'BIKETEAM 回転木馬'×21 | 'Bike Team回転木馬'×13 | 'Bike team 回転木馬'×10 | 'Ｂｉｋｅｔｅａｍ回転木馬'×8 | 'BIKETEAM回転木馬'×7 | 'Bike Team\u3000回転木馬'×6 | 'BikeTeam 回転木馬'×6 | 'biketeam回転木馬'×4 | 'Biketeam 回転木馬'×2 | 'Bike\u3000Team\u3000回転木馬'×1 | 'biketeaｍ回転木馬'×1 | 'Bike\u3000Team 回転木馬'×1
+  [Club La.sista Offroad Team]  'Club La.sista Offroad Team'×558 | 'ClubLa.sistaOffroadTeam'×89 | 'ClubLa.sistaOffroadteam'×34 | 'Club La.sista offroad Team'×17 | 'Club\xa0La.sista\xa0Offroad Team'×11 | 'Club  La . sista Offroad team'×5 | 'Club La.sista Offroad team'×2 | 'Club La.sistaOffroadTeam'×2 | 'ClubLa.sista OffroadTeam'×1 | 'ClubLa.sista Offroad Team'×1 | 'Club\u3000La.sista Offroad\u3000Team'×1 | 'Club La.sista  offroad  Team'×1 | 'Club La .sista  offroad  Team'×1 | 'Club La.sista Off road Team'×1
+  [PAXPROJECT]  'PAXPROJECT'×652 | 'PAX PROJECT'×60 | 'PAX PROJ ECT'×2
+  [EMU SPEED CLUB]  'EMU SPEED CLUB'×662 | 'EMU SPEEDCLUB'×14 | 'EMU SpeedClub'×8 | 'EMU Speed Club'×8 | 'ＥＭＵ\u3000ＳＰＥＥＤ\u3000ＣＬＵＢ'×5 | 'EMUSPEEDCLUB'×4 | 'EMU  SPEED CLUB'×2
+  [Team轍屋]  'Team轍屋'×459 | 'TEAM轍屋'×78 | 'team轍屋'×72 | 'Team 轍屋'×29 | 'TEAM 轍屋'×26 | 'team 轍屋'×9 | 'team  轍屋'×5 | 'TEAM\u3000轍屋'×4 | 'team\u3000轍屋'×4 | 'TEAM \u3000轍屋'×3
+  [AXIS]  'AXIS'×630 | 'axis'×20
+  [エスキーナレーシング]  'エスキーナレーシング'×645 | 'ｴｽｷｰﾅﾚｰｼﾝｸﾞ'×2
+  [イナーメ信濃山形]  'イナーメ信濃山形'×637 | 'ｲﾅｰﾒ信濃山形'×4
+  [TeamCUORE]  'TeamCUORE'×292 | 'Team CUORE'×222 | 'Team Cuore'×44 | 'teamCUORE'×20 | 'team CUORE'×18 | 'TEAM CUORE'×17 | 'TeamCuore'×12 | 'team cuore'×3 | 'team  cuore'×2 | 'Team\u3000CUORE'×2 | 'Ｔｅａｍ\u3000ＣＵＯＲＥ'×2 | 'Team cuore'×1 | 'ＴｅａｍＣＵＯＲＥ'×1 | 'Team\u3000Cuore'×1 | 'Team  CUORE'×1
+  [エキップリオン]  'エキップリオン'×579 | 'エキップ リオン'×21 | 'エキップ\u3000リオン'×20 | 'エキップ  リオン'×10
+  [Salata Bianca Kobe]  'Salata Bianca Kobe'×302 | 'SalataBiancaKobe'×142 | 'Salatabiancakobe'×113 | 'salatabiancakobe'×25 | 'Salata\u3000Bianca\u3000Kobe'×20 | 'ｓａｌａｔａｂｉａｎｃａｋｏｂｅ'×10 | 'Salata bianca kobe'×7 | 'salata bianca kobe'×3 | 'Salata Bianca\u3000Kobe'×1
+  [TEAM YOUCAN]  'TEAM YOUCAN'×241 | 'TEAM YOU CAN'×117 | 'teamYOUCAN'×92 | 'Team YOUCAN'×65 | 'TEAM\u3000YOUCAN'×31 | 'TEAMYOUCAN'×22 | 'Team YOU CAN'×14 | 'team youcan'×13 | 'TeamYOUCAN'×7 | 'team YOUCAN'×5 | 'ＴＥＡＭ\u3000ＹＯＵＣＡＮ'×4 | 'Team YouCan'×4 | 'ＴｅａｍＹＯＵＣＡＮ'×2 | 'TeamYOU CAN'×2 | 'Ｔｅａｍ\u3000ＹＯＵ\u3000ＣＡＮ'×1 | 'Team youcan'×1 | 'Team You Can'×1 | 'TEAM\u3000YOU\u3000CAN'×1
+  [シルクロード]  'シルクロード'×611 | 'ｼﾙｸﾛｰﾄﾞ'×2
+  [SNEL CYCLOCROSS TEAM]  'SNEL CYCLOCROSS TEAM'×536 | 'SNELCYCLOCROSSTEAM'×32 | 'SNEL CYCLOCROSSTEAM'×11 | 'SNEL Cyclocross Team'×9 | 'SNEL CYCLOCROSS  TEAM'×7 | 'SNEL\u3000CYCLOCROSSTEAM'×3 | 'SNEL  CYCLOCROSS  TEAM'×3 | 'SNEL\u3000CYCLOCROSS\u3000TEAM'×2 | 'SNEL\u3000CYCLOCROSS TEAM'×2 | 'SNEL CYCLOCROSS\u3000TEAM'×1 | 'SNEL  CYCLOCROSS TEAM'×1 | 'SNEL CYCLOCROSS\xa0 TEAM'×1
+  [FAST LANE Racing]  'FAST LANE Racing'×381 | 'FastlaneRacing'×46 | 'FAST LANE RACING'×33 | 'FastLaneRacing'×26 | 'Fast Lane Racing'×25 | 'fastlane racing'×14 | 'FASTLANE Racing'×9 | 'FastLANERacing'×6 | 'Fast LANE Racing'×5 | 'FAST LANE  Racing'×4 | 'Fast Lane racing'×3 | 'Fastlane Racing'×2 | 'FAST LANE racing'×2 | 'Fast  Lane Racing'×2 | 'Fastlaneracing'×1 | 'fast lane racing'×1 | 'fastlaneracing'×1 | 'Fast\u3000Lane\u3000Racing'×1
+  [TeamRuedaNAGOYA]  'TeamRuedaNAGOYA'×366 | 'TeamRuedaNagoya'×118 | 'Team Rueda Nagoya'×48 | 'teamRuedaNAGOYA'×9 | 'Team Rueda NAGOYA'×8 | 'Team RuedaNagoya'×1 | 'TeamRueda NAGOYA'×1 | 'Team RuedaNAGOYA'×1
+  [masahikomifune.com]  'masahikomifune.com'×492 | 'Masahikomifune.com'×33 | 'masahiko mifune.com'×17 | 'MasahikoMifune.com'×5 | 'Masahiko Mifune.com'×1
+  [きゅうべえsports]  'きゅうべえsports'×511 | 'きゅうべえSports'×28
+  [ROND CX TEAM]  'ROND CX TEAM'×521 | 'ROND CXTEAM'×7 | 'ＲＯＮＤ\u3000ＣＸ\u3000ＴＥＡＭ'×3 | 'RONDCX team'×2 | 'RONDCXTEAM'×2 | 'ROND\u3000CX\u3000TEAM'×1 | 'RONDCX TEAM'×1 | 'ROND CX Team'×1 | 'ROND CX  TEAM'×1
+  [ARAYA CX TEAM]  'ARAYA CX TEAM'×425 | 'ARAYA\u3000CX\u3000TEAM'×24 | 'ARAYACXTEAM'×24 | 'ARAYA cx TEAM'×11 | 'ARAYA CX\u3000TEAM'×11 | 'ARAYA  CX  TEAM'×9 | 'ＡＲＡＹＡ\u3000ＣＸ\u3000ＴＥＡＭ'×8 | 'ARAYA ＣＸ TEAM'×8 | 'ARAYACX TEAM'×7 | 'ＡＲＡＹＡ ＣＸ ＴＥＡＭ'×2 | 'ARAYA\u3000cx TEAM'×1 | 'ARAYA  CX TEAM'×1
+  [茨城CXレーシングチーム]  '茨城CXレーシングチーム'×496 | '茨城CX レーシングチーム'×11 | '茨城ＣＸレーシングチーム'×9 | '茨城CXﾚｰｼﾝｸﾞﾁｰﾑ'×7 | '茨城cxレーシングチーム'×1
+  [FUKADAまじりんぐ]  'FUKADAまじりんぐ'×460 | 'FUKADA まじりんぐ'×9 | 'ＦＵＫＡＤＡまじりんぐ'×6 | 'FUKADA\u3000まじりんぐ'×2
+  [Mt.HASE321]  'Mt.HASE321'×231 | 'Mt.Hase321'×210 | 'MT.HASE321'×12 | 'Mt.Hase 321'×7 | 'Mt.hase321'×6 | 'Ｍｔ．Ｈａｓｅ３２１'×4 | 'mt.HASE321'×2 | 'mt.hase321'×1 | 'Mt.hase 321'×1
+  [BUCYO COFFEE/CLT Cycling Team]  'BUCYO COFFEE/CLT Cycling Team'×219 | 'BUCYO COFFEE/CLT CYCLING TEAM'×74 | 'BUCYOCOFFEE/CLTCyclingTeam'×65 | 'BUCYOCOFFEE/CLT CYCLING TEAM'×45 | 'BUCYOCOFFEE/CLT CYCLINGTEAM'×18 | 'BUCYOCOFFEE/CLT cycling team'×13 | 'BUCYOCOFFEE/CLT Cycling Team'×5 | 'BUCYO COFFEE/CLT CYCLINGTEAM'×4 | 'BUCYOCOFFEE/CLT cyclingteam'×4 | 'BUCYO COFFEE/CLT cycling team'×4 | 'BUCYOCOFFEE/CLT\u3000CYCLING TEAM'×3 | 'BUCYOCOFFEE/CLT CyclingTeam'×3 | 'BUCYOCOFFEE/CLT Cyclingteam'×3 | 'BUCYO COFFEE / CLT CYCLING TEAM'×3 | 'BUCYO COFFEE/CLT CyclingTeam'×2 | 'bucyocoffee/CLT cycling team'×2 | 'BUCYO COFFEE/CLT  CYCLING TEAM'×1 | 'bucyocoffee/CLT cyclingteam'×1 | 'BUCYOCOFFEE/CLTcycling team'×1
+  [八ヶ岳CYCLOCROSSCLUB]  '八ヶ岳CYCLOCROSSCLUB'×228 | '八ヶ岳CYCLOCROSS CLUB'×177 | '八ヶ岳 CYCLOCROSS CLUB'×54 | '八ヶ岳CYCLO CROSS CLUB'×4 | '八ヶ岳Cyclocross Club'×2 | '八ヶ岳CyclocrossClub'×2 | '八ヶ岳CycloCross Club'×1 | '八ヶ岳\u3000CYCLOCROSS CLUB'×1
+  [Limited Team 846]  'Limited Team 846'×385 | 'limited team 846'×27 | 'Limited team 846'×25 | 'LimitedTeam846'×10 | 'Limitedteam846'×5 | 'Limited Team846'×3 | 'Limited  Team 846'×2 | 'limited\u3000team\u3000846'×1 | 'limited Team846'×1 | 'Limited Ｔeam 846'×1 | 'Limited team846'×1 | 'limited team846'×1 | 'limited Team 846'×1
+  [TEAM AXIS]  'TEAM AXIS'×306 | 'team axis'×29 | 'Team Axis'×28 | 'Team AXIS'×23 | 'team AXIS'×21 | 'TEAMAXIS'×14 | 'TEAM\u3000AXIS'×9 | 'TEAM  AXIS'×8 | 'teamaxis'×7 | 'teamAXIS'×6 | 'TeamAxis'×5 | 'TeamAXIS'×1 | 'team  axis'×1
+  [EURO-WORKS Racing]  'EURO-WORKS Racing'×342 | 'EURO-WORKSRacing'×64 | 'Euro-worksRacing'×34 | 'Euro-works Racing'×5 | 'EURO-WORKS\u3000Racing'×4 | 'EURO-works Racing'×2 | 'EURO-WORKS RACING'×1 | 'Euro-Works\u3000Racing'×1 | 'Euro-WorksRacing'×1
+  [つうばいつうＲ]  'つうばいつうＲ'×262 | 'つうばいつうR'×173 | 'つうばいつう Ｒ'×12
+  [RINGO ROAD]  'RINGO ROAD'×358 | 'RINGOROAD'×42 | 'RingoRoad'×28 | 'Ringo Road'×5 | 'ringoroad'×4 | 'Ringo\u3000Road'×1
+  [CROSS YAMANASHI]  'CROSS YAMANASHI'×360 | 'cross yamanashi'×31 | 'CROSSYAMANASHI'×20 | 'CROSS\u3000YAMANASHI'×15 | 'CROSS YAMANASHi'×4 | 'Cross Yamanashi'×2 | 'crossyamanashi'×1 | 'CROSS yamanashi'×1 | 'Cross  Yamanashi'×1
+  [DESTRA]  'DESTRA'×424 | 'ＤＥＳＴＲＡ'×5 | 'Destra'×4
+  [Champion System Japan Test Team]  'Champion System Japan Test Team'×348 | 'champion system japan test team'×33 | 'Champion system japan test team'×12 | 'ChampionSystemJapanTestTeam'×10 | 'Champion System Japan test team'×6 | 'Champion System japan test team'×5 | 'Champion System Japan Testteam'×5 | 'Champion System Japan Test team'×3 | 'championsystemjapantestteam'×2 | 'CHAMPION SYSTEM JAPAN TEST TEAM'×2 | 'ChampionSystemJapanTestteam'×2 | 'Championsystem Japan Test Team'×2 | 'Champion System Japan TESTTeam'×1 | 'Champion System Japan testteam'×1
+  [CYCLE WITCHES]  'CYCLE WITCHES'×402 | 'CYCLEWITCHES'×14 | 'Cycle witches'×7 | 'Cycle Witches'×4 | 'CYCLE  WITCHES'×3 | 'CycleWitches'×1
+  [ウィンディー筑波シクロクロスチーム]  'ウィンディー筑波シクロクロスチーム'×422 | 'ウィンディー筑波\u3000シクロクロスチーム'×2 | 'ウィンディー筑波 シクロクロスチーム'×1
+  [cycleclub3UP.]  'cycleclub3UP.'×216 | 'Cycleclub3UP.'×106 | 'cycleclub 3UP.'×85 | 'Cycleclub 3UP.'×4 | 'cycleClub3UP.'×3 | 'cycleclub3Up.'×1 | 'cycleclub3up.'×1 | 'cycle club3up.'×1
+  [Team CHAINRING]  'Team CHAINRING'×326 | 'TEAM CHAINRING'×26 | 'Team Chainring'×20 | 'TeamCHAINRING'×14 | 'team chainring'×10 | 'TEAM\u3000CHAINRING'×8 | 'Team\u3000ChainRing'×4 | 'TEAMCHAINRING'×1 | 'TeamChainring'×1 | 'team\u3000chainring'×1 | 'Teamchainring'×1
+  [ナカガワRC]  'ナカガワRC'×349 | 'ナカガワＲＣ'×33 | 'ナカガワ RC'×26 | 'ナカガワＲC'×1 | 'ﾅｶｶﾞﾜRC'×1
+  [Squadra di LAVORANTE]  'Squadra di LAVORANTE'×219 | 'Squadra di Lavorante'×160 | 'Squadra di lavorante'×14 | 'SQUADRA di LAVORANTE'×12 | 'SquadradiLavorante'×2 | 'squadra di lavorante'×2
+  [FUNAKKY CX]  'FUNAKKY CX'×361 | 'FUNAKKYCX'×13 | 'FUNAKKY  CX'×13 | 'FUNAKKY\u3000CX'×8
+  [Baggy racing cyclocross]  'Baggy racing cyclocross'×329 | 'BAGGYRACING CYCLOCROSS'×21 | 'baggy racing cyclocross'×11 | 'Baggy Racing Cyclocross'×5 | 'BaggyRacingcyclocross'×5 | 'Baggy Racing cyclocross'×4 | 'baggyracingcyclocross'×4 | 'Baggyracingcyclocross'×3 | 'Baggy\u3000racing\u3000cyclocross'×2 | 'Baggy racing  cyclocross'×2 | 'Baggy racingc yclocross'×1
+  [弱虫ペダルサイクリングチーム]  '弱虫ペダルサイクリングチーム'×372 | '弱虫ペダル サイクリングチーム'×11
+  [SAUCE CX]  'SAUCE CX'×291 | 'Sauce CX'×40 | 'SAUCECX'×32 | 'sauceCX'×8 | 'sauce cx'×2 | 'SAUCE\u3000CX'×2 | 'Sauce\u3000CX'×2 | 'SAUCE  CX'×1 | 'SauceCX'×1 | 'saucecx'×1
+  [TEAM GRM]  'TEAM GRM'×273 | 'Team GRM'×49 | 'TEAM  GRM'×15 | 'TEAM\u3000GRM'×10 | 'teamGRM'×10 | 'team GRM'×7 | 'TEAMGRM'×5 | 'Ｔeam\u3000GRM'×1 | 'ＴＥＡＭ\u3000ＧＲＭ'×1
+  [CycleShop Re Belle.]  'CycleShop Re Belle.'×323 | 'Cycleshop Re Belle.'×30 | 'cycleshop Re Belle.'×4 | 'CycleShopRe Belle.'×4 | 'cycle shop Re Belle.'×1 | 'Cycle Shop  Re Belle.'×1
+  [バルバクラブトヤマ]  'バルバクラブトヤマ'×316 | 'バルバクラブ\u3000トヤマ'×33 | 'バルバクラブ トヤマ'×13
+  [KAZAMIDORI]  'KAZAMIDORI'×345 | 'Kazamidori'×10 | 'kazamidori'×4 | 'kAZAMIDORI'×1
+  [and more]  'and more'×315 | 'andmore'×43 | 'and  more'×2
+  [チームダックスフンド]  'チームダックスフンド'×278 | 'チーム\u3000ダックスフンド'×56 | 'チーム ダックスフンド'×8 | 'ﾁｰﾑﾀﾞｯｸｽﾌﾝﾄﾞ'×7 | 'ﾁｰﾑ\u3000ﾀﾞｯｸｽﾌﾝﾄﾞ'×7 | 'ﾁｰﾑ ﾀﾞｯｸｽﾌﾝﾄﾞ'×2
+  [COGS]  'COGS'×343 | 'cogs'×8 | 'ＣＯＧＳ'×4
+  [NUCC racing]  'NUCC racing'×199 | 'nucc racing'×95 | 'NUCC Racing'×27 | 'nuccracing'×13 | 'NUCCracing'×13 | 'Nucc racing'×2 | 'nucc  racing'×2 | 'NUCC  racing'×1
+  [KOGMA Racing]  'KOGMA Racing'×328 | 'Kogma Racing'×10 | 'KOGMA\u3000Racing'×10 | 'KOGMARacing'×2
+  [ユーロードCXチーム]  'ユーロードCXチーム'×324 | 'ユーロードＣＸチーム'×21 | 'ユーロードcxチーム'×3 | 'ユーロード\u3000CXチーム'×1
+  [今日も押しまs]  '今日も押しまs'×190 | '今日も押しまS'×84 | '今日も押しまｓ'×70 | '今日も 押しまS'×2
+  [MilePost BMC Racing]  'MilePost BMC Racing'×241 | 'Mile Post BMC Racing'×82 | 'Milepost BMC Racing'×11 | 'MilePostBMCRacing'×7 | 'MilePost  BMC Racing'×3
+  [SPADE ACE CX TEAM]  'SPADE ACE CX TEAM'×327 | 'SPADEACECXTEAM'×7 | 'SPADE  ACE CX TEAM'×4 | 'SPADEACE CX TEAM'×2 | 'SPADE ACE CXTEAM'×2 | 'spade ace cx team'×1 | 'SpadeAce CX team'×1
+  [SNG]  'SNG'×334 | 'ＳＮＧ'×9
+  [バルバクラブエチゼン]  'バルバクラブエチゼン'×305 | 'バルバクラブ\u3000エチゼン'×36 | 'バルバクラブ エチゼン'×1
+  [RTアプローズ]  'RTアプローズ'×316 | 'ＲＴアプローズ'×20 | 'RTｱﾌﾟﾛｰｽﾞ'×2 | 'RT アプローズ'×1
+  [NEBcycling]  'NEBcycling'×322 | 'NEB cycling'×10 | 'Nebcycling'×5
+  [スゴイカッコイイシクロクロスチーム東北]  'スゴイカッコイイシクロクロスチーム東北'×298 | 'ｽｺﾞｲｶｯｺｲｲｼｸﾛｸﾛｽﾁｰﾑ東北'×20 | 'スゴイカッコイイシクロクロス チーム東北'×16
+  [モジュマエリアゼロナナゴ]  'モジュマエリアゼロナナゴ'×322 | 'モジュマ エリアゼロナナゴ'×5 | 'モジュマ\u3000エリアゼロナナゴ'×1
+  [バルバクラブカナザワ]  'バルバクラブカナザワ'×318 | 'バルバクラブ\u3000カナザワ'×8
+  [MIVRO]  'MIVRO'×314 | 'mivro'×7 | 'ＭＩＶＲＯ'×2 | 'Mivro'×1
+  [RIDELIFE GIANT]  'RIDELIFE GIANT'×244 | 'RIDE LIFE GIANT'×68 | 'RIDELIFEGIANT'×9 | 'RIDELIFE  GIANT'×1
+  [岩井商会RACING]  '岩井商会RACING'×313 | '岩井商会racing'×2
+  [（有）村上建具]  '（有）村上建具'×192 | '(有)村上建具'×117
+  [イマイシクロケッツ]  'イマイシクロケッツ'×263 | 'イマイ\u3000シクロケッツ'×32 | 'イマイ シクロケッツ'×9
+  [042 SYNDICATE]  '042 SYNDICATE'×242 | '042SYNDICATE'×57 | '042 SYNDI CATE'×3 | '042SYNDI CATE'×1 | '042SYND ICATE'×1
+  [ARAI MURACA]  'ARAI MURACA'×197 | 'Arai Muraca'×49 | 'ARAIMURACA'×24 | 'ARAI\u3000MURACA'×11 | 'araimuraca'×7 | 'ARAI  MURACA'×5 | 'ARAI muraca'×3 | 'ＡＲＡＩ\u3000ＭＵＲＡＣＡ'×2
+  [ZEROtoTOP]  'ZEROtoTOP'×136 | 'ZERO to TOP'×110 | 'Zero to Top'×30 | 'ZerotoTop'×10 | 'ZERO toTOP'×4 | 'ZerotoTOP'×1 | 'zero to top'×1 | 'ZERO TO TOP'×1 | 'Zero To Top'×1 | 'ZEROtoTOp'×1 | 'ZeroToTop'×1
+  [シケテルズ]  'シケテルズ'×293 | 'ｼｹﾃﾙｽﾞ'×1
+  [Hangover]  'Hangover'×267 | 'hangover'×25 | 'Ｈangover'×1 | 'HANGOVER'×1
+  [Blue Dragon]  'Blue Dragon'×159 | 'BLUE DRAGON'×42 | 'BLUE\u3000DRAGON'×31 | 'Blue dragon'×20 | 'BLUEDRAGON'×13 | 'BLUE  DRAGON'×10 | 'ＢＬＵＥ\u3000ＤＲＡＧＯＮ'×8 | 'blue dragon'×3 | 'Blue  Dragon'×2 | 'BlueDragon'×2
+  [Hutte8to8]  'Hutte8to8'×178 | 'Hutte 8to8'×106 | 'Hutte  8to8'×5
+  [京都岩井商会レーシング]  '京都岩井商会レーシング'×223 | '京都\u3000岩井商会レーシング'×37 | '京都 岩井商会レーシング'×21 | '京都 岩井商会\u3000レーシング'×6 | '京都岩井商会ﾚｰｼﾝｸﾞ'×1
+  [Cycle Justice]  'Cycle Justice'×111 | 'cycle justice'×66 | 'cyclejustice'×59 | 'CycleJustice'×29 | 'CYCLEJUSTICE'×16 | 'CYCLE JUSTICE'×4 | 'CYCLE  JUSTICE'×1 | 'Cycle justice'×1
+  [バルバクラブタカオカ]  'バルバクラブタカオカ'×280 | 'バルバクラブ\u3000タカオカ'×4 | 'バルバクラブ タカオカ'×2
+  [Gufo Cycle Works]  'Gufo Cycle Works'×238 | 'gufo cycleworks'×14 | 'Gufo cycleworks'×12 | 'Gufo cycle works'×6 | 'Gufo\u3000Cycle\u3000Works'×5 | 'gufo cycle works'×3 | 'GUFO CYCLE WORKS'×3 | 'Gufo cycle Works'×2 | 'Gufo  Cycle Works'×1 | 'GufoCycleWorks'×1
+  [CICADA UNITED]  'CICADA UNITED'×253 | 'Cicada United'×21 | 'CICADAUNITED'×8 | 'CICADA\u3000UNITED'×1
+  [TEAM SANREMO]  'TEAM SANREMO'×252 | 'TEAMSANREMO'×25 | 'team SANREMO'×6
+  [Circles Racing Club]  'Circles Racing Club'×189 | 'CirclesRacingClub'×73 | 'Circles racing club'×9 | 'circles racing club'×5 | 'circlesracingclub'×2 | 'CIRCLESRACINGCLUB'×1 | 'circlesRacingCLub'×1
+  [内房レーシングクラブ]  '内房レーシングクラブ'×277 | '内房ﾚｰｼﾝｸﾞｸﾗﾌﾞ'×2
+  [SimWorks Racing]  'SimWorks Racing'×172 | 'SimWorksRacing'×89 | 'SimWorksracing'×8 | 'Sim Works Racing'×2 | 'SimＷorks Racing'×1
+  [BON VOYAGE BIKES]  'BON VOYAGE BIKES'×202 | 'Bon voyage bikes'×21 | 'bon voyage bikes'×19 | 'bonvoyage bikes'×11 | 'bonvoyagebikes'×9 | 'BONVOYAGEBIKES'×3 | 'BON VOYAGE  BIKES'×2 | 'bon voyage  bikes'×1 | 'Bon Voyage Bikes'×1 | 'Bonvoyagebikes'×1 | 'Bonvoyage Bikes'×1
+  [チームきゃうちゃん]  'チームきゃうちゃん'×269 | 'ﾁｰﾑきゃうちゃん'×1
+  [輪心WHEELSOULBIKEWORKS]  '輪心WHEELSOULBIKEWORKS'×237 | '輪心\u3000WHEEL SOUL BIKE WORKS'×19 | '輪心\u3000WHEELSOUL BIKE WORKS'×11 | '輪心wheelsoulbikeworks'×2
+  [cycleclub3UP]  'cycleclub3UP'×127 | 'cycleclub3up'×44 | 'Cycleclub3UP'×29 | 'Cycle club 3UP'×27 | 'cycleclub 3UP'×20 | 'Cycle Club 3UP'×5 | 'cycle club 3up'×4 | 'Cycle club ３UP'×3 | 'CycleClub 3UP'×2 | 'cycle club3up'×2 | 'CycleClub3UP'×1 | 'cycle club 3UP'×1 | 'cycleclub３UP'×1 | 'cycle club3Up'×1 | 'CYCLE CLUB 3UP'×1
+  [チームてるぞう]  'チームてるぞう'×262 | 'ﾁｰﾑてるぞう'×5
+  [Pinazou Test Team]  'Pinazou Test Team'×196 | 'pinazou test team'×25 | 'PINAZOU TEST TEAM'×22 | 'Pinazou test team'×7 | 'Pinazoutestteam'×6 | 'PinazouTestTeam'×3 | 'Pinazou Test  Team'×2 | 'pinazou test  team'×1
+  [ZELKOVA CX]  'ZELKOVA CX'×207 | 'Zelkova CX'×32 | 'ZelkovaCX'×11 | 'Zelkova\u3000CX'×1
+  [DRONE]  'DRONE'×246 | 'Drone'×2
+  [Roppongi Express]  'Roppongi Express'×183 | 'RoppongiExpress'×38 | 'Roppongi express'×11 | 'Roppongiexpress'×6 | 'roppongi express'×4 | 'ROPPONGI EXPRESS'×2 | 'Roppongi  Express'×1 | 'Roppongi\u3000Express'×1
+  [ProRide]  'ProRide'×230 | 'Pro Ride'×6 | 'Proride'×4 | 'PRO RIDE'×2 | 'pro ride'×2 | 'proride'×1
+  [NCFR]  'NCFR'×209 | 'ncfr'×21 | 'ＮＣＦＲ'×13 | 'ＮCＦR'×1
+  [CLUB viento]  'CLUB viento'×112 | 'CLUBviento'×49 | 'Club viento'×24 | 'CLUB VIENTO'×16 | 'club viento'×11 | 'Club VIENTO'×7 | 'club Viento'×5 | 'Clubviento'×4 | 'CLUB\u3000VIENTO'×4 | 'Club Viento'×4 | 'CLUB  Viento'×1
+  [Teamインコ]  'Teamインコ'×233 | 'Teamｲﾝｺ'×4
+  [ベーグルワン]  'ベーグルワン'×224 | 'ベーグル ワン'×9 | 'ベーグル\u3000ワン'×3
+  [36隊]  '36隊'×234 | '３６隊'×1
+  [Flecha]  'Flecha'×211 | 'FLECHA'×17 | 'flecha'×7
+  [TEAM RINGOROAD]  'TEAM RINGOROAD'×77 | 'TEAM RINGO ROAD'×48 | 'TEAMRINGOROAD'×32 | 'Team RingoRoad'×23 | 'TeamRingoRoad'×16 | 'Team RINGOROAD'×14 | 'TEAM\u3000RINGOROAD'×10 | 'Team Ringo Road'×6 | 'TeamRINGORoad'×1 | 'TeamRINGOROAD'×1
+  [SKRK CX]  'SKRK CX'×159 | 'SKRKCX'×66
+  [The☆whoo cx]  'The☆whoo cx'×92 | 'The☆whoo CX'×51 | 'The☆whooCX'×44 | 'The☆whoo  cx'×13 | 'The☆whoocx'×10 | 'The☆Whoo cx'×8 | 'The ☆ whoo cx'×2 | 'The☆Whoo  cx'×1 | 'The ☆whoo CX'×1 | 'The☆Whoo CX'×1 | 'The ☆ Whoo cx'×1
+  [Azzuring]  'Azzuring'×208 | 'azzuring'×15
+  [SUBARU Cycling Team]  'SUBARU Cycling Team'×190 | 'SUBARU CYCLING TEAM'×25 | 'SUBARU CyclingTeam'×4 | 'Subaru Cycling Team'×3 | 'SUBARUCyclingTeam'×1
+  [Panasonic Racing]  'Panasonic Racing'×210 | 'PanasonicRacing'×6 | 'Panasonic racing'×4
+  [Y's-racing シクロクロス部]  "Y's-racing シクロクロス部"×119 | "Y's-racingシクロクロス部"×72 | "Ｙ's-racingシクロクロス部"×11 | "Y's-racing  シクロクロス部"×10 | "Ｙ's-racing  シクロクロス部"×3 | "Y's- racingシクロクロス部"×2 | "Y's- racing  シクロクロス部"×1
+  [ADVANCE仙台]  'ADVANCE仙台'×198 | 'ＡＤＶＡＮＣＥ仙台'×9 | 'Advance仙台'×6 | 'ADVANCE 仙台'×5
+  [TEAMNEXTSTAGE]  'TEAMNEXTSTAGE'×132 | 'TEAM NEXT STAGE'×61 | 'TEAM NEXTSTAGE'×22 | 'TEAM  NEXT STAGE'×2
+  [TEAM AIBE]  'TEAM AIBE'×192 | 'TEAM\u3000AIBE'×12 | 'Team AIBE'×11 | 'TEAMAIBE'×1 | 'TEAM  AIBE'×1
+  [SSRT自転車部]  'SSRT自転車部'×212 | 'ＳＳＲＴ自転車部'×3 | 'SSRT 自転車部'×1
+  [CycleClub.jp]  'CycleClub.jp'×202 | 'cycleclub.jp'×6 | 'Cycleclub.jp'×5 | 'Cycle Club.jp'×1
+  [Blue Lug]  'Blue Lug'×77 | 'Bluelug'×45 | 'BlueLug'×29 | 'Blue lug'×26 | 'blue lug'×24 | 'bluelug'×9 | 'blue  lug'×2 | 'BLUE LUG'×1 | 'BLUELUG'×1
+  [あぶくまサイクリングクラブ]  'あぶくまサイクリングクラブ'×200 | 'あぶくまサイクリングクラブ'×13
+  [バルバクラブハクサン]  'バルバクラブハクサン'×130 | 'バルバクラブ\u3000ハクサン'×79 | 'バルバクラブ ハクサン'×4
+  [Verdad]  'Verdad'×173 | 'verdad'×32 | 'Ｖerdad'×7
+  [侵略！！！]  '侵略！！！'×206 | '侵略!!!'×3
+  [VOLCAオードビーBOMA]  'VOLCAオードビーBOMA'×189 | 'VOLCA ｵｰﾄﾞﾋﾞｰ BOMA'×8 | 'VOLCA オードビーBOMA'×5 | 'VOLCA オードビー BOMA'×4 | 'ＶＯＬＣＡオードビーＢＯＭＡ'×2
+  [TRC PANAMAREDS]  'TRC PANAMAREDS'×89 | 'TRC PANAMA REDS'×46 | 'TRC Panama Reds'×24 | 'TRCPanamaReds'×13 | 'TRCPANAMAREDS'×7 | 'TRC  PANAMAREDS'×7 | 'TRC panamareds'×7 | 'TRC PanamaReds'×5 | 'TRC Panamareds'×5 | 'TRC  PanamaReds'×1 | 'Trc PanamaReds'×1 | 'TRC\u3000Panama\u3000Reds'×1 | 'TRCpanamareds'×1
+  [Y's Road CX Team]  "Y's Road CX Team"×182 | "Y'sroad CXteam"×7 | "Y's road CX Team"×5 | "Y'sRoad CX Team"×4 | "Y's  road cx team"×3 | "Y's Road CX team"×2 | "y'sroad CXteam"×1 | "Y's road cx team"×1
+  [RACING TORQUE]  'RACING TORQUE'×166 | 'Racing TORQUE'×23 | 'Racing Torque'×11 | 'RacingTORQUE'×2 | 'Racing  TORQUE'×1
+  [チームWAVE]  'チームWAVE'×136 | 'チームWave'×42 | 'チームwave'×7 | 'チーム WAVE'×5 | 'チーム\u3000WAVE'×4 | 'ﾁｰﾑWave'×4 | 'ﾁｰﾑWAVE'×2 | 'チーム Wave'×1
+  [チームガチャピン]  'チームガチャピン'×163 | 'チーム\u3000ガチャピン'×28 | 'チーム ガチャピン'×9
+  [A-Pad CYCLING TEAM]  'A-Pad CYCLING TEAM'×143 | 'A-pad cycling team'×17 | 'A-pad CYCLING TEAM'×16 | 'A-Pad Cycling Team'×14 | 'A-pad Cycling Team'×1 | 'Ａ-Pad CYCLING TEAM'×1 | 'A-PAD cycling Team'×1
+  [KIZOK]  'KIZOK'×181 | 'KizoK'×4 | 'Kizok'×3 | 'kizok'×3 | 'KIzoK'×1
+  [kcr]  'kcr'×183 | 'KCR'×7 | 'Kcr'×2
+  [HADANO cyclocross team]  'HADANO cyclocross team'×101 | 'HADANO Cyclocross team'×70 | 'HADANO Cyclocross Team'×8 | 'HADANOCyclocrossteam'×3 | 'HADANOcyclocrossteam'×2 | 'HADANO cyclocross Team'×1 | 'HADANO CYCLOCROSS TEAM'×1 | 'HADANO CyclocrossTeam'×1
+  [チームアウタートップ]  'チームアウタートップ'×175 | 'チーム アウタートップ'×6 | 'ﾁｰﾑｱｳﾀｰﾄｯﾌﾟ'×3 | 'チーム\u3000アウタートップ'×1
+  [DENSO RACING]  'DENSO RACING'×168 | 'Denso Racing'×11 | 'Denso racing'×2 | 'DENSORACING'×2 | 'DENSO  RACING'×1 | 'DENSO\u3000RACING'×1
+  [Sonic-Racing]  'Sonic-Racing'×175 | 'sonic-racing'×7 | 'SONIC-RACING'×1 | 'Ｓonic-Ｒaｃing'×1
+  [Team Tacke]  'Team Tacke'×87 | 'TeamTacke'×62 | 'team tacke'×8 | 'teamTACKE'×6 | 'Team  Tacke'×5 | 'team TACKE'×4 | 'TEAM TACKE'×3 | 'Team TACKE'×3 | 'Team\u3000Tacke'×3 | 'team Tacke'×2
+  [BUCYO COFFEE/URBAN DEER Cycling Team]  'BUCYO COFFEE/URBAN DEER Cycling Team'×92 | 'BUCYO COFFEE/URBAN DEER CYCLING TEAM'×60 | 'BUCYO COFFEE/Urban Deer Cycling Team'×28 | 'BUCYO COFFEE/URBAN DEER CyclingTeam'×1 | 'BUCYOCOFFEE/URBANDEERCyclingTeam'×1
+  [TEAM TAMAGAWA]  'TEAM TAMAGAWA'×124 | 'team tamagawa'×35 | 'Team Tamagawa'×11 | 'TeamTamagawa'×5 | 'TEAMTAMAGAWA'×2 | 'teamtamagawa'×2 | 'Team tamagawa'×1 | 'Team TAMAGAWA'×1
+  [Team Nomu’s]  'Team Nomu’s'×163 | 'TeamNomu’s'×11 | 'Team  Nomu’s'×5 | 'teamnomu’s'×1
+  [VAPOR CX TEAM]  'VAPOR CX TEAM'×171 | 'VAPOR CX  TEAM'×3 | 'VAPORCXTEAM'×2 | 'VAPOR  CX  TEAM'×2
+  [バルバレーシングクラブエチゼン]  'バルバレーシングクラブエチゼン'×164 | 'バルバレーシングクラブ\u3000エチゼン'×7 | 'バルバレーシングクラブ エチゼン'×7
+  [FM730CX]  'FM730CX'×172 | 'FM730cx'×5
+  [Paddy Hitachinaka]  'Paddy Hitachinaka'×64 | 'Paddy HITACHINAKA'×44 | 'PADDY HITACHINAKA'×26 | 'PaddyHitachinaka'×19 | 'Paddy\u3000Hitachinaka'×12 | 'paddyhitachinaka'×3 | 'paddy hitachinaka'×2 | 'Paddy hitachinaka'×2 | 'PaddyHITACHINAKA'×1 | 'paddy Hitachinaka'×1 | 'PADDY Hitachinaka'×1
+  [ジャイアントストア一宮]  'ジャイアントストア一宮'×163 | 'ジャイアントストア\u3000一宮'×12
+  [WP KYOTO]  'WP KYOTO'×105 | 'ＷＰＫＹＯＴＯ'×23 | 'WP Kyoto'×13 | 'WP kyoto'×12 | 'WP  KYOTO'×9 | 'WPKYOTO'×5 | 'WP\u3000KYOTO'×3 | 'W P KYOTO'×1 | 'ＷＰKyoto'×1
+  [ユーロワークス]  'ユーロワークス'×169 | 'ﾕｰﾛﾜｰｸｽ'×1
+  [Mile Post Racing]  'Mile Post Racing'×65 | 'MilePost Racing'×62 | 'MilePostRacing'×28 | 'Milepost Racing'×4 | 'mile post racing'×3 | 'Mile  Post Racing'×2 | 'milepost racing'×2 | 'Mile Post R acing'×1 | 'Mile Post Ｒacing'×1 | 'MilepostRacing'×1
+  [Team 自転車処 風輪]  'Team 自転車処 風輪'×122 | 'team 自転車処 風輪'×29 | 'team 自転車処風輪'×10 | 'Team自転車処 風輪'×3 | 'Team自転車処\u3000風輪'×2 | 'team自転車処風輪'×1 | 'Team自転車処風輪'×1
+  [BICYCLE STEP]  'BICYCLE STEP'×153 | 'bicycle step'×5 | 'BICYCLESTEP'×4 | 'Bicycle Step'×3 | 'BicycleStep'×2 | 'Bicycle step'×1
+  [Tonic CX Team Japan]  'Tonic CX Team Japan'×90 | 'TonicCXTeamJapan'×68 | 'Tonic CX Team JAPAN'×2 | 'TonicCxTeamJapan'×2 | 'TONIC CX TEAM JAPAN'×2 | 'TonicCX TeamJapan'×1 | 'Tonic CX teamJapan'×1 | 'tonicCxteamJapan'×1
+  [ベルエキップしびれ隊]  'ベルエキップしびれ隊'×138 | 'ベルエキップしびれ隊'×27
+  [Toyo Frame]  'Toyo Frame'×54 | 'ToyoFrame'×42 | 'TOYO FRAME'×25 | 'TOYOFRAME'×25 | 'toyo frame'×9 | 'Toyo frame'×5 | 'TOYOFrame'×2 | 'TOYO Frame'×1 | 'Toyoframe'×1
+  [フットワークRC]  'フットワークRC'×158 | 'ﾌｯﾄﾜｰｸRC'×3 | 'フットワークＲＣ'×2
+  [BUCYOcoffee.CLT]  'BUCYOcoffee.CLT'×52 | 'BUCYOCOFFEE.CLT'×35 | 'BUCYO COFFEE .CLT'×29 | 'BUCYO coffee. CLT'×29 | 'BUCYO coffee.CLT'×8 | 'BUCYO COFFEE.CLT'×7 | 'Bucyocoffee.CLT'×1
+  [ドバッツ]  'ドバッツ'×157 | 'ﾄﾞﾊﾞｯﾂ'×4
+  [有限会社　村上建具]  '有限会社\u3000村上建具'×130 | '有限会社村上建具'×30 | '有限会社 村上建具'×1
+  [RinRinRacing]  'RinRinRacing'×144 | 'rinrinracing'×6 | 'Rin Rin Racing'×4 | 'Rin Rin   Racing'×3 | 'RINRIN RACING'×1 | 'RINRIN Racing'×1 | 'RinRin Racing'×1
+  [茶まるCXチーム]  '茶まるCXチーム'×154 | '茶まるCXﾁｰﾑ'×5 | '茶まるＣＸチーム'×1
+  [BRAC]  'BRAC'×158 | 'B R A C'×1
+  [SPADE ACE]  'SPADE ACE'×133 | 'SPADE\u3000ACE'×14 | 'spade ace'×7 | 'SPADEACE'×2 | 'SPADE  ACE'×2
+  [Green Cog Cycling Club]  'Green Cog Cycling Club'×107 | 'GreenCog CyclingClub'×25 | 'GreenCogCyclingClub'×13 | 'Greencog Cycling Club'×8 | 'GreenCog Cycling Club'×2 | 'Green cog Cycling Club'×1
+  [SANWA Talkers]  'SANWA Talkers'×83 | 'SANWA talkers'×52 | 'SANWA TALKERs'×7 | 'SANWA TALKERS'×6 | 'SANWATalkers'×4 | 'Sanwa Talkers'×3 | 'SANWA\u3000Talkers'×1
+  [SBC Dirt Union]  'SBC Dirt Union'×81 | 'SBC DIRT UNION'×60 | 'sbcdirtunion'×7 | 'SBCDirtUnion'×3 | 'SBCDIRTUNION'×2 | 'sbc dirt union'×1 | 'ＳＢＣ\u3000ＤＩＲＴ\u3000ＵＮＩＯＮ'×1
+  [DECOJA RACING TEAM]  'DECOJA RACING TEAM'×102 | 'DECOJARACINGTEAM'×35 | 'Decoja Racing Team'×13 | 'DECOJA\u3000RACING\u3000TEAM'×1 | 'Decoja racing team'×1 | 'DECOJA\u3000RACING TEAM'×1
+  [オカヤマシクロクロス]  'オカヤマシクロクロス'×141 | 'ｵｶﾔﾏｼｸﾛｸﾛｽ'×12
+  [Above bike store cycle club]  'Above bike store cycle club'×78 | 'Above Bike Store Cycle Club'×46 | 'AboveBikeStoreCycleClub'×19 | 'Above Bike Store cycle club'×3 | 'Above Bike store cycle club'×2 | 'Above BIke Store Cycle Club'×1 | 'Above Bike Store Cycle club'×1 | 'above Bike Store cycle club'×1 | 'above bike store cycle club'×1 | 'abovebikestore cycle club'×1
+  [チーム　サイクルマインド]  'チーム\u3000サイクルマインド'×142 | 'チームサイクルマインド'×10 | 'チーム サイクルマインド'×1
+  [CSヤマダ]  'CSヤマダ'×130 | 'ＣＳ\u3000ヤマダ'×10 | 'ＣＳヤマダ'×10 | 'CSﾔﾏﾀﾞ'×1 | 'CS\u3000ヤマダ'×1
+  [TRAP]  'TRAP'×146 | 'ＴＲＡＰ'×6
+  [white jack]  'white jack'×140 | 'ｗｈｉｔｅ\u3000ｊａｃｋ'×4 | 'white\u3000jack'×3 | 'whitejack'×3 | 'White jack'×1 | 'whiteJack'×1
+  [F(t)麒麟山Racing]  'F(t)麒麟山Racing'×118 | 'F(t)麒麟山racing'×32
+  [CWASPアタリ前田]  'CWASPアタリ前田'×125 | 'ＣＷＡＳＰアタリ前田'×22 | 'cwasp アタリ前田'×1
+  [INFINITY]  'INFINITY'×126 | 'infinity'×11 | 'Infinity'×7 | 'ＩＮＦＩＮＩＴＹ'×1
+  [Team Shiokaze CX]  'Team Shiokaze CX'×77 | 'TeamShiokazeCX'×51 | 'TEAMSHIOKAZECX'×7 | 'teamshiokazecx'×3 | 'TEAM SHIOKAZE CX'×2 | 'Team Shiokazecx'×1 | 'Team ShiokazeCX'×1
+  [GSバンビーノ]  'GSバンビーノ'×124 | 'ＧＳバンビーノ'×14 | 'GS バンビーノ'×3
+  [エキップナカムラ]  'エキップナカムラ'×140 | 'ｴｷｯﾌﾟﾅｶﾑﾗ'×1
+  [TEAM THE RED]  'TEAM THE RED'×122 | 'TEAMTHERED'×9 | 'TEAM  THE  RED'×7 | 'Team THE RED'×1 | 'Team the red'×1
+  [HGSBT Cycle Team]  'HGSBT Cycle Team'×127 | 'HGSBT  Cycle  Team'×7 | 'HGSBT CYCLE TEAM'×4 | 'HGSBTCycleTeam'×2
+  [Golosa]  'Golosa'×134 | 'Ｇｏｌｏｓａ'×2 | 'golosa'×2 | 'gOLOSA'×1
+  [gyrfalcon]  'gyrfalcon'×75 | 'Gyrfalcon'×60 | 'GYRFALCON'×2
+  [Team Andoman]  'Team Andoman'×134 | 'TeamAndoman'×3
+  [ウオズミサイクル]  'ウオズミサイクル'×133 | 'ウオズミ サイクル'×2 | 'ｳｵｽﾞﾐｻｲｸﾙ'×1
+  [サンクスサイクルラボ]  'サンクスサイクルラボ'×131 | 'サンクスサイクル ラボ'×5
+  [YOKOSUKA UNO RACING]  'YOKOSUKA UNO RACING'×129 | 'YOKOSUKA UNO Racing'×3 | 'Yokosuka uno Racing'×3 | 'Yokosuka UNO Racing'×1
+  [AXIS CX TEAM]  'AXIS CX TEAM'×126 | 'Axis CX Team'×7 | 'AXIS CX team'×1 | 'AXISCXteam'×1 | 'AXISＣＸTEAM'×1
+  [TEAM SKY KYOTO]  'TEAM SKY KYOTO'×120 | 'team sky kyoto'×7 | 'teamskykyoto'×5 | 'TEAMSKYKYOTO'×3
+  [ELITE TEST TEAM]  'ELITE TEST TEAM'×103 | 'EliteTestTeam'×18 | 'Elite Test Team'×7 | 'ELITETESTTEAM'×6
+  [BOUNCE]  'BOUNCE'×132 | 'bounce'×1
+  [IRC TIRE]  'IRC TIRE'×97 | 'iRC TIRE'×33 | 'iRC tire'×2 | 'iRCTIRE'×1
+  [C.viento]  'C.viento'×82 | 'c.viento'×41 | 'Ｃ．ｖｉｅｎｔｏ'×4 | 'C.Viento'×2 | 'C．viento'×1 | 'C .ｖｉｅｎｔｏ'×1 | 'Ｃ.ｖｉｅｎｔｏ'×1
+  [YOU CAN]  'YOU CAN'×55 | 'YOUCAN'×40 | 'YouCan'×31 | 'You Can'×2 | 'youcan'×2 | 'YouCAN'×1 | 'Youcan'×1
+  [Honda栃木]  'Honda栃木'×62 | 'Honda 栃木'×54 | 'HONDA栃木'×15 | 'Hｏｎｄａ栃木'×1
+  [Infinity_K10s]  'Infinity_K10s'×129 | 'Infinity _K10s'×3
+  [Ready Go JAPAN]  'Ready Go JAPAN'×115 | 'ReadyGoJAPAN'×11 | 'Ready Go Japan'×4
+  [BIKE RANCH]  'BIKE RANCH'×73 | 'BikeRanch'×41 | 'BIKERANCH'×5 | 'Bike Ranch'×5 | 'bike ranch'×3 | 'BIKE\u3000RANCH'×1 | 'Bike ranch'×1
+  [LEPUS]  'LEPUS'×122 | 'Lepus'×4
+  [LOKO RACING]  'LOKO RACING'×85 | 'LOKO Racing'×17 | 'LOKORACING'×9 | 'ＬＯＫＯ\u3000ＲＡＣＩＮＧ'×4 | 'LOKO racing'×3 | 'LOKORacing'×3 | 'LOKO  Racing'×3 | 'Loko Racing'×1 | 'LOKO ＲＡＣＩＮＧ'×1
+  [SMRC CX TEAM]  'SMRC CX TEAM'×119 | 'ＳＭＲＣ CX TEAM'×3 | 'SMRC CX team'×2 | 'SMRC CX Team'×1 | 'SMRC  CX  TEAM'×1
+  [Team Kermis Cross]  'Team Kermis Cross'×121 | 'TeamKermisCross'×3 | 'Team kermis Cross'×2
+  [RX&CO]  'RX&CO'×68 | 'Rx&CO'×38 | 'RX&Co'×9 | 'RX & CO'×3 | 'RX＆CO'×3 | 'Rx&Co'×3 | 'Rx&co'×2
+  [R2SPORTSCYCLINGTEAM]  'R2SPORTSCYCLINGTEAM'×61 | 'R2 SPORTS CYCLING TEAM'×34 | 'R2 sports cycling team'×23 | 'R2 SPORTS CYCLINGTEAM'×5 | 'R2  SPORTS  CYCLING  TEAM'×1
+  [イオンバイクJr.レーシング]  'イオンバイクJr.レーシング'×98 | 'イオンバイクjr.レーシング'×14 | 'イオンバイクJr. レーシング'×5 | 'イオンバイク Jr. レーシング'×4 | 'イオンバイクjr．レーシング'×1 | 'イオンバイクＪｒ.レーシング'×1
+  [MiNERVA-asahi]  'MiNERVA-asahi'×122 | 'Mi NERVA-asahi'×1
+  [The Delez Squad]  'The Delez Squad'×95 | 'THE DELEZ SQUAD'×23 | 'The Delez squad'×2 | 'TheDelezSquad'×2 | 'The Delez SQUAD'×1
+  [Black Sheep]  'Black Sheep'×62 | 'BlackSheep'×60
+  [Moto-SR]  'Moto-SR'×112 | 'MOTO-SR'×9 | 'moto-SR'×1
+  [COWGUMMA]  'COWGUMMA'×89 | 'COW GUMMA'×25 | 'Cowgumma'×6 | 'cow gumma'×1 | 'ＣＯＷＧＵＭＭＡ'×1
+  [TeamSOLA]  'TeamSOLA'×84 | 'Team SOLA'×26 | 'teamSOLA'×5 | 'team SOLA'×5 | 'Teamsola'×2
+  [TeamSpeed]  'TeamSpeed'×61 | 'Team Speed'×32 | 'TeamSPEED'×21 | 'Team  Speed'×5 | 'Team SPEED'×2
+  [ﾅｶｶﾞﾜＡＳ．Ｋ’ﾃﾞｻﾞｲﾝ]  'ﾅｶｶﾞﾜＡＳ．Ｋ’ﾃﾞｻﾞｲﾝ'×65 | 'ナカガワＡＳ．Ｋ’デザイン'×51 | 'ナカガワAs.K’デザイン'×5
+  [SHOROs]  'SHOROs'×104 | 'Shoros'×9 | 'SHOROｓ'×2 | 'SHOROS'×2 | 'shoros'×2 | 'ＳＨＯＲＯＳ'×1 | 'SHOROＳ'×1
+  [All-City Cycles / 662CCC]  'All-City Cycles / 662CCC'×107 | 'All-City Cycles/662CCC'×9 | 'All-CityCycles/662CCC'×3 | 'All-City Cycles / 662ccc'×1
+  [ORCA CYCLING TEAM]  'ORCA CYCLING TEAM'×118 | 'ORCA cycling team'×2
+  [CHARGECYCLINGCLUB]  'CHARGECYCLINGCLUB'×64 | 'CHARGECyclingClub'×47 | 'CHARGE CYCLING CLUB'×3 | 'CHARGE Cycling Club'×3 | 'charge cycling club'×2
+  [A'le:ne So'le:ne]  "A'le:ne So'le:ne"×114 | "A'le:ne\u3000So'le:ne"×2 | "A'le:ne  So'le:ne"×2 | "A'le:neSo'le:ne"×1
+  [TEAM FLYING PENGUINS]  'TEAM FLYING PENGUINS'×89 | 'Team Flying Penguins'×22 | 'team flying penguins'×4 | 'TEAMFLYINGPENGUINS'×1 | 'team  flying penguins'×1 | 'TEAMFLYING PENGUINS'×1 | 'TEAM  FLYING PENGUINS'×1
+  [team SONIC]  'team SONIC'×106 | 'TeamSONIC'×10 | 'Team SONIC'×1 | 'teamSONIC'×1
+  [チームヤマシゲ]  'チームヤマシゲ'×73 | 'チーム ヤマシゲ'×45
+  [TEAM GIRO CX]  'TEAM GIRO CX'×79 | 'Team GIRO CX'×18 | 'Team Giro CX'×13 | 'TEAM\u3000GIRO\u3000CX'×2 | 'team GIRO CX'×2 | 'team giro cx'×1 | 'TEAM GIRO\u3000CX'×1 | 'TEAMGIRO CX'×1 | 'Team  GIRO CX'×1
+  [TS TECH 自転車部]  'TS TECH 自転車部'×61 | 'TS TECH自転車部'×44 | 'TS tech自転車部'×7 | 'TS tech 自転車部'×4 | 'TSTECH自転車部'×1 | 'TS  tech自転車部'×1
+  [まほろばRC]  'まほろばRC'×64 | 'まほろばＲＣ'×53
+  [YCC]  'YCC'×115 | 'ＹＣＣ'×1
+  [ReVelo]  'ReVelo'×108 | 'revelo'×7 | 'Revelo'×1
+  [TeamGreenRoad]  'TeamGreenRoad'×66 | 'Team Green Road'×47 | 'Team\u3000Green\u3000Road'×2
+  [TEAM辻浦]  'TEAM辻浦'×114 | 'TEAM 辻浦'×1
+  [TORQUE NOZAC]  'TORQUE NOZAC'×107 | 'TORQUENOZAC'×6 | 'Torque NOZAC'×2
+  [チーム バケラッタ]  'チーム バケラッタ'×92 | 'チームバケラッタ'×12 | 'チーム\u3000バケラッタ'×11
+  [AVENTURA VICTORIA RACING]  'AVENTURA VICTORIA RACING'×106 | 'AVENTURA VICTORIA\u3000RACING'×5 | 'AVENTURA  VICTORIA RACING'×2 | 'AVENTURA\u3000VICTORIA\u3000RACING'×1
+  [輪娯ロード]  '輪娯ロード'×111 | '輪娯ﾛｰﾄﾞ'×2
+  [リベルタス TBC]  'リベルタス TBC'×56 | 'リベルタス ＴＢＣ'×15 | 'リベルタスTBC'×14 | 'リベルタス\u3000TBC'×14 | 'リベルタス  TBC'×7 | 'リベルタス  ＴＢＣ'×5 | 'リベルタス\u3000TB C'×1
+  [Araren8214]  'Araren8214'×89 | 'ARAREN8214'×17 | 'Ａｒａｒｅｎ8214'×3 | 'ARAREN  8214'×1 | 'Araren 8214'×1 | 'Araren\u30008214'×1
+  [QQQ9]  'QQQ9'×96 | 'ＱＱＱ９'×14 | 'ＱＱＱ9'×2
+  [Team-NR]  'Team-NR'×108 | 'TEAM-NR'×3
+  [ピアチェーレヤマ]  'ピアチェーレヤマ'×108 | 'ピアチェーレ ヤマ'×3
+  [TEAM AGRI withAST]  'TEAM AGRI withAST'×96 | 'TEAM AGRI with AST'×14 | 'TEAMAGRIwithAST'×1
+  [エキップ昴]  'エキップ昴'×109 | 'ｴｷｯﾌﾟ昴'×1
+  [SD26]  'SD26'×105 | 'sd26'×3 | 'ＳＤ２６'×2
+  [SUCC]  'SUCC'×106 | 'succ'×4
+  [TeamZenko]  'TeamZenko'×53 | 'Team Zenko'×45 | 'team zenko'×5 | 'teamzenko'×4 | 'TEAM Zenko'×2 | 'Teamzenko'×1
+  [イオンバイクJr.アカデミー]  'イオンバイクJr.アカデミー'×51 | 'イオンバイク Ｊｒ. アカデミー'×28 | 'イオンバイク Jr. アカデミー'×19 | 'イオンバイク Jr.アカデミー'×6 | 'イオンバイクjr.アカデミー'×4 | 'イオンバイクJr. アカデミー'×1 | 'ｲｵﾝﾊﾞｲｸJr.ｱｶﾃﾞﾐｰ'×1
+  [SAMZ SPEED]  'SAMZ SPEED'×86 | 'SAMZSPEED'×7 | 'samz speed'×5 | 'SAMZ\u3000SPEED'×4 | 'ＳＡＭＺ\u3000ＳＰＥＥＤ'×3 | 'SAMZ  SPEED'×2 | 'Samzspeed'×1
+  [チームファンサイクル]  'チームファンサイクル'×75 | 'ﾁｰﾑﾌｧﾝｻｲｸﾙ'×12 | 'チーム ファンサイクル'×9 | 'ﾁｰﾑ ﾌｧﾝｻｲｸﾙ'×4 | 'ﾁｰﾑ  ﾌｧﾝｻｲｸﾙ'×3 | 'チーム\u3000ファンサイクル'×3 | 'チーム  ファンサイクル'×2
+  [Monster Foot Racing]  'Monster Foot Racing'×106 | 'MonsterFootRacing'×1
+  [熊トレ　グラベル部]  '熊トレ\u3000グラベル部'×86 | '熊トレ グラベル部'×20 | '熊トレグラベル部'×1
+  [Racing CUBE]  'Racing CUBE'×75 | 'Racing Cube'×21 | 'RacingCUBE'×3 | 'racing CUBE'×3 | 'racing cube'×2 | 'Racing cube'×1 | 'RACINGCUBE'×1 | 'RacingCube'×1
+  [OLIVE]  'OLIVE'×106 | 'Olive'×1
+  [RCC]  'RCC'×105 | 'Rcc'×1
+  [eNshare cycling team]  'eNshare cycling team'×48 | 'eNShare CyclingTeam'×25 | 'eNShareCyclingTeam'×10 | 'eNshare Cycling Team'×8 | 'eNShare Cycling Team'×7 | 'eNShare  CyclingTeam'×3 | 'eNShare cyclingteam'×2 | 'eNShare cycling team'×2 | 'eNshare cycling Team'×1
+  [Limited Team 846/回転木馬]  'Limited Team 846/回転木馬'×78 | 'Limited team 846／回転木馬'×17 | 'Limited team 846/回転木馬'×3 | 'Limited Team 846 / 回転木馬'×2 | 'Limited Team 846／回転木馬'×2 | 'limited team 846/回転木馬'×1 | 'LimitedTeam846／回転木馬'×1 | 'LimitedTeam846/回転木馬'×1 | 'Limitedteam846/回転木馬'×1
+  [Bicycle Planner Cycle Team]  'Bicycle Planner Cycle Team'×69 | 'BicyclePlannerCycleTeam'×27 | 'Bicycle Planner cycle team'×4 | 'bicycleplannercycleteam'×3 | 'BicyclePlanner CycleTeam'×1 | 'BicyclePlannercycleteam'×1 | 'bicycle planner cycle team'×1
+  [DA MONDE]  'DA MONDE'×75 | 'Da monde'×17 | 'Da MONDE'×11 | 'DAMONDE'×1 | 'Da Monde'×1
+  [シクル・マーモット]  'シクル・マーモット'×103 | 'シクル･マーモット'×1 | 'ｼｸﾙ･ﾏｰﾓｯﾄ'×1
+  [CO2bicycle]  'CO2bicycle'×72 | 'CO2 bicycle'×24 | 'CO2 Bicycle'×4 | 'co2bicycle'×3 | 'co2 bicycle'×1 | 'CO２bicycle'×1
+  [ZAS Racing]  'ZAS Racing'×49 | 'ZASRacing'×38 | 'Zas Racing'×13 | 'ZAS racing'×3 | 'ZASracing'×1
+  [チームBMインドカレーサーラ]  'チームBMインドカレーサーラ'×90 | 'チームＢＭインドカレーサーラ'×9 | 'チームBM インドカレーサーラ'×4 | 'チーム BM インドカレーサーラ'×1
+  [DESTRA CX TEAM]  'DESTRA CX TEAM'×37 | 'DESTRA cx Team'×33 | 'DESTRA cx team'×14 | 'DESTRA CX team'×7 | 'DESTRA CX Team'×4 | 'DESTRA cxTeam'×3 | 'DESTRACXTEAM'×3 | 'DESTRACXTeam'×2 | 'DESTRA cxTEAM'×1
+  [TRC PANAMAREDS CX]  'TRC PANAMAREDS CX'×49 | 'TRC PanamaReds CX'×23 | 'TRCPANAMAREDSCX'×8 | 'TRC Panamareds CX'×4 | 'TRC  PANAMAREDS  CX'×4 | 'TRC PANAMAREDSCX'×3 | 'TRCpanamaredsCX'×2 | 'TRCPANAMAREDS cx'×2 | 'TRC\u3000Panamareds\u3000CX'×2 | 'TRC Panama Reds CX'×2 | 'TRCPanamaRedsCX'×1 | 'TRCPANAMAREDS CX'×1 | 'TRC PANAMA REDS CX'×1 | 'TRC Panama reds CX'×1
+  [FCCサイクリングクラブ]  'FCCサイクリングクラブ'×83 | 'ＦＣＣサイクリングクラブ'×20
+  [ZELKOVA]  'ZELKOVA'×83 | 'Zelkova'×19
+  [CLICK八幡]  'CLICK八幡'×52 | 'Click八幡'×33 | 'click八幡'×12 | 'Click 八幡'×2 | 'CLICK 八幡'×2 | 'CLICK\u3000八幡'×1
+  [TRYCLE.ing]  'TRYCLE.ing'×101 | 'Trycle.ing'×1
+  [クラブワンピースフクイ47/18]  'クラブワンピースフクイ47/18'×99 | 'クラブワンピースフクイ 47/18'×3
+  [Team Sakatani]  'Team Sakatani'×58 | 'Teamsakatani'×11 | 'TEAM SAKATANI'×9 | 'TeamSakatani'×8 | 'team Sakatani'×6 | 'Team  Sakatani'×3 | 'teamsakatani'×2 | 'Team sakatani'×1 | 'teamSakatani'×1 | 'Team\u3000Sakatani'×1
+  [TEAM CRANK]  'TEAM CRANK'×89 | 'TEAMCRANK'×11
+  [grumpy cx team]  'grumpy cx team'×33 | 'Grumpy CX Team'×32 | 'grumpy CX team'×18 | 'Grumpy CX team'×6 | 'grumpyCXteam'×4 | 'GRUMPY CX TEAM'×2 | 'Grumpy cx team'×2 | 'Grumpy CX  Team'×1 | 'grumpy CX Team'×1
+  [Teamまるいち]  'Teamまるいち'×78 | 'teamまるいち'×17 | 'TEAMまるいち'×4
+  [ターミネーターRT]  'ターミネーターRT'×76 | 'ターミネーターＲT'×23
+  [MAX SPEED 97]  'MAX SPEED 97'×40 | 'MaxSpeed97'×27 | 'Max Speed 97'×14 | 'Max speed97'×4 | 'Max Speed97'×3 | 'MAXSPEED97'×3 | 'MAX SPEED97'×3 | 'Max speed 97'×2 | 'MAXSPEED 97'×2 | 'MaxSpeed 97'×1
+  [高知CTC]  '高知CTC'×94 | '高知ＣＴＣ'×5
+  [トーヨーCT]  'トーヨーCT'×92 | 'トーヨーＣＴ'×4 | 'ﾄｰﾖｰCT'×3
+  [Gnom CX]  'Gnom CX'×63 | 'GnomCX'×9 | 'Gnom cx'×9 | 'Gnom Cx'×6 | 'Gnom  CX'×6 | 'Gnom\u3000Cx'×2 | 'Gnomcx'×1 | 'Gnom\u3000ｃｘ'×1 | 'Gnom\u3000CX'×1 | 'Gnom\u3000cx'×1
+  [DreamSeekerJr.RacingTeam]  'DreamSeekerJr.RacingTeam'×28 | 'Dream Seeker jr. Racing Team'×23 | 'Dream Seeker Jr.Racing Team'×20 | 'Dream Seeker jr.Racing Team'×16 | 'Dream Seeker Jr. Racing Team'×11 | 'DreamSeeker Jr.Racing Team'×1
+  [chamule pack]  'chamule pack'×97 | 'chamulepack'×1
+  [companio kobe]  'companio kobe'×35 | 'Companio Kobe'×31 | 'Companio\u3000kobe'×14 | 'Companio kobe'×6 | 'companio\u3000kobe'×5 | 'companioKobe'×3 | 'companiokobe'×3 | 'companio Kobe'×1
+  [WTFS-CX]  'WTFS-CX'×96 | 'WTFS- CX'×1
+  [チーム・リ・サイクル]  'チーム・リ・サイクル'×96 | 'ﾁｰﾑ･ﾘ･ｻｲｸﾙ'×1
+  [香川県ドM組合]  '香川県ドM組合'×83 | '香川県ドＭ組合'×7 | '香川県ﾄﾞM組合'×7
+  [BUCYOcoffee/CLT]  'BUCYOcoffee/CLT'×41 | 'BUCYOCOFFEE／CLT'×32 | 'BUCYOCOFFEE/CLT'×19 | 'BucyoCoffee/CLT'×4 | 'BUCYOcoffee/clt'×1
+  [Zippycycleclub]  'Zippycycleclub'×72 | 'zippy cycle club'×12 | 'Zippy cycle club'×8 | 'zippycycleclub'×2 | 'ZiPPYCYCLEClub'×1 | 'ZIPPY CYCLE CLUB'×1
+  [Guell bicycle store]  'Guell bicycle store'×66 | 'Guell Bicycle Store'×25 | 'GuellBicycleStore'×3 | 'Guellbicyclestore'×2
+  [Biwako Cycling]  'Biwako Cycling'×81 | 'BiwakoCycling'×14
+  [equipe mistral]  'equipe mistral'×73 | 'Equipe mistral'×15 | 'equipe  mistral'×5 | 'ｅｑｕｉｐｅ\u3000ｍｉｓｔｒａｌ'×1 | 'Equipemistral'×1
+  [TEAM ZERO]  'TEAM ZERO'×74 | 'TEAM    ZERO'×8 | 'TEAMZERO'×4 | 'TEAM  ZERO'×4 | 'team ZERO'×4
+  [Glocal bike]  'Glocal bike'×46 | 'Glocalbike'×19 | 'GlocalBike'×11 | 'glocal bike'×11 | 'Glocal Bike'×3 | 'glocalbike'×3 | 'GlocalBIKE'×1
+  [ナカガワAS・K’デザイン]  'ナカガワAS・K’デザイン'×59 | 'ナカガワＡＳ・Ｋ’デザイン'×22 | 'ナカガワAS ・K’デザイン'×12
+  [Fine Nova LAB]  'Fine Nova LAB'×57 | 'Fine nova LAB'×29 | 'FineNovaLAB'×5 | 'Fine Nova Lab'×2
+  [minzuuBike]  'minzuuBike'×66 | 'minzuu Bike'×21 | 'minzuu bike'×2 | 'Ｍinzuu Bike'×1 | 'minzuuBIKE'×1 | 'Minzuubike'×1
+  [SPACE ZEROPOINT]  'SPACE ZEROPOINT'×76 | 'space zeropoint'×6 | 'SPACE ZERO POINT'×3 | 'SPACEZEROPOINT'×2 | 'SPACE zero point'×1 | 'space zero point'×1 | 'spacezeropoint'×1 | 'SPACE zeropoint'×1
+  [Speedvagen Family Racing]  'Speedvagen Family Racing'×74 | 'SPEEDVAGEN FAMILY RACING'×12 | 'SpeedvagenFamilyRacing'×3 | 'SPEEDVAGENFAMILYRACING'×2
+  [Free Ride]  'Free Ride'×43 | 'free ride'×32 | 'FreeRide'×9 | 'FREERIDE'×4 | 'FREE RIDE'×2
+  [Mt.HASE321/ターミネーターRT]  'Mt.HASE321/ターミネーターRT'×55 | 'Mt.Hase321/ターミネーターRT'×31 | 'Mt.HASE321/ﾀｰﾐﾈｰﾀｰRT'×4
+  [イナーメ信濃山形＆大幸ハーネス]  'イナーメ信濃山形＆大幸ハーネス'×51 | 'イナーメ信濃山形&大幸ハーネス'×39
+  [SYHHP]  'SYHHP'×88 | 'syhhp'×1
+  [48PRODUCT]  '48PRODUCT'×88 | '48product'×1
+  [B.C.宇都宮]  'B.C.宇都宮'×83 | 'Ｂ.Ｃ.宇都宮'×3 | 'Ｂ.C.宇都宮'×1 | 'Ｂ．Ｃ．宇都宮'×1
+  [ROND CX TEAM/豊中農園]  'ROND CX TEAM/豊中農園'×78 | 'ROND CX  TEAM/豊中農園'×6 | 'ROND  CX TEAM/豊中農園'×4
+  [スクミズマシンワークス]  'スクミズマシンワークス'×86 | 'ｽｸﾐｽﾞﾏｼﾝﾜｰｸｽ'×1
+  [WEMO 2005]  'WEMO 2005'×59 | 'WEMO2005'×28
+  [cycle master]  'cycle master'×83 | 'cycle  master'×2 | 'cycle\u3000master'×2
+  [Ride ronde Kinki CX Club]  'Ride ronde Kinki CX Club'×62 | 'Ride ronde kinki CX Club'×22 | 'RiderondekinkiCXClub'×2 | 'RiderondeKinkiCXClub'×1
+  [ベッキーシクロクロス/なかじきや]  'ベッキーシクロクロス/なかじきや'×85 | 'ベッキーシクロクロス／なかじきや'×2
+  [Y's Racing シクロクロス部]  "Y's Racing シクロクロス部"×27 | "Y's racing シクロクロス部"×23 | "Y'sracingシクロクロス部"×8 | "Y'sRacingシクロクロス部"×7 | "Y's racingシクロクロス部"×6 | "Y's  Racing\u3000シクロクロス部"×5 | "Y's\u3000racingシクロクロス部"×4 | "Y's\u3000Racing\u3000シクロクロス部"×2 | "Y'sRacing\u3000シクロクロス部"×1 | "Y's\u3000Racingシクロクロス部"×1 | "Ｙ's racing シクロクロス部"×1 | "Y's racing\u3000シクロクロス部"×1
+  [ホネつき数珠’Sは劇団です]  'ホネつき数珠’Sは劇団です'×45 | 'ホネつき数珠’Ｓは劇団です'×39 | 'ﾎﾈつき数珠’Sは劇団です'×1
+  [PEDAL NATION]  'PEDAL NATION'×81 | 'PEDALNATION'×4
+  [Team Sciroco]  'Team Sciroco'×59 | 'TeamSciroco'×20 | 'Team SCIROCO'×6
+  [DEVOTION]  'DEVOTION'×63 | 'Devotion'×19 | 'devotion'×3
+  [AVENTURA CYCLING ESTRELLA]  'AVENTURA CYCLING ESTRELLA'×65 | 'AVENTURA Cycling Estrella'×20
+  [LINKVISION GIRASOLE CYCLING]  'LINKVISION GIRASOLE CYCLING'×76 | 'LINKVISIONGIRASOLECYCLING'×5 | 'LINK VISION GIRASOLE CYCLING'×4
+  [Team MW]  'Team MW'×81 | 'TeamMW'×4
+  [バルバレーシングクラブトヤマ]  'バルバレーシングクラブトヤマ'×82 | 'バルバレーシングクラブ トヤマ'×3
+  [ダブルオーグラスギア/朝6]  'ダブルオーグラスギア/朝6'×58 | 'ダブルオーグラスギア／朝６'×27
+  [team motopink]  'team motopink'×49 | 'teammotopink'×33 | 'team moto pink'×2
+  [FUJIMOTO FARM]  'FUJIMOTO FARM'×81 | 'Fujimoto farm'×2 | 'FUJIMOTOFARM'×1
+  [MountainStreamCXTeam]  'MountainStreamCXTeam'×39 | 'MountainStream CX Team'×24 | 'Mountain Stream CX Team'×10 | 'Mountain Stream CXTeam'×10 | 'mountainStreamCXteam'×1
+  [FLAT立川/多摩湖朝練部]  'FLAT立川/多摩湖朝練部'×82 | 'FLAT 立川/多摩湖朝練部'×1
+  [Abukumaサイクリングクラブ]  'Abukumaサイクリングクラブ'×53 | 'abukumaｻｲｸﾘﾝｸﾞｸﾗﾌﾞ'×17 | 'abukumaサイクリングクラブ'×9 | 'Abukumaｻｲｸﾘﾝｸﾞｸﾗﾌﾞ'×4
+  [rabbit street UBE]  'rabbit street UBE'×24 | 'Rabbit Street UBE'×19 | 'Rabbit Street Ube'×19 | 'Rabbit street UBE'×8 | 'Rabbit street ube'×7 | 'rabbitstreet UBE'×3 | 'Rabbit Street  UBE'×2 | 'Rabbit Street\u3000UBE'×1
+  [kcr(キヨシサイクルレーシング)]  'kcr(キヨシサイクルレーシング)'×75 | 'kcr(キヨシ サイクル レーシング)'×8
+  [チームシルクロード]  'チームシルクロード'×78 | 'チーム シルクロード'×3 | 'チーム\u3000シルクロード'×1
+  [Kamogawa TC]  'Kamogawa TC'×64 | 'KamogawaTC'×14 | 'KAMOGAWA TC'×2 | 'KAMOGAWATC'×1 | 'Kamogawa\u3000TC'×1
+  [GPT]  'GPT'×73 | 'ＧＰＴ'×8
+  [treacciaro]  'treacciaro'×39 | 'tre  acciaro'×27 | 'tre acciaro'×15
+  [K's OFFROAD TEAMwithBOMA]  "K's OFFROAD TEAMwithBOMA"×52 | "K's OFFROAD TEAM with BOMA"×23 | "K's Offroad Team with Boma"×4 | "K's OFF ROAD TEAM with BOMA"×1 | "K'sOFFROADTEAMwithBOMA"×1
+  [クラブワンピースエチゼン]  'クラブワンピースエチゼン'×70 | 'クラブワンピース\u3000エチゼン'×11
+  [RingoRoad.com]  'RingoRoad.com'×57 | 'RINGOROAD.com'×20 | 'Ringo Road .com'×2 | 'RINGO ROAD .com'×1
+  [AutoBahnGotemba]  'AutoBahnGotemba'×69 | 'Autobahn Gotemba'×6 | 'autobahngotemba'×3 | 'AutoBahn Gotemba'×1 | 'Autobahn gotemba'×1
+  [B-SOUL]  'B-SOUL'×77 | 'B-soul'×2
+  [じてんしゃPitプロ 埼玉日高]  'じてんしゃPitプロ 埼玉日高'×28 | 'じてんしゃPitプロ埼玉日高'×22 | 'じてんしゃPitﾌﾟﾛ 埼玉日高'×11 | 'じてんしゃPit プロ 埼玉日高'×6 | 'じてんしゃＰｉｔプロ 埼玉日高'×5 | 'じてんしゃＰｉｔプロ\u3000埼玉日高'×3 | 'じてんしゃPit ﾌﾟﾛ 埼玉日高'×1 | 'じてんしゃPitプロ  埼玉日高'×1 | 'じてんしゃPit プロ埼玉日高'×1
+  [ride rondo cx team]  'ride rondo cx team'×56 | 'Ride rondo cx team'×21 | 'riderondocxteam'×1
+  [TEAM TOUK CX]  'TEAM TOUK CX'×75 | 'TEAMTOUKCX'×3
+  [drawer THE CYCLING CLUB]  'drawer THE CYCLING CLUB'×59 | 'drawer the cycling club'×11 | 'drawer THE CYCLINGCLUB'×3 | 'drawer the cycling Club'×2 | 'drawer  the  cyclingclub'×1 | 'drawerTHECYCLINGCLUB'×1
+  [CORAGGIO KAWANISHI U-19]  'CORAGGIO KAWANISHI U-19'×71 | 'CORAGGIOKAWANISHIU-19'×3 | 'CORAGGIO Kawanishi U-19'×1 | 'CORAGGIO KAWANISHI\u3000U-19'×1 | 'Coraggio Kawanishi U-19'×1
+  [OGW]  'OGW'×58 | 'OGw'×10 | 'ogw'×8
+  [NIKO FACTORY]  'NIKO FACTORY'×34 | 'NIKO Factory'×16 | 'NIKO\u3000FACTORY'×14 | 'NikoFactory'×6 | 'NIKOFACTORY'×2 | 'Niko Factory'×2 | 'niko factory'×2
+  [...&BicycleCC]  '...&BicycleCC'×36 | '...＆BicycleCC'×21 | '...＆BICYCLECC'×11 | '…＆BicycleCC'×2 | '...＆Bicycle CC'×2 | '…&BICYCLECC'×2 | '…&Bicycle CC'×1 | '...& BicycleCC'×1
+  [bikin!tv]  'bikin!tv'×41 | 'ｂｉｋｉｎ！ＴＶ'×33
+  [ナカガワAsKデザイン]  'ナカガワAsKデザイン'×20 | 'ナカガワ\u3000As Kデザイン'×18 | 'ナカガワ As Kデザイン'×17 | 'ナカガワaskデザイン'×8 | 'ナカガワ\u3000As\u3000Kデザイン'×7 | 'ナカガワ\u3000As Ｋデザイン'×2 | 'ﾅｶｶﾞﾜ  As  Kﾃﾞｻﾞｲﾝ'×1 | 'ナカガワ  As  Kデザイン'×1
+  [焼鳥山鳥R]  '焼鳥山鳥R'×48 | '焼鳥山鳥Ｒ'×26
+  [チームＪＵＮ]  'チームＪＵＮ'×68 | 'チームJUN'×4 | 'チーム JUN'×2
+  [SimWorks CX Racing]  'SimWorks CX Racing'×53 | 'Simworks CX Racing'×11 | 'SimWorksCXRacing'×5 | 'Sim Works CX Racing'×4 | 'SimworksCXRacing'×1
+  [Toyo Frame Field Model]  'Toyo Frame Field Model'×36 | 'Toyo frame field model'×28 | 'Toyoframefieldmodel'×5 | 'ToyoFrameFieldModel'×2 | 'ToyoFrame FieldModel'×2 | 'Toyo Frame Field model'×1
+  [Teamまんま]  'Teamまんま'×57 | 'Team まんま'×10 | 'teamまんま'×6
+  [Team The Lewis]  'Team The Lewis'×72 | 'TeamTheLewis'×1
+  [TeamARI]  'TeamARI'×47 | 'Team ARI'×20 | 'Team\u3000ARI'×4 | 'teamARI'×1 | 'ＴｅａｍＡＲＩ'×1
+  [MINOURA大垣レーシング]  'MINOURA大垣レーシング'×66 | 'MINOURA 大垣レーシング'×4 | 'ＭＩＮＯＵＲＡ大垣レーシング'×3
+  [CHARMING CYCLE TEAM]  'CHARMING CYCLE TEAM'×69 | 'charming cycle team'×4
+  [maillot SY-Nak]  'maillot SY-Nak'×65 | 'maillot SY-nak'×3 | 'maillotSY-Nak'×2 | 'Maillot SY-Nak'×2
+  [チーム・フォルツァ！]  'チーム・フォルツァ！'×71 | 'チーム・フォルツァ!'×1
+  [サイクルピット240]  'サイクルピット240'×67 | 'ｻｲｸﾙﾋﾟｯﾄ240'×5
+  [AX]  'AX'×71 | 'ax'×1
+  [TeamCOYOTE]  'TeamCOYOTE'×58 | 'TeamCoyote'×6 | 'Team Coyote'×5 | 'teamCOYOTE'×2 | 'Team COYOTE'×1
+  [NAMIBIA PROJECT Cycling Team]  'NAMIBIA PROJECT Cycling Team'×60 | 'NAMIBIA PROJECT cycling Team'×4 | 'NAMIBIA Project Cycling Team'×2 | 'NAMIBIA Project Cycling team'×1 | 'NAMIBIA  PROJECT Cycling Team'×1 | 'NAMIBIA PROJECT cycling team'×1 | 'Namibia project cycling team'×1 | 'NAMIBIA  PROJECT  Cycling team'×1 | 'NAMIBIA PROJECT CYCLING TEAM'×1
+  [ダランネーケ白山ＣＸ-NONDEMO]  'ダランネーケ白山ＣＸ-NONDEMO'×38 | 'ダランネーケ白山CX-NONDEMO'×32 | 'ダランネーケ白山ＣＸ-ＮＯＮＤＥＭＯ'×2
+  [Infinity Style]  'Infinity Style'×63 | 'Infinity style'×5 | 'InfinityStyle'×3 | 'Infinitystyle'×1
+  [Silverbacks CX Team]  'Silverbacks CX Team'×35 | 'Silver Backs CX Team'×33 | 'Silverbacks\u3000CX\u3000Team'×2 | 'Silverbacks cx team'×1 | 'Silverbacks\u3000CX \u3000Team'×1
+  [サッサーズ]  'サッサーズ'×61 | 'ｻｯｻｰｽﾞ'×10
+  [CSYAMADA]  'CSYAMADA'×32 | 'CS YAMADA'×23 | 'CS  YAMADA'×15 | 'CS\u3000YAMADA'×1
+  [ダックスフンド]  'ダックスフンド'×67 | 'ﾀﾞｯｸｽﾌﾝﾄﾞ'×4
+  [TEAM SCOTT]  'TEAM SCOTT'×63 | 'TEAMSCOTT'×7 | 'TEAM\u3000SCOTT'×1
+  [ナカガワAS.K'デザイン]  "ナカガワAS.K'デザイン"×64 | "ナカガワAS . K 'デザイン"×3 | "ナカガワAs.K'デザイン"×3 | "ナカガワAS .K 'デザイン"×1
+  [ZERO]  'ZERO'×64 | 'ＺＥＲＯ'×7
+  [ELONGA]  'ELONGA'×70 | 'Elonga'×1
+  [W.V.OTA]  'W.V.OTA'×70 | 'Ｗ.Ｖ.OTA'×1
+  [自転車道シクロクロス部]  '自転車道シクロクロス部'×69 | '自転車道\u3000シクロクロス部'×1
+  [GENEBIKES496部]  'GENEBIKES496部'×60 | 'GENE BIKES 496部'×9 | 'GENEBIKES496 部'×1
+  [FatCat]  'FatCat'×24 | 'Fat Cat'×19 | 'fat cat'×12 | 'fatcat'×7 | 'fat Cat'×3 | 'ＦａｔＣａｔ'×2 | 'Fatcat'×2 | 'Fat\u3000Cat'×1
+  [NAMIBIA PROJECT CX Team]  'NAMIBIA PROJECT CX Team'×48 | 'NAMIBIA PROJECT CX TEAM'×7 | 'Namibia project CX TEAM'×4 | 'NAMIBIA \u3000PROJECT \u3000CX\u3000TEAM'×3 | 'NAMIBIA PROJECT CX team'×2 | 'NAMIBIA  PROJECT CX TEAM'×1 | 'NAMIBIA PROJECT  CX TEAM'×1 | 'NAMIBIA PROJECT CXTEAM'×1 | 'Namibia project  CX TEAM'×1 | 'NAMIBIA  PROJECT  CX TEAM'×1 | 'NAMIBIA  PROJECT  CX  TEAM'×1
+  [Blanche]  'Blanche'×62 | 'blanche'×7
+  [Team INE]  'Team INE'×66 | 'TeamINE'×2 | 'Team Ine'×1
+  [日野自動車レーシングチーム]  '日野自動車レーシングチーム'×53 | '日野自動車ﾚｰｼﾝｸﾞﾁｰﾑ'×16
+  [Avenir Yamanashi Yamanakako]  'Avenir Yamanashi Yamanakako'×65 | 'aveniryamanashiyamanakako'×3 | 'AvenirYamanashiYamanakako'×1
+  [TEAM EMMA Cycling]  'TEAM EMMA Cycling'×63 | 'TEAMEMMACycling'×5 | 'Team EMMA Cycling'×1
+  [OMEGA-STRADA]  'OMEGA-STRADA'×67 | 'omega-strada'×1
+  [快レーシング]  '快レーシング'×67 | '快\u3000レーシング'×1
+  [MASAYA YOUNG RIDERS]  'MASAYA YOUNG RIDERS'×55 | 'masaya young riders'×10 | 'MASAYAYOUNGRIDERS'×1 | 'MASAYA Young Riders'×1 | 'MASAYA\u3000YOUNG\u3000RIDERS'×1
+  [cycleclub.3up]  'cycleclub.3up'×31 | 'cycleclub.3Up'×11 | 'cycleclub.3UP'×8 | 'cycle club.3up'×7 | 'cycle club .3Up'×4 | 'cycle club.3Up'×3 | 'cycle club. 3up'×2 | 'cycleClub.3up'×1 | 'CYCLECLUB.3UP'×1
+  [CRC]  'CRC'×66 | 'crc'×1
+  [SPADE・ACE CX TEAM]  'SPADE・ACE CX TEAM'×33 | 'SPADE･ACE CX TEAM'×24 | 'SPADE・ACECXTEAM'×3 | 'SPADE・ACE\u3000CX\u3000TEAM'×3 | 'ＳＰＡＤＥ・ＡＣＥ CX TEAM'×2 | 'SPADE・ACE CX  TEAM'×1 | 'SPADE・ACE  CX TEAM'×1
+  [Coraggio Kawanishi Cycling Team Kids]  'Coraggio Kawanishi Cycling Team Kids'×30 | 'Coraggio Kawanishi Cycling team kids'×11 | 'CoraggioKawanishiCyclingTeamKids'×9 | 'Coraggio Kawanishi Cycling Team kids'×7 | 'coraggio kawanishi cycling team kids'×5 | 'Coraggio Kawanishi Cycling Team\u3000Kids'×2 | 'Coraggio Kawanishi  Cycling Team Kids'×1 | 'CoraggioKawanishiCyclingteamkids'×1 | 'Coraggio Kawanishi cycling team kids'×1
+  [Bicycle Planner]  'Bicycle Planner'×22 | 'bicycleplanner'×22 | 'bicycle planner'×13 | 'BicyclePlanner'×9 | 'Bicycle planner'×1
+  [mkw]  'mkw'×65 | 'MKW'×2
+  [クラブ遊輪館]  'クラブ遊輪館'×65 | 'ｸﾗﾌﾞ遊輪館'×1
+  [KLUB KATZ]  'KLUB KATZ'×61 | 'klub katz'×3 | 'KLUBKATZ'×2
+  [SakataniRacing]  'SakataniRacing'×53 | 'Sakatani Racing'×8 | 'Sakatani racing'×3 | 'Sakataniracing'×1
+  [チームローマン]  'チームローマン'×32 | 'チーム\u3000ローマン'×27 | 'チーム ローマン'×6
+  [Team Poppo]  'Team Poppo'×37 | 'TeamPoppo'×25 | 'teampoppo'×2 | 'team poppo'×1
+  [MasahikoMifune.com Cycling Team]  'MasahikoMifune.com Cycling Team'×26 | 'masahikomifune.com Cycling Team'×23 | 'MasahikoMifune.com cycling Team'×7 | 'masahikomifune.com CyclingTeam'×4 | 'masahikomifune.comCyclingTeam'×3 | 'ｍasahikomifune.com Cycling Team'×2
+  [Team Actcyc]  'Team Actcyc'×60 | 'TeamActcyc'×5
+  [午後4時座銀の人達]  '午後4時座銀の人達'×48 | '午後４時座銀の人達'×17
+  [BeeClub]  'BeeClub'×36 | 'Bee Club'×26 | 'ＢｅｅＣｌｕｂ'×2
+  [ACQUA TAMA]  'ACQUA TAMA'×56 | 'Acqua Tama'×8
+  [KINFOLK]  'KINFOLK'×49 | 'kinfolk'×14 | 'Kinfolk'×1
+  [イナーメCX]  'イナーメCX'×47 | 'イナーメＣＸ'×17
+  [チームレグルス＠CDまめ屋]  'チームレグルス＠CDまめ屋'×28 | 'チームレグルス＠ＣＤまめ屋'×20 | 'チームレグルス@CDまめ屋'×16
+  [SonicRacing]  'SonicRacing'×23 | 'Sonic Racing'×17 | 'SONIC RACING'×13 | 'sonicracing'×8 | 'SONICRACING'×1 | 'sonic racing'×1
+  [Team-DADDY]  'Team-DADDY'×61 | 'TEAM-DADDY'×1 | 'team-DADDY'×1
+  [MONOKUSA RACING]  'MONOKUSA RACING'×23 | 'monokusaracing'×20 | 'Monokusa racing'×10 | 'monokusa racing'×7 | 'Monokusaracing'×3
+  [njk]  'njk'×41 | 'NJK'×22
+  [Adventure Cycle]  'Adventure Cycle'×60 | 'Adventure  Cycle'×2 | 'AdventureCycle'×1
+  [ニャンでやねんっ。]  'ニャンでやねんっ。'×62 | 'ﾆｬﾝでやねんっ｡'×1
+  [TEAM SFIDA]  'TEAM SFIDA'×60 | 'TEAMSFIDA'×3
+  [ASS Racing]  'ASS Racing'×33 | 'ASS racing'×23 | 'ASSracing'×7
+  [TEAMボンシャンス]  'TEAMボンシャンス'×58 | 'TEAM ボンシャンス'×5
+  [白崎サイクルシクロクロスの部]  '白崎サイクルシクロクロスの部'×49 | '白崎サイクルシクロクロス の部'×12 | '白崎サイクル シクロクロスの部'×1
+  [Bonnechance]  'Bonnechance'×29 | 'BonneChance'×28 | 'Bonne Chance'×3 | 'BONNE CHANCE'×1 | 'bonne chance'×1
+  [八ヶ岳CYCLING CLUB]  '八ヶ岳CYCLING CLUB'×56 | '八ヶ岳 CYCLING CLUB'×5 | '八ヶ岳CYCLING  CLUB'×1
+  [Team nacree]  'Team nacree'×45 | 'team nacree'×17
+  [Sonic-Racing/SRAM]  'Sonic-Racing/SRAM'×45 | 'Sonic-Racing／SRAM'×17
+  [ホネつき数珠’Sは劇団です。]  'ホネつき数珠’Sは劇団です。'×31 | 'ホネつき数珠’sは劇団です。'×31
+  [ＶＯＲＴＥＸ６３４]  'ＶＯＲＴＥＸ６３４'×38 | 'VORTEX634'×14 | 'VORTEX６３４'×5 | 'ＶＯＲＴＥＸ634'×5
+  [sheg 泥鍛錬部]  'sheg 泥鍛錬部'×30 | 'sheg泥鍛錬部'×18 | 'SHEG泥鍛錬部'×4 | 'SHEG 泥鍛錬部'×4 | 'Sheg 泥鍛錬部'×3 | 'SHEG\u3000泥鍛錬部'×3
+  [BUCYOCOFFEECLT]  'BUCYOCOFFEECLT'×47 | 'BUCYO COFFEE CLT'×13 | 'ＢＵＣＹＯCOFFEECLT'×1
+  [ﾊﾟﾅｿﾆｯｸ]  'ﾊﾟﾅｿﾆｯｸ'×49 | 'パナソニック'×12
+  [サイクロトロン ターゲッツ]  'サイクロトロン ターゲッツ'×56 | 'サイクロトロンターゲッツ'×3 | 'サイクロトロン\u3000ターゲッツ'×2
+  [EXLUB Project]  'EXLUB Project'×59 | 'EXLUB\u3000Project'×1 | 'EXLUB PROJECT'×1
+  [TEAM ORCA]  'TEAM ORCA'×47 | 'Team ORCA'×12 | 'TEAM  ORCA'×1 | 'team orca'×1
+  [サイクルボーグ@TAG]  'サイクルボーグ@TAG'×40 | 'サイクルボーグ＠TAG'×20
+  [バルバレーシングクラブタカオカ]  'バルバレーシングクラブタカオカ'×59 | 'バルバレーシングクラブ タカオカ'×1
+  [STOKED CYCLE]  'STOKED CYCLE'×43 | 'STOKEDCYCLE'×16 | 'stokedcycle'×1
+  [RIDEON]  'RIDEON'×55 | 'RIDE ON'×3 | 'Ride on'×1
+  [SPADE ACE CX-Team]  'SPADE ACE CX-Team'×47 | 'SPADE ACE CX-TEAM'×12
+  [Team Zephyr]  'Team Zephyr'×49 | 'teamzephyr'×3 | 'team zephyr'×2 | 'TeamZephyr'×2 | 'Team zephyr'×1 | 'teamZephyr'×1 | 'team Zephyr'×1
+  [BBQ Masters]  'BBQ Masters'×36 | 'BBQ  Masters'×17 | 'BBQMasters'×4 | 'BBQ MASTERS'×2
+  [HEYM8CYCLE/遊輪クラブ]  'HEYM8CYCLE/遊輪クラブ'×57 | 'HEYM8CYCLE／遊輪クラブ'×2
+  [シモーネシクロクロス]  'シモーネシクロクロス'×48 | 'シモーネ シクロクロス'×8 | 'シモーネ\u3000シクロクロス'×3
+  [SAMSSPEED]  'SAMSSPEED'×53 | 'SAMS SPEED'×5
+  [TEAM BG8]  'TEAM BG8'×46 | 'TEAM\u3000BG8'×11 | 'TEAMBG8'×1
+  [sfiDARE CRIT JAPAN]  'sfiDARE CRIT JAPAN'×34 | 'sfidare crit japan'×9 | 'sfiDARE Crit Japan'×8 | 'SFIDAREcritJapan'×3 | 'sfiDARE crit japan'×2 | 'sfiDARECRITJAPAN'×1 | 'Sfidare crit japan'×1
+  [Le lien de Shiga]  'Le lien de Shiga'×56 | 'LeliendeShiga'×1 | 'Le  lien de Shiga'×1
+  [RedLeafLogic,C&W]  'RedLeafLogic,C&W'×36 | 'RedLeafLogic, C&W'×20 | 'redleaflogic,C&W'×1 | 'RedLeafLogic,C＆W'×1
+  [good weekender]  'good weekender'×30 | 'Good weekender'×27 | 'Goodweekender'×1
+  [SOHAYA RACING]  'SOHAYA RACING'×51 | 'SOHAYA Racing'×2 | 'SOHAYARACING'×2 | 'SOHAYA  Racing'×1 | 'SOHAYARacing'×1 | 'SOHAYAracing'×1
+  [TEAM BONSAI ASTRONAUTICS]  'TEAM BONSAI ASTRONAUTICS'×56 | 'TEAMBONSAIASTRONAUTICS'×1
+  [TEAM GIANT]  'TEAM GIANT'×51 | 'TEAMGIANT'×5 | 'TEAM  GIANT'×1
+  [Unity]  'Unity'×41 | 'unity'×13 | 'UNITY'×3
+  [team AST]  'team AST'×53 | 'Team AST'×2 | 'team  AST'×2
+  [チーム鳴木屋/Pep Cycles]  'チーム鳴木屋/Pep Cycles'×42 | 'チーム鳴木屋/Pep cycles'×13 | 'チーム鳴木屋/Pepcycles'×2
+  [TGES CYCLING TEAM]  'TGES CYCLING TEAM'×39 | 'TGES Cycling Team'×18
+  [TEAM GUMBO]  'TEAM GUMBO'×43 | 'Team GUMBO'×8 | 'TEAM\u3000GUMBO'×3 | 'TeamGUMBO'×2 | 'TEAMGUMBO'×1
+  [S’fida Prego Racing]  'S’fida Prego Racing'×55 | 'S’fidaPregoRacing'×2
+  [Actcyc]  'Actcyc'×56 | 'actcyc'×1
+  [自転車工房今井CX部]  '自転車工房今井CX部'×53 | '自転車工房今井ＣＸ部'×3
+  [TEAM ZWC]  'TEAM ZWC'×28 | 'Team ZWC'×25 | 'Ｔｅａｍ\u3000ＺＷＣ'×3
+  [DOTE RACING]  'DOTE RACING'×34 | 'Dote Racing'×11 | 'Dote racing'×9 | 'DOTERACING'×2
+  [MASAYA RACING]  'MASAYA RACING'×53 | 'MASAYARACING'×1 | 'MASAYA  RACING'×1 | 'masaya racing'×1
+  [2Rline.]  '2Rline.'×32 | '2RLine.'×18 | '２RLine.'×6
+  [GuellCyclingTeam]  'GuellCyclingTeam'×23 | 'GUELLCYCLINGTEAM'×22 | 'Guell Cycling Team'×9 | 'GUELL CYCLING TEAM'×1
+  [ＢｅｅＣｌｕｂ138]  'ＢｅｅＣｌｕｂ138'×21 | 'Bee Club 138'×10 | 'bee club 138'×8 | 'Bee club 138'×8 | 'BeeClub138'×3 | 'beeclub138'×2 | 'ＢｅｅＣｌｕｂ 138'×1 | 'Beeclub138'×1 | 'Bee club138'×1
+  [サイクルロードエイト]  'サイクルロードエイト'×53 | 'サイクルロード エイト'×2
+  [紀州DECOJARACING]  '紀州DECOJARACING'×54 | '紀州DECOJA RACING'×1
+  [和光機器-BIORACER]  '和光機器-BIORACER'×44 | '和光機器-Bioracer'×11
+  [36隊/cyclespaceHalo]  '36隊/cyclespaceHalo'×54 | '３６隊/cyclespaceHalo'×1
+  [PRT KOSEKI 金生堂]  'PRT KOSEKI 金生堂'×42 | 'PRTKOSEKI金生堂'×4 | 'PRT KOSEKI金生堂'×4 | 'PRT KOSEKI \u3000金生堂'×3 | 'PRT KOSEKI\u3000金生堂'×2
+  [シュースイみどり福祉会]  'シュースイみどり福祉会'×54 | 'シュースイ\u3000みどり福祉会'×1
+  [BOMA/ROND CX TEAM]  'BOMA/ROND CX TEAM'×47 | 'BOMA/ROND  CX TEAM'×5 | 'BOMA/ROND CX  TEAM'×2 | 'BOMA／ROND  CX TEAM'×1
+  [KPRB泥鍛錬部]  'KPRB泥鍛錬部'×37 | 'KPRB 泥鍛錬部'×15 | 'KPRB\u3000泥鍛錬部'×3
+  [None]  'None'×26 | 'none'×21 | 'NONE'×7
+  [ベッキーシクロクロス@泥プロ]  'ベッキーシクロクロス@泥プロ'×34 | 'ベッキーシクロクロス @泥プロ'×20
+  [acu-power Racing Team]  'acu-power Racing Team'×40 | 'acu-power RACING TEAM'×9 | 'acu-power RACINGTEAM'×4 | 'acu-power racing team'×1
+  [COWBOY/ベッキーシクロクロス]  'COWBOY/ベッキーシクロクロス'×50 | 'COWBOY/ﾍﾞｯｷｰｼｸﾛｸﾛｽ'×2 | 'COWBOY／ベッキーシクロクロス'×2
+  [チーム　リドレー]  'チーム\u3000リドレー'×30 | 'チームリドレー'×13 | 'チーム リドレー'×11
+  [JCC]  'JCC'×53 | 'ＪＣＣ'×1
+  [AKIRUNO-Cycling Academy Project]  'AKIRUNO-Cycling Academy Project'×53 | 'Akiruno-Cycling Academy Project'×1
+  [AFTER21]  'AFTER21'×34 | 'AFTER 21'×12 | 'after21'×8
+  [NASUFANCLUB]  'NASUFANCLUB'×14 | 'NASU FAN CLUB'×14 | 'NasuFanClub'×13 | 'NASU\u3000FAN\u3000CLUB'×10 | 'Nasu Fan Club'×2
+  [SANWA Talker's]  "SANWA Talker's"×29 | "SANWA talker's"×14 | "SANWA TALKER'S"×3 | "SANWA  Talker's"×3 | "SANWATalker's"×2 | "sanwa talker's"×1 | "SANWA  TALKER'S"×1
+  [信州大学obrt]  '信州大学obrt'×45 | '信州大学OBRT'×8
+  [武田青果店　Cycle　Section]  '武田青果店\u3000Cycle\u3000Section'×23 | '武田青果店\u3000Cycle Section'×18 | '武田青果店 Cycle Section'×7 | '武田青果店 cycle section'×3 | '武田青果店CycleSection'×2
+  [山口県自転車競技連盟・我逢人]  '山口県自転車競技連盟・我逢人'×52 | '山口県自転車競技連盟･我逢人'×1
+  [KINFOLKCX-JP]  'KINFOLKCX-JP'×46 | 'KINFOLK CX-JP'×4 | 'kinfolkcx-jp'×1 | 'kinfolk CX-JP'×1
+  [Hunter/SimWorks CX Team]  'Hunter/SimWorks CX Team'×36 | 'Hunter/SimWorksCXTeam'×16
+  [SalataBiancaKobeEsquina]  'SalataBiancaKobeEsquina'×35 | 'Salata Bianca Kobe Esquina'×17
+  [WE LOVE O2]  'WE LOVE O2'×46 | 'We Love O2'×2 | 'WELOVEO2'×1 | 'WE  LOVE  O2'×1 | 'We love O2'×1 | 'WE  LOVE  Ｏ２'×1
+  [FUKADA マジリング]  'FUKADA マジリング'×40 | 'FUKADAマジリング'×6 | 'FUKADA  マジリング'×4 | 'FUKADA ﾏｼﾞﾘﾝｸﾞ'×1 | 'FUKADAﾏｼﾞﾘﾝｸﾞ'×1
+  [Live GARDEN BiciStelle]  'Live GARDEN BiciStelle'×21 | 'Live GARDEN Bici Stelle'×21 | 'LiveGARDENBicistelle'×4 | 'LiveGARDEN BiciStelle'×3 | 'LiveGARDENBiciStelle'×2 | 'LiveGARDEN Bici stelle'×1
+  [Crunk Gorilla Cycling Team]  'Crunk Gorilla Cycling Team'×48 | 'CrunkGorillaCyclingTeam'×3 | 'crunk gorilla cycling team'×1
+  [ChickPEA]  'ChickPEA'×45 | 'chickPEA'×7
+  [ZERO BIKE FACTORY]  'ZERO BIKE FACTORY'×50 | 'ZEROBIKEFACTORY'×2
+  [twobytwo]  'twobytwo'×41 | 'TWO by TWO'×7 | 'Twobytwo'×1 | 'two by two'×1 | 'TwobyTwo'×1
+  [WildBoars]  'WildBoars'×46 | 'Wildboars'×2 | 'Wild Boars'×1 | 'Wild boars'×1 | 'wild boars'×1
+  [Maidservant Subject]  'Maidservant Subject'×28 | 'MaidservantSubject'×18 | 'Maidservant\u3000Subject'×3 | 'Maid servant Subject'×1
+  [CWASP Ravitaillement]  'CWASP Ravitaillement'×32 | 'CWASP RAVITAILLEMENT'×9 | 'Cwasp ravitaillement'×6 | 'cwasp ravitaillement'×2 | 'CWASP\u3000Ravitaillement'×1
+  [ALPHAWK]  'ALPHAWK'×42 | 'alphawk'×5 | 'Alphawk'×3
+  [SAGAMI RACING]  'SAGAMI RACING'×48 | 'SAGAMI\u3000RACING'×2
+  [PRT KOSEKI]  'PRT KOSEKI'×45 | 'PRTKOSEKI'×3 | 'PRT koseki'×1 | 'PRT\u3000KOSEKI'×1
+  [SPADE.ACE CX TEAM]  'SPADE.ACE CX TEAM'×43 | 'SPADE.ACE\u3000CX\u3000TEAM'×3 | 'SPADE.ACECXTEAM'×2 | 'SPADE.ACE  CX TEAM'×2
+  [RIDAIレーシング]  'RIDAIレーシング'×36 | 'RIDAI レーシング'×9 | 'RIDAIﾚｰｼﾝｸﾞ'×3 | 'RIDAI\u3000レーシング'×1 | 'ＲＩＤＡＩレーシング'×1
+  [OCi]  'OCi'×42 | 'OCI'×4 | 'oci'×2 | 'Oci'×1
+  [チームまるいち　あさまる班]  'チームまるいち\u3000あさまる班'×48 | 'ﾁｰﾑまるいち\u3000あさまる班'×1
+  [自転車道JUMBO]  '自転車道JUMBO'×46 | '自転車道jumbo'×2 | '自転車道ＪＵＭＢＯ'×1
+  [56]  '56'×43 | '５６'×6
+  [CORAGGIO KAWANISHI KIDS]  'CORAGGIO KAWANISHI KIDS'×27 | 'Coraggio Kawanishi Kids'×20 | 'CORAGGIO KAWANISHI Kids'×1 | 'Coraggio Kawanishi kids'×1
+  [SHIDO-WORKS / EMU]  'SHIDO-WORKS / EMU'×28 | 'SHIDO-WORKS/EMU'×16 | 'SHIDO-WORKS／EMU'×5
+  [KINAN Racing Team MIE Junior]  'KINAN Racing Team MIE Junior'×33 | 'KINAN Racing Team MIE junior'×16
+  [FELT-mistral]  'FELT-mistral'×42 | 'Felt-mistral'×3 | 'FELT-Mistral'×3
+  [ＴＯＰＦＩＥLＤ]  'ＴＯＰＦＩＥLＤ'×43 | 'TOP FIELD'×5
+  [SPADE ACE.CX TEAM]  'SPADE ACE.CX TEAM'×38 | 'SPADE ACE.CxTeam'×6 | 'SPADEACE.CXTEAM'×2 | 'spade ace.cx team'×2
+  [Squadra Coo]  'Squadra Coo'×25 | 'squadra Coo'×17 | 'Squadra coo'×4 | 'squadra\u3000Coo'×1 | 'Squadra\u3000Coo'×1
+  [TEAM輪工房]  'TEAM輪工房'×31 | 'TEAM 輪工房'×8 | 'Team輪工房'×6 | 'team輪工房'×2 | 'Team 輪工房'×1
+  [Pedal Forth Fitting]  'Pedal Forth Fitting'×23 | 'Pedalforth Fitting'×17 | 'PedalForth Fitting'×8
+  [チーム　リプたま]  'チーム\u3000リプたま'×38 | 'チームリプたま'×7 | 'チーム リプたま'×3
+  [NESTO Factory Team]  'NESTO Factory Team'×43 | 'NESTO factory team'×3 | 'NESTO FACTORY TEAM'×2
+  [Pas Normal Studios Japan]  'Pas Normal Studios Japan'×26 | 'Pas normal studios Japan'×19 | 'Pas normal studios japan'×2 | 'pasnormalstudiosjapan'×1
+  [TEAM503]  'TEAM503'×41 | 'Team503'×5 | 'Team 503'×2
+  [Maynooth cycling team]  'Maynooth cycling team'×33 | 'Maynooth Cycling Team'×7 | 'maynooth cycling team'×7 | 'MaynoothCyclingTeam'×1
+  [Hot Spring]  'Hot Spring'×37 | 'HotSpring'×6 | 'Hot spring'×4 | 'HOT SPRING'×1
+  [Bikeworks回転木馬]  'Bikeworks回転木馬'×22 | 'Bike works 回転木馬'×10 | 'BikeWorks回転木馬'×7 | 'bikeworks 回転木馬'×4 | 'Bikeworks 回転木馬'×1 | 'Bike Works回転木馬'×1 | 'BikeWorks 回転木馬'×1 | 'Bike Works 回転木馬'×1
+  [LEGON]  'LEGON'×46 | 'ＬＥＧＯＮ'×1
+  [パワースポーツ・SICK]  'パワースポーツ・SICK'×39 | 'パワースポーツ・ＳＩＣＫ'×8
+  [TEAM SHIDO]  'TEAM SHIDO'×21 | 'Team SHIDO'×21 | 'TeamSHIDO'×3 | 'Team Shido'×1 | 'team SHIDO'×1
+  [CYCLO NERO]  'CYCLO NERO'×39 | 'CYCLO  NERO'×8
+  [BASILISCUS]  'BASILISCUS'×30 | 'Basiliscus'×10 | 'basiliscus'×7
+  [エロレンジャー]  'エロレンジャー'×46 | 'ｴﾛﾚﾝｼﾞｬｰ'×1
+  [VC VELOCE]  'VC VELOCE'×44 | 'VCVELOCE'×3
+  [vivace kakegawa]  'vivace kakegawa'×19 | 'Vivace\u3000Kakegawa'×15 | 'Vivace kakegawa'×7 | 'Vivace Kakegawa'×5 | 'vivace Kakegawa'×1
+  [IKOMAI!]  'IKOMAI!'×25 | 'ＩＫＯＭＡＩ!'×10 | 'ＩＫOＭＡＩ!'×8 | 'IKOMAI！'×3 | 'ＩＫＯＭＡＩ！'×1
+  [ROUGH STONES]  'ROUGH STONES'×46 | 'ROUGHSTONES'×1
+  [美山ＣＣ]  '美山ＣＣ'×45 | '美山CC'×1
+  [Cycle Space Halo]  'Cycle Space Halo'×13 | 'CyclespaceHalo'×9 | 'cycle space Halo'×8 | 'CycleSpaceHalo'×6 | 'cyclespaceHalo'×3 | 'cycle space halo'×3 | 'CycleSpaceHALO'×2 | 'cyclespace Halo'×1 | 'cycle spaceH alo'×1
+  [姫路市立 置塩中学校]  '姫路市立 置塩中学校'×20 | '姫路市立置塩中学校'×16 | '姫路市立\u3000置塩中学校'×10
+  [COWGUMMA CX]  'COWGUMMA CX'×40 | 'COWGUMMACX'×3 | 'COW GUMMA CX'×3
+  [アルプス工業c.c.c]  'アルプス工業c.c.c'×27 | 'アルプス工業C.C.C'×15 | 'アルプス工業 c.c.c'×3 | 'アルプス工業 C.C.C'×1
+  [つうばいつうＲ／GSJ-CX]  'つうばいつうＲ／GSJ-CX'×41 | 'つうばいつうR/GSJ-CX'×2 | 'つうばいつうR／GSJ-CX'×2 | 'つうばいつうＲ/GSJ-CX'×1
+  [クラブワンピースタカオカ47/16]  'クラブワンピースタカオカ47/16'×44 | 'クラブワンピースタカオカ\u300047/16'×2
+  [チームアヴェル]  'チームアヴェル'×40 | 'チーム アヴェル'×3 | 'ﾁｰﾑｱｳﾞｪﾙ'×1 | 'チーム\u3000アヴェル'×1
+  [大垣CSC]  '大垣CSC'×44 | '大垣ＣＳＣ'×1
+  [TEAMSUZUKI]  'TEAMSUZUKI'×31 | 'TEAM\u3000SUZUKI'×13 | 'TEAM SUZUKI'×1
+  [GRUPPO ACQUA TAMA]  'GRUPPO ACQUA TAMA'×34 | 'GRUPPO ACQUATAMA'×4 | 'GRUPPOACQUATAMA'×3 | 'GRUPPO  ACQUA TAMA'×2 | 'Gruppo Acqua Tama'×1 | 'gruppo acqua tama'×1
+  [Marine Snow with Stoked Cycle]  'Marine Snow with Stoked Cycle'×26 | 'Marine Snow With Stoked Cycle'×15 | 'Marine Snow with STOKED CYCLE'×4
+  [子連れ狼/K-factory]  '子連れ狼/K-factory'×41 | '子連れ狼/k-factory'×4
+  [Team山の駅]  'Team山の駅'×36 | 'TEAM山の駅'×5 | 'Team 山の駅'×3
+  [56CYCLE]  '56CYCLE'×28 | '56cycle'×8 | '56Cycle'×5 | '５６CYCLE'×2 | '56CYCLe'×1
+  [TEAM SPORTSKID]  'TEAM SPORTSKID'×29 | 'TEAM SPORTS KID'×15
+  [Collina Z]  'Collina Z'×31 | 'collinaZ'×7 | 'CollinaZ'×5 | 'collina Z'×1
+  [TeamZepher]  'TeamZepher'×37 | 'Team Zepher'×7
+  [Tractor RC]  'Tractor RC'×30 | 'TRACTOR rc'×11 | 'TractorRC'×2 | 'TRACTOR RC'×1
+  [Y練]  'Y練'×40 | 'Ｙ練'×4
+  [アスリチューン・CORAGGIO KAWANISHI U-19]  'アスリチューン・CORAGGIO KAWANISHI U-19'×43 | 'アスリチューン・Coraggio Kawanishi U-19'×1
+  [club-pk]  'club-pk'×29 | 'club-PK'×9 | 'CLUB-PK'×5
+  [ナカガワＲT/伊都製糸／チーム岡村]  'ナカガワＲT/伊都製糸／チーム岡村'×34 | 'ナカガワRT/伊都製糸/チーム岡村'×9
+  [まほロバRC]  'まほロバRC'×41 | 'まほロバＲＣ'×2
+  [DTF Lab.]  'DTF Lab.'×38 | 'Dtf lab.'×4 | 'DTF lab.'×1
+  [Y's Road]  "Y's Road"×23 | "Y'sRoad"×14 | "Y's road"×4 | "Y'S ROAD"×1 | "Ｙ's Road"×1
+  [GIANT INTERNAL FELLOWS TEAM]  'GIANT INTERNAL FELLOWS TEAM'×32 | 'GIANT\u3000INTERNAL FELLOWS TEAM'×9 | 'GIANTINTERNALFELLOWSTEAM'×2
+  [DTC]  'DTC'×33 | 'dtc'×10
+  [プロレスCX]  'プロレスCX'×41 | 'ﾌﾟﾛﾚｽCX'×1 | 'プロレスcx'×1
+  [フットワークレーシング]  'フットワークレーシング'×42 | 'ﾌｯﾄﾜｰｸﾚｰｼﾝｸﾞ'×1
+  [synerzy]  'synerzy'×20 | 'SYNERZY'×16 | 'Synerzy'×6
+  [T-carsCyclingTeam]  'T-carsCyclingTeam'×32 | 'Ｔ-carsCyclingTeam'×8 | 'T-cars cycling team'×2
+  [Rise-Ride]  'Rise-Ride'×41 | 'R ise-Ride'×1
+  [Kyoto-cf]  'Kyoto-cf'×24 | 'KYOTO-CF'×13 | 'kyoto-cf'×5
+  [KCTC]  'KCTC'×40 | 'ＫＣＴＣ'×2
+  [PRANTAN CYCLING TEAM]  'PRANTAN CYCLING TEAM'×37 | 'PRANTANCYCLINGTEAM'×5
+  [イオンバイクJrレーシング]  'イオンバイクJrレーシング'×21 | 'イオンバイクjrレーシング'×13 | 'イオンバイクｊｒレーシング'×7 | 'イオンバイクJr レーシング'×1
+  [Le Mont]  'Le Mont'×37 | 'LeMont'×5
+  [COWBOY/Team山の駅]  'COWBOY/Team山の駅'×37 | 'cowboy/Team山の駅'×5
+  [Rimbridge]  'Rimbridge'×22 | 'RIMBRIDGE'×16 | 'Rim bridge'×4
+  [bicycle fellow]  'bicycle fellow'×22 | 'bicyclefellow'×14 | 'Bicycle fellow'×3 | 'bicycle  fellow'×2 | 'bicycle\u3000fellow'×1
+  [Y’s-racing シクロクロス部]  'Y’s-racing シクロクロス部'×22 | 'Y’s-racingシクロクロス部'×17 | 'Y’s -racing シクロクロス部'×3
+  [TeamARAYA]  'TeamARAYA'×27 | 'teamARAYA'×9 | 'team ARAYA'×3 | 'Team ARAYA'×2
+  [凛靴/SKRK]  '凛靴/SKRK'×33 | '凛靴/skrk'×8
+  [Team MOMO]  'Team MOMO'×33 | 'TEAM MOMO'×6 | 'Team\u3000MOMO'×1 | 'TEAM  MOMO'×1
+  [パインヒルズ90]  'パインヒルズ90'×23 | 'パインヒルズ９０'×18
+  [猿投RISE]  '猿投RISE'×25 | '猿投ＲＩＳＥ'×15 | '猿投\u3000RISE'×1
+  [MAAPxBONSAI]  'MAAPxBONSAI'×32 | 'MAAP x BONSAI'×8 | 'maapxbonsai'×1
+  [ピストンズCX]  'ピストンズCX'×39 | 'ピストンズＣＸ'×1 | 'ピストンズcx'×1
+  [Brown Suger p.w.m]  'Brown Suger p.w.m'×35 | 'Brown Suger P.W.M'×5 | 'BrownSugerp.w.m'×1
+  [ダランネーケ白山CX]  'ダランネーケ白山CX'×40 | 'ダランネーケ白山ＣＸ'×1
+  [STRIKExRACING]  'STRIKExRACING'×40 | 'STRIKEx RACING'×1
+  [MUD lovers]  'MUD lovers'×31 | 'MUD  lovers'×7 | 'MUDlovers'×3
+  [teamCREA]  'teamCREA'×21 | 'TEAMCREA'×6 | 'team CREA'×6 | 'Team CREA'×6 | 'TEAM CREA'×1
+  [茨城CXチーム]  '茨城CXチーム'×35 | '茨城 C Xチーム'×4 | '茨城ＣＸチーム'×1
+  [SUBARU・C・C]  'SUBARU・C・C'×30 | 'ＳＵＢＡＲＵ・Ｃ・Ｃ'×9 | 'SUBARU･C･C'×1
+  [カレーハムスターCX Team]  'カレーハムスターCX Team'×36 | 'カレーハムスター CX Team'×2 | 'カレーハムスターCX team'×1 | 'カレーハムスター CX TEAM'×1
+  [team cadence]  'team cadence'×28 | 'Team cadence'×9 | 'Team Cadence'×3
+  [チーム　アレリドレー]  'チーム\u3000アレリドレー'×25 | 'チーム  アレ  リドレー'×7 | 'チームアレリドレー'×3 | 'チーム アレ リドレー'×3 | 'チーム アレリドレー'×1 | 'チーム\u3000アレ\u3000リドレー'×1
+  [HOKURIKU DOROTABOU]  'HOKURIKU DOROTABOU'×39 | 'HOKURIKUDOROTABOU'×1
+  [Saturday　early　morning]  'Saturday\u3000early\u3000morning'×33 | 'SaturdayEarlyMorning'×3 | 'Saturday early morning'×2 | 'Saturday\u3000Early\u3000Morning'×2
+  [good speed]  'good speed'×21 | 'Good Speed'×8 | 'GOOD SPEED'×7 | 'goodspeed'×4
+  [エレファントレーシング]  'エレファントレーシング'×39 | 'エレファント レーシング'×1
+  [TRKWorks]  'TRKWorks'×28 | 'TRK Works'×12
+  [CHARGE]  'CHARGE'×23 | 'charge'×16
+  [...&BicycleCC;]  '...&BicycleCC;'×36 | '…&BicycleCC;'×3
+  [TEAM SOLDOUT RACING]  'TEAM SOLDOUT RACING'×31 | 'TEAM SOLD OUT RACING'×6 | 'TEAMSOLDOUTRACING'×2
+  [Soleildel'est]  "Soleildel'est"×18 | "soleil de l'est"×10 | "Soleil de l'est"×8 | "soleildel'est"×3
+  [E.T.hardschoolstyle]  'E.T.hardschoolstyle'×37 | 'E.T.hard school style'×2
+  [shoro's]  "shoro's"×38 | "SHORO's"×1
+  [BUCYO COFFE/CLT Cycling Team]  'BUCYO COFFE/CLT Cycling Team'×37 | 'BUCYOCOFFE/CLTCyclingTeam'×2
+  [BIBA BIKES JAPAN/ OCX]  'BIBA BIKES JAPAN/ OCX'×32 | 'BIBA BiKES JAPAN /OCX'×3 | 'BIBA BIKES JAPAN/OCX'×2 | 'BIBABIKESJAPAN/OCX'×1 | 'BIBA BIKES JAPAN / OCX'×1
+  [TeamBarcaRacing]  'TeamBarcaRacing'×25 | 'Team Barca Racing'×11 | 'Team Barca racing'×1 | 'Team barca racing'×1
+  [HEART VIEW]  'HEART VIEW'×37 | 'HEART  VIEW'×1
+  [Tacke]  'Tacke'×28 | 'TACKE'×8 | 'tacke'×2
+  [ACCEL]  'ACCEL'×36 | 'accel'×1 | 'ＡＣＣＥＬ'×1
+  [INTHEWOODS×MAAP]  'INTHEWOODS×MAAP'×23 | 'IN THE WOODS × MAAP'×15
+  [Bei Cycling Club]  'Bei Cycling Club'×28 | 'BeiCyclingClub'×8 | 'BEI CYCLING CLUB'×1 | 'Bei cycling club'×1
+  [blue lug homies]  'blue lug homies'×12 | 'Blue Lug Homies'×8 | 'bluelug homies'×6 | 'Blue lug homies'×4 | 'blue lug  homies'×4 | 'BluelugHomies'×3 | 'Bluelug Homies'×1
+  [RX&CO;]  'RX&CO;'×33 | 'Rx&CO;'×3 | 'RX&Co;'×2
+  [U2BIKES]  'U2BIKES'×16 | 'U2 Bikes'×14 | 'U2 BIKES'×8
+  [R's Cycle]  "R's Cycle"×27 | "R's CYCLE"×7 | "R's cycle"×4
+  [ＰＣｻｲｸﾙｸﾗﾌﾞ松本]  'ＰＣｻｲｸﾙｸﾗﾌﾞ松本'×21 | 'PCサイクルクラブ松本'×16
+  [The☆whoo]  'The☆whoo'×22 | 'the☆whoo'×13 | 'The☆Whoo'×2
+  [回転木馬CX部]  '回転木馬CX部'×20 | '回転木馬cx部'×17
+  [Team ProRide]  'Team ProRide'×22 | 'TeamProRide'×9 | 'TEAM ProRide'×3 | 'Team Pro Ride'×2 | 'teamproride'×1
+  [バルバエチゼン]  'バルバエチゼン'×29 | 'バルバ\u3000エチゼン'×8
+  [Sky High]  'Sky High'×25 | 'SKYHIGH'×4 | 'SKY HIGH'×4 | 'SkyHigh'×3 | 'Skyhigh'×1
+  [チームガンボ]  'チームガンボ'×21 | 'チーム\u3000ガンボ'×12 | 'チーム ガンボ'×3 | 'ﾁｰﾑｶﾞﾝﾎﾞ'×1
+  [TEAM BRIDGESTONE Cycling]  'TEAM BRIDGESTONE Cycling'×34 | 'TEAMBRIDGESTONECycling'×3
+  [Soliton]  'Soliton'×33 | 'soliton'×4
+  [ElecTFew Cycling]  'ElecTFew Cycling'×25 | 'ElecTFewCycling'×10 | 'ElecT Few Cycling'×2
+  [Team GBtL]  'Team GBtL'×27 | 'Ｔｅａｍ\u3000ＧＢｔＬ'×7 | 'team GBtL'×2 | 'TeamGBtL'×1
+  [妄想自転車店CXTEAM]  '妄想自転車店CXTEAM'×21 | '妄想自転車店CX TEAM'×13 | '妄想自転車店CXteam'×2
+  [sfiDARE Works]  'sfiDARE Works'×19 | 'sfiDARE WORKS'×16 | 'sfiDAREworks'×1
+  [INTHEWOODS]  'INTHEWOODS'×17 | 'IN THE WOODS'×13 | 'In the woods'×3 | 'Inthewoods'×2 | 'inthewoods'×1
+  [ZiPPY]  'ZiPPY'×25 | 'zippy'×9 | 'Zippy'×2
+  [SM bros.]  'SM bros.'×28 | 'SM Bros.'×3 | 'SM\u3000Bros.'×2 | 'SM\u3000bros.'×2 | 'SMBros.'×1
+  [GENEBIKES]  'GENEBIKES'×21 | 'GENE BIKES'×15
+  [Racing Heart/サッサーズ]  'Racing Heart/サッサーズ'×31 | 'Racing heart/サッサーズ'×2 | 'racing heart/サッサーズ'×2 | 'Racing Heart / サッサーズ'×1
+  [LimitedTeam846まるいち]  'LimitedTeam846まるいち'×26 | 'Limited Team 846まるいち'×5 | 'Limited Team 846 まるいち'×5
+  [三菱電機(株)　郡山工場]  '三菱電機(株)\u3000郡山工場'×20 | '三菱電機(株)郡山工場'×7 | '三菱電機(株) 郡山工場'×5 | '三菱電機（株） 郡山工場'×4
+  [Dive Gravelers]  'Dive Gravelers'×28 | 'Divegravelers'×4 | 'DIVE gravelers'×4
+  [チーム ロマンス]  'チーム ロマンス'×24 | 'チームロマンス'×12
+  [KANTACO CYCLING TEAM]  'KANTACO CYCLING TEAM'×35 | 'KANTACOCYCLINGTEAM'×1
+  [MUUR zero]  'MUUR zero'×15 | 'MUURzero'×11 | 'MUUR Zero'×4 | 'MUUR ZERO'×4 | 'MUUR\u3000zero'×1
+  [TeamOyajiAsaren]  'TeamOyajiAsaren'×27 | 'Team Oyaji Asaren'×8
+  [Roppo Racing]  'Roppo Racing'×30 | 'RoppoRacing'×5
+  [梅しば ごんじり]  '梅しば ごんじり'×20 | '梅しば\u3000ごんじり'×15
+  [1jyo]  '1jyo'×33 | '1JYO'×2
+  [MOZU COFFEE]  'MOZU COFFEE'×20 | 'MOZUCOFFEE'×15
+  [Innocent]  'Innocent'×29 | 'innocent'×6
+  [Team9203]  'Team9203'×21 | 'Team 9203'×14
+  [ナカガワRT/伊都製糸・チームオカムラ]  'ナカガワRT/伊都製糸・チームオカムラ'×25 | 'ナカガワRT/ 伊都製糸・チームオカムラ'×10
+  [TeamSoleil悠]  'TeamSoleil悠'×20 | 'Team Soleil悠'×6 | 'Team Soleil 悠'×3 | 'team soleil悠'×2 | 'Team soleil 悠'×2 | 'Team soleil悠'×1 | 'Ｔｅａｍ\u3000ｓｏｌｅｉｌ悠'×1
+  [ClubLa.sistaOffroadTem]  'ClubLa.sistaOffroadTem'×32 | 'Club La.sista Offroad Tem'×2
+  [space]  'space'×22 | 'SPACE'×12
+  [ChanNuCycling]  'ChanNuCycling'×19 | 'Channu Cycling'×9 | 'ChanNu Cycling'×5 | 'Chan Nu Cycling'×1
+  [TANAKA BEE YARD]  'TANAKA BEE YARD'×31 | 'TANAKABEEYARD'×2 | 'TANAKA BEE  YARD'×1
+  [curtis Japan]  'curtis Japan'×21 | 'Curtis Japan'×8 | 'curtis japan'×5
+  [NAMIBIA PROJECT]  'NAMIBIA PROJECT'×30 | 'NAMIBIA  PROJECT'×3 | 'NAMIBIA \u3000PROJECT'×1
+  [team allways]  'team allways'×13 | 'Team allways'×12 | 'TEAM allways'×7 | 'teamallways'×1 | 'team Allways'×1
+  [Bike is life.]  'Bike is life.'×29 | 'Bikeislife.'×4 | 'bike is life.'×1
+  [MCC]  'MCC'×33 | 'MCc'×1
+  [シケテルズ/違駄天]  'シケテルズ/違駄天'×23 | 'シケテルズ／違駄天'×11
+  [スクアドラ/SOLEILFLIEGER]  'スクアドラ/SOLEILFLIEGER'×31 | 'スクアドラ/SOLEIL FLIEGER'×2
+  [FREESPEED]  'FREESPEED'×27 | 'FREE SPEED'×5 | 'freespeed'×1
+  [BUCYO COFFEE]  'BUCYO COFFEE'×15 | 'BUCYOCOFFEE'×9 | 'bucyocoffee'×7 | 'BUCYOcoffee'×1 | 'BUCYO coffee'×1
+  [FUKAYA RACING]  'FUKAYA RACING'×31 | 'FUKAYARACING'×2
+  [TEAM MELODY PUNCH]  'TEAM MELODY PUNCH'×25 | 'Team Melody Punch'×7 | 'teamMELODYPUNCH'×1
+  [Team GARNEAU CHAINRING]  'Team GARNEAU CHAINRING'×23 | 'team GARNEAU chainring'×9 | 'TEAM GARNEAU CHAINRING'×1
+  [XTERRA TUBE/ベッキーシクロクロス]  'XTERRA TUBE/ベッキーシクロクロス'×31 | 'XTERRA TUBE/ベッキー シクロクロス'×1 | 'XTERRATUBE/ベッキーシクロクロス'×1
+  [スミタ・エイダイ・パールイズミ・ラバネロ]  'スミタ・エイダイ・パールイズミ・ラバネロ'×31 | 'スミタ･エイダイ･パールイズミ･ラバネロ'×2
+  [TEAM AGRI withAST FOREST]  'TEAM AGRI withAST FOREST'×25 | 'TEAM AGRI with AST FOREST'×7 | 'TEAM AGRIwithAST FOREST'×1
+  [AVENTURA CYCLING]  'AVENTURA CYCLING'×28 | 'Aventura Cycling'×3 | 'AVENTURA Cycling'×1 | 'AVENTURACYCLING'×1
+  [ＶＣ福岡マスターズ関西]  'ＶＣ福岡マスターズ関西'×32 | 'VC福岡マスターズ関西'×1
+  [KPC]  'KPC'×32 | 'kPC'×1
+  [DECOJA]  'DECOJA'×25 | 'Decoja'×5 | 'decoja'×2
+  [FELT mistral]  'FELT mistral'×20 | 'FELT Mistral'×9 | 'FELTmistral'×3
+  [有限会社村上建具工房ハイランダー]  '有限会社村上建具工房ハイランダー'×28 | '有限会社 村上建具工房ハイランダー'×4
+  [Team VAPOR]  'Team VAPOR'×9 | 'TEAM VAPOR'×8 | 'Team Vapor'×7 | 'TEAM\u3000VAPOR'×3 | 'TeamVapor'×2 | 'TEAM  VAPOR'×2 | 'team VAPOR'×1
+  [VC Fukuoka]  'VC Fukuoka'×14 | 'VC FUKUOKA'×9 | 'VCFukuoka'×6 | 'VCFUKUOKA'×2 | 'Vc Fukuoka'×1
+  [SHIMANO RACING]  'SHIMANO RACING'×13 | 'SHIMANORacing'×4 | 'SHIMANO Racing'×4 | 'Shimano racing'×4 | 'Shimano Racing'×3 | 'ShimanoRacing'×2 | 'shimano racing'×2
+  [cycleZ]  'cycleZ'×27 | 'Cycle Z'×3 | 'cycle z'×1 | 'CycleZ'×1
+  [nasi]  'nasi'×30 | 'NASI'×2
+  [LimitVertex]  'LimitVertex'×17 | 'Limit Vertex'×8 | 'limit vertex'×6 | 'limitvertex'×1
+  [FSR Cyclocross Team]  'FSR Cyclocross Team'×18 | 'FSR CYCLOCROSS TEAM'×12 | 'FSR cyclocross team'×2
+  [SAMSON CX TEAM]  'SAMSON CX TEAM'×30 | 'SAMSONCXTEAM'×2
+  [COWBOY/どろんじょ]  'COWBOY/どろんじょ'×25 | 'cowboy/どろんじょ'×5 | 'COWBOY／どろんじょ'×2
+  [Cycles Marmotte]  'Cycles Marmotte'×30 | 'CyclesMarmotte'×2
+  [team hsj]  'team hsj'×17 | 'Team hsj'×9 | 'teamhsj'×3 | 'Teamhsj'×3
+  [TEAM TOUK CX / 矢田バイカーズ]  'TEAM TOUK CX / 矢田バイカーズ'×22 | 'TEAM TOUK CX/矢田バイカーズ'×8 | 'TEAMTOUKCX/矢田バイカーズ'×2
+  [芸人倶楽部 with Racing Heart]  '芸人倶楽部 with Racing Heart'×31 | '芸人倶楽部withRacingHeart'×1
+  [ZERO.COM]  'ZERO.COM'×22 | 'ZERO.com'×10
+  [ビチクレッタマル]  'ビチクレッタマル'×21 | 'ビチクレッタ\u3000マル'×11
+  [KAMOGAWAT.C]  'KAMOGAWAT.C'×24 | 'Kamogawa T.C'×5 | 'KAMOGAWA T.C'×2
+  [チームインコ]  'チームインコ'×29 | 'ﾁｰﾑｲﾝｺ'×2
+  [モジュマエリア075]  'モジュマエリア075'×30 | 'モジュマ エリア075'×1
+  [白崎サイクルシクロクロス部]  '白崎サイクルシクロクロス部'×25 | '白崎サイクル\u3000シクロクロス部'×3 | '白崎サイクル シクロクロス部'×2 | '白崎サイクル  シクロクロス部'×1
+  [じてんしゃPit 埼玉日高]  'じてんしゃPit 埼玉日高'×22 | 'じてんしゃPit\u3000埼玉日高'×2 | 'じてんしゃPit埼玉日高'×2 | 'じてんしゃＰｉｔ\u3000埼玉日高'×2 | 'じてんしゃＰｉｔ 埼玉日高'×1 | 'じてんしゃPit  埼玉日高'×1 | 'じてんしゃＰｉｔ埼玉日高'×1
+  [MountainStream]  'MountainStream'×19 | 'Mountain Stream'×12
+  [KINAN AACA]  'KINAN AACA'×30 | 'KINANAACA'×1
+  [STRADA Riders]  'STRADA Riders'×26 | 'STRADARiders'×2 | 'STRADA\u3000RIDERS'×2 | 'STRADA  Riders'×1
+  [Limited Team846/BUCYO COFFEE]  'Limited Team846/BUCYO COFFEE'×25 | 'Limited Team 846/BUCYO COFFEE'×5 | 'LimitedTeam846/BUCYOCOFFEE'×1
+  [大垣ピストンズチームモンキチ]  '大垣ピストンズチームモンキチ'×29 | '大垣ピストンズ\u3000チームモンキチ'×2
+  [Teamぽめ]  'Teamぽめ'×30 | 'Team ぽめ'×1
+  [ピストンズstyle]  'ピストンズstyle'×30 | 'ピストンズStyle'×1
+  [NASK Trading]  'NASK Trading'×30 | 'NASKTrading'×1
+  [3PEAK]  '3PEAK'×21 | '3peak'×9
+  [（有）村上建具teamhighlander]  '（有）村上建具teamhighlander'×26 | '(有)村上建具TeamHighlander'×3 | '(有)村上建具 TeamHighlander'×1
+  [Kochi CTC]  'Kochi CTC'×21 | 'KochiCTC'×7 | 'kochi CTC'×1 | 'kochi ctc'×1
+  [KENICHI   CYCLE]  'KENICHI   CYCLE'×11 | 'kenichi cycle'×9 | 'KENICHI\u3000\u3000CYCLE'×5 | 'kenichi   cycle'×3 | 'kenichicycle'×1 | 'KENICHI\u3000CYCLE'×1
+  [KUCC]  'KUCC'×27 | 'kucc'×3
+  [NORTH WHEELIE]  'NORTH WHEELIE'×18 | 'Northwheelie'×5 | 'NORTHWHEELIE'×5 | 'NorthWheelie'×2
+  [VOLCA]  'VOLCA'×27 | 'Volca'×2 | 'volca'×1
+  [エキップティラン]  'エキップティラン'×29 | 'エキップ\u3000ティラン'×1
+  [CCPP]  'CCPP'×29 | 'ＣＣＰＰ'×1
+  [BC.TIMER’S]  'BC.TIMER’S'×20 | 'BC.Timer’s'×6 | 'BC.timer’s'×2 | 'Bc.Timer’s'×1 | 'Bc.timer’s'×1
+  [SALUTE project]  'SALUTE project'×12 | 'SALUTE Project'×12 | 'SALUTEproject'×3 | 'SALUTEProject'×2 | 'SALUTE PROJECT'×1
+  [Wilde Bikes / 662CCC]  'Wilde Bikes / 662CCC'×26 | 'WildeBikes / 662CCC'×4
+  [AVANTGARDE]  'AVANTGARDE'×27 | 'AVANT GARDE'×2
+  [ストラーダR]  'ストラーダR'×23 | 'ストラーダＲ'×6
+  [GIANTオーナーズ倶楽部]  'GIANTオーナーズ倶楽部'×25 | 'GIANT オーナーズ倶楽部'×4
+  [岡山大学サイクリング部]  '岡山大学サイクリング部'×23 | '岡山大学ｻｲｸﾘﾝｸﾞ部'×6
+  [Mountain Stream CX]  'Mountain Stream CX'×25 | 'Mountain  Stream CX'×2 | 'MountainStreamCX'×1 | 'Mountain Stream  CX'×1
+  [TEAM MASA+/BOMA]  'TEAM MASA+/BOMA'×28 | 'TEAMMASA+/BOMA'×1
+  [iBeyond]  'iBeyond'×28 | 'ibeyond'×1
+  [Team サコッシュ]  'Team サコッシュ'×18 | 'Teamサコッシュ'×6 | 'Ｔｅａｍ\u3000サコッシュ'×2 | 'Team ｻｺｯｼｭ'×2 | 'Team\u3000サコッシュ'×1
+  [アトリエフルーブ]  'アトリエフルーブ'×19 | 'アトリエ フルーブ'×7 | 'アトリエ\u3000フルーブ'×3
+  [AKIRUNO CYCLING ACADEMY PROJECT]  'AKIRUNO CYCLING ACADEMY PROJECT'×24 | 'AKIRUNO Cycling Academy Project'×2 | 'Akiruno Cycling Academy Project'×2 | 'AKIRUNOCYCLING ACADEMY PROJECT'×1
+  [SHOROs / MCC]  'SHOROs / MCC'×18 | 'Shoros/MCC'×11
+  [ブチョーコーヒー/Urban Deer Cycling Team]  'ブチョーコーヒー/Urban Deer Cycling Team'×23 | 'ブチョーコーヒー／Urban Deer Cycling Team'×6
+  [CycleRoad]  'CycleRoad'×13 | 'cycle road'×11 | 'Cycle Road'×4 | 'Cycleroad'×1
+  [Teamぱーりない]  'Teamぱーりない'×26 | 'Team ぱーりない'×3
+  [GRAVEL GRID]  'GRAVEL GRID'×25 | 'Gravel Grid'×4
+  [WESTBERG/ProRide]  'WESTBERG/ProRide'×27 | 'ＷＥＳＴＢＥＲＧ／ＰｒｏＲｉｄｅ'×1
+  [弱虫ペダルシクロクロスチーム]  '弱虫ペダルシクロクロスチーム'×25 | '弱虫ﾍﾟﾀﾞﾙｼｸﾛｸﾛｽﾁｰﾑ'×3
+  [白崎サイクルシクロの部]  '白崎サイクルシクロの部'×18 | '白崎サイクル シクロの部'×7 | '白崎サイクル\u3000シクロの部'×3
+  [CIERVONARA]  'CIERVONARA'×26 | 'CIERVO NARA'×2
+  [HATO☆SUN]  'HATO☆SUN'×27 | 'ＨＡＴＯ☆ＳＵＮ'×1
+  [team crz]  'team crz'×21 | 'teamcrz'×7
+  [Tyrell Kagawa Racing]  'Tyrell Kagawa Racing'×15 | 'Tyrell kagawa racing'×5 | 'TyrellKagawaRacing'×3 | 'tyrell kagawa racing'×3 | 'tyrellkagawaracing'×1 | 'Tyrell Kagawa racing'×1
+  [TAS CYCLE]  'TAS CYCLE'×17 | 'TASCYCLE'×7 | 'TAS\u3000CYCLE'×3 | 'tascycle'×1
+  [Team　all out]  'Team\u3000all out'×10 | 'TEAM all out'×7 | 'Team allout'×3 | 'Team all out'×3 | 'Teamallout'×2 | 'TEAMAllOUT'×1 | 'TEAMallout'×1 | 'TEAM\u3000all\u3000out'×1
+  [チームうっかり]  'チームうっかり'×27 | 'チーム\u3000うっかり'×1
+  [自転車処 風輪]  '自転車処 風輪'×17 | '自転車処風輪'×11
+  [voyAge cycling team]  'voyAge cycling team'×27 | 'voyage cycling team'×1
+  [Limited Team 846/Team-K]  'Limited Team 846/Team-K'×16 | 'Limited\u3000Team\u3000846/Team-K'×4 | 'Limited Team 846/ Team-K'×2 | 'Limited Team\u3000846/Team-K'×2 | 'Limited Team  846/Team-K'×1 | 'Limited Team 846/Team-Ｋ'×1 | 'Limited Team  846/Team-Ｋ'×1 | 'LimitedTeam846/Team-K'×1
+  [rabbit street]  'rabbit street'×18 | 'rabbitstreet'×6 | 'RabbitStreet'×3 | 'rabbitStreet'×1
+  [BonBon CX]  'BonBon CX'×12 | 'BonBonCX'×6 | 'Bon Bon CX'×5 | 'BONBON CX'×4 | 'BON BON CX'×1
+  [tamagokakegohan]  'tamagokakegohan'×21 | 'TamagoKakeGohan'×5 | 'Tamagokakegohan'×2
+  [Y練/轍屋]  'Y練/轍屋'×17 | 'Ｙ練/轍屋'×6 | 'Ｙ練／轍屋'×5
+  [team FROG]  'team FROG'×20 | 'TEAM FROG'×6 | 'TEAM  FROG'×2
+  [NAMIBIA PROJECT CX Team /EMU]  'NAMIBIA PROJECT CX Team /EMU'×21 | 'NAMIBIA PROJECT CX Team/EMU'×6 | 'NAMIBIA PROJECT CX Team ／EMU'×1
+  [ISnetfukui]  'ISnetfukui'×17 | 'ISnet fukui'×7 | 'ISnet Fukui'×2 | 'ISnetFukui'×1
+  [チームウォークライド]  'チームウォークライド'×26 | 'チーム\u3000ウォークライド'×1
+  [ナカガワＡＳ・Ｋデザイン]  'ナカガワＡＳ・Ｋデザイン'×22 | 'ナカガワAS・kデザイン'×3 | 'ナカガワAS・Kデザイン'×1 | 'ナカガワAS･Kデザイン'×1
+  [チームミニットマン]  'チームミニットマン'×21 | 'チーム\u3000ミニットマン'×3 | 'ﾁｰﾑﾐﾆｯﾄﾏﾝ'×3
+  [Coraggio Kawanishi Cycling Team]  'Coraggio Kawanishi Cycling Team'×15 | 'CoraggioKawanishiCyclingTeam'×11 | 'Coraggio Kawanishi CyclingTeam'×1
+  [TEAM568]  'TEAM568'×19 | 'Team568'×8
+  [TARGET]  'TARGET'×15 | 'ＴＡＲＧＥＴ'×8 | 'target'×3 | 'Target'×1
+  [東北学院大学自転車競技部CX班]  '東北学院大学自転車競技部CX班'×25 | '東北学院大学自転車競技部 CX班'×2
+  [Grid CX]  'Grid CX'×14 | 'GridCX'×4 | 'GRIDCX'×4 | 'gridCX'×3 | 'grid CX'×2
+  [Bicycle Color]  'Bicycle Color'×15 | 'BicycleColor'×11 | 'Bicycle color'×1
+  [EDIT CXRACING]  'EDIT CXRACING'×26 | 'EDITcxracing'×1
+  [ブリッツェン☆ステラ]  'ブリッツェン☆ステラ'×26 | 'ブリッツェン ☆ステラ'×1
+  [Q-shu union]  'Q-shu union'×15 | 'Q-SHU UNION'×11 | 'Q-Shu\u3000Union'×1
+  [JCCC]  'JCCC'×21 | 'jccc'×6
+  [Team ASOBI]  'Team ASOBI'×10 | 'TEAM ASOBI'×10 | 'team ASOBI'×2 | 'TeamASOBI'×2 | 'TEAMASOBI'×2 | 'Team Asobi'×1
+  [WANOZEN]  'WANOZEN'×21 | 'wanozen'×6
+  [Champion System Japan TT 轍屋]  'Champion System Japan TT 轍屋'×26 | 'Champion System Japan  TT 轍屋'×1
+  [Astama Cycling Team]  'Astama Cycling Team'×9 | 'ASTAMA Cycling Team'×6 | 'Astama cycling team'×5 | 'ASTAMACyclingTeam'×3 | 'Astama Cycling team'×3 | 'Astamacyclingteam'×1
+  [NattyExpress]  'NattyExpress'×19 | 'Natty Express'×7
+  [NCC CEREZO]  'NCC CEREZO'×24 | 'NCC\u3000CEREZO'×2
+  [TADOBICYCLETEAM]  'TADOBICYCLETEAM'×22 | 'TADO\u3000BICYCLE\u3000TEAM'×3 | 'TADO BICYCLE TEAM'×1
+  [TEAM HATO☆SUN]  'TEAM HATO☆SUN'×25 | 'TEAMHATO☆SUN'×1
+  [チーム勝輪 / SHORIN]  'チーム勝輪 / SHORIN'×15 | 'チーム勝輪  /  SHORIN'×8 | 'チーム勝輪/SHORIN'×2 | 'チーム勝輪 /  SHORIN'×1
+  [kcf]  'kcf'×19 | 'KCF'×7
+  [Rough Roadies]  'Rough Roadies'×15 | 'roughroadies'×10 | 'RoughRoadies'×1
+  [CCOPP]  'CCOPP'×24 | 'ccopp'×2
+  [チームyyy]  'チームyyy'×23 | 'チーム yyy'×3
+  [Teamおさだゆい]  'Teamおさだゆい'×25 | 'Team おさだゆい'×1
+  [ビワONEメテオ]  'ビワONEメテオ'×14 | 'ビワoneメテオ'×12
+  [SKRK]  'SKRK'×21 | 'skrk'×5
+  [A-Pad CX GIRLS TEAM]  'A-Pad CX GIRLS TEAM'×25 | 'A-pad CX GIRLS TEAM'×1
+  [K's OFFROAD TEAM]  "K's OFFROAD TEAM"×25 | "K's OFF ROAD TEAM"×1
+  [Li-re sleep]  'Li-re sleep'×13 | 'Li-re Sleep'×7 | 'Li-Re Sleep'×6
+  [WeZ RC タケスポ]  'WeZ RC タケスポ'×22 | 'WeZRC タケスポ'×4
+  [Nadaraka cycling club]  'Nadaraka cycling club'×24 | 'Nadaraka Cycling Club'×2
+  [oiden trail]  'oiden trail'×18 | 'oidentrail'×5 | 'Oiden Trail'×2 | 'OIDEN TRAIL'×1
+  [PAD Racing]  'PAD Racing'×13 | 'PADRacing'×13
+  [埼玉工業大学自転車部]  '埼玉工業大学自転車部'×24 | '埼玉工業大学\u3000自転車部'×2
+  [HEART KIDS]  'HEART KIDS'×15 | 'HEARTKIDS'×10
+  [Rise Ride]  'Rise Ride'×23 | 'RiseRide'×1 | 'Rise  Ride'×1
+  [DECOJA RACING]  'DECOJA RACING'×11 | 'Decoja Racing'×7 | 'DecojaRacing'×5 | 'DECOJARACING'×2
+  [team36隊/cyclespaceHalo]  'team36隊/cyclespaceHalo'×24 | 'Team36隊/cyclespaceHalo'×1
+  [Panasonic]  'Panasonic'×24 | 'panasonic'×1
+  [多摩湖朝練部 / SaddleTripper CX]  '多摩湖朝練部 / SaddleTripper CX'×19 | '多摩湖朝練部／SaddleTripperCX'×4 | '多摩湖朝練部／Saddle Tripper CX'×2
+  [Bicycle-watanabe]  'Bicycle-watanabe'×20 | 'Bicycle-WATANABE'×5
+  [Clichy Cycling Club]  'Clichy Cycling Club'×24 | 'ClichyCyclingClub'×1
+  [Team Grandi Petit]  'Team Grandi Petit'×20 | 'TeamGrandiPetit'×5
+  [チーム大永山]  'チーム大永山'×23 | 'ﾁｰﾑ 大永山'×1 | 'チーム\u3000大永山'×1
+  [OVER TAKE]  'OVER TAKE'×24 | 'OVERTAKE'×1
+  [サイクルショップピーナッツ]  'サイクルショップピーナッツ'×24 | 'サイクルショップ\u3000ピーナッツ'×1
+  [自転車村R_HANGOUT]  '自転車村R_HANGOUT'×20 | '自転車村R_hangout'×5
+  [Pas Nomal Studios]  'Pas Nomal Studios'×20 | 'PasNomalStudios'×4 | 'PAS NOMAL STUDIOS'×1
+  [ZEROtoTOP/EMU SPEED CLUB]  'ZEROtoTOP/EMU SPEED CLUB'×23 | 'ZERO to TOP/EMU SPEED CLUB'×1 | 'ZEROtoTOP/EMUSPEEDCLUB'×1
+  [とちぎJr.MTBレーシング]  'とちぎJr.MTBレーシング'×24 | 'とちぎjr.MTBレーシング'×1
+  [ridingsun]  'ridingsun'×13 | 'Ridingsun'×7 | 'RIDINGSUN'×2 | 'RIDING SUN'×1 | 'riding sun'×1
+  [Above bike store]  'Above bike store'×11 | 'Above Bike Store'×9 | 'AboveBikeStore'×2 | 'Abovebikestore'×2
+  [Night ride in Kochi]  'Night ride in Kochi'×6 | 'NightRide in Kochi'×5 | 'NightRideinKochi'×4 | 'Night Ride in Kochi'×4 | 'night ride in kochi'×2 | 'NightrideinKochi'×1 | 'Night ride in KOCHI'×1 | 'Night  ride in Kochi'×1
+  [KINAN CYCLING TEAM]  'KINAN CYCLING TEAM'×16 | 'KINAN Cycling Team'×5 | 'KINANCyclingTeam'×1 | 'KINANCYCLINGTEAM'×1 | 'KINAN cycling Team'×1
+  [BREZZAカミハギRT]  'BREZZAカミハギRT'×13 | 'BREZZAｶﾐﾊｷﾞＲＴ'×11
+  [the whoo CX]  'the whoo CX'×11 | 'TheWhooCX'×5 | 'ThewhooCX'×2 | 'THE whoo cx'×2 | 'the\u3000whoo\u3000CX'×1 | 'Thewhoocx'×1 | 'the whoo cx'×1 | 'The Whoo cx'×1
+  [Cielo Sim Works CX TEAM]  'Cielo Sim Works CX TEAM'×14 | 'Cielo Simworks CX Team'×9 | 'CieloSimWorksCXTEAM'×1
+  [Banana Works]  'Banana Works'×22 | 'Banana\u3000Works'×1 | 'BananaWorks'×1
+  [BRIDGE BIKE PRODUCTS]  'BRIDGE BIKE PRODUCTS'×19 | 'Bridge Bike Products'×3 | 'BRIDGE\u3000BIKE\u3000PRODUCTS'×2
+  [Team Panda]  'Team Panda'×13 | 'team panda'×11
+  [drawer THE RACING]  'drawer THE RACING'×21 | 'drawerTHERACING'×2 | 'drawer THE  RACING'×1
+  [Team Nomu's]  "Team Nomu's"×14 | "Team nomu's"×10
+  [EL CAMINO CYCLE]  'EL CAMINO CYCLE'×21 | 'EL\u3000CAMINO CYCLE'×2 | 'ELCAMINO ＣＹＣＬＥ'×1
+  [Team RSO-Racing]  'Team RSO-Racing'×23 | 'TeamRSO-Racing'×1
+  [companio kobe with 小野工業高校]  'companio kobe with 小野工業高校'×9 | 'Companio kobe with 小野工業高校'×8 | 'Companio Kobe with 小野工業高校'×2 | 'companiokobewith小野工業高校'×2 | 'companio kobe with小野工業高校'×2 | 'Companio kobe  with  小野工業高校'×1
+  [TOKAI POTENZA/OCF]  'TOKAI POTENZA/OCF'×23 | 'TOKAIPOTENZA/OCF'×1
+  [SBC Vertex Racing Team]  'SBC Vertex Racing Team'×23 | 'SBC VertexRacingTeam'×1
+  [Random Variable]  'Random Variable'×22 | 'RandomVariable'×2
+  [Green Cog Cycling Club / SDL]  'Green Cog Cycling Club / SDL'×21 | 'Green Cog Cycling Club/SDL'×2 | 'GREEN COG CYCLING CLUB / SDL'×1
+  [Team DANETiGA]  'Team DANETiGA'×11 | 'TeamDANETiGA'×8 | 'TEAMDANETiGA'×3 | 'TEAM DANETiGA'×1 | 'Team DANETi GA'×1
+  [奈良キタサイクルまほろばRC]  '奈良キタサイクルまほろばRC'×22 | '奈良キタサイクル\u3000まほろばRC'×1
+  [IsnetFukuicyclingTeam]  'IsnetFukuicyclingTeam'×10 | 'isnet fukui cycling team'×3 | 'ISnet Fukui Cycling Team'×2 | 'ISnet\u3000Fukui\u3000Cycling\u3000Team'×2 | 'ISnet fukui cycling team'×1 | 'Is net Fukui cycling Team'×1 | 'IsnetFukuiCyclingTeam'×1 | 'Isnetfukuicyclingteam'×1 | 'isnet fukui cycling Team'×1 | 'Isnet  fukui cycling team'×1
+  [SM bros]  'SM bros'×15 | 'SM\u3000Bros'×4 | 'SMBros'×2 | 'SM\u3000bros'×2
+  [高松市サイクルスポーツ少年団]  '高松市サイクルスポーツ少年団'×19 | '高松市ｻｲｸﾙｽﾎﾟｰﾂ少年団'×4
+  [カミハギCX]  'カミハギCX'×19 | 'カミハギcx'×4
+  [ナカガワRC OHC]  'ナカガワRC OHC'×22 | 'ナカガワRC   OHC'×1
+  [KAZE/IGLEHEART]  'KAZE/IGLEHEART'×20 | 'KAZE /IGLEHEART'×3
+  [3UP]  '3UP'×13 | '3up'×7 | '３UP'×3
+  [ET hard school style]  'ET hard school style'×9 | 'EThardschoolstyle'×9 | 'ETHardSchoolStyle'×3 | 'ET Hard School Style'×2
+  [プラティヤヤ]  'プラティヤヤ'×22 | 'ﾌﾟﾗﾃｨﾔﾔ'×1
+  [Derailleur Brew Works]  'Derailleur Brew Works'×22 | 'DerailleurBrewWorks'×1
+  [Lipatti Jewelry]  'Lipatti Jewelry'×12 | 'lipatti jewelry'×7 | 'LipattiJewelry'×4
+  [カヤマレーシング]  'カヤマレーシング'×16 | 'ｶﾔﾏﾚｰｼﾝｸﾞ'×7
+  [Shonan Avanzar]  'Shonan Avanzar'×12 | 'SHONAN AVANZAR'×8 | 'SHONAN\u3000AVANZAR'×3
+  [ペレグリンＣＸ]  'ペレグリンＣＸ'×15 | 'ペレグリンCX'×8
+  [Team MilePost Racing]  'Team MilePost Racing'×20 | 'Team Mile Post Racing'×2 | 'Team MilePost racing'×1
+  [allways]  'allways'×15 | 'ALLWAYS'×6 | 'ａｌｌｗａｙｓ'×2
+  [Team GOCHI]  'Team GOCHI'×14 | 'TeamGOCHI'×8 | 'TEAMGOCHI'×1
+  [BIKE&TECH]  'BIKE&TECH'×20 | 'BIKE＆TECH'×3
+  [BMTC / Hicc]  'BMTC / Hicc'×10 | 'BMTC/HiCC'×7 | 'BMTC / HiCC'×3 | 'BMTC/Hicc'×3
+  [AST FOREST]  'AST FOREST'×22 | 'AST forest'×1
+  [MOVEMENT]  'MOVEMENT'×20 | 'movement'×2
+  [TeamSKRKCX]  'TeamSKRKCX'×19 | 'Team SKRKCX'×1 | 'TeamSKRK CX'×1 | 'Team SKRK CX'×1
+  [Champion System Japan]  'Champion System Japan'×20 | 'Championsystem Japan'×2
+  [RITCHEYBREZZAカミハギRT]  'RITCHEYBREZZAカミハギRT'×10 | 'RITCHEYBREZZAｶﾐﾊｷﾞＲＴ'×10 | 'RITCHEY BREZZA カミハギRT'×1 | 'RIT CHEY BREZZA ｶﾐﾊｷﾞＲＴ'×1
+  [アウターダンシングクラブSDA]  'アウターダンシングクラブSDA'×19 | 'アウターダンシングクラブＳＤＡ'×2 | 'ｱｳﾀｰﾀﾞﾝｼﾝｸﾞｸﾗﾌﾞＳＤＡ'×1
+  [チーム侍]  'チーム侍'×20 | 'ﾁｰﾑ侍'×2
+  [F(t)麒麟山Racing CX Team]  'F(t)麒麟山Racing CX Team'×21 | 'F(t)麒麟山RacingCXTeam'×1
+  [京都朝ライド]  '京都朝ライド'×21 | '京都朝ﾗｲﾄﾞ'×1
+  [EURO WORKS RACING]  'EURO WORKS RACING'×13 | 'EURO WORKS Racing'×7 | 'EUROWORKSracing'×2
+  [Ryoyo Cycling club]  'Ryoyo Cycling club'×19 | 'RyoyoCyclingClub'×2 | 'RyoyoCyclingclub'×1
+  [Team NR]  'Team NR'×20 | 'TeamNR'×1 | 'TEAM NR'×1
+  [Peach MAX]  'Peach MAX'×21 | 'PeachMAX'×1
+  [abare-G]  'abare-G'×20 | 'abare-g'×1 | 'ABARE-G'×1
+  [team APEX]  'team APEX'×15 | 'teamAPEX'×5 | 'Team APEX'×1 | 'team  APEX'×1
+  [TEAM SCOTT JAPAN]  'TEAM SCOTT JAPAN'×13 | 'TEAM SCOTT Japan'×7 | 'TEAMSCOTTJAPAN'×2
+  [だらんねーけ白山CX]  'だらんねーけ白山CX'×21 | 'だらんねーけ白山Cx'×1
+  [ROND CX TEAM/テープジャパン]  'ROND CX TEAM/テープジャパン'×11 | 'ROND CX TEAM/ﾃｰﾌﾟｼﾞｬﾊﾟﾝ'×10 | 'ROND CX TEAM /テープジャパン'×1
+  [A&Nサイクルフレンド]  'A&Nサイクルフレンド'×12 | 'A&N サイクルフレンド'×10
+  [AIOLOS]  'AIOLOS'×17 | 'ＡＩＯＬＯＳ'×5
+  [Aki Rising Bicycle team]  'Aki Rising Bicycle team'×12 | 'AkiRisingBicycleteam'×10
+  [Mt,HASE321]  'Mt,HASE321'×15 | 'Ｍｔ，ＨＡＳＥ３２１'×6 | 'Mt,hase321'×1
+  [ROND CX TEAM/PAD]  'ROND CX TEAM/PAD'×21 | 'RONDCXTEAM/PAD'×1
+  [STOKEDCYCLEwithHalu]  'STOKEDCYCLEwithHalu'×15 | 'STOKEDCYCLE with Halu'×7
+  [NAMAZU CX TOCHIGI]  'NAMAZU CX TOCHIGI'×19 | 'NAMAZU  CX TOCHIGI'×3
+  [club.viento]  'club.viento'×20 | 'Club.viento'×2
+  [京都MTB朝ライド～ 時々シケテルズ]  '京都MTB朝ライド～ 時々シケテルズ'×21 | '京都MTB朝ライド~ 時々シケテルズ'×1
+  [25LAS BICYCLE WORKS]  '25LAS BICYCLE WORKS'×19 | '25LAS Bicycle Works'×2
+  [GIANTCC]  'GIANTCC'×11 | 'GIANT CC'×10
+  [Cielo/SimWorks CX Team]  'Cielo/SimWorks CX Team'×11 | 'Cielo/Simworks cxteam'×7 | 'Cielo/SimworksCXteam'×2 | 'Cielo/simworks cxteam'×1
+  [PAXCYCLE]  'PAXCYCLE'×12 | 'PAX CYCLE'×9
+  [SOLD OUT!]  'SOLD OUT!'×13 | 'SOLD OUT !'×3 | 'SOLDOUT!'×2 | 'SOLD\u3000OUT！'×2 | 'SOLD OUT！'×1
+  [BEX ISOYA]  'BEX ISOYA'×18 | 'BeX ISOYA'×2 | 'BEXISOYA'×1
+  [MilePost]  'MilePost'×8 | 'Mile Post'×7 | 'mile post'×3 | 'ＭＩＬＥＰＯＳＴ'×2 | 'Milepost'×1
+  [TRX-Racing]  'TRX-Racing'×20 | 'TRX-RACING'×1
+  [白崎サイクルシクロ部]  '白崎サイクルシクロ部'×16 | '白崎サイクル シクロ部'×4 | '白崎サイクル  シクロ部'×1
+  [Team宝塚線／Pigmon Channel]  'Team宝塚線／Pigmon Channel'×9 | 'Team宝塚線/Pigmon Channel'×6 | 'Team宝塚線/PigmonChannel'×3 | 'TEAM宝塚線／PigmonChannel'×1 | 'Team宝塚線／PigmonChannel'×1 | 'TEAM宝塚線 / Pigmon Channel'×1
+  [Team-RSO racing]  'Team-RSO racing'×8 | 'TEAM-RSORACING'×8 | 'Team-RSO Racing'×5
+  [Gifu-style]  'Gifu-style'×14 | 'gifu-style'×6 | 'Gifu-Style'×1
+  [奈良キタサイクル　まほロバRC]  '奈良キタサイクル\u3000まほロバRC'×19 | '奈良キタサイクルまほロバRC'×2
+  [Team Johnny]  'Team Johnny'×11 | 'Team\u3000Johnny'×9 | 'TeamJohnny'×1
+  [EQUILIBRIUM]  'EQUILIBRIUM'×13 | 'Equilibrium'×8
+  [三重県立志摩病院 w/ HCR]  '三重県立志摩病院 w/ HCR'×16 | '三重県立志摩病院 w/HCR'×3 | '三重県立志摩病院w/HCR'×2
+  [フルスクワット]  'フルスクワット'×20 | 'フル\u3000スクワット'×1
+  [チーム36隊大阪]  'チーム36隊大阪'×11 | 'チーム36隊\u3000大阪'×9 | 'チーム36隊 大阪'×1
+  [Velvet Revolutions]  'Velvet Revolutions'×20 | 'VelvetRevolutions'×1
+  [FUN RIDE GANG]  'FUN RIDE GANG'×20 | 'FUN\u3000RIDE\u3000GANG'×1
+  [FAT2-CROSS]  'FAT2-CROSS'×20 | 'FAT2- CROSS'×1
+  [bikintv バイキンティービー]  'bikintv バイキンティービー'×18 | 'bikintvバイキンティービー'×3
+  [TWBC　サイクリングチーム]  'TWBC\u3000サイクリングチーム'×10 | 'TWBC サイクリングチーム'×8 | 'TWBC\u3000ｻｲｸﾘﾝｸﾞﾁｰﾑ'×2 | 'TWBCサイクリングチーム'×1
+  [ADVANCE仙台&SUGO]  'ADVANCE仙台&SUGO'×9 | 'Advance 仙台&SUGO'×8 | 'Advance仙台&SUGO'×2 | 'Advance仙台＆SUGO'×2
+  [Triathlon in Tokyo]  'Triathlon in Tokyo'×20 | 'Triathlon In Tokyo'×1
+  [5G!]  '5G!'×13 | '5G！'×7 | '５Ｇ！'×1
+  [5G!CX部]  '5G!CX部'×14 | '5G! CX部'×6 | '５G! CX部'×1
+  [D40+]  'D40+'×19 | 'd40+'×1
+  [リミテッドチーム846]  'リミテッドチーム846'×19 | 'リミテッド チーム846'×1
+  [MARRONCROSS]  'MARRONCROSS'×16 | 'marron cross'×3 | 'MARRON  cross'×1
+  [viento]  'viento'×9 | 'VIENTO'×8 | 'ＶＩＥＮＴＯ'×2 | 'Viento'×1
+  [Cyclery Kirin/KMC/iPlan]  'Cyclery Kirin/KMC/iPlan'×6 | 'CycleryKIRIN/KMC/iPlan'×5 | 'CycleryKirin/KMC/iPlan'×3 | 'Cyclery KIRIN /KMC/iPlan'×3 | 'Cyclery KIRIN / KMC /iPlan'×2 | 'Cyclery KIRIN/KMC/iPlan'×1
+  [BRIDLER JD共済 OZ]  'BRIDLER JD共済 OZ'×11 | 'BRIDLERJD共済OZ'×7 | 'BRIDLER\u3000JD共済OZ'×1 | 'BRIDLER JD共済OZ'×1
+  [アレーネソレーネ]  'アレーネソレーネ'×14 | 'アレーネ\u3000ソレーネ'×4 | 'アレーネ ソレーネ'×2
+  [ZTT CXTeam]  'ZTT CXTeam'×17 | 'ZTT CXteam'×3
+  [Sprout di Goccia]  'Sprout di Goccia'×8 | 'SproutdiGoccia'×7 | 'Sprout di goccia'×5
+  [イオンバイクJrアカデミー]  'イオンバイクJrアカデミー'×16 | 'イオンバイクjrアカデミー'×4
+  [Limited team 846/OK牧場]  'Limited team 846/OK牧場'×19 | 'Limitedteam846／OK牧場'×1
+  [Flamme Rouge]  'Flamme Rouge'×19 | 'flamme rouge'×1
+  [Euro works-Racing]  'Euro works-Racing'×13 | 'Euroworks-Racing'×7
+  [チームWEAEK END]  'チームWEAEK END'×12 | 'チーム WEAEKEND'×7 | 'チームWEAEKEND'×1
+  [MOZUCOFFEECX]  'MOZUCOFFEECX'×19 | 'MozuCoffeeCX'×1
+  [イオンバイクJr.レーシング＆怪しい道調査隊]  'イオンバイクJr.レーシング＆怪しい道調査隊'×10 | 'イオンバイクJr.レーシング&怪しい道調査隊'×6 | 'イオンバイクjr.レーシング＆怪しい道調査隊'×3 | 'イオンバイクＪｒ.レーシング＆怪しい道調査隊'×1
+  [Bon Bon CX Team]  'Bon Bon CX Team'×14 | 'Bon Bon  CX Team'×4 | 'BonBon CX Team'×2
+  [中島 No Brakes]  '中島 No Brakes'×19 | '中島NoBrakes'×1
+  [eNshare FOCUS]  'eNshare FOCUS'×12 | 'eNShare FOCUS'×8
+  [662CCC / K O U]  '662CCC / K O U'×19 | '662CCC/KOU'×1
+  [DTF Racing]  'DTF Racing'×19 | 'DTFRacing'×1
+  [A-CAP]  'A-CAP'×19 | 'A-cap'×1
+  [Team zero uno frontier]  'Team zero uno frontier'×13 | 'Team Zero uno frontier'×4 | 'Team ZERO UNO FRONTIER'×2 | 'team zero uno frontier'×1
+  [MERIDA Kids Club]  'MERIDA Kids Club'×16 | 'Merida kids club'×2 | 'MERIDA\u3000KIDS\u3000CLUB'×1 | 'MERIDA KIDS CLUB'×1
+  [Mavic test team/SDL]  'Mavic test team/SDL'×17 | 'MAVIC TEST TEAM/SDL'×2 | 'MAVIC test team/SDL'×1
+  [CSJTT轍屋]  'CSJTT轍屋'×16 | 'CSJTT 轍屋'×4
+  [Above Bike Store C.C.]  'Above Bike Store C.C.'×17 | 'AboveBikeStoreC.C.'×1 | 'AboveBikeStore C.C.'×1
+  [SCCCX]  'SCCCX'×16 | 'SCC CX'×2 | 'scccx'×1
+  [FlightWorks]  'FlightWorks'×18 | 'Flight works'×1
+  [Rise-Ride2020]  'Rise-Ride2020'×17 | 'Rise-Ride 2020'×2
+  [飾磨工業高校 自転車競技部]  '飾磨工業高校 自転車競技部'×15 | '飾磨工業高校自転車競技部'×3 | '飾磨工業高校\u3000自転車競技部'×1
+  [2GUNS cycling team]  '2GUNS cycling team'×18 | '2Guns cycling team'×1
+  [Team闇練]  'Team闇練'×12 | 'Team 闇練'×7
+  [SHIDO]  'SHIDO'×11 | 'Shido'×7 | 'shido'×1
+  [Kokopelli Gurny Goo]  'Kokopelli Gurny Goo'×16 | 'Kokopelli\u3000Gurny\u3000Goo'×2 | 'KOKOPELLI GURNY GOO'×1
+  [Team Ringo Road/K O U]  'Team Ringo Road/K O U'×8 | 'TEAMRINGOROAD/KOU'×7 | 'TEAM RINGO ROAD / KOU'×2 | 'Team Ringo Road / KOU'×2
+  [ドM組合/ビバ.バイクス ジャパン]  'ドM組合/ビバ.バイクス ジャパン'×10 | 'ドM組合/ビバ.バイクス\u3000ジャパン'×5 | 'ドM組合/ビバ.バイクスジャパン'×3 | 'ﾄﾞM組合/ﾋﾞﾊﾞ.ﾊﾞｲｸｽ ｼﾞｬﾊﾟﾝ'×1
+  [662CCC/兵庫工業高等学校]  '662CCC/兵庫工業高等学校'×18 | '662ccc/兵庫工業高等学校'×1
+  [Equipe-U Racing]  'Equipe-U Racing'×18 | 'Equipe-U  Racing'×1
+  [UNIVERS]  'UNIVERS'×16 | 'Univers'×3
+  [Gruppetto]  'Gruppetto'×12 | 'gruppetto'×7
+  [AYA BIKES]  'AYA BIKES'×11 | 'Ayabikes'×5 | 'AYABIKES'×2 | 'Aya bikes'×1
+  [ATHLETE FARM MTB CLUB]  'ATHLETE FARM MTB CLUB'×18 | 'ATHLETE  FARM  MTB  CLUB'×1
+  [Team シシクロス 唐揚げ担当]  'Team シシクロス 唐揚げ担当'×18 | 'TEAM シシクロス 唐揚げ担当'×1
+  [IGLEHEART]  'IGLEHEART'×17 | 'Igleheart'×2
+  [都製餡シクロクロスチーム]  '都製餡シクロクロスチーム'×18 | '都製餡シクロクロス チーム'×1
+  [Team Zenko SUNVOLT]  'Team Zenko SUNVOLT'×9 | 'TeamZenkoSunvolt'×6 | 'TeamZenko Sunvolt'×2 | 'TeamZenko SUNVOLT'×1
+  [広島大学RADER]  '広島大学RADER'×9 | '広島大学Rader'×5 | '広島大学 RADER'×2 | '広島大学rader'×2
+  [TEAM GIRO]  'TEAM GIRO'×11 | 'Team GIRO'×4 | 'team giro'×1 | 'Team Giro'×1 | 'TeamGIRO'×1
+  [ETT Racing]  'ETT Racing'×17 | 'ETTRacing'×1
+  [TEAM RINGOROAD/のぼこん]  'TEAM RINGOROAD/のぼこん'×9 | 'Team Ringo Road / のぼこん'×6 | 'TEAMRINGOROAD/のぼこん'×1 | 'Team Ringo Road/のぼこん'×1 | 'TEAM RINGO ROAD/のぼこん'×1
+  [DMJCX]  'DMJCX'×12 | 'DMJcx'×5 | 'DMJ CX'×1
+  [nashi]  'nashi'×15 | 'NASHI'×3
+  [ハピガル]  'ハピガル'×13 | 'ﾊﾋﾟｶﾞﾙ'×5
+  [愛媛県自転車競技連盟ジュニアクラブ]  '愛媛県自転車競技連盟ジュニアクラブ'×16 | '愛媛県自転車競技連盟ｼﾞｭﾆｱｸﾗﾌﾞ'×2
+  [チームサンディスク]  'チームサンディスク'×16 | 'ﾁｰﾑｻﾝﾃﾞｨｽｸ'×2
+  [Hagibow Bike Works]  'Hagibow Bike Works'×10 | 'Hagibow Bikeworks'×4 | 'HagibowBikeWorks'×3 | 'HAGIBOWBIKEWORKS'×1
+  [TeamMocs]  'TeamMocs'×16 | 'Team Mocs'×2
+  [TeamSkyberry]  'TeamSkyberry'×16 | 'TeamSKYBERRY'×1 | 'Team SKYBERRY'×1
+  [Circles/SimWorks CX Team]  'Circles/SimWorks CX Team'×15 | 'Circles/Sim Works CX Team'×2 | 'Circles/SimWorksCXTeam'×1
+  [Team MJR]  'Team MJR'×14 | 'TeamMJR'×1 | 'teamMJR'×1 | 'team MJR'×1 | 'team  MJR'×1
+  [アルプス工業シクロ部]  'アルプス工業シクロ部'×16 | 'アルプス工業 シクロ部'×1 | 'アルプス工業\u3000シクロ部'×1
+  [Equipe Lien]  'Equipe Lien'×16 | 'EquipeLien'×2
+  [Bike is life]  'Bike is life'×7 | 'bike is life'×6 | 'Bike is Life'×5
+  [SBC Vertex Racing Club]  'SBC Vertex Racing Club'×17 | 'SBC VERTEX RACING CLUB'×1
+  [伊豆CSC]  '伊豆CSC'×14 | '伊豆 CSC'×4
+  [shoro's/MCC]  "shoro's/MCC"×16 | "SHORO's/MCC"×1 | "shoro's/mcc"×1
+  [Y’s spirit]  'Y’s spirit'×12 | 'Y’s Spirit'×6
+  [LEVANTE YOUTH CYCLING SCHOOL]  'LEVANTE YOUTH CYCLING SCHOOL'×17 | 'LEVANTE\u3000YOUTH\u3000CYCLING\u3000SCHOOL'×1
+  [THT RACING]  'THT RACING'×12 | 'THT Racing'×6
+  [VAMOS柏]  'VAMOS柏'×17 | 'Vamos柏'×1
+  [Aisan Cycling Club]  'Aisan Cycling Club'×14 | 'Ａisan Ｃycling Ｃlub'×4
+  [京都MTB朝ライド/Cycle Justice]  '京都MTB朝ライド/Cycle Justice'×12 | '京都MTB朝ライド/CycleJustice'×6
+  [Teamsproutdigoccia]  'Teamsproutdigoccia'×10 | 'Team Sprout di Goccia'×6 | 'Team sprout di goccia'×1
+  [SPEEDVAGEN CYCLOCROSS TEAM]  'SPEEDVAGEN CYCLOCROSS TEAM'×15 | 'SPEEDVAGENCYCLOCROSSTEAM'×2
+  [TeamCUORE/順天堂大学]  'TeamCUORE/順天堂大学'×9 | 'TeamCUORE / 順天堂大学'×5 | 'Team CUORE／順天堂大学'×2 | 'Team CUORE / 順天堂大学'×1
+  [milltectools CX]  'milltectools CX'×15 | 'milltec TOOLs CX'×1 | 'milltec tools CX'×1
+  [RCC TYO]  'RCC TYO'×11 | 'RCCTYO'×6
+  [Team CUORE／市立柏高校]  'Team CUORE／市立柏高校'×6 | 'TeamCUORE / 市立柏高校'×5 | 'TeamCUORE/市立柏高校'×3 | 'TeamCUORE／市立柏高校'×3
+  [TeamUKYO]  'TeamUKYO'×11 | 'Team UKYO'×6
+  [Peek a Boo]  'Peek a Boo'×15 | 'peek a boo'×1 | 'Peek a boo'×1
+  [Becky cyclocross]  'Becky cyclocross'×10 | 'BECKY CYCLOCROSS'×6 | 'BECKY Cyclocross'×1
+  [ベッキーシクロクロスCRC]  'ベッキーシクロクロスCRC'×9 | 'ベッキーシクロクロスＣＲＣ'×8
+  [team bakeratta]  'team bakeratta'×16 | 'Team Bakeratta'×1
+  [Above bike store cycling club]  'Above bike store cycling club'×12 | 'above bike store cycling club'×3 | 'Above Bike Store Cycling Club'×2
+  [TeamCRIMSON]  'TeamCRIMSON'×8 | 'Team CRIMSON'×4 | 'TeamCrimson'×3 | 'team CRIMSON'×2
+  [WING PAW]  'WING PAW'×11 | 'WINGPAW'×5 | 'wingpaw'×1
+  [紀州DECOJA RACING TEAM]  '紀州DECOJA RACING TEAM'×15 | '紀州DECOJARACINGTEAM'×1 | '紀州DECOJA\u3000RACING\u3000TEAM'×1
+  [おっちゃんずﾚﾎﾞﾘｭｰｼｮﾝ]  'おっちゃんずﾚﾎﾞﾘｭｰｼｮﾝ'×16 | 'おっちゃんずレボリューション'×1
+  [bikeport R.R]  'bikeport R.R'×11 | 'Bikeport R.R'×2 | 'bike  port R.R'×2 | 'bikeport  R.R'×1 | 'bikeportR.R'×1
+  [Team Eurasia-iRC TIRE]  'Team Eurasia-iRC TIRE'×4 | 'Team Eurasia - iRC Tire'×3 | 'Team EURASIA-IRC TIRE'×2 | 'Team EURASIA-iRC TIRE'×2 | 'Team Eurasia - iRC TIRE'×2 | 'Team Eurasia-IRC TIRE'×2 | 'TEAM EURASIA-iRC TIRE'×1 | 'Team Eurasia-iRC Tire'×1
+  [Defardi]  'Defardi'×14 | 'defardi'×3
+  [HUBGRID]  'HUBGRID'×16 | 'HUB GRID'×1
+  [Yamanakako Cycling Club]  'Yamanakako Cycling Club'×13 | 'Yamanakako cycling club'×3 | 'yamanakako cycling club'×1
+  [Q-SHU UNION CJ UNIT]  'Q-SHU UNION CJ UNIT'×15 | 'Q-shu union cj unit'×1 | 'Q-SHU UNION  CJ  UNIT'×1
+  [Limited Team846/ブチョーコーヒー]  'Limited Team846/ブチョーコーヒー'×12 | 'Limited Team 846/ブチョーコーヒー'×5
+  [DESTRA CX]  'DESTRA CX'×16 | 'DESTRA cx'×1
+  [チームさといち／関東SS同好会]  'チームさといち／関東SS同好会'×14 | 'チームさといち/関東SS同好会'×3
+  [Olanda Base/Watersley]  'Olanda Base/Watersley'×13 | 'Olandabase/Watersley'×2 | 'OlandaBase/Watersley'×2
+  [HiCC/BMTC]  'HiCC/BMTC'×16 | 'HiCC / BMTC'×1
+  [明治国際医療大学/CCCC]  '明治国際医療大学/CCCC'×14 | '明治国際医療大学/ＣＣＣＣ'×2 | '明治国際医療大学／CCCC'×1
+  [DRONE/看板ステーション]  'DRONE/看板ステーション'×16 | 'DRONE / 看板ステーション'×1
+  [チームユーラシア-iRCタイヤ]  'チームユーラシア-iRCタイヤ'×9 | 'チームユーラシア - iRCタイヤ'×7 | 'チームユーラシア- iRCタイヤ'×1
+  [SUNNYDAYS/ボルケーノレーシング]  'SUNNYDAYS/ボルケーノレーシング'×13 | 'SUNNYDAYS/ﾎﾞﾙｹｰﾉﾚｰｼﾝｸﾞ'×4
+  [PRANTAN/SQUADRA]  'PRANTAN/SQUADRA'×14 | 'PRANTAN / SQUADRA'×2
+  [尼崎市消防局AC]  '尼崎市消防局AC'×10 | '尼崎市消防局ＡＣ'×6
+  [チーム・Y]  'チーム・Y'×13 | 'チーム・Ｙ'×3
+  [team cavalieri]  'team cavalieri'×11 | 'Team Cavalieri'×4 | 'Team cavalieri'×1
+  [セオレーシング+東邦大学cc]  'セオレーシング+東邦大学cc'×11 | 'セオレーシング＋東邦大学cc'×4 | 'セオレーシング＋東邦大学CC'×1
+  [GROOVY]  'GROOVY'×9 | 'ＧＲＯＯＶＹ'×5 | 'groovy'×2
+  [クラブパラボラ]  'クラブパラボラ'×12 | 'ｸﾗﾌﾞﾊﾟﾗﾎﾞﾗ'×2 | 'クラブ\u3000パラボラ'×2
+  [team BRANDEX]  'team BRANDEX'×15 | 'Team BRANDEX'×1
+  [TEAM GIRO-CX]  'TEAM GIRO-CX'×14 | 'Team\u3000Giro-cx'×1 | 'team giro-cx'×1
+  [ケンイチサイクル]  'ケンイチサイクル'×11 | 'ケンイチ  サイクル'×2 | 'ケンイチ\u3000サイクル'×1 | 'ケンイチ\u3000\u3000サイクル'×1 | 'ケンイチ サイクル'×1
+  [MOLTENI1962]  'MOLTENI1962'×7 | 'Molteni1962'×6 | 'molteni1962'×2 | 'Molteni 1962'×1
+  [Team Blue Lug]  'Team Blue Lug'×7 | 'Team Bluelug'×4 | 'TeamBlueLug'×4 | 'TEAM BLUE LUG'×1
+  [ナカガワAS.Kデザイン]  'ナカガワAS.Kデザイン'×9 | 'ナカガワAS . K デザイン'×6 | 'ナカガワAS.K デザイン'×1
+  [TEAM カイザー]  'TEAM カイザー'×14 | 'TEAMカイザー'×2
+  [Limited Team 846/Bike Team 回転木馬]  'Limited Team 846/Bike Team 回転木馬'×10 | 'LimitedTeam846/BikeTeam回転木馬'×5 | 'Limited team 846\u3000/\u3000bike team 回転木馬'×1
+  [BLACK SOX BICYCLE CLUB]  'BLACK SOX BICYCLE CLUB'×11 | 'black sox bicycle club'×2 | 'BlackSoxBicycleClub'×1 | 'blacksoxbicycleclub'×1 | 'Black sox bicycle club'×1
+  [Trek]  'Trek'×9 | 'TREK'×7
+  [チーム・チョロ]  'チーム・チョロ'×13 | 'ﾁｰﾑ･ﾁｮﾛ'×3
+  [RAM AIR/Wing It]  'RAM AIR/Wing It'×8 | 'RAM AIR/WING IT'×8
+  [CLAMP DEANIMA]  'CLAMP DEANIMA'×10 | 'CLAMPDEANIMA'×6
+  [クラブ Paradiso]  'クラブ Paradiso'×15 | 'クラブParadiso'×1
+  [ＣＶ]  'ＣＶ'×13 | 'CV'×3
+  [One-Up Cerezo Racing]  'One-Up Cerezo Racing'×11 | 'One-up Cerezo Racing'×3 | 'One-upCerezoRacing'×1 | 'One-up cerezo Racing'×1
+  [Velo Sport Valletais]  'Velo Sport Valletais'×14 | 'velo sport valletais'×2
+  [Muddy Wakayama]  'Muddy Wakayama'×9 | 'MUDDY WAKAYAMA'×2 | 'Muddy WAKAYAMA'×2 | 'muddy wakayama'×2 | 'MuddyWAKAYAMA'×1
+  [福島CTC]  '福島CTC'×11 | '福島ＣＴＣ'×5
+  [DRAGONLING CX]  'DRAGONLING CX'×15 | 'DRAGON LING CX'×1
+  [footwork RC]  'footwork RC'×9 | 'FootWorkRC'×4 | 'FootWork RC'×2 | 'footworkRC'×1
+  [ベッキーシクロクロス/Team GBtL]  'ベッキーシクロクロス/Team GBtL'×13 | 'ベッキーシクロクロス/Team GbtL'×3
+  [SUCC OB]  'SUCC OB'×13 | 'SUCCOB'×3
+  [W.V.OTA／駿台甲府高等学校]  'W.V.OTA／駿台甲府高等学校'×8 | 'W.V.OTA/駿台甲府高等学校'×3 | 'W.V.OTA / 駿台甲府高等学校'×3 | 'W.V.Ota/駿台甲府高等学校'×1 | 'W.V.OTA  / 駿台甲府高等学校'×1
+  [川崎バンクpista club]  '川崎バンクpista club'×11 | '川崎バンクpistaclub'×3 | '川崎バンク pista club'×2
+  [2-PIPE]  '2-PIPE'×12 | '2-pipe'×3
+  [チームスクアドラ]  'チームスクアドラ'×14 | 'チーム\u3000スクアドラ'×1
+  [チームMARRON]  'チームMARRON'×10 | 'ﾁｰﾑMARRON'×5
+  [Team CHAINRING Espoir]  'Team CHAINRING Espoir'×8 | 'Team CHAINRING espoir'×5 | 'TEAM CHAINRING espoir'×2
+  [Hunter SimWorks CX Team]  'Hunter SimWorks CX Team'×12 | 'HunterSimworksCXteam'×1 | 'Hunter Simworks CX team'×1 | 'Hunter SimWorks CX team'×1
+  [Nakagawa AS K'design]  "Nakagawa AS K'design"×13 | "NakagawaASK'design"×1 | "Nakagawa\u3000AS\u3000K'design"×1
+  [BakaTorque]  'BakaTorque'×5 | 'Bakatorque'×5 | 'Baka Torque'×4 | 'bakatorque'×1
+  [Limited846]  'Limited846'×14 | 'limited846'×1
+  [VICTOIRE広島]  'VICTOIRE広島'×12 | 'victoire広島'×3
+  [MilePostレーシング]  'MilePostレーシング'×5 | 'Mile post レーシング'×3 | 'Mile Post レーシング'×3 | 'MilePost レーシング'×1 | 'MilePostﾚｰｼﾝｸﾞ'×1 | 'Mile Post ﾚｰｼﾝｸﾞ'×1 | 'milepostレーシング'×1
+  [Half Life]  'Half Life'×8 | 'Half\u3000Life'×7
+  [TeamBarca]  'TeamBarca'×13 | 'Team Barca'×2
+  [MARUYAMA PHARMACY]  'MARUYAMA PHARMACY'×12 | 'Maruyama Pharmacy'×2 | 'Maruyama\u3000Pharmacy'×1
+  [それ行け田吾作　Team　Y]  'それ行け田吾作\u3000Team\u3000Y'×13 | 'それ行け田吾作TeamY'×1 | 'それ行け田吾作\u3000TeamY'×1
+  [チームモトピンク]  'チームモトピンク'×12 | 'チーム\u3000モトピンク'×3
+  [じょうぼんズ]  'じょうぼんズ'×11 | 'じょうぼんズ'×4
+  [RSCC]  'RSCC'×12 | 'rscc'×3
+  [Esquina Racing]  'Esquina Racing'×7 | 'Esquina racing'×4 | 'ESQUINA RACING'×2 | 'ESQUINA  RACING'×2
+  [ペンペン2号]  'ペンペン2号'×14 | 'ペンペン２号'×1
+  [Coraggio Kawanishi Cycling Team Junior Youth]  'Coraggio Kawanishi Cycling Team Junior Youth'×11 | 'CoraggioKawanishiCyclingTeamJuniorYouth'×2 | 'CoraggioKawanishiCyclingTeamJunioryouth'×2
+  [onmac]  'onmac'×12 | 'on mac'×3
+  [TORQUE/NOZAC]  'TORQUE/NOZAC'×13 | 'Torque/Nozac'×2
+  [Suwako racing team]  'Suwako racing team'×4 | 'suwako racing team'×3 | 'Suwako Racing Team'×3 | 'Suwakoracingteam'×2 | 'SUWAKORACINGTEAM'×2 | 'SUWAKO RACING TEAM'×1
+  [kcr (kiyoshi cycle  racing)]  'kcr (kiyoshi cycle  racing)'×4 | 'kcr(kiyoshi cycle racing)'×3 | 'kcr(kiyoshicycleracing)'×2 | 'kcr(KiyoshiCycleRacing)'×1 | 'kcr (Kiyoshi Cycle Racing)'×1 | 'kcr (Kiyoshi cycle racing)'×1 | 'kcr (Kiyoshi  Cycle Racing)'×1 | 'kcr (kiyoshi cycle racing)'×1 | 'kcr （kiyoshi cycle racing)'×1
+  [BROTURES OSAKA]  'BROTURES OSAKA'×14 | 'BROTURESOSAKA'×1
+  [AX cycle cross team]  'AX cycle cross team'×8 | 'AX cyclecross team'×4 | 'AX cyclecrossteam'×2 | 'AX Cyclecross Team'×1
+  [FK]  'FK'×13 | 'F Ｋ'×2
+  [サイクルチーム「茶まる」]  'サイクルチーム「茶まる」'×14 | 'ｻｲｸﾙﾁｰﾑ｢茶まる｣'×1
+  [FROG喜多方サイクリングチーム]  'FROG喜多方サイクリングチーム'×14 | 'frog喜多方サイクリングチーム'×1
+  [3stacks]  '3stacks'×12 | '3STACKS'×2 | '３STACKS'×1
+  [taiki works]  'taiki works'×7 | 'taikiworks'×6 | 'Taiki works'×2
+  [違駄天/シケテルズ]  '違駄天/シケテルズ'×11 | '違駄天／シケテルズ'×3 | '違駄天/ｼｹﾃﾙｽﾞ'×1
+  [EMU / Bicycle Fellow]  'EMU / Bicycle Fellow'×6 | 'EMU/Bicycle Fellow'×5 | 'EMU/bicycle fellow'×1 | 'EMU/BicycleFellow'×1 | 'EMU/Bicyclefellow'×1 | 'EMU/Bicycle fellow'×1
+  [CC TOKYO]  'CC TOKYO'×11 | 'CCTOKYO'×3 | 'Cctokyo'×1
+  [LifeRide]  'LifeRide'×12 | 'Life Ride'×2
+  [NextStage]  'NextStage'×12 | 'NEXT STAGE'×1 | 'Next Stage'×1
+  [SKRK  Kyoto]  'SKRK  Kyoto'×12 | 'skrk kyoto'×1 | 'SKRK Kyoto'×1
+  [Piacere YAMA]  'Piacere YAMA'×5 | 'PiacereYama'×4 | 'Piacere Yama'×3 | 'PIACERE YAMA'×2
+  [kei's power!]  "kei's power!"×9 | "kei'spower!"×4 | "Kei's Power!"×1
+  [ナカガワAS・K'デザイン]  "ナカガワAS・K'デザイン"×11 | "ナカガワAS・K'ﾃﾞｻﾞｲﾝ"×2 | "ﾅｶｶﾞﾜAS･K'ﾃﾞｻﾞｲﾝ"×1
+  [presto racing]  'presto racing'×12 | 'PRESTO racing'×2
+  [D-RACING]  'D-RACING'×6 | 'D-Racing'×6 | 'D-racing'×2
+  [NUCC]  'NUCC'×13 | 'nucc'×1
+  [MARUICHI]  'MARUICHI'×7 | 'maruichi'×4 | 'Maruichi'×3
+  [SPEEDVAGEN X MAAP]  'SPEEDVAGEN X MAAP'×7 | 'Speedvagen X MAAP'×5 | 'SPEEDVAGEN x MAAP'×2
+  [lovespo.com]  'lovespo.com'×13 | 'Lovespo.com'×1
+  [niko bike factory]  'niko bike factory'×5 | 'NikoBikeFactory'×4 | 'niko  bike factory'×4 | 'nikobikefactory'×1
+  [ＢＯＮＢＯＮシクロクロス]  'ＢＯＮＢＯＮシクロクロス'×9 | 'BONBONシクロクロス'×2 | 'BonBonシクロクロス'×2 | 'BON BONシクロクロス'×1
+  [みやわかmtbクラブ]  'みやわかmtbクラブ'×11 | 'みやわかMTBｸﾗﾌﾞ'×2 | 'みやわかMTBクラブ'×1
+  [ButabakoTimingCompany]  'ButabakoTimingCompany'×9 | 'Butabako Timing Company'×5
+  [cycleborg@TAG]  'cycleborg@TAG'×10 | 'Cycleborg@TAG'×2 | 'cycleborg＠TAG'×2
+  [パールイズミＢ]  'パールイズミＢ'×10 | 'パールイズミB'×4
+  [PPP]  'PPP'×13 | 'PpP'×1
+  [CORSA Pelucchi]  'CORSA Pelucchi'×10 | 'CORSA\u3000Pelucchi'×4
+  [じてんしゃPit Pro 埼玉日高]  'じてんしゃPit Pro 埼玉日高'×7 | 'じてんしゃPit Pro\u3000埼玉日高'×5 | 'じてんしゃPit PRO 埼玉日高'×2
+  [LOKO RACING シクロ部]  'LOKO RACING シクロ部'×8 | 'LOKO Racing シクロ部'×6
+  [Sliverbacks CX Team]  'Sliverbacks CX Team'×11 | 'SliverBacks CX Team'×3
+  [Team YRS]  'Team YRS'×8 | 'Team  YRS'×6
+  [TeamWA! CXteam]  'TeamWA! CXteam'×7 | 'TeamWA! CXTeam'×2 | 'TeamWA!CXTeam'×2 | 'TeamWa! CXTeam'×1 | 'TeamWA! CX team'×1 | 'TeamWA! CX Team'×1
+  [SNIFF OUTDOOR  LIFE Racing]  'SNIFF OUTDOOR  LIFE Racing'×12 | 'SNIFF OUTDOORLIFE Racing'×2
+  [毒キノコ連合/C2F!!]  '毒キノコ連合/C2F!!'×7 | '毒キノコ連合 / C2F!!'×4 | '毒キノコ連合／C2F!!'×3
+  [BUCYOCOFFEE/URBANDEER]  'BUCYOCOFFEE/URBANDEER'×13 | 'BUCYO COFFEE/Urban Deer'×1
+  [662CCC / CANNONDALE]  '662CCC / CANNONDALE'×11 | '662CCC/cannondale'×2 | '662CCC/CANNONDALE'×1
+  [さといち／関東シングルスピード同好会]  'さといち／関東シングルスピード同好会'×8 | 'さといち/関東シングルスピード同好会'×6
+  [HMK-DESIGN]  'HMK-DESIGN'×13 | 'HMK-DESiGN'×1
+  [EVO cycling club]  'EVO cycling club'×12 | 'EVO Cycling Club'×2
+  [/slash Cinelli-Vision]  '/slash Cinelli-Vision'×8 | '/slash Cinelli - Vision'×5 | '/slash  Cinelli - Vision'×1
+  [LEVANTE HOPE]  'LEVANTE HOPE'×13 | 'LEVANTEHOPE'×1
+  [DRAGONLING/SWAG CLUB]  'DRAGONLING/SWAG CLUB'×9 | 'DRAGONLING/SWAGCLUB'×2 | 'DRAGON LING/SWAG CLUB'×2 | 'DRAGONLING / SWAGCLUB'×1
+  [livestrong]  'livestrong'×13 | 'LIVESTRONG'×1
+  [CSKRacingClub]  'CSKRacingClub'×10 | 'CSK Racing Club'×3
+  [S.D.L  YAMAHA]  'S.D.L  YAMAHA'×7 | 'S.D.L YAMAHA'×4 | 'Ｓ．Ｄ．Ｌ\u3000ＹＡＭＡＨＡ'×2
+  [Green SCT]  'Green SCT'×12 | 'GreenSCT'×1
+  [orz racing]  'orz racing'×11 | 'orz Racing'×2
+  [FRITEN]  'FRITEN'×10 | 'Friten'×2 | 'friten'×1
+  [トンデモクラブ金沢 & のむラボ]  'トンデモクラブ金沢 & のむラボ'×10 | 'トンデモクラブ金沢＆のむラボ'×2 | 'トンデモクラブ金沢&のむラボ'×1
+  [CUORE]  'CUORE'×9 | 'cuore'×3 | 'Cuore'×1
+  [LEGON グラベル部]  'LEGON グラベル部'×10 | 'LEGONグラベル部'×3
+  [Utsunomiya Blitzen]  'Utsunomiya Blitzen'×9 | 'UTSUNOMIYA BLITZEN'×4
+  [daranneike 白山CXレーシング]  'daranneike 白山CXレーシング'×5 | 'daranneike白山CXレーシング'×4 | 'Daranneike白山ＣＸレーシング'×4
+  [TEAM QMAX]  'TEAM QMAX'×12 | 'TEAMQMAX'×1
+  [#ﾁｬﾝﾈﾙ]  '#ﾁｬﾝﾈﾙ'×6 | '＃チャンネル'×4 | '#チャンネル'×3
+  [ホネつき数珠'Sは劇団です]  "ホネつき数珠'Sは劇団です"×11 | "ﾎﾈつき数珠'Sは劇団です"×1 | "ホネつき数珠'sは劇団です"×1
+  [サンクスサイクルラボ　西葛西店]  'サンクスサイクルラボ\u3000西葛西店'×9 | 'サンクスサイクルラボ西葛西店'×4
+  [coolvelo]  'coolvelo'×7 | 'cool velo'×4 | 'CoolVelo'×2
+  [SkyHighCX]  'SkyHighCX'×7 | 'SkyHigh CX'×3 | 'Sky High CX'×2 | 'Sky HighCX'×1
+  [CHEEKY BIKING]  'CHEEKY BIKING'×12 | 'CHEEKYBIKING'×1
+  [Team ELMO]  'Team ELMO'×10 | 'team ELMO'×3
+  [ディレイラ ブリュー ワークス]  'ディレイラ ブリュー ワークス'×9 | 'ディレイラブリューワークス'×4
+  [Project K@2]  'Project K@2'×12 | 'project k@2'×1
+  [Trailer Park Racing]  'Trailer Park Racing'×10 | 'TRAILER PARK RACING'×3
+  [東洋大学自転車愛好会]  '東洋大学自転車愛好会'×11 | '東洋大学 自転車愛好会'×2
+  [team WAKO'S]  "team WAKO'S"×9 | "teamWAKO'S"×3 | "Team WAKO'S"×1
+  [Cycle team 一番★星]  'Cycle team 一番★星'×7 | 'Cycle Team 一番★星'×6
+  [#1-PRIMERA-]  '#1-PRIMERA-'×10 | '#1 -PRIMERA-'×2 | '＃1-PRIMERA-'×1
+  [GENKIスポーツクラブ]  'GENKIスポーツクラブ'×12 | 'GENKIｽﾎﾟｰﾂｸﾗﾌﾞ'×1
+  [QBEI sports]  'QBEI sports'×12 | 'QBEIsports'×1
+  [O4＋]  'O4＋'×11 | 'O4+'×1 | 'Ｏ4＋'×1
+  [SHORO,s/MCC]  'SHORO,s/MCC'×9 | 'SHORO,S/MCC'×4
+  [042SYSDICATE]  '042SYSDICATE'×8 | '042 SYSDICATE'×5
+  [オンザロード泥鍛錬部]  'オンザロード泥鍛錬部'×12 | 'オンザロード\u3000泥鍛錬部'×1
+  [グロータック 3段変速部]  'グロータック 3段変速部'×9 | 'グロータック\u30003段変速部'×4
+  [KINAN RacingTeam]  'KINAN RacingTeam'×7 | 'KINAN Racing Team'×6
+  [Club SY-Nak/48PRODUCT]  'Club SY-Nak/48PRODUCT'×5 | 'Club SY-Nak / 48PRODUCT'×4 | 'Club SY-Nak/ 48 product'×2 | 'Club SY-Nak/48 Product'×1 | 'Club SY-Nak/ 48PRODUCT'×1
+  [往生際が悪いんですっ!]  '往生際が悪いんですっ!'×10 | '往生際が悪いんですっ！'×3
+  [アクシス　シクロクロスチーム]  'アクシス\u3000シクロクロスチーム'×12 | 'アクシスシクロクロスチーム'×1
+  [SET Forward]  'SET Forward'×12 | 'Set Forward'×1
+  [TEAM406]  'TEAM406'×12 | 'Team406'×1
+  [SNG/BASILISCUS]  'SNG/BASILISCUS'×11 | 'SNG/Basiliscus'×2
+  [RICE ON!!]  'RICE ON!!'×9 | 'Rice on!!'×4
+  [Mazak OCC]  'Mazak OCC'×9 | 'MAZAK OCC'×3 | 'MazakOCC'×1
+  [Kani-Base]  'Kani-Base'×6 | 'kani-base'×4 | 'Kani-base'×3
+  [glocal bike/Pupha]  'glocal bike/Pupha'×10 | 'Glocalbike/pupha'×1 | 'Glocalbike /Pupha'×1 | 'glocal bike/pupha'×1
+  [RX&Co.]  'RX&Co.'×9 | 'Rx&CO.'×4
+  [Astemo宇都宮ブリッツェン]  'Astemo宇都宮ブリッツェン'×8 | 'Astemo 宇都宮ブリッツェン'×5
+  [STARE]  'STARE'×11 | 'stare'×1
+  [トンデモクラブ金沢withCS加賀]  'トンデモクラブ金沢withCS加賀'×11 | 'トンデモクラブ金沢 with CS加賀'×1
+  [B.SMOVEMENT]  'B.SMOVEMENT'×10 | 'B.S MOVEMENT'×2
+  [ReadySteadyGo!]  'ReadySteadyGo!'×10 | 'Ready Steady Go!'×1 | 'Ready Steady Go！'×1
+  [WildBoars OTR]  'WildBoars OTR'×9 | 'WildBoarsOTR'×3
+  [Rising Heart Racing]  'Rising Heart Racing'×7 | 'RISING HEART Racing'×5
+  [TEAM SPORT KID]  'TEAM SPORT KID'×10 | 'TEAMSPORTKID'×2
+  [TSEC]  'TSEC'×5 | 'ＴＳＥＣ'×5 | 'tsec'×2
+  [TUCC]  'TUCC'×7 | 'tucc'×5
+  [Team TOC]  'Team TOC'×8 | 'TeamTOC'×4
+  [（有）村上建具工房ハイランダー]  '（有）村上建具工房ハイランダー'×10 | '(有)村上建具\u3000工房ハイランダー'×1 | '(有)村上建具工房ハイランダー'×1
+  [バイクルームシンMOMO]  'バイクルームシンMOMO'×6 | 'ﾊﾞｲｸﾙｰﾑｼﾝMOMO'×6
+  [YATSUGATAKE CX Club/八ヶ岳CYCLOCROSSCLUB]  'YATSUGATAKE CX Club/八ヶ岳CYCLOCROSSCLUB'×6 | 'Yatsugatake CX Club/八ヶ岳CYCLOCROSS CLUB'×6
+  [KANKO GUMI]  'KANKO GUMI'×7 | 'KANKOGUMI'×3 | 'ＫＡＮＫＯ\u3000ＧＵＭＩ'×1 | 'Kankogumi'×1
+  [Team long tail]  'Team long tail'×7 | 'TeamLongtail'×5
+  [高知工科大学サイクリング部]  '高知工科大学サイクリング部'×9 | '高知工科大学\u3000サイクリング部'×1 | '高知工科大学ｻｲｸﾘﾝｸﾞ部'×1 | '高知工科大学\u3000ｻｲｸﾘﾝｸﾞ部'×1
+  [THCREW CXTEAM]  'THCREW CXTEAM'×10 | 'THCREW CX TEAM'×2
+  [WAVEONE TEST TEAM]  'WAVEONE TEST TEAM'×10 | 'WAVE ONE TEST TEAM'×2
+  [マッドスポークス]  'マッドスポークス'×9 | 'マッド\u3000スポークス'×2 | 'マッド スポークス'×1
+  [azzring]  'azzring'×7 | 'Azzring'×5
+  [BONBON シクロクロスチーム]  'BONBON シクロクロスチーム'×10 | 'BonBonシクロクロスチーム'×2
+  [チームシロッコ]  'チームシロッコ'×9 | 'チーム\u3000シロッコ'×3
+  [BENTENDO CYCLING TEAM]  'BENTENDO CYCLING TEAM'×9 | 'BENTENDOCYCLINGTEAM'×2 | 'Bentendo cycling team'×1
+  [Club La sista Offroad Team]  'Club La sista Offroad Team'×9 | 'Club Lasista Offroad Team'×1 | 'ClubLasistaOffroadTeam'×1 | 'Club la sista offroad team'×1
+  [COOKIE AND BEER DREAM CHILDS]  'COOKIE AND BEER DREAM CHILDS'×11 | 'Cookie and Beer Dream Childs'×1
+  [アルプス工業CCC]  'アルプス工業CCC'×10 | 'アルプス工業ccc'×2
+  [TeamWA!]  'TeamWA!'×11 | 'teamWA!'×1
+  [MULLER]  'MULLER'×11 | 'Muller'×1
+  [Akita Cycling Academy]  'Akita Cycling Academy'×7 | 'AKITA CYCLING ACADEMY'×5
+  [CCC]  'CCC'×11 | 'ccc'×1
+  [Igname Cross]  'Igname Cross'×11 | 'Igname\u3000Cross'×1
+  [Daikin Racing / シケテルズ]  'Daikin Racing / シケテルズ'×9 | 'DaikinRacing／シケテルズ'×1 | 'DaikinRacing/シケテルズ'×1 | 'DaikinRacing / シケテルズ'×1
+  [Ride Mashun SPECIALIZED]  'Ride Mashun SPECIALIZED'×6 | 'RIDE MASHUN SPECIALIZED'×6
+  [ZERO to TOP/Team36Cycling]  'ZERO to TOP/Team36Cycling'×11 | 'ZERO to TOP/Team36cycling'×1
+  [東海大学 BOMBERS]  '東海大学 BOMBERS'×8 | '東海大学BOMBERS'×2 | '東海大学\u3000BOMBERS'×2
+  [ZERO to TOP/EMU]  'ZERO to TOP/EMU'×10 | 'ZerotoTOP/EMU'×2
+  [NOWCYCLE CX部]  'NOWCYCLE CX部'×9 | 'NOW CYCLE CX部'×2 | 'NOWCYCLECX部'×1
+  [KERMIS CROSS]  'KERMIS CROSS'×7 | 'kermis cross'×5
+  [SALUTE Project　川越]  'SALUTE Project\u3000川越'×5 | 'SALUTE project川越'×3 | 'SALUTE Project川越'×2 | 'SALUTEproject川越'×1 | 'SALUTE Project 川越'×1
+  [Positivo]  'Positivo'×10 | 'POSITIVO'×2
+  [Lifeグラベル部]  'Lifeグラベル部'×11 | 'LIFEグラベル部'×1
+  [MUD lovers TEAM K]  'MUD lovers TEAM K'×8 | 'MUD lovers teamK'×2 | 'MUD lovers team K'×2
+  [だらんねけ白山CX/ NICO-OZ]  'だらんねけ白山CX/ NICO-OZ'×8 | 'だらんねけ白山CX /NICO-OZ'×4
+  [AULIUS]  'AULIUS'×11 | 'Aulius'×1
+  [Markhor cafe]  'Markhor cafe'×11 | 'markhor cafe'×1
+  [TEAM ロマンス]  'TEAM ロマンス'×11 | 'Team ロマンス'×1
+  [HOTFLASH]  'HOTFLASH'×10 | 'HOT FLASH'×1
+  [RINGOROADRACING]  'RINGOROADRACING'×10 | 'RINGO ROAD RACING'×1
+  [Team NCC CX]  'Team NCC CX'×8 | 'team NCC CX'×3
+  [DoroKID TSUKUBA]  'DoroKID TSUKUBA'×8 | 'Doro KID TSUKUBA'×3
+  [KAMIHAGI]  'KAMIHAGI'×9 | 'kamihagi'×2
+  [team12so]  'team12so'×5 | 'Team12so'×4 | 'TEAM 12SO'×1 | 'Team 12so'×1
+  [VOLCAｵｰﾄﾞﾋﾞｰBOMA・UVEX]  'VOLCAｵｰﾄﾞﾋﾞｰBOMA・UVEX'×9 | 'VOLCAオードビーBOMA・UVEX'×2
+  [Night ride]  'Night ride'×10 | 'Night Ride'×1
+  [Team decoja]  'Team decoja'×6 | 'team decoja'×2 | 'Team Decoja'×2 | 'TEAMDECOJA'×1
+  [Team DRONE]  'Team DRONE'×6 | 'TEAM DRONE'×5
+  [Team宝塚線]  'Team宝塚線'×7 | 'TEAM宝塚線'×3 | 'ＴＥＡＭ宝塚線'×1
+  [ミニットマン]  'ミニットマン'×10 | 'ﾐﾆｯﾄﾏﾝ'×1
+  [2024Limited846/Teamスクアドラ]  '2024Limited846/Teamスクアドラ'×7 | '2024limited846/Teamスクアドラ'×3 | '2024limited846/Teamｽｸｱﾄﾞﾗ'×1
+  [Team Naben]  'Team Naben'×8 | 'Team NABEN'×2 | 'TeamNaben'×1
+  [WAKO'S RACING TEAM]  "WAKO'S RACING TEAM"×9 | "WAKO'SRACINGTEAM"×2
+  [BIKETOWN]  'BIKETOWN'×10 | 'BIKE TOWN'×1
+  [Euro Works]  'Euro Works'×5 | 'EuroWorks'×4 | 'Euro  Works'×1 | 'Euro   Works'×1
+  [Suisitu]  'Suisitu'×8 | 'suisitu'×3
+  [North F' Wheelie]  "North F' Wheelie"×5 | "North F' wheelie"×4 | "NORTH F' WHEELIE"×2
+  [SOLDOUT! / WINDSBIKES]  'SOLDOUT! / WINDSBIKES'×7 | 'SOLDOUT！/ WINDSBIKES'×2 | 'SOLDOUT! /WINDSBIKES'×1 | 'SOLDOUT！／WINDSBIKES'×1
+  [C-WASPアタリ前田]  'C-WASPアタリ前田'×10 | 'C-WASP アタリ前田'×1
+  [Stanton bikes]  'Stanton bikes'×6 | 'Stanton Bikes'×4 | 'STANTON Bikes'×1
+  [BOMA/ROND BICYCLE]  'BOMA/ROND BICYCLE'×6 | 'BOMA/ROND\u3000BICYCLE'×5
+  [39’s Racing Club]  '39’s Racing Club'×6 | '39’s\u3000Racing Club'×5
+  [ShimanoDrinking]  'ShimanoDrinking'×4 | 'SHIMANO DRINKING'×4 | 'Shimano Drinking'×3
+  [662CCC/FUKAYA/リンゴロード]  '662CCC/FUKAYA/リンゴロード'×10 | '662ccc/FUKAYA/リンゴロード'×1
+  [Teaｍ RingoRoad/木津南中学校]  'Teaｍ RingoRoad/木津南中学校'×10 | 'Team RingoRoad/木津南中学校'×1
+  [回転木馬/Limited Team 846]  '回転木馬/Limited Team 846'×7 | '回転木馬/LimitedTeam846'×4
+  [Kage Bikes]  'Kage Bikes'×6 | 'KAGEBIKES'×2 | 'Kagebikes'×1 | 'kagebikes'×1 | 'KAGE BIKES'×1
+  [CORSA VITA]  'CORSA VITA'×6 | 'corsa vita'×4 | 'Corsa vita'×1
+  [エンシェア]  'エンシェア'×8 | 'ｴﾝｼｪｱ'×3
+  [２ｘ２ Ｒ]  '２ｘ２ Ｒ'×10 | '２x２ Ｒ'×1
+  [Team回転木馬]  'Team回転木馬'×9 | 'team回転木馬'×2
+  [rapha c.c.]  'rapha c.c.'×7 | 'rapha  c.c.'×4
+  [ドM組合.おcx/BIBA BIKES JAPAN]  'ドM組合.おcx/BIBA BIKES JAPAN'×7 | 'ドM組合．おcx/BIBA BIKES JAPAN'×4
+  [アルプス工業　シクロクロス部]  'アルプス工業\u3000シクロクロス部'×8 | 'アルプス工業シクロクロス部'×3
+  [TRAILBLAZER/GSJ-CX]  'TRAILBLAZER/GSJ-CX'×6 | 'TRAILBLAZER / GSJ-CX'×5
+  [（・囚・）]  '（・囚・）'×10 | '(・囚・)'×1
+  [Team ヴェレール with EXLUB]  'Team ヴェレール with EXLUB'×10 | 'Team ヴェレール\u3000ｗｉｔｈ\u3000ＥＸＬＵＢ'×1
+  [Sonic Racing/SRAM]  'Sonic Racing/SRAM'×10 | 'SonicRacing/SRAM'×1
+  [sheg]  'sheg'×6 | 'SHEG'×5
+  [cycling gym]  'cycling gym'×8 | 'Cycling Gym'×2 | 'CyclingGym'×1
+  [glocal bike/RCC]  'glocal bike/RCC'×7 | 'glocal bike / RCC'×2 | 'glocalbike/RCC'×1 | 'GlocalBike/RCC'×1
+  [Panaracer CX Team]  'Panaracer CX Team'×9 | 'PanaracerCXTeam'×2
+  [BICICLETTA DI MARU]  'BICICLETTA DI MARU'×10 | 'B I C I CＬEＴＴA   Ｄ I   M A RＵ'×1
+  [往生際が悪いんですっ。]  '往生際が悪いんですっ。'×8 | '往生際が悪いんですっ｡'×3
+  [チーム マリア・ローザ]  'チーム マリア・ローザ'×6 | 'チームマリア・ローザ'×4 | 'チーム\u3000マリア・ローザ'×1
+  [Gnome CX]  'Gnome CX'×10 | 'GnomeCX'×1
+  [ご支援に感謝＆F(t)]  'ご支援に感謝＆F(t)'×8 | 'ご支援に感謝&F(t)'×3
+  [CycleRoad YAO]  'CycleRoad YAO'×6 | 'Cycle Road Yao'×3 | 'Cycleroad Yao'×2
+  [GRANARY BIKES/T&K]  'GRANARY BIKES/T&K'×10 | 'granarybikes/T&K'×1
+  [COWGUMMA CX/東洋大学]  'COWGUMMA CX/東洋大学'×9 | 'COWGUMMACX/東洋大学'×2
+  [TEAM HATO★SUN]  'TEAM HATO★SUN'×9 | 'Team HATO★SUN'×1
+  [Team Dirty Wheels]  'Team Dirty Wheels'×9 | 'TeamDirtyWheels'×1
+  [CLT BUCYO COFFEE]  'CLT BUCYO COFFEE'×9 | 'CLTBUCYOCOFFEE'×1
+  [ｼﾐｽﾞｻｲｸﾙ]  'ｼﾐｽﾞｻｲｸﾙ'×7 | 'シミズサイクル'×3
+  [Lemonade Bellmare Racing Team]  'Lemonade Bellmare Racing Team'×9 | 'Lemonade Bellmare RacingTeam'×1
+  [Team Toyo Frame]  'Team Toyo Frame'×6 | 'TeamToyoFrame'×4
+  [ASSO RACING]  'ASSO RACING'×8 | 'ASSO\u3000RACING'×1 | 'asso racing'×1
+  [Hamster Spin]  'Hamster Spin'×8 | 'Hamsterspin'×2
+  [サイクルロード８]  'サイクルロード８'×8 | 'サイクルロード8'×2
+  [CORNER]  'CORNER'×5 | 'corner'×5
+  [Sakura Bike Store]  'Sakura Bike Store'×6 | 'Sakura BikeStore'×2 | 'SAKURA Bike Store'×2
+  [champion system test team]  'champion system test team'×6 | 'Champion System Test Team'×4
+  [FOCUS JAPAN]  'FOCUS JAPAN'×6 | 'FOCUS Japan'×3 | 'FOCUSJapan'×1
+  [NAKED HORSE CYCLE TEAM]  'NAKED HORSE CYCLE TEAM'×3 | 'Naked Horse Cycle Team'×3 | 'Naked horse cycle team'×2 | 'nakedhorsecycleteam'×1 | 'NAKED HORSE CYCLE  TEAM'×1
+  [blue line]  'blue line'×6 | 'blueline'×3 | 'Blue Line'×1
+  [Melody Punch]  'Melody Punch'×8 | 'MELODYPUNCH'×2
+  [SHIDO WORKS]  'SHIDO WORKS'×9 | 'SHIDOworks'×1
+  [TeamFuncycle]  'TeamFuncycle'×5 | 'Team Funcycle'×2 | 'Team FunCycle'×2 | 'Team Fun Cycle'×1
+  [スミタエイダイパールイズミラバネロ]  'スミタエイダイパールイズミラバネロ'×9 | 'スミタ エイダイ パールイズミ ラバネロ'×1
+  [TeamまるいちMTB]  'TeamまるいちMTB'×9 | 'TEAMまるいちMTB'×1
+  [Wirbelwind]  'Wirbelwind'×9 | 'WIRBELWIND'×1
+  [セオレーシング+NESTO]  'セオレーシング+NESTO'×9 | 'セオレーシング+ NESTO'×1
+  [RC:shirahama]  'RC:shirahama'×9 | 'RC:Shirahama'×1
+  [PROJECT-Y]  'PROJECT-Y'×9 | 'Project-Y'×1
+  [A&N]  'A&N'×8 | 'A＆N'×1 | 'Ａ＆N'×1
+  [FlatRoadLovers]  'FlatRoadLovers'×6 | 'Flat Road Lovers'×4
+  [宗像トライアスロンクラブ]  '宗像トライアスロンクラブ'×9 | '宗像ﾄﾗｲｱｽﾛﾝｸﾗﾌﾞ'×1
+  [Team RingoRoad/田辺高校]  'Team RingoRoad/田辺高校'×8 | 'Team RingoRoad /田辺高校'×2
+  [Niconico-Works-Racing]  'Niconico-Works-Racing'×8 | 'niconico-works-racing'×2
+  [チーム　モデナ]  'チーム\u3000モデナ'×7 | 'チーム モデナ'×2 | 'チームモデナ'×1
+  [Rise-Ride Club]  'Rise-Ride Club'×9 | 'Rise-Ride CLUB'×1
+  [０５３０７１１]  '０５３０７１１'×9 | '0530711'×1
+  [アスリチューン・コラッジョU19]  'アスリチューン・コラッジョU19'×9 | 'アスリチューン・コラッジョＵ１９'×1
+  [GOOD CONDISION]  'GOOD CONDISION'×9 | 'GOODCONDISION'×1
+  [ダランネーケ白山ＣＸ−NONDEMO]  'ダランネーケ白山ＣＸ−NONDEMO'×8 | 'ダランネーケ白山ＣＸ−ＮＯＮＤＥＭＯ'×2
+  [京都MTB朝ライド/The☆whoo CX]  '京都MTB朝ライド/The☆whoo CX'×7 | '京都MTB朝ライド/The☆whoo cx'×1 | '京都MTB朝ライド/The☆whooCX'×1 | '京都MTB朝ライド/The☆whoocx'×1
+  [EURO-WORKS Racing P塾/HZM]  'EURO-WORKS Racing P塾/HZM'×9 | 'EURO-WORKSRacingP塾/HZM'×1
+  [AVA/RCC]  'AVA/RCC'×6 | 'AVA /RCC'×4
+  [Team MODENA 唐揚げ担当]  'Team MODENA 唐揚げ担当'×8 | 'TEAM MODENA 唐揚げ担当'×2
+  [Bicycle Academy]  'Bicycle Academy'×9 | 'bicycle academy'×1
+  [HADANO CX team]  'HADANO CX team'×7 | 'HADANO cx team'×3
+  [springwind230]  'springwind230'×4 | 'springwind 230'×3 | 'SpringWind230'×2 | 'SpringWind 230'×1
+  [チームスカイキョウト]  'チームスカイキョウト'×5 | 'チーム\u3000スカイ\u3000キョウト'×5
+  [Sofer Savini due OMZ]  'Sofer Savini due OMZ'×6 | 'Sofer Savini Due OMZ'×4
+  [Team Homebike]  'Team Homebike'×9 | 'TEAM HOMEBIKE'×1
+  [BMレーシング インドカレーサーラ]  'BMレーシング インドカレーサーラ'×5 | 'BMレーシング\u3000インドカレーサーラ'×4 | 'BM レーシング\u3000インドカレーサーラ'×1
+  [BICI AMORE RACING CLUB]  'BICI AMORE RACING CLUB'×8 | 'BICIAMORE RACING CLUB'×2
+  [RSR Windy]  'RSR Windy'×4 | 'RSR windy'×3 | 'RSR WINDY'×2 | 'RSRWindy'×1
+  [サロン　フラムルージュ]  'サロン\u3000フラムルージュ'×5 | 'サロン フラムルージュ'×5
+  [Asia Union TCS Racing Team]  'Asia Union TCS Racing Team'×9 | 'AsiaUnionTCSRacingTeam'×1
+  [Team 光]  'Team 光'×6 | 'team光'×2 | 'team 光'×2
+  [Team Y's Road]  "Team Y's Road"×8 | "TEAM Y'SROAD"×1
+  [白山CXレーシングTDC]  '白山CXレーシングTDC'×8 | '白山ＣＸレーシングTDC'×1
+  [soleildelest]  'soleildelest'×6 | 'soleil de lest'×2 | 'Soleil de lest'×1
+  [Team Daddy]  'Team Daddy'×5 | 'Team DADDY'×3 | 'team daddy'×1
+  [asibinaa]  'asibinaa'×4 | 'Asibinaa'×3 | 'ASIBINAA'×2
+  [HARP Racing Club]  'HARP Racing Club'×8 | 'HARPRacingClub'×1
+  [Bonappetit]  'Bonappetit'×5 | 'Bon appetit'×3 | 'bon appetit'×1
+  [チームオーベスト]  'チームオーベスト'×8 | 'チーム\u3000オーベスト'×1
+  [YATSUGATAKE CYCLOCROSS CLUB]  'YATSUGATAKE CYCLOCROSS CLUB'×4 | 'YatsugatakeCyclocrossClub'×2 | 'YATSUGATAKE  CYCLOCROSSCLUB'×2 | 'Yatsugatake Cyclocross Club'×1
+  [HottSpin]  'HottSpin'×4 | 'HOTT   SPIN'×3 | 'HOTTSPIN'×1 | 'HOTT SPIN'×1
+  [Team Nasso]  'Team Nasso'×6 | 'team nasso'×2 | 'Team\u3000Nasso'×1
+  [20i Cycle Unit]  '20i Cycle Unit'×5 | '20i cycle unit'×4
+  [カミハギAC]  'カミハギAC'×8 | 'カミハギＡＣ'×1
+  [Mashun Racing]  'Mashun Racing'×7 | 'MASHUN RACING'×1 | 'mashun racing'×1
+  [c viento]  'c viento'×6 | 'C viento'×2 | 'cviento'×1
+  [Y's road CX]  "Y's road CX"×8 | "Y's Road CX"×1
+  [みしょにょBOMBERS]  'みしょにょBOMBERS'×6 | 'みしょにょ Bombers'×2 | 'みしょにょBombers'×1
+  [たかだフレンドレーシング]  'たかだフレンドレーシング'×8 | 'たかだﾌﾚﾝﾄﾞﾚｰｼﾝｸﾞ'×1
+  [サイクルショップマティーノ]  'サイクルショップマティーノ'×7 | 'サイクルショップ マティーノ'×2
+  [OCCX Minami]  'OCCX Minami'×8 | 'occx minami'×1
+  [25LAS BICYCLE WORKS/BLACK SOX BICYCLE CLUB/TRACK BIKE UNION]  '25LAS BICYCLE WORKS/BLACK SOX BICYCLE CLUB/TRACK BIKE UNION'×8 | '25LAS BICYCLE WORKS / BLACK SOX BICYCLE CLUB / TRACK BIKE UNION'×1
+  [MMCYシクロクロスチーム]  'MMCYシクロクロスチーム'×7 | 'MMCY シクロクロスチーム'×2
+  [ブリッツェンステラ]  'ブリッツェンステラ'×6 | 'ブリッツェン ステラ'×3
+  [LumiereKOBE]  'LumiereKOBE'×6 | 'Lumiere KOBE'×3
+  [TeamGUMBOHiroshima]  'TeamGUMBOHiroshima'×3 | 'TEAM GUMBO HIROSHIMA'×3 | 'Team GUMBO Hiroshima'×3
+  [Taperedclub]  'Taperedclub'×6 | 'Tapered club'×2 | 'TaperedClub'×1
+  [Cielo sim-works CXteam]  'Cielo sim-works CXteam'×8 | 'Cielosim-worksCXTEAM'×1
+  [伊那北高校/ボンシャンス]  '伊那北高校/ボンシャンス'×8 | '伊那北高校／ボンシャンス'×1
+  [SAKUWA RACING]  'SAKUWA RACING'×7 | 'SAKUWARACING'×2
+  [MK�｡]  'MK�｡'×8 | 'mk�｡'×1
+  [Limited Team 846/KURE]  'Limited Team 846/KURE'×6 | 'LimitedTeam846/KURE'×2 | 'Limited Team846/KURE'×1
+  [AC KANI シックボーイズ]  'AC KANI シックボーイズ'×8 | 'AC \u3000KANI\u3000シックボーイズ'×1
+  [トラクタRC]  'トラクタRC'×6 | 'トラクタＲＣ'×3
+  [Tsport]  'Tsport'×8 | 'TSport'×1
+  [Bonne Chance ACA]  'Bonne Chance ACA'×4 | 'BonnechanceACA'×3 | 'BonneChance ACA'×2
+  [今日も押しますs]  '今日も押しますs'×8 | '今日も押しますｓ'×1
+  [CX TEAM SAKAI]  'CX TEAM SAKAI'×8 | 'CX team SAKAI'×1
+  [BonneChance Asia Cycling Academy]  'BonneChance Asia Cycling Academy'×8 | 'BonneChanceAsiaCyclingAcademy'×1
+  [SUBARU Cycling Club]  'SUBARU Cycling Club'×7 | 'subarucyclingclub'×1 | 'SUBARU Cycling  Club'×1
+  [Y’sRoad]  'Y’sRoad'×3 | 'Y’s road'×3 | 'Y’s Road'×2 | 'Y’sROAD'×1
+  [AXIS CX]  'AXIS CX'×8 | 'AXISCX'×1
+  [DEF Touring]  'DEF Touring'×7 | 'DEFTouring'×1 | 'DEF  Touring'×1
+  [万世橋アノーズ]  '万世橋アノーズ'×8 | '万世橋ｱﾉｰｽﾞ'×1
+  [Avenir Cycling Yamanashi]  'Avenir Cycling Yamanashi'×4 | 'avenir cycling yamanashi'×3 | 'AvenirCyclingYamanashi'×1 | 'Avenir cycling Yamanashi'×1
+  [チームFunCycle]  'チームFunCycle'×7 | 'ﾁｰﾑFunCycle'×2
+  [シモーネ & Silverbacks CX Team]  'シモーネ & Silverbacks CX Team'×5 | 'シモーネ&Silverbacks cx team'×3 | 'シモーネ &Silverbacks CX Team'×1
+  [KAWAKUBO COFFEE]  'KAWAKUBO COFFEE'×4 | 'Kawakubo coffee'×3 | 'KAWAKUBOCOFFEE'×2
+  [TAMACOPPI]  'TAMACOPPI'×4 | 'TAMA COPPI'×3 | 'TAMA coppi'×2
+  [/slash - PINARELLO]  '/slash - PINARELLO'×8 | '/slash-PINARELLO'×1
+  [矢島工務店　京都MTB朝ライド]  '矢島工務店\u3000京都MTB朝ライド'×6 | '矢島工務店 京都MTB朝ライド'×3
+  [Un Authorized]  'Un Authorized'×5 | 'UnAuthorized'×4
+  [TEAMVIT]  'TEAMVIT'×7 | 'TEAM  VIT'×1
+  [プレーゴ]  'プレーゴ'×7 | 'プレーゴ'×1
+  [FORZA・YONEX]  'FORZA・YONEX'×7 | 'FORZA･YONEX'×1
+  [ＯＫ牧場]  'ＯＫ牧場'×6 | 'OK牧場'×2
+  [Mon Vieux Igname]  'Mon Vieux Igname'×6 | 'MonVieuxIgname'×2
+  [ALL-CITY JAPAN / 662CCC]  'ALL-CITY JAPAN / 662CCC'×6 | 'ALL-CITYJAPAN/662CCC'×2
+  [パインヒルズ '90]  "パインヒルズ '90"×4 | "パインヒルズ'90"×4
+  [Tothesun]  'Tothesun'×5 | 'To the sun'×3
+  [Team K]  'Team K'×6 | 'TeamK'×2
+  [L,ottimo]  'L,ottimo'×5 | 'l,ottimo'×3
+  [TEAM SHIOKAZE]  'TEAM SHIOKAZE'×3 | 'Team Shiokaze'×3 | 'TEAMSHIOKAZE'×2
+  [TRCパナマレッズ]  'TRCパナマレッズ'×5 | 'TRC パナマレッズ'×3
+  [株式会社　井上自工]  '株式会社\u3000井上自工'×6 | '株式会社 井上自工'×2
+  [TEAM410G]  'TEAM410G'×5 | 'TEAM 410G'×3
+  [Wing It]  'Wing It'×5 | 'wing it'×3
+  [Team Cavarieli]  'Team Cavarieli'×5 | 'team cavarieli'×2 | 'Team cavarieli'×1
+  [RCC OSAKA]  'RCC OSAKA'×6 | 'RCCOSAKA'×2
+  [テック]  'テック'×7 | 'ﾃｯｸ'×1
+  [TEAM- GIRO- CX]  'TEAM- GIRO- CX'×3 | 'TEAM-GIRO-CX'×2 | 'Team-giro-cx'×2 | 'team-giro-cx'×1
+  [Team UKYO Reve]  'Team UKYO Reve'×3 | 'TeamUKYO Reve'×3 | 'TeamUKYOReve'×2
+  [Blue Grass Racing]  'Blue Grass Racing'×4 | 'BlueGrassRacing'×3 | 'BlueGrass Racing'×1
+  [アミーゴ倉敷]  'アミーゴ倉敷'×7 | 'ｱﾐｰｺﾞ倉敷'×1
+  [oochiali]  'oochiali'×7 | 'OOCHIALI'×1
+  [A-pad]  'A-pad'×5 | 'A-Pad'×3
+  [オリーブサイクル]  'オリーブサイクル'×7 | 'ｵﾘｰﾌﾞｻｲｸﾙ'×1
+  [神奈川工科大学自転車部]  '神奈川工科大学自転車部'×4 | '神奈川工科大学 自転車部'×4
+  [TEAM WAVE]  'TEAM WAVE'×4 | 'teamwave'×2 | 'TEAMWAVE'×1 | 'Team WAVE'×1
+  [hoo's planning]  "hoo's planning"×6 | "hoo'splanning"×1 | "hoo's  planning"×1
+  [サンクスサイクルラボ西葛西]  'サンクスサイクルラボ西葛西'×7 | 'サンクスサイクルラボ\u3000西葛西'×1
+  [Shoro’s]  'Shoro’s'×7 | 'shoro’s'×1
+  [Bon Bon Cyclocross]  'Bon Bon Cyclocross'×6 | 'BonBonCyclocross'×2
+  [Torstone Technology]  'Torstone Technology'×5 | 'TORSTONE TECHNOLOGY'×3
+  [Se:loli racing]  'Se:loli racing'×4 | 'Se:loli Racing'×4
+  [Cycle ZERO]  'Cycle ZERO'×3 | 'CycleZERO'×2 | 'CYCLE ZERO'×2 | 'CYCLEZERO'×1
+  [関市CX同好会]  '関市CX同好会'×7 | '関市ＣＸ同好会'×1
+  [BikePortRacingTeam]  'BikePortRacingTeam'×3 | 'BikePort Racing TEAM'×3 | 'bikeport racing team'×2
+  [Cycle team 一番☆星]  'Cycle team 一番☆星'×4 | 'cycle team 一番☆星'×2 | 'CycleTeam一番☆星'×1 | 'Cycle Team 一番☆星'×1
+  [チーム36隊見習い]  'チーム36隊見習い'×7 | 'チーム３６隊見習い'×1
+  [YOUCAN海老名]  'YOUCAN海老名'×6 | 'YOU CAN海老名'×1 | 'YOU CAN 海老名'×1
+  [Rabbit Street UBE（県車連）]  'Rabbit Street UBE（県車連）'×7 | 'Rabbit Street UBE(県車連)'×1
+  [268 we do]  '268 we do'×7 | '268wedo'×1
+  [B・B・Q Masters]  'B・B・Q Masters'×4 | 'B・B・Q  Masters'×4
+  [project  K@2 P塾]  'project  K@2 P塾'×4 | 'project K@2 P塾'×2 | 'project k@2 P塾'×1 | 'Project k@2 P塾'×1
+  [Village de °M]  'Village de °M'×7 | 'village de °Ｍ'×1
+  [HONEYBEE Cycleworks]  'HONEYBEE Cycleworks'×5 | 'HONEYBEE CycleWorks'×2 | 'HONEYBEE\u3000CycleWorks'×1
+  [EMU／ベッキーシクロクロス]  'EMU／ベッキーシクロクロス'×5 | 'EMU/ベッキーシクロクロス'×3
+  [Team IMEZI]  'Team IMEZI'×7 | 'team IMEZI'×1
+  [Y’s Road CX Team]  'Y’s Road CX Team'×6 | 'Y’sRoad CX Team'×2
+  [さいたまディレーブ]  'さいたまディレーブ'×7 | 'さいたまﾃﾞｨﾚｰﾌﾞ'×1
+  [Big Lake]  'Big Lake'×3 | 'ＢｉｇＬａｋｅ'×3 | 'BigLake'×2
+  [now cycle]  'now cycle'×5 | 'nowcycle'×2 | 'NOWCYCLE'×1
+  [#bonsaiyacc]  '#bonsaiyacc'×7 | '#BONSAIYACC'×1
+  [BF/EMU]  'BF/EMU'×6 | 'BF / EMU'×2
+  [Team侍]  'Team侍'×5 | 'team侍'×3
+  [FIELDHOUSE]  'FIELDHOUSE'×5 | 'FIELD HOUSE'×3
+  [NAMIBIA PROJECT/EMU]  'NAMIBIA PROJECT/EMU'×4 | 'NAMIBIA PROJECT /EMU'×4
+  [Team ZERO UNO FRONTIER/グランデパール播磨]  'Team ZERO UNO FRONTIER/グランデパール播磨'×4 | 'TeamZeroUnoFrontier/グランデパール播磨'×2 | 'Team ZeroUnoFrontier/グランデパール播磨'×1 | 'Team ZERO UNO FRONTIER／グランデパール播磨'×1
+  [ainou cx1]  'ainou cx1'×7 | 'ainoucx1'×1
+  [Saddle up!]  'Saddle up!'×4 | 'saddle up！'×4
+  [パラティアムTOKYO dimare]  'パラティアムTOKYO dimare'×4 | 'パラティアム TOKYO dimare'×4
+  [OKT Squalo]  'OKT Squalo'×5 | 'OKT squalo'×3
+  [KPRB 泥鍛錬部 冒険ランドコース整備士]  'KPRB 泥鍛錬部 冒険ランドコース整備士'×5 | 'KPRB泥鍛錬部 冒険ランドコース整備士'×1 | 'KPRB 泥鍛錬部  冒険ランドコース整備士'×1 | 'KPRB泥鍛錬部\u3000冒険ランドコース整備士'×1
+  [Olanda Base]  'Olanda Base'×6 | 'Olandabase'×1 | 'Olanda base'×1
+  [白山CXレーシング]  '白山CXレーシング'×5 | '白山ＣＸレーシング'×2
+  [CyclingKyoto!]  'CyclingKyoto!'×4 | 'Cycling Kyoto!'×3
+  [チーム鳥取]  'チーム鳥取'×6 | 'ﾁｰﾑ鳥取'×1
+  [team NOZAC]  'team NOZAC'×3 | 'Team NOZAC'×2 | 'team Nozac'×1 | 'Team Nozac'×1
+  [自転車のウエサカ@大垣CSC]  '自転車のウエサカ@大垣CSC'×3 | '自転車のウエサカ＠大垣CSC'×2 | '自転車のウエサカ＠大垣ＣＳＣ'×2
+  [Ed Racing]  'Ed Racing'×6 | 'Ed racing'×1
+  [ＳＤＬ YAMAHA]  'ＳＤＬ YAMAHA'×5 | 'SDL YAMAHA'×2
+  [TRAIL LOVERS]  'TRAIL LOVERS'×4 | 'Trail\u3000Lovers'×2 | 'TrailLOVERS'×1
+  [Forzi:k山梨]  'Forzi:k山梨'×5 | 'Forzi:k 山梨'×2
+  [UTSUNOMIYA BLITZEN/宇都宮ブリッツェンシクロクロスチーム]  'UTSUNOMIYA BLITZEN/宇都宮ブリッツェンシクロクロスチーム'×6 | 'UTSUNOMIYA\u3000BLITZEN/宇都宮ブリッツェンシクロクロスチーム'×1
+  [NIPPO VINI FANTINI]  'NIPPO VINI FANTINI'×5 | 'Nippo Vini Fantini'×2
+  [Forzi:k 長野支部]  'Forzi:k 長野支部'×6 | 'Forzi:k長野支部'×1
+  [Team  saitou]  'Team  saitou'×3 | 'Team saitou'×2 | 'Team Saitou'×2
+  [2GUNS]  '2GUNS'×4 | '2Guns'×2 | '2guns'×1
+  [Gutaro Swim]  'Gutaro Swim'×3 | 'Gutaro\u3000SWIM'×2 | 'GUTARO SWIM'×2
+  [EquipeU-Racing]  'EquipeU-Racing'×5 | 'Equipe U-Racing'×2
+  [T.L.E.T]  'T.L.E.T'×6 | 't.l.e.t'×1
+  [Squid Bikes]  'Squid Bikes'×6 | 'SQUID BIKES'×1
+  [KAMIHAGICYCLE]  'KAMIHAGICYCLE'×5 | 'KAMIHAGI CYCLE'×1 | 'KAMIHAGI\u3000CYCLE'×1
+  [gifu-ray cycle team]  'gifu-ray cycle team'×4 | 'GIFU-RAY cycle team'×2 | 'GIFU- RAY cycle team'×1
+  [Campion System Japan Test team]  'Campion System Japan Test team'×4 | 'Campion System Japan Testteam'×1 | 'Campion\u3000System Japan Test Team'×1 | 'Campion system japan test team'×1
+  [J-KAWASAKI]  'J-KAWASAKI'×6 | 'J-Kawasaki'×1
+  [thcrewCX]  'thcrewCX'×6 | 'thcrew CX'×1
+  [恥じらいJapan]  '恥じらいJapan'×5 | '恥じらいJAPAN'×2
+  [ET Herd School Style]  'ET Herd School Style'×3 | 'ETherdschoolstyle'×2 | 'ETHerdSchoolStyle'×1 | 'ET herdschoolstyle'×1
+  [バイシクルステップ]  'バイシクルステップ'×6 | 'バイシクル\u3000ステップ'×1
+  [Non]  'Non'×5 | 'NON'×2
+  [Team VERAILE with EXLUB]  'Team VERAILE with EXLUB'×6 | 'TEAM VERAILE with EXLUB'×1
+  [Dream Seeker MTB Racing Team]  'Dream Seeker MTB Racing Team'×3 | 'DREAM SEEKER MTB RACING TEAM'×3 | 'DreamSeeker MTB Racing Team'×1
+  [おっさんシクロクロス部　BIBA　BIKES]  'おっさんシクロクロス部\u3000BIBA\u3000BIKES'×4 | 'おっさんシクロクロス部\u3000BIBA BIKES'×3
+  [Makio’s bike]  'Makio’s bike'×4 | 'Makio’s Bike'×2 | 'makio’sbike'×1
+  [Team FONTANA]  'Team FONTANA'×6 | 'TEAM FONTANA'×1
+  [Nara]  'Nara'×5 | 'NARA'×2
+  [free]  'free'×4 | 'Free'×3
+  [RCCNGY]  'RCCNGY'×4 | 'RCC NGY'×2 | 'ＲＣＣＮＧＹ'×1
+  [Gruppo Allenamento]  'Gruppo Allenamento'×3 | 'gruppo allenamento'×3 | 'Gruppo allenamento'×1
+  [club vient]  'club vient'×4 | 'CLUB vient'×2 | 'Club vient'×1
+  [Bicycleアカネ]  'Bicycleアカネ'×6 | 'Bicycle アカネ'×1
+  [GEEKS]  'GEEKS'×6 | 'Geeks'×1
+  [名岐Vend]  '名岐Vend'×6 | '名岐vend'×1
+  [Gutaro offroad Team]  'Gutaro offroad Team'×5 | 'Gutaro Offroad Team'×2
+  [SDL/MAVIC test team]  'SDL/MAVIC test team'×5 | 'SDL/Mavic test team'×2
+  [KEI cycles]  'KEI cycles'×4 | 'KEIcycles'×2 | 'KEI  cycles'×1
+  [GROVE]  'GROVE'×6 | 'grove'×1
+  [Valtagne]  'Valtagne'×6 | 'VALTAGNE'×1
+  [プリンスロードCX]  'プリンスロードCX'×6 | 'プリンスロードcx'×1
+  [ride rove]  'ride rove'×6 | 'ｒｉｄｅ ｒｏｖｅ'×1
+  [SHIDOｰWORKS]  'SHIDOｰWORKS'×6 | 'SHIDOーWORKS'×1
+  [京都MTB朝ライド/THE SIKETELS]  '京都MTB朝ライド/THE SIKETELS'×6 | '京都MTB朝ライド/THE  SIKETELS'×1
+  [AOI TRUST OVER RAGE RACING]  'AOI TRUST OVER RAGE RACING'×5 | 'AOITRUST OVER RAGE RACING'×2
+  [みやわかMTB]  'みやわかMTB'×6 | 'みやわかM T B'×1
+  [ルモンヒルクライムチーム]  'ルモンヒルクライムチーム'×6 | 'ルモン\u3000ヒルクライムチーム'×1
+  [cyclist OGGI]  'cyclist OGGI'×5 | 'cyclistOGGI'×2
+  [IS.NETふくい]  'IS.NETふくい'×5 | 'IS.NET ふくい'×1 | 'Is .NET ふくい'×1
+  [MORICOWAVE]  'MORICOWAVE'×4 | 'MORICO WAVE'×2
+  [Nagaramin CX]  'Nagaramin CX'×4 | 'NagaraminCX'×2
+  [sonicracing/市立伊丹高校]  'sonicracing/市立伊丹高校'×3 | 'Sonicracing/市立伊丹高校'×2 | 'Sonic Racing／市立伊丹高校'×1
+  [コルサヴィータ]  'コルサヴィータ'×4 | 'ｺﾙｻｳﾞｨｰﾀ'×2
+  [circles]  'circles'×5 | 'Circles'×1
+  [BEYOND 70]  'BEYOND 70'×5 | 'Beyond70'×1
+  [Ride to FUN]  'Ride to FUN'×4 | 'RIDE to FUN'×2
+  [SHIMANO Racing Team]  'SHIMANO Racing Team'×4 | 'SHIMANORacingTeam'×1 | 'shimano racing team'×1
+  [cycleryKIRIN/iPlan]  'cycleryKIRIN/iPlan'×3 | 'CycleryKIRIN/iplan'×2 | 'CycleryKIRIN/iPlan'×1
+  [2020Limited846/Team-K]  '2020Limited846/Team-K'×5 | '2020 Limited 846/Team-K'×1
+  [上伊那Re；CYCLING]  '上伊那Re；CYCLING'×5 | '上伊那Re;CYCＬIＮG'×1
+  [バイクショップ フレッシュ]  'バイクショップ フレッシュ'×3 | 'バイクショップフレッシュ'×2 | 'バイクショップ\u3000フレッシュ'×1
+  [mmcy]  'mmcy'×5 | 'MMCY'×1
+  [PowersportsCHIC]  'PowersportsCHIC'×5 | 'Powersports CHIC'×1
+  [Lion de Kapelmuur/042-703-9122]  'Lion de Kapelmuur/042-703-9122'×4 | 'Lion de Kapelmuur / 042-703-9122'×2
+  [高松ｻｲｸﾙｽﾎﾟｰﾂ少年団]  '高松ｻｲｸﾙｽﾎﾟｰﾂ少年団'×5 | '高松サイクルスポーツ少年団'×1
+  [チーム36隊/cyclespaceHalo]  'チーム36隊/cyclespaceHalo'×5 | 'チーム36隊/cyclespace Halo'×1
+  [イオンバイクJr.レーシング/アラスカワークス]  'イオンバイクJr.レーシング/アラスカワークス'×2 | 'イオンバイクJr.レーシング／アラスカワークス'×2 | 'イオンバイク Jr.レーシング/アラスカワークス'×1 | 'ｲｵﾝﾊﾞｲｸJr.ﾚｰｼﾝｸﾞ/ｱﾗｽｶﾜｰｸｽ'×1
+  [MATCH CYCLES]  'MATCH CYCLES'×5 | 'match cycles'×1
+  [チーム　シンセキ]  'チーム\u3000シンセキ'×3 | 'チームシンセキ'×3
+  [サイクル　サイエンス]  'サイクル\u3000サイエンス'×5 | 'サイクルサイエンス'×1
+  [ナカガワ As K,デザイン]  'ナカガワ As K,デザイン'×5 | 'ナカガワAsK,デザイン'×1
+  [662CCC/FK]  '662CCC/FK'×5 | '662ccc/FK'×1
+  [香川県ドM組合ころ部第5軍]  '香川県ドM組合ころ部第5軍'×5 | '香川県ドM組合ころ部第５軍'×1
+  [YOWAMUSHI PEDAL CYCLING TEAM]  'YOWAMUSHI PEDAL CYCLING TEAM'×4 | 'Yowamushipedal Cycling Team'×2
+  [OGW CX TEAM]  'OGW CX TEAM'×4 | 'OGW CX Team'×1 | 'OGW\u3000CX\u3000Team'×1
+  [7 ELEVEN RBP]  '7 ELEVEN RBP'×3 | '7ELEVEN RBP'×2 | '7Eleven RBP'×1
+  [team  wadachiya]  'team  wadachiya'×3 | 'Team WADACHIYA'×2 | 'TEAM wadachiya'×1
+  [American School In Japan]  'American School In Japan'×3 | 'American School in Japan'×3
+  [BALBAclub fukui]  'BALBAclub fukui'×2 | 'balbaclub Fukui'×2 | 'BALBACLUB FUKUI'×1 | 'balba Club fukui'×1
+  [kinfolksatellite]  'kinfolksatellite'×4 | 'KINFOLKSATELLITE'×1 | 'KINFOLK SATELLITE'×1
+  [日本大学工学部サイクリング部]  '日本大学工学部サイクリング部'×4 | '日本大学工学部\u3000サイクリング部'×2
+  [自転車道シクロクロス部 with ダム男]  '自転車道シクロクロス部 with ダム男'×5 | '自転車道シクロクロス部 With ダム男'×1
+  [Team Lion]  'Team Lion'×4 | 'Team LION'×2
+  [Mountaineering]  'Mountaineering'×5 | 'mountaineering'×1
+  [MoutainStream CX Team]  'MoutainStream CX Team'×5 | 'MoutainStream CXTeam'×1
+  [TRCC]  'TRCC'×4 | 'trcc'×2
+  [abscc]  'abscc'×3 | 'ABSCC'×3
+  [チームKAWAZOE]  'チームKAWAZOE'×3 | 'ﾁｰﾑKAWAZOE'×3
+  [チームソボビッチ]  'チームソボビッチ'×5 | 'ﾁｰﾑｿﾎﾞﾋﾞｯﾁ'×1
+  [自転車道シクロクロス部/ASD]  '自転車道シクロクロス部/ASD'×2 | '自転車道シクロクロス部/ＡＳＤ'×2 | '自転車道シクロクロス部／ＡＳＤ'×1 | '自転車道シクロクロス部／ASD'×1
+  [BonBonCyclocross team]  'BonBonCyclocross team'×5 | 'Bon Bon Cyclocross Team'×1
+  [type1]  'type1'×5 | 'Type1'×1
+  [権蔵レーシング/アルプス工業]  '権蔵レーシング/アルプス工業'×5 | '権蔵レーシング／アルプス工業'×1
+  [大垣ピストンズ　WＦW]  '大垣ピストンズ\u3000WＦW'×4 | '大垣ピストンズ\u3000WFW'×2
+  [eNShare Racing Team]  'eNShare Racing Team'×2 | 'eNShare Racing  Team'×2 | 'eNshare Racing Team'×1 | 'eNshare Racing team'×1
+  [PARABOLAイワイシーガル]  'PARABOLAイワイシーガル'×3 | 'parabola イワイシーガル'×2 | 'parabola イワイ シーガル'×1
+  [TEAM BIGBANG]  'TEAM BIGBANG'×5 | 'TEAMBIGBANG'×1
+  [おっさんシクロクロス部・BIBA BIKES]  'おっさんシクロクロス部・BIBA BIKES'×5 | 'おっさんシクロクロス部・BIBABIKES'×1
+  [KIZOK DBS]  'KIZOK DBS'×5 | 'KIZOK\u3000DBS'×1
+  [愛媛mtb]  '愛媛mtb'×3 | '愛媛MTB'×3
+  [SweetHomeEdoGawa]  'SweetHomeEdoGawa'×3 | 'Sweet Home EdoGawa'×2 | 'sweet home edogawa'×1
+  [asia cycling academy]  'asia cycling academy'×3 | 'Asia Cycling Academy'×2 | 'Asia cycling academy'×1
+  [TASサイクルつくば]  'TASサイクルつくば'×5 | 'TASサイクル\u3000つくば'×1
+  [magnet]  'magnet'×4 | 'MAGNET'×2
+  [LONE BUT UNITED OFF-ROAD RACING]  'LONE BUT UNITED OFF-ROAD RACING'×5 | 'LONEBUTUNITEDOFF-ROADRACING'×1
+  [HyakuCycle綾部]  'HyakuCycle綾部'×4 | 'HyakuCycle\u3000綾部'×2
+  [bicycle fellow / EMU]  'bicycle fellow / EMU'×5 | 'bicycle fellow/EMU'×1
+  [乗ルンジャー！]  '乗ルンジャー！'×5 | '乗ルンジャー!'×1
+  [アイノウCX]  'アイノウCX'×4 | 'アイノウcx'×2
+  [ROND　BICYCLE]  'ROND\u3000BICYCLE'×4 | 'ROND BICYCLE'×2
+  [Bicycle Club]  'Bicycle Club'×5 | 'BicycleClub'×1
+  [LEVANTE YOUTH]  'LEVANTE YOUTH'×4 | 'LEVANTE  YOUTH'×2
+  [金田BODYTALKING]  '金田BODYTALKING'×2 | '金田BODY TALKING'×1 | '金田BODY Talking'×1 | '金田Body Talking'×1 | '金田 BODY TALKING'×1
+  [Re Belle. Kids]  'Re Belle. Kids'×5 | 'Re Belle. kids'×1
+  [Rice on]  'Rice on'×5 | 'RICE ON'×1
+  [アスリチューン・CORAGGIO KAWANISHI U-19/横浜立野高等学校]  'アスリチューン・CORAGGIO KAWANISHI U-19/横浜立野高等学校'×5 | 'アスリチューン・CORAGGIOKAWANISHIU-19/横浜立野高等学校'×1
+  [NUCC Racing OB]  'NUCC Racing OB'×3 | 'NUCC racing OB'×2 | 'NUCCracingOB'×1
+  [AOITRUSTOVERRAGE]  'AOITRUSTOVERRAGE'×3 | 'AOI TRUST OVER RAGE'×3
+  [TeamRCC]  'TeamRCC'×4 | 'Team RCC'×1
+  [サクソバンクFX証券・YONEX]  'サクソバンクFX証券・YONEX'×4 | 'サクソバンクFX証券･YONEX'×1
+  [MOJYUMAarea075]  'MOJYUMAarea075'×3 | 'MOJYUMA area075'×1 | 'MOJYUMA Area075'×1
+  [...&Bicycle; CC]  '...&Bicycle; CC'×3 | '…&Bicycle; CC'×2
+  [BOMBTRACK / W-LINE]  'BOMBTRACK / W-LINE'×4 | 'BOMBTRACK/ W-LINE'×1
+  [村上建具teamhighlander]  '村上建具teamhighlander'×3 | '村上建具teamHighlander'×2
+  [Mistral]  'Mistral'×3 | 'mistral'×2
+  [sportech]  'sportech'×3 | 'SPORTECH'×2
+  [ON THE ROAD]  'ON THE ROAD'×4 | 'ONTHEROAD'×1
+  [FRIETEN-edco]  'FRIETEN-edco'×3 | 'Frieten-edco'×2
+  [ridingSUN/SKRK]  'ridingSUN/SKRK'×2 | 'ridingsun/skrk'×2 | 'ridingsun/SKRK'×1
+  [BSN　RAVEN　CX]  'BSN\u3000RAVEN\u3000CX'×3 | 'BSN RAVEN CX'×1 | 'BSN  RAVEN  CX'×1
+  [Bon appetit/ボナペティ]  'Bon appetit/ボナペティ'×4 | 'Bon\u3000Appetit/ボナペティ'×1
+  [Panasonic ladies/パナソニックレディース]  'Panasonic ladies/パナソニックレディース'×4 | 'Panasonic Ladies/パナソニックレディース'×1
+  [Lotus]  'Lotus'×4 | 'LOTUS'×1
+  [MELCO UNO＆BT]  'MELCO UNO＆BT'×4 | 'melco UNO & BT'×1
+  [SNEL G]  'SNEL G'×3 | 'SNEL\u3000G'×2
+  [Daisy Messenger]  'Daisy Messenger'×4 | 'DAISY MESSENGER'×1
+  [シャドウワークスS]  'シャドウワークスS'×4 | 'シャドウワークス S'×1
+  [林商店/Hagibow Bikeworks]  '林商店/Hagibow Bikeworks'×3 | '林商店/HagibowBikeworks'×2
+  [NOZAC/Torque/サンメリット]  'NOZAC/Torque/サンメリット'×4 | 'NOZAC/TORQUE/サンメリット'×1
+  [FUNNY RIDE]  'FUNNY RIDE'×2 | 'FunnyRide'×2 | 'FUNNYRIDE'×1
+  [MATRIX POWERTAG]  'MATRIX POWERTAG'×4 | 'Matrix power tag'×1
+  [POWERKICK]  'POWERKICK'×3 | 'PowerKick'×1 | 'Powerkick'×1
+  [OneWay泥組]  'OneWay泥組'×2 | 'OneWay 泥組'×2 | 'ＯｎｅＷａｙ泥組'×1
+  [ドM組合　ころ部3軍]  'ドM組合\u3000ころ部3軍'×2 | 'ドM組合ころ部3軍'×1 | 'ﾄﾞM組合 ころ部3軍'×1 | 'ﾄﾞM組合\u3000ころ部3軍'×1
+  [EUROｰWORKSRacing]  'EUROｰWORKSRacing'×4 | 'EUROｰWORKS Racing'×1
+  [BikeTeam回転木馬 CX部]  'BikeTeam回転木馬 CX部'×4 | 'BikeTeam 回転木馬 CX部'×1
+  [シマノドリンキングXCC]  'シマノドリンキングXCC'×3 | 'シマノドリンキングXC C'×1 | 'シマノドリンキング XC C'×1
+  [ミストラルスポーツ学校]  'ミストラルスポーツ学校'×3 | 'ミストラル スポーツ学校'×2
+  [bonbon]  'bonbon'×3 | 'BONBON'×2
+  [CrunkGollira]  'CrunkGollira'×2 | 'Crunk Gollira'×2 | 'crunk gollira'×1
+  [CO2bicycle/GOKISO]  'CO2bicycle/GOKISO'×3 | 'CO2 bicycle / GOKISO'×2
+  [ジェットスターKIX]  'ジェットスターKIX'×4 | 'ジェットスター KIX'×1
+  [RINGOROAD/のぼこん]  'RINGOROAD/のぼこん'×3 | 'Ringo Road / のぼこん'×2
+  [チーム鳴木屋/Pep Cycle]  'チーム鳴木屋/Pep Cycle'×3 | 'チーム鳴木屋/PepCycle'×2
+  [８４６]  '８４６'×3 | '846'×2
+  [AMIGO倉敷]  'AMIGO倉敷'×3 | 'Amigo倉敷'×1 | 'Amigo 倉敷'×1
+  [Panama Reds]  'Panama Reds'×2 | 'Panama reds'×2 | 'PANAMA REDS'×1
+  [JPスポーツ]  'JPスポーツ'×4 | 'JP スポーツ'×1
+  [浪花大回転/BROTURES OSAKA]  '浪花大回転/BROTURES OSAKA'×4 | '浪花大回転/BROTURESOSAKA'×1
+  [La speranza]  'La speranza'×4 | 'La Speranza'×1
+  [SpinningGarage]  'SpinningGarage'×3 | 'Spinning Garage'×2
+  [ﾁｰﾑ発射台]  'ﾁｰﾑ発射台'×3 | 'チーム発射台'×2
+  [チーム ザ レッド]  'チーム ザ レッド'×2 | 'チームザレッド'×2 | 'ﾁｰﾑｻﾞﾚｯﾄﾞ'×1
+  [おっさんシクロ入門生]  'おっさんシクロ入門生'×4 | 'おっさんｼｸﾛ入門生'×1
+  [FunCycle]  'FunCycle'×4 | 'funcycle'×1
+  [OANDA JAPAN]  'OANDA JAPAN'×3 | 'OANDAJAPAN'×2
+  [Team Bikeport]  'Team Bikeport'×3 | 'Team Bike Port'×1 | 'Team bikeport'×1
+  [OMEGA-STRADA/WING-IT]  'OMEGA-STRADA/WING-IT'×4 | 'OMEGA-STRADA/Wing-it'×1
+  [TWO CYCLE]  'TWO CYCLE'×4 | 'TWOCYCLE'×1
+  [武田青果店　CC]  '武田青果店\u3000CC'×4 | '武田青果店CC'×1
+  [ＦＲＡＴ−ＣＸ]  'ＦＲＡＴ−ＣＸ'×4 | 'FRAT−CX'×1
+  [FUSION]  'FUSION'×3 | 'fusion'×2
+  [Zekof team]  'Zekof team'×3 | 'ZEKOF TEAM'×2
+  [EDIT CX-RACING]  'EDIT CX-RACING'×3 | 'EDIT\u3000CX-RACING'×2
+  [トンデモクラブCSKAGA]  'トンデモクラブCSKAGA'×3 | 'トンデモクラブ CSKAGA'×2
+  [piston,sCX]  'piston,sCX'×2 | 'PISTON,SCX'×1 | 'piston,s CX'×1 | 'PISTON,S\u3000\u3000CX'×1
+  [ガンボ広島(eNShareCyclingTeam所属）]  'ガンボ広島(eNShareCyclingTeam所属）'×2 | 'ガンボ広島(eNShare cycling team所属)'×1 | 'ガンボ広島（eNShareCyclingTeam所属)'×1 | 'ガンボ広島(eNShare Cycling Team所属）'×1
+  [ワダチヤ]  'ワダチヤ'×4 | 'ﾜﾀﾞﾁﾔ'×1
+  [TRC PANAMARES]  'TRC PANAMARES'×4 | 'TRC Panamares'×1
+  [SOLDOUT! / WINDSBIKES 34]  'SOLDOUT! / WINDSBIKES 34'×4 | 'SOLDOUT！/WINDSBIKES34'×1
+  [Gruppo Allenament]  'Gruppo Allenament'×2 | 'Gruppoallenament'×1 | 'Gruppo allenament'×1 | 'Ｇruppo allenament'×1
+  [Sobu-CX]  'Sobu-CX'×4 | 'sobu-cx'×1
+  [Team ASOBI★]  'Team ASOBI★'×4 | 'TeamASOBI★'×1
+  [TTGミトロング-V]  'TTGミトロング-V'×4 | 'TTG ミトロング-V'×1
+  [SUBARU･CYCLING･CLUB]  'SUBARU･CYCLING･CLUB'×4 | 'SUBARU・CYCLING・CLUB'×1
+  [TeamSoleil悠（ソレイユウ）]  'TeamSoleil悠（ソレイユウ）'×4 | 'team soleil悠（ソレイユウ）'×1
+  [Nacree]  'Nacree'×4 | 'nacree'×1
+  [RouteKOBE]  'RouteKOBE'×3 | 'ROUTEKOBE'×1 | 'ROUTE KOBE'×1
+  [HADA RACING]  'HADA RACING'×3 | 'HADARACING'×1 | 'hada racing'×1
+  [LEGONグラベル]  'LEGONグラベル'×3 | 'LEGON グラベル'×2
+  [Ｙ’ｓーｒａｃｉｎｇ　シクロクロス部]  'Ｙ’ｓーｒａｃｉｎｇ\u3000シクロクロス部'×3 | 'Ｙ’ｓーｒａｃｉｎｇシクロクロス部'×2
+  [soleil悠]  'soleil悠'×3 | 'Soleil悠'×2
+  [じてんしゃひろば　遊]  'じてんしゃひろば\u3000遊'×3 | 'じてんしゃひろば遊'×2
+  [ベッキーシクロクロス/サイテルズ]  'ベッキーシクロクロス/サイテルズ'×2 | 'ベッキーシクロクロス／サイテルズ'×2 | 'ベッキーシクロクロス /サイテルズ'×1
+  [(仮）NEW WAVE]  '(仮）NEW WAVE'×3 | '(仮)NEW WAVE'×2
+  [スペシャライズド京都]  'スペシャライズド京都'×4 | 'スペシャライズド 京都'×1
+  [ClubAshiviva]  'ClubAshiviva'×4 | 'Club Ashiviva'×1
+  [EF education NIPPO development team]  'EF education NIPPO development team'×4 | 'EF Education NIPPO development team'×1
+  [BD Racing Club]  'BD Racing Club'×3 | 'BD RACING CLUB'×2
+  [The☆whoo_CX]  'The☆whoo_CX'×4 | 'The☆whoo_cx'×1
+  [Mavic test team]  'Mavic test team'×3 | 'MAVIC test team'×2
+  [虎ノ門　Racing Team]  '虎ノ門\u3000Racing Team'×3 | '虎ノ門 Racing Team'×2
+  [クラブワンピーストヤマ47/16]  'クラブワンピーストヤマ47/16'×3 | 'クラブワンピーストヤマ 47/16'×2
+  [TEAM YUK]  'TEAM YUK'×4 | 'TEAMYUK'×1
+  [NICHIA Cometa Azul]  'NICHIA Cometa Azul'×4 | 'Nichia Cometa Azul'×1
+  [TEAM OYOT]  'TEAM OYOT'×4 | 'TEAM  OYOT'×1
+  [Naturalfarmer]  'Naturalfarmer'×3 | 'Natural farmer'×2
+  [Falconer cycles]  'Falconer cycles'×3 | 'Falconer Cycles'×2
+  [TEAMひだまりの家Cycling]  'TEAMひだまりの家Cycling'×3 | 'teamひだまりの家cycling'×2
+  [CIERVONARACXTEAM]  'CIERVONARACXTEAM'×3 | 'CIERVO NARA CX TEAM'×1
+  [BH RACING MTB TEAM]  'BH RACING MTB TEAM'×3 | 'BHRACINGMTBTEAM'×1
+  [Team M]  'Team M'×2 | 'team M'×2
+  [Cycling Kyoto]  'Cycling Kyoto'×3 | 'CyclingKyoto'×1
+  [ARAI RACING CLUB]  'ARAI RACING CLUB'×3 | 'Arai Racing Club'×1
+  [Mafioso cycleclub]  'Mafioso cycleclub'×2 | 'Mafioso Cycle Club'×2
+  [Team510]  'Team510'×3 | 'Team 510'×1
+  [Team  AVEL]  'Team  AVEL'×2 | 'TEAMAVEL'×1 | 'Team AVEL'×1
+  [nucc-racing]  'nucc-racing'×3 | 'NUCC-Racing'×1
+  [ファンサイクル]  'ファンサイクル'×3 | 'ﾌｧﾝｻｲｸﾙ'×1
+  [TRCCXごんじり]  'TRCCXごんじり'×3 | 'ＴＲＣＣＸごんじり'×1
+  [C.viento with静岡理工科大学]  'C.viento with静岡理工科大学'×3 | 'C.Viento with静岡理工科大学'×1
+  [CLUB Silbest/クラブシルベスト]  'CLUB Silbest/クラブシルベスト'×2 | 'CLUB SILBEST/クラブシルベスト'×1 | 'CLUB\u3000SILBEST/クラブシルベスト'×1
+  [...＆Bicycle]  '...＆Bicycle'×3 | '...&BICYCLE'×1
+  [チーム ナメロク]  'チーム ナメロク'×3 | 'ﾁｰﾑ ﾅﾒﾛｸ'×1
+  [武田医院  ゲゲゲ]  '武田医院  ゲゲゲ'×3 | '武田医院 ゲゲゲ'×1
+  [Pedro]  'Pedro'×3 | 'PEDRO'×1
+  [Team Bonds]  'Team Bonds'×3 | 'TeamBonds'×1
+  [COUNTRY MORNING]  'COUNTRY MORNING'×2 | 'CountryMorning'×1 | 'Country Morning'×1
+  [The☆whoo/大原朝市R&C]  'The☆whoo/大原朝市R&C'×3 | 'The☆whoo/大原朝市R＆C'×1
+  [Daranneike白山CXレーシングwithPK]  'Daranneike白山CXレーシングwithPK'×2 | 'daranneike白山CXレーシングwithPK'×2
+  [PASSIONE]  'PASSIONE'×2 | 'passione'×2
+  [NCC日赤]  'NCC日赤'×3 | 'NCC 日赤'×1
+  [TEAMLUPPI]  'TEAMLUPPI'×3 | 'TEAM LUPPI'×1
+  [京都岩井商会Racing]  '京都岩井商会Racing'×3 | '京都岩井商会racing'×1
+  [桜台レーシングチーム CX]  '桜台レーシングチーム CX'×3 | '桜台レーシングチーム\u3000CX'×1
+  [Tokyo4]  'Tokyo4'×3 | 'Tokyo 4'×1
+  [F.P.BOOKS]  'F.P.BOOKS'×3 | 'F.P.Books'×1
+  [TLET]  'TLET'×2 | 'ＴＬＥＴ'×2
+  [team TKG]  'team TKG'×3 | 'teamTKG'×1
+  [USUKINE RACING]  'USUKINE RACING'×2 | 'usukineracing'×1 | 'Usukineracing'×1
+  [AoyamaRocketsRT]  'AoyamaRocketsRT'×2 | 'Aoyama Rockets RT'×2
+  [青山ロケッツ RT]  '青山ロケッツ RT'×2 | '青山ロケッツRT'×2
+  [GT Bicycles]  'GT Bicycles'×3 | 'GT BICYCLES'×1
+  [LOKO Bicycle]  'LOKO Bicycle'×2 | 'LokoBicycle'×1 | 'LOKO BICYCLE'×1
+  [Brown Sugar p.w.m]  'Brown Sugar p.w.m'×2 | 'BrownSugarp.w.m'×1 | 'Brown Sugar  p.w.m'×1
+  [NICONICO RACING]  'NICONICO RACING'×3 | 'NiconicoRacing'×1
+  [Team Nomu' s /DISTANZA]  "Team Nomu' s /DISTANZA"×3 | "TeamNomu's/DISTANZA"×1
+  [ＦＣＣサイクリング]  'ＦＣＣサイクリング'×2 | 'FCCサイクリング'×2
+  [WILD PIGs]  'WILD PIGs'×2 | 'ＷＩＬＤ\u3000ＰＩＧｓ'×1 | 'WILDPIGS'×1
+  [Cielo sim-works]  'Cielo sim-works'×3 | 'cielo sim-works'×1
+  [Niconico-Racing]  'Niconico-Racing'×3 | 'niconico-Racing'×1
+  [ボンシャンスユース]  'ボンシャンスユース'×3 | 'ボンシャンス\u3000ユース'×1
+  [star village ACHI]  'star village ACHI'×2 | 'Star Village ACHI'×1 | 'Star Village ACH I'×1
+  [Simone]  'Simone'×3 | 'simone'×1
+  [team-MJR]  'team-MJR'×2 | 'Team- MJR'×1 | 'Team-MJR'×1
+  [SUBARU CYCLNG TEAM]  'SUBARU CYCLNG TEAM'×3 | 'SUBARU Cyclng Team'×1
+  [じょんのびTIME]  'じょんのびTIME'×3 | 'じょんのびTime'×1
+  [narifuri / charifuri]  'narifuri / charifuri'×3 | 'narifuri/charifuri'×1
+  [team シャカリキ]  'team シャカリキ'×3 | 'teamシャカリキ'×1
+  [Champion System Japan Testteame]  'Champion System Japan Testteame'×3 | 'Champion System Japan Test teame'×1
+  [Team Dky]  'Team Dky'×2 | 'Team DKY'×2
+  [CRC/EDIT CXRACING]  'CRC/EDIT CXRACING'×2 | 'CRC / EDITCXRACING'×2
+  [GSJ −CX]  'GSJ −CX'×3 | 'GSJ−ＣＸ'×1
+  [sacrifice高知CTC]  'sacrifice高知CTC'×3 | 'sacrifice高知ctc'×1
+  [The☆whooCX/京都MTB朝ライド]  'The☆whooCX/京都MTB朝ライド'×3 | 'The☆whoo cx/京都MTB朝ライド'×1
+  [Ｙ&#039;s-racingシクロクロス部]  'Ｙ&#039;s-racingシクロクロス部'×2 | 'Y&#039;s- racingシクロクロス部'×1 | 'Y&#039;s-racing シクロクロス部'×1
+  [ナカガワRT 伊都製糸　チームオカムラ]  'ナカガワRT 伊都製糸\u3000チームオカムラ'×3 | 'ナカガワRT伊都製糸チームオカムラ'×1
+  [n/a]  'n/a'×2 | 'N/A'×2
+  [bucyo coffee clt cycling team]  'bucyo coffee clt cycling team'×2 | 'BUCYO COFFEE CLT CYCLING TEAM'×1 | 'BUCYO COFFEE CLT cycling team'×1
+  [fr]  'fr'×2 | 'FR'×2
+  [Club La.sista]  'Club La.sista'×3 | 'ClubLa.Sista'×1
+  [B.C TIMER’S]  'B.C TIMER’S'×2 | 'B.C Timer’s'×2
+  [Plover Cycles]  'Plover Cycles'×3 | 'PloverCycles'×1
+  [TeamYellowtail]  'TeamYellowtail'×2 | 'Team Yellowtail'×2
+  [team montagna]  'team montagna'×2 | 'TEAM Montagna'×1 | 'TEAM montagna'×1
+  [kawakubo coffee cycling club]  'kawakubo coffee cycling club'×3 | 'KAWAKUBO COFFEE Cycling Club'×1
+  [TH racing]  'TH racing'×2 | 'ＴＨracing'×1 | 'ＴＨ racing'×1
+  [喫茶スプーン]  '喫茶スプーン'×2 | '喫茶\u3000スプーン'×2
+  [（株）テクノ菱和]  '（株）テクノ菱和'×3 | '(株)テクノ菱和'×1
+  [飲んだくれ会北九州（ノンアル部）]  '飲んだくれ会北九州（ノンアル部）'×3 | '飲んだくれ会北九州（ﾉﾝｱﾙ部）'×1
+  [ｸﾗｲﾏｰｽﾞ･ﾊｲ]  'ｸﾗｲﾏｰｽﾞ･ﾊｲ'×3 | 'クライマーズ・ハイ'×1
+  [EF Education-NIPPO Development Team]  'EF Education-NIPPO Development Team'×2 | 'EF Education-NIPPO DevelopMent Team'×1 | 'EF Education-NIPPO Development team'×1
+  [ﾁｰﾑ けったぐりマシーン]  'ﾁｰﾑ けったぐりマシーン'×2 | 'ﾁｰﾑけったぐりマシーン'×1 | 'チーム\u3000けったぐりマシーン'×1
+  [NB会]  'NB会'×3 | 'ＮＢ会'×1
+  [ＤＡＮＤＡＮ]  'ＤＡＮＤＡＮ'×3 | 'DANDAN'×1
+  [サイクルチ-ム「茶まるCX」]  'サイクルチ-ム「茶まるCX」'×2 | 'サイクルチ－ム「茶まるCX」'×2
+  [COWGUMMA/東洋大学]  'COWGUMMA/東洋大学'×3 | 'COWGUMMA /東洋大学'×1
+  [ウインディーシクロクロスレーシングチーム]  'ウインディーシクロクロスレーシングチーム'×3 | 'ウインディー\u3000シクロクロスレーシングチーム'×1
+  [Club. Vient]  'Club. Vient'×2 | 'club.vient'×2
+  [PARABOLA福岡]  'PARABOLA福岡'×2 | 'Parabola福岡'×2
+  [#RCCFUK]  '#RCCFUK'×2 | '#rccfuk'×1 | '＃RCCFUK'×1
+  [team ABYDOS]  'team ABYDOS'×3 | 'TEAM ABYDOS'×1
+  [Albatross factory]  'Albatross factory'×3 | 'albatross factory'×1
+  [Ｉ LOVE ＳＳ]  'Ｉ LOVE ＳＳ'×3 | 'Ｉ ＬＯＶＥ ＳＳ'×1
+  [Team PO14RIS]  'Team PO14RIS'×3 | 'TeamPO14RIS'×1
+  [電気通信大学 / TRYCLE.ing]  '電気通信大学 / TRYCLE.ing'×3 | '電気通信大学/TRYCLE.ing'×1
+  [壁掛けカレンダー販売中!]  '壁掛けカレンダー販売中!'×3 | '壁掛けカレンダー販売中！'×1
+  [ArakawaFairy]  'ArakawaFairy'×2 | 'ARAKAWA FAIRY'×2
+  [ホネつき数珠'Sは劇団です。]  "ホネつき数珠'Sは劇団です。"×2 | "ホネつき数珠'sは劇団です。"×2
+  [WANKARA]  'WANKARA'×2 | 'wankara'×1
+  [club grow]  'club grow'×2 | 'CLUB GROW'×1
+  [SafariSimbaz]  'SafariSimbaz'×2 | 'Safari Simbaz'×1
+  [Ring×2CyclingTeam]  'Ring×2CyclingTeam'×2 | 'Ring×2 Cycling Team'×1
+  [Q-MAX　つるﾋﾟ~家族]  'Q-MAX\u3000つるﾋﾟ~家族'×2 | 'Q-MAX つるピ～家族'×1
+  [ARAI MURACA（アライ ムラカ）]  'ARAI MURACA（アライ ムラカ）'×2 | 'ARAI MURACA（アライ\u3000ムラカ）'×1
+  [VAPOR]  'VAPOR'×2 | 'vapor'×1
+  [Team OCF]  'Team OCF'×2 | 'TeamOCF'×1
+  [BLUE DORAGON]  'BLUE DORAGON'×2 | 'BLUEDORAGON'×1
+  [FIRSTKIDS CHICHIBU]  'FIRSTKIDS CHICHIBU'×2 | 'FIRSTKIDS  CHICHIBU'×1
+  [hot cross]  'hot cross'×2 | 'hotcross'×1
+  [mercredi]  'mercredi'×2 | 'Mercredi'×1
+  [Is-net fukui]  'Is-net fukui'×2 | 'Is-net  fukui'×1
+  [TRC PANAMA CX]  'TRC PANAMA CX'×2 | 'TRC\u3000Panama\u3000CX'×1
+  [MUSTANG　SALLY]  'MUSTANG\u3000SALLY'×2 | 'MUSTANG SALLY'×1
+  [Raphan cycle club]  'Raphan cycle club'×2 | 'Raphancycleclub'×1
+  [WHIZKID/順天堂大学]  'WHIZKID/順天堂大学'×2 | 'WHIZKID／順天堂大学'×1
+  [DTF Lab. / 京都朝ライド]  'DTF Lab. / 京都朝ライド'×2 | 'DTFLab./京都朝ライド'×1
+  [IWAI SHOKAI/岩井商会RACING]  'IWAI SHOKAI/岩井商会RACING'×2 | 'IWAI Shokai/岩井商会RACING'×1
+  [TaemTacke]  'TaemTacke'×2 | 'Taem Tacke'×1
+  [RAPHA CYCLE CLUB]  'RAPHA CYCLE CLUB'×1 | 'Rapha Cycle Club'×1 | 'Rapha Cycle club'×1
+  [ぺんぺん２号]  'ぺんぺん２号'×2 | 'ぺんぺん2号'×1
+  [MAAP × IN THE WOODS]  'MAAP × IN THE WOODS'×2 | 'MAAP×INTHEWOODS'×1
+  [Ritz　Cycle　Racing]  'Ritz\u3000Cycle\u3000Racing'×1 | 'Ritz Cycle Racing'×1 | 'Ritz cycle racing'×1
+  [La couleur]  'La couleur'×2 | 'La Couleur'×1
+  [Touch me !]  'Touch me !'×2 | 'touch me !'×1
+  [チームF]  'チームF'×2 | 'チームＦ'×1
+  [BTCflowerroad]  'BTCflowerroad'×2 | 'BTC flower road'×1
+  [チーム　ＷＡＤＡ]  'チーム\u3000ＷＡＤＡ'×2 | 'チームWADA'×1
+  [八ヶ岳CYCLO-CROSSCLUB]  '八ヶ岳CYCLO-CROSSCLUB'×2 | '八ヶ岳CYCLO-CROSS CLUB'×1
+  [YCC(淀川サイクリングクラブ)]  'YCC(淀川サイクリングクラブ)'×2 | 'YCC(淀川サイクリングクラブ）'×1
+  [MUD Spokes]  'MUD Spokes'×1 | 'MUD\u3000SPOKES'×1 | 'Mud\u3000Spokes'×1
+  [自転車道／ASD]  '自転車道／ASD'×1 | '自転車道／ＡＳＤ'×1 | '自転車道/ASD'×1
+  [Team Bluelug Homies]  'Team Bluelug Homies'×2 | 'Team BluelugHomies'×1
+  [A’le:ne So’le:ne]  'A’le:ne So’le:ne'×2 | 'A’le：ne So’le：ne'×1
+  [CorragioKawanishiCyclingTeamkids]  'CorragioKawanishiCyclingTeamkids'×1 | 'Corragio Kawanishi Cycling team kids'×1 | 'Corragio Kawanishi Cycling Team kids'×1
+  [ベロチスタパールイズミ]  'ベロチスタパールイズミ'×2 | 'ベロチスタ\u3000パールイズミ'×1
+  [TEAM all out＠ベッキーシクロクロス]  'TEAM all out＠ベッキーシクロクロス'×2 | 'Teamallout@ベッキーシクロクロス'×1
+  [Homebike]  'Homebike'×2 | 'HomeBike'×1
+  [bridler moon/MPR]  'bridler moon/MPR'×2 | 'bridler moon /MPR'×1
+  [Tcars cycling team]  'Tcars cycling team'×2 | 'Tcarscyclingteam'×1
+  [team Tamagokakegohan]  'team Tamagokakegohan'×2 | 'team tamagokakegohan'×1
+  [スノウ・ゴリラ]  'スノウ・ゴリラ'×2 | 'ｽﾉｳ･ｺﾞﾘﾗ'×1
+  [花道＆名古屋サイクリング友の会]  '花道＆名古屋サイクリング友の会'×2 | '花道&名古屋サイクリング友の会'×1
+  [Nichia]  'Nichia'×2 | 'nichia'×1
+  [662CCC/FUKAYA]  '662CCC/FUKAYA'×2 | '662ccc/FUKAYA'×1
+  [BANANA　HOLIC]  'BANANA\u3000HOLIC'×1 | 'BANANA HOLIC'×1 | 'Banana HOLIC'×1
+  [Team TamagoKakeGohan CX]  'Team TamagoKakeGohan CX'×1 | 'Team Tamagokakegohan CX'×1 | 'Team tamagokakegohan CX'×1
+  [Ehime Happy Girls Racing Team(ﾊﾋﾟｶﾞﾙ)]  'Ehime Happy Girls Racing Team(ﾊﾋﾟｶﾞﾙ)'×2 | 'Ehime Happy Girls Racing Team(ハピガル)'×1
+  [Team Ashiviva]  'Team Ashiviva'×2 | 'Team  Ashiviva'×1
+  [MASAYA　RIDERS]  'MASAYA\u3000RIDERS'×2 | 'MASAYA RIDERS'×1
+  [COGS/長野南高校]  'COGS/長野南高校'×2 | 'cogs/長野南高校'×1
+  [Cwaspアタリ前田inthewoods]  'Cwaspアタリ前田inthewoods'×2 | 'CWASPアタリ前田inthewoods'×1
+  [岡谷セイケン(株) CXTeam]  '岡谷セイケン(株) CXTeam'×2 | '岡谷セイケン（株）CX Team'×1
+  [バルバクラブタカオカ PKRS]  'バルバクラブタカオカ PKRS'×2 | 'バルバクラブタカオカPKRS'×1
+  [paddy]  'paddy'×2 | 'Paddy'×1
+  [cycle size]  'cycle size'×2 | 'CycleSize'×1
+  [チームyyy 加中]  'チームyyy 加中'×1 | 'チーム yyy  加中'×1 | 'チーム\u3000yyy 加中'×1
+  [BUCYOCOFFEE CLT/Cycling Team]  'BUCYOCOFFEE CLT/Cycling Team'×2 | 'BUCYOCOFFEE CLT/Cyclingteam'×1
+  [影山輪業 横浜杉田店]  '影山輪業 横浜杉田店'×1 | '影山輪業\u3000横浜杉田店'×1 | '影山輪業横浜杉田店'×1
+  [NAMIBIA JAPAN UNITED Cycling Team]  'NAMIBIA JAPAN UNITED Cycling Team'×1 | 'NAMIBIA  JAPAN UNITED cycling Team'×1 | 'NAMIBIA  JAPAN  UNITED  Cycling Team'×1
+  [Araren8214 アラレンハツイシ]  'Araren8214 アラレンハツイシ'×2 | 'Araren8214 アラレン\u3000ハツイシ'×1
+  [Villagede°M（ヴィラージュドエム）]  'Villagede°M（ヴィラージュドエム）'×2 | 'Village de °M(ヴィラージュドエム)'×1
+  [Sandeb]  'Sandeb'×2 | 'sandeb'×1
+  [cーviento]  'cーviento'×2 | 'Cーviento'×1
+  [COWBOY／山の駅]  'COWBOY／山の駅'×2 | 'COWBOY/山の駅'×1
+  [ChihayaCycleCluster]  'ChihayaCycleCluster'×2 | 'Chihaya Cycle Cluster'×1
+  [Kobe Pompier Cycling]  'Kobe Pompier Cycling'×2 | 'kobe pompier cycling'×1
+  [EURO-WORKS Racing P塾]  'EURO-WORKS Racing P塾'×2 | 'EURO-WORKS Racing\u3000Ｐ塾'×1
+  [Nerebani / ALLOUT reric]  'Nerebani / ALLOUT reric'×2 | 'Nerebani/ALLOUT reric'×1
+  [EUROーWORKS Racing P塾]  'EUROーWORKS Racing P塾'×2 | 'EUROーWORKSRacingP塾'×1
+  [WAVE]  'WAVE'×2 | 'Wave'×1
+  [SKRK/rinkasports]  'SKRK/rinkasports'×2 | 'skrk/rinkasports'×1
+  [Club La.sista. Offroad Team]  'Club La.sista. Offroad Team'×2 | 'Club La.sista.OffroadTeam'×1
+  [HOJOH1961]  'HOJOH1961'×2 | 'hojoh1961'×1
+  [TEAM A&F / OAKLEY]  'TEAM A&F / OAKLEY'×2 | 'TEAM A&F/ OAKLEY'×1
+  [TeamEurasiaIRCTire]  'TeamEurasiaIRCTire'×2 | 'Team Eurasia IRCtire'×1
+  [EMU SPEED CLUB/Bicycle Fellow]  'EMU SPEED CLUB/Bicycle Fellow'×1 | 'EMU SPEED CLUB/Bicycle fellow'×1 | 'EMU SPEED CLUB/bicycle fellow'×1
+  [マヴィックテストチーム]  'マヴィックテストチーム'×2 | 'ﾏｳﾞｨｯｸﾃｽﾄﾁｰﾑ'×1
+  [喫茶SPOON]  '喫茶SPOON'×2 | '喫茶spoon'×1
+  [Maddy WAKAYAMA]  'Maddy WAKAYAMA'×2 | 'Maddy Wakayama'×1
+  [HADANO Cyclocross Te]  'HADANO Cyclocross Te'×2 | 'HADANO Cyclocross te'×1
+  [kochi cycling junior club]  'kochi cycling junior club'×2 | 'Kochi Cycling Junior Club'×1
+  [Legarsi イナーメ信濃山形]  'Legarsi イナーメ信濃山形'×2 | 'Legarsiイナーメ信濃山形'×1
+  [Theカブト虫]  'Theカブト虫'×2 | 'The カブト虫'×1
+  [ウィーモ2005]  'ウィーモ2005'×2 | 'ウィーモ\u30002005'×1
+  [BOA DIALED IN/ハッピーハンバーグ]  'BOA DIALED IN/ハッピーハンバーグ'×2 | 'BOA DIALED IN/ﾊｯﾋﾟｰﾊﾝﾊﾞｰｸﾞ'×1
+  [全機材借り物レーシングseason2]  '全機材借り物レーシングseason2'×2 | '全機材借り物レーシング season2'×1
+  [Fleet]  'Fleet'×2 | 'FLEET'×1
+  [FAST LANE]  'FAST LANE'×2 | 'Fast Lane'×1
+  [CLUB Liv]  'CLUB Liv'×2 | 'CLUB LIV'×1
+  [El Nino KENPOKU]  'El Nino KENPOKU'×2 | 'El Nino Kenpoku'×1
+  [Team 自転車処 風綸]  'Team 自転車処 風綸'×2 | 'TEAM 自転車処 風綸'×1
+  [シン・借り物レーシング3.0]  'シン・借り物レーシング3.0'×2 | 'シン・借り物レーシング 3.0'×1
+  [wcu]  'wcu'×2 | 'WCU'×1
+  [Saddle-Up!]  'Saddle-Up!'×2 | 'Saddle-up!'×1
+  [J&M朝活集団]  'J&M朝活集団'×2 | 'J & M 朝活集団'×1
+  [ZEAL /みんゴル！]  'ZEAL /みんゴル！'×1 | 'ZEAL/みんゴル！'×1 | 'ZEAL／みんゴル！'×1
+  [Team LMP La Roche Vendee Cyclisme]  'Team LMP La Roche Vendee Cyclisme'×2 | 'TEAM LMP La Roche Vendee Cyclisme'×1
+  [Team DANDTiGA]  'Team DANDTiGA'×2 | 'TEAM DANDTiGA'×1
+  [いちございくるRedBeco]  'いちございくるRedBeco'×2 | 'いちございくるRedbeco'×1
+  [Ｌｉーｒｅｓｌｅｅｐ]  'Ｌｉーｒｅｓｌｅｅｐ'×2 | 'Ｌｉーｒｅ\u3000ｓｌｅｅｐ'×1
+  [CyclesMarmotte/みんなのゴルビー]  'CyclesMarmotte/みんなのゴルビー'×2 | 'Cycles Marmotte/みんなのゴルビー'×1
+  [ISnet]  'ISnet'×1 | 'isnet'×1
+  [LIFECYCLE]  'LIFECYCLE'×1 | 'ＬＩＦＥＣＹＣＬＥ'×1
+  [OLDbamboo]  'OLDbamboo'×1 | 'OLD bamboo'×1
+  [TEAM INNO]  'TEAM INNO'×1 | 'Team INNO'×1
+  [nm7Racing]  'nm7Racing'×1 | 'nm7 racing'×1
+  [R.S.B.CTeam@]  'R.S.B.CTeam@'×1 | 'R.S.B.C Team@'×1
+  [TEAMTOPFIELD]  'TEAMTOPFIELD'×1 | 'TeamTopField'×1
+  [teamsportech]  'teamsportech'×1 | 'team sportech'×1
+  [CLUB・Viento]  'CLUB・Viento'×1 | 'CLUB・VIENTO'×1
+  [ENJOYHOUSE CSC]  'ENJOYHOUSE CSC'×1 | 'ENJOY HOUSE CSC'×1
+  [ネモト Hello2]  'ネモト Hello2'×1 | 'ネモト\u3000Hello2'×1
+  [銀輪クラブ]  '銀輪クラブ'×1 | '銀輪クラブ'×1
+  [GENEBIKES496部/662CCC]  'GENEBIKES496部/662CCC'×1 | 'GENE BIKES 496部/662CCC'×1
+  [サイクルクラブ3UP]  'サイクルクラブ3UP'×1 | 'サイクルクラブ 3UP'×1
+  [TEAM WADACHIYA/TEAM轍屋]  'TEAM WADACHIYA/TEAM轍屋'×1 | 'TEAM WADACHIYA/TEAM 轍屋'×1
+  [ChrisKing/CieloFactoryTeam]  'ChrisKing/CieloFactoryTeam'×1 | 'Chris King/ Cielo Factory Team'×1
+  [ＡＲＩ ＭＵＲＡＣＡ]  'ＡＲＩ ＭＵＲＡＣＡ'×1 | 'ARI MURACA'×1
+  [パワースポーツシック]  'パワースポーツシック'×1 | 'ﾊﾟﾜｰｽﾎﾟｰﾂ\u3000ｼｯｸ'×1
+  [IWAI SHOKAI RC/岩井商会RACING]  'IWAI SHOKAI RC/岩井商会RACING'×1 | 'IWAI SHOKAI\u3000RC/岩井商会RACING'×1
+  [TeamCUORE（チームクオーレ）]  'TeamCUORE（チームクオーレ）'×1 | 'Team CUORE（チームクオーレ）'×1
+  [ｲﾅｰﾒ･ｲﾜﾅｱｼﾞﾙ]  'ｲﾅｰﾒ･ｲﾜﾅｱｼﾞﾙ'×1 | 'イナーメ・イワナアジル'×1
+  [MURAKAMI TATEGU/（有）村上建具]  'MURAKAMI TATEGU/（有）村上建具'×1 | 'MURAKAMI Tategu/（有）村上建具'×1
+  [Yatsugatake　c.c./八ヶ岳CYCLOCROSSCLUB]  'Yatsugatake\u3000c.c./八ヶ岳CYCLOCROSSCLUB'×1 | 'Yatsugatake\u3000c.c./八ヶ岳CYCLOCROSS CLUB'×1
+  [CYCLEMIND/チーム　サイクルマインド]  'CYCLEMIND/チーム\u3000サイクルマインド'×1 | 'Cycle Mind/チーム\u3000サイクルマインド'×1
+  [Ogvv]  'Ogvv'×1 | 'ogvv'×1
+  [RADER]  'RADER'×1 | 'rader'×1
+  [FLATOUT]  'FLATOUT'×1 | 'FLAT OUT'×1
+  [OVER REV]  'OVER REV'×1 | 'OVER  REV'×1
+  [teamFRAT]  'teamFRAT'×1 | 'TeamFRAT'×1
+  [Y's Racing]  "Y's Racing"×1 | "Y'sracing"×1
+  [チームAVEL]  'チームAVEL'×1 | 'ﾁｰﾑAVEL'×1
+  [32ビット級]  '32ビット級'×1 | '３２ビット級'×1
+  [CROSS TEAM by G4]  'CROSS TEAM by G4'×1 | 'Cross Team by G4'×1
+  [TyrellKagawaCycling]  'TyrellKagawaCycling'×1 | 'Tyrell Kagawa Cycling'×1
+  [ﾌﾞﾙﾌﾞﾙﾁｷﾝ]  'ﾌﾞﾙﾌﾞﾙﾁｷﾝ'×1 | 'ブルブルチキン'×1
+  [RADIO BERRY MAI チャリ！]  'RADIO BERRY MAI チャリ！'×1 | 'RADIO BERRY MAIチャリ！'×1
+  [The☆whoo CX/大原朝市R&C]  'The☆whoo CX/大原朝市R&C'×1 | 'The☆whoo CX / 大原朝市Ｒ＆Ｃ'×1
+  [パインヒルズ’９０湘南]  'パインヒルズ’９０湘南'×1 | 'パインヒルズ ’９０ 湘南'×1
+  [メカピサイクリングクラブ]  'メカピサイクリングクラブ'×1 | 'ﾒｶﾋﾟｻｲｸﾘﾝｸﾞｸﾗﾌﾞ'×1
+  [ビッグベローズ&イマイシクロケッツ]  'ビッグベローズ&イマイシクロケッツ'×1 | 'ビッグベローズ＆イマイシクロケッツ'×1
+  [ｲﾅｰﾒ･ｲﾜﾅｱｼﾞﾙ･ﾀﾜｰｽﾞ]  'ｲﾅｰﾒ･ｲﾜﾅｱｼﾞﾙ･ﾀﾜｰｽﾞ'×1 | 'イナーメ・イワナアジル・タワーズ'×1
+  [CycleDNA]  'CycleDNA'×1 | 'Cycle DNA'×1
+  [TAS PARK]  'TAS PARK'×1 | 'TAS\u3000PARK'×1
+  [simworks]  'simworks'×1 | 'SimWorks'×1
+  [TeamZipang]  'TeamZipang'×1 | 'Team Zipang'×1
+  [TEAN YOUCAN]  'TEAN YOUCAN'×1 | 'TeanYOUCAN'×1
+  [TRC PNAMAREDS]  'TRC PNAMAREDS'×1 | 'TRCPnamaReds'×1
+  [EURO-WORKSRacig]  'EURO-WORKSRacig'×1 | 'EURO-WORKS Racig'×1
+  [Soleildel’est]  'Soleildel’est'×1 | 'soleil de l’est'×1
+  [CAMEL Men's gear]  "CAMEL Men's gear"×1 | "CAMEL Men's  Gear"×1
+  [Ride-Ride CX(仮)]  'Ride-Ride CX(仮)'×1 | 'Ride-Ride CX (仮)'×1
+  [TeamCuore/Yahoo! JAPAN]  'TeamCuore/Yahoo! JAPAN'×1 | 'Team Cuore/ Yahoo! JAPAN'×1
+  [Cycom／多武峰朝練]  'Cycom／多武峰朝練'×1 | 'Cycom/多武峰朝練'×1
+  [Kyoto Iwaishokai Racing]  'Kyoto Iwaishokai Racing'×1 | 'Kyoto Iwai Shokai Racing'×1
+  [松原正典松原治希]  '松原正典松原治希'×1 | '松原\u3000正典 松原\u3000治希'×1
+  [Flecha(フレーチャ）]  'Flecha(フレーチャ）'×1 | 'Flecha(フレーチャ)'×1
+  [Team闇練MANA大杉走輪]  'Team闇練MANA大杉走輪'×1 | 'Team闇練mana大杉走輪'×1
+  [eNShare-エルドラード]  'eNShare-エルドラード'×1 | 'eNshare-エルドラード'×1
+  [箕形和代遠藤ゆずな]  '箕形和代遠藤ゆずな'×1 | '箕形\u3000和代 遠藤\u3000ゆずな'×1
+  [ＮＣＫ自転車くらぶ]  'ＮＣＫ自転車くらぶ'×1 | 'NCK自転車くらぶ'×1
+  [taperedclub／シャオピンズ]  'taperedclub／シャオピンズ'×1 | 'TAPERED CLUB/シャオピンズ'×1
+  [アクアタマユーロワークス]  'アクアタマユーロワークス'×1 | 'アクアタマ\u3000ユーロワークス'×1
+  [イトウサイクル WING IT RACING]  'イトウサイクル WING IT RACING'×1 | 'イトウサイクル  WING IT RACING'×1
+  [ゾースエレファンットメント]  'ゾースエレファンットメント'×1 | 'ｿﾞｰｽ ｴﾚﾌｧﾝｯﾄﾒﾝﾄ'×1
+  [IUHW MED]  'IUHW MED'×1 | 'IUHW med'×1
+  [ok works]  'ok works'×1 | 'OK  WORKS'×1
+  [8823Racing]  '8823Racing'×1 | '８８２３Racing'×1
+  [SDL-YAMAHA]  'SDL-YAMAHA'×1 | 'SDL-Yamaha'×1
+  [ロコBICI]  'ロコBICI'×1 | 'ロコbici'×1
+  [TEAM NARITA]  'TEAM NARITA'×1 | 'Team Narita'×1
+  [TEAM２０３]  'TEAM２０３'×1 | 'TEAM203'×1
+  [74(ナナヨン)]  '74(ナナヨン)'×1 | '74（ナナヨン）'×1
+  [摂津CYCLE ZERO]  '摂津CYCLE ZERO'×1 | '摂津 CYCLE ZERO'×1
+  [チーム アクシス]  'チーム アクシス'×1 | 'チーム\u3000アクシス'×1
+  [662CCC/輪娯ロード/FUKAYA]  '662CCC/輪娯ロード/FUKAYA'×1 | '662ccc/輪娯ロード/FUKAYA'×1
+  [オリーブサイクル宇多津]  'オリーブサイクル宇多津'×1 | 'ｵﾘｰﾌﾞｻｲｸﾙ宇多津'×1
+  [関西大学トライアスロン]  '関西大学トライアスロン'×1 | '関西大学 トライアスロン'×1
+  [no]  'no'×1 | 'No'×1
+  [USK]  'USK'×1 | 'usk'×1
+  [Glocal]  'Glocal'×1 | 'glocal'×1
+  [Valmoto]  'Valmoto'×1 | 'valmoto'×1
+  [TEAM NRT]  'TEAM NRT'×1 | 'Team NRT'×1
+  [Forever efish]  'Forever efish'×1 | 'forever  efish'×1
+  [team斜度男]  'team斜度男'×1 | 'team 斜度男'×1
+  [チーム Paradiso]  'チーム Paradiso'×1 | 'チームParadiso'×1
+  [eNsher Cycling Team]  'eNsher Cycling Team'×1 | 'eNsher Cycling\u3000Team'×1
+  [projectPPcyclo-cross]  'projectPPcyclo-cross'×1 | 'project PPcyclo-cross'×1
+  [チーム yyy 三小]  'チーム yyy 三小'×1 | 'チーム yyy 三 小'×1
+  [Limit Vertex/外環CX]  'Limit Vertex/外環CX'×1 | 'limit vertex/外環CX'×1
+  [ひろともきRacing]  'ひろともきRacing'×1 | 'ひろともきracing'×1
+  [MAC(マック)チャリ部]  'MAC(マック)チャリ部'×1 | 'ＭＡＣ（マック）チャリ部'×1
+  [チーム埼玉県人 Alphawk]  'チーム埼玉県人 Alphawk'×1 | 'チーム埼玉県人\u3000ALPHAWK'×1
+  [RiseRide/Team Lion(チーム　リオン)]  'RiseRide/Team Lion(チーム\u3000リオン)'×1 | 'RiseRide/Team Lion（チーム リオン）'×1
+  [日本製鉄（株）八幡製鉄所/Click八幡]  '日本製鉄（株）八幡製鉄所/Click八幡'×1 | '日本製鉄（株）八幡製鉄所/Cｌick八幡'×1
+  [TEAM GIRO360]  'TEAM GIRO360'×1 | 'TEAM GIRO 360'×1
+  [662/RINGO ROAD]  '662/RINGO ROAD'×1 | '662/RINGOROAD'×1
+  [SNElCYCLECROSSTEAM]  'SNElCYCLECROSSTEAM'×1 | 'SNEL CYCLECROSS TEAM'×1
+  [orange's FLAT 0% PT]  "orange's FLAT 0% PT"×1 | "Orange's  FLAT0％\u3000PT"×1
+  [チームグランプッチ]  'チームグランプッチ'×1 | 'チーム\u3000グランプッチ'×1
+  [team井上]  'team井上'×1 | 'team 井上'×1
+  [RACING NOZAC]  'RACING NOZAC'×1 | 'Racing Nozac'×1
+  [スマコCX部]  'スマコCX部'×1 | 'スマコ CX部'×1
+  [SimWorks RacingTeam]  'SimWorks RacingTeam'×1 | 'SimWorks Racing Team'×1
+  [WINSPACE VELONUTS  CYCLING　CLUB]  'WINSPACE VELONUTS  CYCLING\u3000CLUB'×1 | 'WINSPACE\u3000VELONUTS\u3000CYCLING\u3000CLUB'×1
+  [Y’Spirit]  'Y’Spirit'×1 | 'Y’spirit'×1
+  [Team DAHHHLIA]  'Team DAHHHLIA'×1 | 'team DAHHHLIA'×1
+  [Equipe U Racing]  'Equipe U Racing'×1 | 'EquipeURacing'×1
+  [Greeen Lights racing team]  'Greeen Lights racing team'×1 | 'Greeen Lights Racing Team'×1
+  [お魚ﾁﾝﾊﾟﾝｼﾞｰ]  'お魚ﾁﾝﾊﾟﾝｼﾞｰ'×1 | 'お魚チンパンジー'×1
+  [東洋水産ロードレース部]  '東洋水産ロードレース部'×1 | '東洋水産ﾛｰﾄﾞﾚｰｽ部'×1
+  [往生際がわるいんですっ！]  '往生際がわるいんですっ！'×1 | '往生際がわるいんですっ!'×1
+  [アスリチューン・CORAGGIO KAWANISHI U19]  'アスリチューン・CORAGGIO KAWANISHI U19'×1 | 'ｱｽﾘﾁｭｰﾝ･CORAGGIO KAWANISHI U19'×1
+  [IKOMAI]  'IKOMAI'×1 | 'ＩＫＯＭＡi'×1
+  [schemeV]  'schemeV'×1 | 'scheme V'×1
+  [Tiffany CX]  'Tiffany CX'×1 | 'Tiffany cx'×1
+  [OUTDOORLIFERacing.]  'OUTDOORLIFERacing.'×1 | 'OUTDOORLIFE Racing.'×1
+  [tours.net / Honda栃木]  'tours.net / Honda栃木'×1 | 'tours.net/Honda栃木'×1
+  [BC.TIMER’S/粟レンジャー]  'BC.TIMER’S/粟レンジャー'×1 | 'BC.TIMER’S / 粟レンジャー'×1
+  [NAMIBIA PROJECT Cycling Team /EMU]  'NAMIBIA PROJECT Cycling Team /EMU'×1 | 'NAMIBIA PROJECT Cycling Team／EMU'×1
+  [全機材借り物レーシング meets 多武峰CX]  '全機材借り物レーシング meets 多武峰CX'×1 | '全機材借り物レーシング\u3000meets多武峰CX'×1
+  [FEMALE]  'FEMALE'×1 | 'female'×1
+  [The Stoogees]  'The Stoogees'×1 | 'The stoogees'×1
+  [HOKKAIDO ESPOIR PROJECT]  'HOKKAIDO ESPOIR PROJECT'×1 | 'HOKKAIDO\u3000ESPOIR\u3000PROJECT'×1
+  [チーム　ボンシャンス]  'チーム\u3000ボンシャンス'×1 | 'チーム ボンシャンス'×1
+  [CinqMorceau]  'CinqMorceau'×1 | 'Cinq Morceau'×1
+  [GRAVEL GRIT]  'GRAVEL GRIT'×1 | 'Gravel Grit'×1
+  [HARMONIA/NICO-OZ]  'HARMONIA/NICO-OZ'×1 | 'HARMONIA／NICO-OZ'×1
+  [Team轍屋/Maynoothcyclingteam]  'Team轍屋/Maynoothcyclingteam'×1 | 'Team 轍屋/Maynooth cycling team'×1
+  [クリック八幡/サコッシュ]  'クリック八幡/サコッシュ'×1 | 'クリック八幡／サコッシュ'×1
+  [ATHLETUNE・CORAGGIO KAWANISHIU-19/横浜立野高等学校]  'ATHLETUNE・CORAGGIO KAWANISHIU-19/横浜立野高等学校'×1 | 'ATHLETUNE・CORAGGIO KAWANISHI U-19/横浜立野高等学校'×1
+
+======================================================================
+【レビュー材料 C】無所属の見落とし候補（除外リスト外で“無所属っぽい”値）
+======================================================================
+       80  'サイクルフリーダム'
+       31  'サイクルフリーダム・レーシング'
+       17  'フリーダム'
+       12  'サイクルフリーダムレーシング'
+        3  'サイクルフリーダムレーシングチーム'
+        2  'サイクルフリーダム店長'
+        2  'サイクルフリーダム・レーシングチーム'
+        1  'サイクフリーダム・レーシングチーム'
+        1  'サイクル・フリーダムレーシングチーム'
+        1  'サイクル・フリーダムレーシング'
+
+======================================================================
+【参考】現設定での暫定 シーズン別ユニークチーム数（承認後に確定）
+======================================================================
+  シーズン         ユニーク数       無所属件数
+  15-16         1600       5,676  
+  16-17         1995       2,736  (+395)
+  17-18         2133       2,346  (+138)
+  18-19         2222       2,344  (+89)
+  19-20         2320       2,248  (+98)
+  20-21         1718       1,573  (-602)
+  21-22         1901       2,586  (+183)
+  22-23         2012       3,057  (+111)
+  23-24         1951       3,139  (-61)
+  24-25         1899       2,876  (-52)
+  25-26         1859       2,911  (-40)
