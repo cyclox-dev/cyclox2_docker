@@ -1,0 +1,29 @@
+フェーズ,タスクID,タスク,内容,工数(人日),依存,優先度,備考
+W0 足場・テスト基盤,W0.1,PHP8.3コンテナ追加,旧Cake2と並行する PHP8.3 ターゲットコンテナを docker-compose に追加,1.5,,高,旧環境は停止しない
+W0 足場・テスト基盤,W0.2,characterizationテスト基盤,主要画面のHTTPゴールデン取得基盤を整備,3.0,,高,テスト皆無への対策(最重要安全弁)
+W0 足場・テスト基盤,W0.3,計算系スナップショット,ResultParamCalc/PointSeries/RedLine/CatLimit の入出力をゴールデン化,3.0,,最高,計算系の暗黙仕様の固定
+W0 足場・テスト基盤,W0.4,インベントリ+権限マトリクス,機能棚卸しとAcl/Users権限の1:1マトリクス作成,2.5,,高,認可移行の前提
+W1 Laravel足場,W1.1,Laravel12初期化,初期化・規約・サンプル実装,2.0,W0.1,高,
+W1 Laravel足場,W1.2,Eloquent接続/スキーマ所有,既存スキーマへモデルmap・マイグレーション所有体制の確立,3.0,W1.1,高,webがスキーマ所有者
+W1 Laravel足場,W1.3,認証・認可土台,Users相当の認証・Acl→Policy/Gate の認可土台,4.0,W1.1,高,権限境界の再現
+W1 Laravel足場,W1.4,スケジューラ/キュー,cron/batch の受け皿(スケジューラ/キュー)設定,1.5,W1.1,中,
+W2 共通基盤・横断,W2.1,Cyclox共通ライブラリ移植,Cyclox/Const・Util(4100行)の移植,4.0,W1.2,高,
+W2 共通基盤・横断,W2.2,SoftDelete/Search/ヘルパー,論理削除・検索相当・共通ヘルパーの移植,3.0,W1.2,中,
+W2 共通基盤・横断,W2.3,レイアウト/テンプレ土台,157ビューの共通レイアウト土台,2.5,W1.1,中,
+W3 機能グループ移行,W3.1,基本UI,index/view/edit/delete とレイアウト,5.0,W2.3,高,
+W3 機能グループ移行,W3.2,選手管理,Racers/CategoryRacers/NameChangeLogs/UniteRacerLogs(名寄せ),5.0,W2.1,高,
+W3 機能グループ移行,W3.3,大会・エントリ管理,Meets/MeetGroups/Seasons/EntryGroups/EntryCategories/EntryRacers,5.0,W2.1,高,
+W3 機能グループ移行,W3.4,カテゴリ管理(昇格降格),Categories/CategoryGroups と昇格降格ロジック,5.0,W0.3,最高,計算系
+W3 機能グループ移行,W3.5,ポイント管理,PointSeries群/MeetPointSeries/HoldPoints/RedLines とランキング計算,5.0,W0.3,最高,計算系
+W3 機能グループ移行,W3.6,成績/記録,ResultParamCalc(2193行)/ResultRead/TimeRecords/RacerResults,7.0,W0.3,最高,最重要・本番相当データ突合
+W3 機能グループ移行,W3.7,API,ApiController(1685行)・契約テスト固定,4.0,W2.1,高,外部連携互換
+W3 機能グループ移行,W3.8,バッチ/cron,Console4種(Result/CatLimit/OrgUtil/OneTime)をスケジューラへ,4.0,W1.4,高,
+W3 機能グループ移行,W3.9,運用ユーティリティ/CSV,OrgUtil(1268行)・CSV入出力,3.0,W2.1,中,
+W4 共有PKG抽出(S3b),W4.1,共有パッケージ雛形,共有ドメインパッケージ(repo)雛形・GitHub VCS配布・バージョニング,2.0,W3.6,高,res-sysのR5の前提
+W4 共有PKG抽出(S3b),W4.2,共有ロジック抽出,共有DBモデル/集計サービスをパッケージへ抽出しweb側を参照へ置換,4.0,W4.1,高,二重実装の解消
+W4 共有PKG抽出(S3b),W4.3,両consumer CI,パッケージ更新→両アプリのゴールデン回帰CI整備,2.0,W4.2,高,片側破壊の検出
+W5 結合/性能/切替,W5.1,結合テスト,全機能の結合テスト,3.0,W3.9,高,
+W5 結合/性能/切替,W5.2,性能・計算系突合,性能最適化と計算系の本番相当データ突合,3.0,W5.1,最高,
+W5 結合/性能/切替,W5.3,セキュリティテスト,認可・入力・依存の点検,2.0,W5.1,高,
+W5 結合/性能/切替,W5.4,本番切替,Blue/Green切替・ロールバック・旧Cake2停止,3.0,W5.2,高,オフシーズン実施推奨
+,,,合計,92.0,,,半稼働(週2.5日)で約36.8週相当
