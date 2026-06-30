@@ -45,7 +45,7 @@ Conventional Commits に準拠:
 | `test` | テストの追加・修正 |
 | `chore` | ビルド設定・依存関係・CI等 |
 
-scope 例: `docker`, `cyclox2web`, `cyclox2res-sys`, `sdd`, `architecture`
+scope 例: `core`, `api`, `ui`, `db`, `sdd`, `docs`（プロジェクトに応じて定義）
 
 ---
 

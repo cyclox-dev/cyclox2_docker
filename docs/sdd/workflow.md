@@ -116,6 +116,6 @@ docs/specs/<task-id>/
 ## ベースルール管理
 
 このドキュメントおよび `docs/sdd/` 配下は **リポジトリ非依存のベースルール** です。
-他のリポジトリへ流用する際は `docs/sdd/` ディレクトリごとコピー（または将来的に `npx cyclox-sdd-base init` 経由で展開）してください。
+他のリポジトリへ流用する際は `npx github:<org>/sdd_base_template install`（または `init`）で展開してください。`docs/sdd/` 配下はリポジトリ非依存です。
 
 リポジトリ固有情報は `docs/architecture/` に分離されています。
