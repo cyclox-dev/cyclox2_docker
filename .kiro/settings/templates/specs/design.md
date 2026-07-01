@@ -329,3 +329,24 @@ Include a Mermaid flowchart showing migration phases when schema/data movement i
 - Create this section only when keeping the information in the main body would hurt readability (e.g., very long TypeScript definitions, vendor option matrices, exhaustive schema tables). Keep decision-making context in the main sections so the design stays self-contained.
 - Link to the supporting references from the main text instead of inlining large snippets.
 - Background research notes and comparisons continue to live in `research.md`, but their conclusions must be summarized in the main design.
+
+<!-- SDD-OVERLAY:DESIGN-TECHREQ:START (sdd_base_template が付加。手動編集は再 init で再付与される) -->
+## 技術要件・制約チェック（SDD overlay / 初回実装時）
+
+> 旧 `tech-requirements.md` はこの節に統合済み。独立ファイルは作らない。
+> 言語/FW/ライブラリは **Technology Stack**、テスト方針は **Testing Strategy**、既存コード結合は
+> **Existing Architecture Analysis / Modified Files** に記載する。本節はそれらに収まらない
+> 「環境固有の制約」と「初回実装前の確認」だけを補う。
+
+### 環境固有の制約
+| 制約 | 内容 |
+|---|---|
+| 言語ランタイムのバージョン制約 | |
+| データストアのバージョン制約 | |
+| Docker / 実行環境での考慮事項 | |
+| その他 | |
+
+### 初回実装前の確認
+- [ ] 上記スタック・テスト方針・既存結合・環境制約を確認した
+- [ ] 人間が技術要件を確認した（**承認の記録は `spec.json` の design ゲートに集約。本チェックは二重管理しない**）
+<!-- SDD-OVERLAY:DESIGN-TECHREQ:END -->
