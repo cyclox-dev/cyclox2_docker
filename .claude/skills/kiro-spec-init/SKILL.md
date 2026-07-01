@@ -49,3 +49,21 @@ Provide output in the language specified in `spec.json` with the following struc
 - **Template Missing**: If template files don't exist in `.kiro/settings/templates/specs/`, report error with specific missing file path and suggest checking repository setup
 - **Directory Conflict**: If feature name already exists, append numeric suffix (e.g., `feature-name-2`) and notify user of automatic conflict resolution
 - **Write Failure**: Report error with specific path and suggest checking permissions or disk space
+
+<!-- SDD-OVERLAY:ENSURE-AGREEMENT-LOG:START (sdd_base_template が付加。手動編集は再 init で再付与される) -->
+## Ensure agreement-log.md exists (SDD overlay)
+
+**This repository requires every spec to have a real `agreement-log.md` file.** cc-sdd's
+spec-init does not create one, so as part of initializing a spec you MUST also create it if
+missing:
+
+1. After `spec.json` / `requirements.md` are generated, check for
+   `.kiro/specs/<id>/agreement-log.md`.
+2. If it does not exist, create it from the template
+   `docs/sdd/templates/agreement-log.md`, filling in タスクID / 作成日 / 関係者 and the
+   壁打ち概要 from the spec description. Do NOT leave the agreement as conversation-only.
+3. Keep it updated at each approval gate (decisions, rationale, dates). The authoritative
+   approval booleans still live in `spec.json`; agreement-log records the "why".
+
+See `docs/sdd/workflow.md` (「非コーディング作業のドキュメント化」/「承認ゲートの原則」) for the rule.
+<!-- SDD-OVERLAY:ENSURE-AGREEMENT-LOG:END -->

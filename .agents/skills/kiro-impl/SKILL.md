@@ -244,3 +244,28 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 
 **Task Plan Invalidated During Implementation**:
 - If debug returns `NEXT_ACTION: STOP_FOR_HUMAN` because of task ordering, boundary, or decomposition problems, stop and return for human review of `tasks.md` or the approved plan instead of forcing a code workaround
+
+<!-- SDD-OVERLAY:IMPL-POLICY:START (sdd_base_template が付加。手動編集は再 init で再付与される) -->
+## Team Policy Override (SDD overlay)
+
+**This repository overlays team rules ON TOP of this cc-sdd skill. Where they conflict, the
+overlay wins.** The authoritative policy lives in the overlay docs — read and obey them:
+- `docs/sdd/workflow.md` (development flow, the two entry doors, Tier S/L)
+- `docs/sdd/rules/commit-policy.md`
+- `docs/sdd/rules/branching-policy.md`
+
+Concretely, this OVERRIDES the commit/branch behavior described above in this skill:
+1. **Autonomous auto-commit is DISABLED by default.** Do NOT `git commit` after each task.
+   Instead, mark the task `[x]` in tasks.md, and at phase breakpoints PROPOSE a commit
+   (target files + suggested message) for the human to execute. Auto-commit runs only when the
+   human explicitly opts in ("このタスクはコミットまで自動で進めて") — see commit-policy.md.
+2. **Never commit to `main`/`master`.** Work on a feature branch; integrate via push → PR.
+   If the current branch is `main`/`master`, STOP and ask the human to create a branch first.
+3. **No destructive history ops** (`--amend`, `reset --hard`, force push) inside the loop.
+4. **Records go to `.kiro/specs/<id>/`** (test-results.md, integration-test-checklist.md,
+   agreement-log.md). Do not create a separate `docs/specs/` tree.
+
+Everything else in this skill (TDD, independent review, bounded debug, validate-impl gate)
+still applies. After the validate-impl GO, a human integration-test gate remains
+(`.kiro/specs/<id>/integration-test-checklist.md`) before the feature is "done".
+<!-- SDD-OVERLAY:IMPL-POLICY:END -->
