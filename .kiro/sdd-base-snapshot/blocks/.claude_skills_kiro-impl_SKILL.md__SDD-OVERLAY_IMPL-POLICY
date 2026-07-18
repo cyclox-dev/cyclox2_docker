@@ -16,6 +16,25 @@ Concretely, this OVERRIDES the commit/branch behavior described above in this sk
 3. **No destructive history ops** (`--amend`, `reset --hard`, force push) inside the loop.
 4. **Records go to `.kiro/specs/<id>/`** (test-results.md, integration-test-checklist.md,
    agreement-log.md). Do not create a separate `docs/specs/` tree.
+5. **ABSOLUTE AXIS — never start actual work (design/implementation) without human permission,
+   in ANY situation.** The approval-gate pattern (dialogue → approve → design → approve → implement)
+   is the non-negotiable safety baseline on every route: standard, deviation, emergency, or rework.
+   - **Design-scope deviations require a HUMAN GATE — do not decide them yourself.** If during
+     implementation you find the approved requirements/design was wrong, an assumption breaks, or
+     you need to add a **public interface not in the approved design** (a new CLI command, API,
+     file format, contract, or dependency), STOP the loop and return to the human with the gap and
+     options for **re-approval**.
+   - **Recovery from any deviated route MUST go through "share situation with human → confirm →
+     approve" before you touch the corrective design/implementation.** Finding a problem is not a
+     license to silently fix it. If a prior stage was wrong, go BACK to that stage's gate, set the
+     relevant `spec.json` approvals to false, and get re-approval. After approval, reflect the
+     decision into requirements/design and update `spec.json` before resuming.
+   - `agreement-log` is for rationale, NOT for smuggling in unapproved design changes; logging
+     alone is acceptable only for trivial details **within already-approved scope**.
+   - Scope line: a NEW gate is required only for work crossing scope boundaries (unapproved design,
+     new implementation, public interface, contract, or dependency). Execution inside
+     already-approved scope is already permitted (no new gate for a typo fix).
+   Test: "Is this within the design/tasks the human approved? If not, stop and go back."
 
 Everything else in this skill (TDD, independent review, bounded debug, validate-impl gate)
 still applies. After the validate-impl GO, a human integration-test gate remains

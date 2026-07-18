@@ -1,16 +1,15 @@
 ---
 name: kiro-verify-completion
 description: Verify completion and success claims with fresh evidence. Use before claiming a task is complete, a fix works, tests pass, or a feature is ready for GO.
-allowed-tools: Read, Bash, Grep, Glob
-argument-hint: <claim-type> <claim>
 ---
 
 # kiro-verify-completion
 
-## Overview
-
+<background_information>
 This skill prevents false completion claims. A task, fix, or feature is only complete when supported by fresh evidence that matches the scope of the claim.
+</background_information>
 
+<instructions>
 ## When to Use
 
 - Before saying a task is complete
@@ -129,3 +128,4 @@ Return `NOT_VERIFIED` when:
 - GAPS: <scope/evidence mismatch or missing validation>
 - NOTES: <next action if not verified>
 ```
+</instructions>

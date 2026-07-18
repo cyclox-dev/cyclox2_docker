@@ -1,6 +1,7 @@
 template_commit=unknown (fallback: https://github.com/kyamady-dorokid/sdd_base_template)
 template_repo=https://github.com/kyamady-dorokid/sdd_base_template
-file:docs/sdd/workflow.md:e27f2810ae47f7bf5f00b5362ba0a5dc673c974af66ca2e2cebf0c2109cc3dd6
+file:docs/sdd/deliverables-policy.md:f6529b230e57c6a8b8e3fc8a67fbe098adb51cb53240ad6acf84a2269f9a06dc
+file:docs/sdd/workflow.md:042bea352f29bdd1a91450c6124e524430bb1cb15d00d7844576b392357aa47b
 file:docs/sdd/rules/security-policy.md:3f2582b691bc629b36a03ad3874b6d1fa139d8f12f8114fa971f287f6e61032d
 file:docs/sdd/rules/branching-policy.md:c884f1d4786aaaf8ead862cbe8f1d2e8fca2521d432ab62b31d68ad806e224b4
 file:docs/sdd/rules/commit-policy.md:666cf139606339f0d8b1de02d0689eeaf598f540e873bc4b6d444b1cb047305f
@@ -9,10 +10,12 @@ file:docs/sdd/rules/testing-policy.md:0534278202c6e36d246f4c84524b76cc7a1655e2d3
 file:docs/sdd/templates/agreement-log.md:4358086d7a325721c726343a214269214b50b360fa98f05e6fac3c280af39277
 file:docs/sdd/templates/test-results.md:0788490c7708b15b648109ecd69427816d8b4de15591c58f384305baa001de7c
 file:docs/sdd/templates/integration-test-checklist.md:864d1fa01dbdf891f8737781bf86964ceb731886d79e1e3354be1584eb33f3b5
-block:CLAUDE.md:SDD-BASE:fa988be6e8aff7c4e5f40e2eb059830cda9dd33f883d6f675903dd716f827f50
-block:AGENTS.md:SDD-BASE:fa988be6e8aff7c4e5f40e2eb059830cda9dd33f883d6f675903dd716f827f50
-block:.claude/skills/kiro-impl/SKILL.md:SDD-OVERLAY:IMPL-POLICY:101e544dfd03070c2014a7860d37a26001c62a6d141415a2c743fddadb3dfc41
-block:.agents/skills/kiro-impl/SKILL.md:SDD-OVERLAY:IMPL-POLICY:101e544dfd03070c2014a7860d37a26001c62a6d141415a2c743fddadb3dfc41
+file:.claude/skills/doc-export/SKILL.md:61693b2b24d406064f9ef09783ab1e4f0173243f7bb58437d3891fc7d24e4ba9
+file:.agents/skills/doc-export/SKILL.md:61693b2b24d406064f9ef09783ab1e4f0173243f7bb58437d3891fc7d24e4ba9
+block:CLAUDE.md:SDD-BASE:7c0029e3c081d9e495d03b8f46c69a7e98fa5826741734925c062ae6ddded507
+block:AGENTS.md:SDD-BASE:7c0029e3c081d9e495d03b8f46c69a7e98fa5826741734925c062ae6ddded507
+block:.claude/skills/kiro-impl/SKILL.md:SDD-OVERLAY:IMPL-POLICY:74dadebf6ee489ca5d5757fa625a867ab774d1d819503b3a65922ba3c898231f
+block:.agents/skills/kiro-impl/SKILL.md:SDD-OVERLAY:IMPL-POLICY:74dadebf6ee489ca5d5757fa625a867ab774d1d819503b3a65922ba3c898231f
 block:.kiro/settings/templates/specs/design.md:SDD-OVERLAY:DESIGN-TECHREQ:97c4a69656ec565ee0a9d4b08143ac33f3eeb461984ff4044821079d1f025679
 block:.claude/skills/kiro-spec-init/SKILL.md:SDD-OVERLAY:ENSURE-AGREEMENT-LOG:e194596f2891f06b853e4ec30a71e20425aff362b7d95bf556237426bcfe19cb
 block:.agents/skills/kiro-spec-init/SKILL.md:SDD-OVERLAY:ENSURE-AGREEMENT-LOG:e194596f2891f06b853e4ec30a71e20425aff362b7d95bf556237426bcfe19cb

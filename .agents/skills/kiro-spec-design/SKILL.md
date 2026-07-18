@@ -1,30 +1,30 @@
 ---
 name: kiro-spec-design
-description: Generate comprehensive technical design translating requirements (WHAT) into architecture (HOW) with discovery process. Use when creating architecture from requirements.
-allowed-tools: Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
-argument-hint: <feature-name> [-y]
+description: Create comprehensive technical design for a specification
 metadata:
   shared-rules: "design-principles.md, design-discovery-full.md, design-discovery-light.md, design-synthesis.md, design-review-gate.md"
 ---
 
-# kiro-spec-design Skill
 
-## Core Mission
+# Technical Design Generator
+
+<background_information>
 - **Success Criteria**:
   - All requirements mapped to technical components with clear interfaces
   - The design makes responsibility boundaries explicit enough to guide task generation and review
   - Appropriate architecture discovery and research completed
   - Design aligns with steering context and existing patterns
   - Visual diagrams included for complex architectures
+</background_information>
 
+<instructions>
 ## Execution Steps
 
-### Step 1: Gather Context
+### Step 1: Load Context
 
-If steering/spec context is already available from conversation, skip redundant file reads.
-Otherwise, load all necessary context:
-- `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md` (if exists)
-- `.kiro/specs/{feature}/research.md` (if exists, contains gap analysis from `/kiro-validate-gap`)
+**Read all necessary context**:
+- `.kiro/specs/$1/spec.json`, `requirements.md`, `design.md` (if exists)
+- `.kiro/specs/$1/research.md` (if exists, contains gap analysis from `$kiro-validate-gap`)
 - Core steering context: `product.md`, `tech.md`, `structure.md`
 - Additional steering files only when directly relevant to requirement coverage, architecture boundaries, integrations, runtime prerequisites, security/performance constraints, or team conventions that affect implementation readiness
 - `.kiro/settings/templates/specs/design.md` for document structure
@@ -32,7 +32,7 @@ Otherwise, load all necessary context:
 - `.kiro/settings/templates/specs/research.md` for discovery log structure
 
 **Validate requirements approval**:
-- If auto-approve flag is true: Auto-approve requirements in spec.json
+- If `-y` flag provided ($2 == "-y"): Auto-approve requirements in spec.json
 - Otherwise: Verify approval status (stop if unapproved, see Safety & Fallback)
 
 ### Step 2: Discovery & Analysis
@@ -46,7 +46,7 @@ Otherwise, load all necessary context:
    - **Complex Integration** → Comprehensive analysis required
 
 2. **Execute Appropriate Discovery Process**:
-
+   
    **For Complex/New Features**:
    - Read and execute `rules/design-discovery-full.md` from this skill's directory
    - Conduct thorough research using WebSearch/WebFetch:
@@ -54,25 +54,25 @@ Otherwise, load all necessary context:
      - External dependency verification (APIs, libraries, versions, compatibility)
      - Official documentation, migration guides, known issues
      - Performance benchmarks and security considerations
-
+   
    **For Extensions**:
    - Read and execute `rules/design-discovery-light.md` from this skill's directory
    - Focus on integration points, existing patterns, compatibility
    - Use Grep to analyze existing codebase patterns
-
+   
    **For Simple Additions**:
    - Skip formal discovery, quick pattern check only
 
-#### Parallel Research (subagent dispatch)
+#### Parallel Research (sub-agent dispatch)
 
-The following research areas are independent and can be dispatched as **subagents** via the Agent tool. The agent should decide the optimal decomposition based on feature complexity — split, merge, add, or skip subagents as needed. Each subagent returns a **findings summary** (not raw data) to keep the main context clean for synthesis.
+The following research areas are independent and can be dispatched as **sub-agents**. The agent should decide the optimal decomposition based on feature complexity — split, merge, add, or skip sub-agents as needed. Each sub-agent returns a **findings summary** (not raw data) to keep the main context clean for synthesis.
 
 **Typical research areas** (adjust as appropriate):
-- **Codebase analysis**: Existing architecture patterns, integration points, code conventions (using Grep/Glob)
-- **External research**: Dependencies, APIs, latest best practices (using WebSearch/WebFetch)
+- **Codebase analysis**: Existing architecture patterns, integration points, code conventions
+- **External research**: Dependencies, APIs, latest best practices
 - **Context loading** (usually main context): Steering files, design principles, discovery rules, templates
 
-For simple additions, skip subagent dispatch entirely and do a quick pattern check in main context.
+For simple additions, skip sub-agent dispatch entirely and do a quick pattern check in main context.
 
 After all findings return, synthesize in main context before proceeding.
 
@@ -85,10 +85,10 @@ After all findings return, synthesize in main context before proceeding.
    - Boundary candidates, out-of-boundary decisions, and likely revalidation triggers
 
 4. **Persist Findings to Research Log**:
-   - Create or update `.kiro/specs/{feature}/research.md` using the shared template
-   - Summarize discovery scope and key findings
-   - Record investigations with sources and implications
-   - Document architecture pattern evaluation, design decisions, and risks
+   - Create or update `.kiro/specs/$1/research.md` using the shared template
+   - Summarize discovery scope and key findings (Summary section)
+   - Record investigations in Research Log topics with sources and implications
+   - Document architecture pattern evaluation, design decisions, and risks using the template sections
    - Use the language specified in spec.json when writing or updating `research.md`
 
 ### Step 3: Synthesis
@@ -96,12 +96,16 @@ After all findings return, synthesize in main context before proceeding.
 **Apply design synthesis to discovery findings before writing.**
 
 - Read and apply `rules/design-synthesis.md` from this skill's directory
-- This step requires the full picture from discovery findings — execute in main context, not in a subagent
+- This step requires the full picture from discovery — do not parallelize or delegate to sub-agents
 - Record synthesis outcomes (generalizations found, build-vs-adopt decisions, simplifications) in `research.md`
 
 ### Step 4: Generate Design Draft
 
-1. **Generate Design Draft**:
+1. **Load Design Template and Rules**:
+   - Read `.kiro/settings/templates/specs/design.md` for structure
+   - Read `rules/design-principles.md` from this skill's directory for principles
+
+2. **Generate Design Draft**:
    - **Follow specs/design.md template structure and generation instructions strictly**
    - **Boundary-first requirement**: Before expanding supporting sections, make the boundary explicit. The draft must clearly define what this spec owns, what it does not own, which dependencies are allowed, and what changes would require downstream revalidation.
    - **Integrate all discovery findings and synthesis outcomes**: Use researched information (APIs, patterns, technologies) and synthesis decisions (generalizations, build-vs-adopt, simplifications) throughout component definitions, architecture decisions, and integration points
@@ -122,12 +126,12 @@ After all findings return, synthesize in main context before proceeding.
 
 ### Step 6: Finalize Design Document
 
-1. **Write Final Design**:
-   - Write `.kiro/specs/{feature}/design.md` only after the design review gate passes
+1. **Write Final Design and Research Log**:
+   - Write `.kiro/specs/$1/design.md` only after the design review gate passes
    - Write research.md with discovery findings and synthesis outcomes (if not already written)
+   - Persist any `research.md` updates that support the finalized design
 
 2. **Update Metadata** in spec.json:
-
    - Set `phase: "design-generated"`
    - Set `approvals.design.generated: true, approved: false`
    - Set `approvals.requirements.approved: true`
@@ -141,6 +145,7 @@ After all findings return, synthesize in main context before proceeding.
    - For dynamically typed languages, provide type hints/annotations where available (e.g., Python type hints) and validate inputs at boundaries.
    - Document public interfaces and contracts clearly to ensure cross-component type safety.
 - **Requirements Traceability IDs**: Use numeric requirement IDs only (e.g. "1.1", "1.2", "3.1", "3.3") exactly as defined in requirements.md. Do not invent new IDs or use alphabetic labels.
+</instructions>
 
 ## Output Description
 
@@ -148,9 +153,9 @@ After all findings return, synthesize in main context before proceeding.
 
 Provide brief summary in the language specified in spec.json:
 
-1. **Status**: Confirm design document generated at `.kiro/specs/{feature}/design.md`
+1. **Status**: Confirm design document generated at `.kiro/specs/$1/design.md`
 2. **Discovery Type**: Which discovery process was executed (full/light/minimal)
-3. **Key Findings**: 2-3 critical insights from discovery that shaped the design
+3. **Key Findings**: 2-3 critical insights from `research.md` that shaped the design
 4. **Review Gate**: Confirm the design review gate passed
 5. **Next Action**: Approval workflow guidance (see Safety & Fallback)
 6. **Research Log**: Confirm `research.md` updated with latest decisions
@@ -166,12 +171,12 @@ Provide brief summary in the language specified in spec.json:
 **Requirements Not Approved**:
 - **Stop Execution**: Cannot proceed without approved requirements
 - **User Message**: "Requirements not yet approved. Approval required before design generation."
-- **Suggested Action**: "Run `/kiro-spec-design {feature} -y` to auto-approve requirements and proceed"
+- **Suggested Action**: "Run `$kiro-spec-design $1 -y` to auto-approve requirements and proceed"
 
 **Missing Requirements**:
 - **Stop Execution**: Requirements document must exist
-- **User Message**: "No requirements.md found at `.kiro/specs/{feature}/requirements.md`"
-- **Suggested Action**: "Run `/kiro-spec-requirements {feature}` to generate requirements first"
+- **User Message**: "No requirements.md found at `.kiro/specs/$1/requirements.md`"
+- **Suggested Action**: "Run `$kiro-spec-requirements $1` to generate requirements first"
 
 **Template Missing**:
 - **User Message**: "Template file missing at `.kiro/settings/templates/specs/design.md`"
@@ -188,15 +193,15 @@ Provide brief summary in the language specified in spec.json:
 **Spec Gap Found During Design Review**:
 - **Stop Execution**: Do not write a patched-over `design.md`
 - **User Message**: "Design review found a real spec gap or ambiguity that must be resolved before design can be finalized."
-- **Suggested Action**: Clarify or fix `requirements.md`, then re-run `/kiro-spec-design {feature}`
+- **Suggested Action**: Clarify or fix `requirements.md`, then re-run `$kiro-spec-design $1`
 
 ### Next Phase: Task Generation
 
 **If Design Approved**:
-- **Optional**: Run `/kiro-validate-design {feature}` for interactive quality review
-- Run `/kiro-spec-tasks {feature}` to generate implementation tasks
-- Or `/kiro-spec-tasks {feature} -y` to auto-approve and proceed directly
+- Review generated design at `.kiro/specs/$1/design.md`
+- **Optional**: Run `$kiro-validate-design $1` for interactive quality review
+- Then `$kiro-spec-tasks $1 -y` to generate implementation tasks
 
 **If Modifications Needed**:
-- Provide feedback and re-run `/kiro-spec-design {feature}`
+- Provide feedback and re-run `$kiro-spec-design $1`
 - Existing design used as reference (merge mode)

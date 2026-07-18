@@ -20,3 +20,5 @@ cyclox2_svr/cyclox2_conf/database.php
 .kiro/sdd-base-update-report.md
 # 大容量・一時ファイル
 # sync 実行のたびに上書きされるレポート（実行時ログ・履歴として残さない）
+# 二次成果物（PDF/Word/PPT 等のビルド出力。再生成可能なため履歴に残さない）
+outputs/
