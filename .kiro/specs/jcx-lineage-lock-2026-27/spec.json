@@ -1,0 +1,23 @@
+{
+  "feature_name": "jcx-lineage-lock-2026-27",
+  "created_at": "2026-07-15T00:00:00Z",
+  "updated_at": "2026-07-15T12:00:00Z",
+  "language": "ja",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "ready_for_implementation": true,
+  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。"
+}
