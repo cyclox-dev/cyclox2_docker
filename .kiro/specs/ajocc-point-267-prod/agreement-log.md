@@ -1,0 +1,80 @@
+# 合意形成記録: ajocc-point-267-prod
+
+| 項目 | 内容 |
+|---|---|
+| タスクID | `ajocc-point-267-prod` |
+| 作成日 | 2026-07-14 |
+| 関係者 | kyamady（依頼者）, Claude（spec作成） |
+
+---
+
+## 壁打ち概要
+
+AJOCC 2026-27シーズン規則改正に伴う新8区分ポイント表（`AJOCC_267_TEST`）を、
+`point-sim-2025-26` での検証済み実装から本番運用へ昇格させる spec を、ロードマップ
+（`.kiro/steering/roadmap.md`）・discovery brief（`brief.md`）の指示に基づき、
+requirements → design → tasks の一括生成（自動承認モード、`-y` 相当）で作成した。
+
+検討した主な論点:
+- 適用条件の本番化方式（シーズン起点のリテラル日付分岐 vs `Season` テーブル参照 vs
+  フラグ恒久化）。
+- `feat/point-table-ajocc-267-sim` ブランチのマージ状況（brief で必須調査項目として
+  明示）。
+- System②（シリーズ点計算）に自動判定ロジックを追加すべきか。
+- `PointSimShell.php` の処遇（削除 vs 汎用シェルとして存続）。
+
+---
+
+## 決定事項
+
+| # | 決定内容 | 決定理由 | 決定日 |
+|---|---|---|---|
+| 1 | 実装ブランチは submodule `cyclox2web` の最新 `origin/main`（PR #12 マージ済み）を起点とする | `git fetch` + `git merge-base --is-ancestor` で確認した結果、`feat/point-table-ajocc-267-sim` は既に `origin/main` へマージ済み（マージコミット `2c3fd3a`）。ローカル `main` 参照が古かっただけであり、追加のマージ作業は不要と判明した | 2026-07-14 |
+| 2 | 新得点表の適用開始日は `2026-08-01`（新規定数 `$divDate2026`）とし、既存の年度境界と同じリテラル `DateTime` 比較パターンで実装する | 直近3回のシーズン境界追加（2022, 2024, 2025）が全て同パターン。`Season` テーブル参照方式は呼び出し元への影響が広がりスコープ超過となるため不採用 | 2026-07-14 |
+| 3 | System②（シリーズ点計算）には日付による自動判定を追加せず、`PointCalculator::$AJOCC_267` を正式名称で選択肢として提供するのみとする（`point_series.calc_rule` は既存どおり運用担当者が管理画面で手動選択） | 過去の全シーズンで配点ルールは運用担当者の手動選択という前例のみであり、自動化された前例が無い。日付分岐を新設すると不要な抽象化になる | 2026-07-14 |
+| 4 | `app/Console/Command/PointSimShell.php` を削除する | フラグ除去により同シェルの `enableSimAjocc267()` 等への依存が解消不能になる。役割（2025-26 what-if 比較）は `point-sim-2025-26` で完了・記録済みで再利用の必然性が無く、他ファイルからの参照も無いことを確認済み | 2026-07-14 |
+| 5 | `PointCalculator::$AJOCC_267_TEST` の `val=13` は変更せず維持する | DBの `calc_rule` 値との後方互換性を保つため。本番DBに `calc_rule=13` の既存行は無い前提だが、値変更のリスクを避ける | 2026-07-14 |
+| 6 | 公式ポイント表PDFとの数値照合はFoundationフェーズ（tasks.md 1.2）の最も早い段階で実施する | Core実装・テストがテーブル値を前提にするため、差異発覚時の手戻りを最小化する | 2026-07-14 |
+
+---
+
+## 却下・保留事項
+
+| 内容 | 理由 |
+|---|---|
+| `Season` テーブル参照による動的な年度境界判定への刷新 | 呼び出し元の引数追加など影響範囲が広がり、既存5世代の実装パターンとの一貫性も崩れるため見送り。将来必要になれば別スコープで検討 |
+| シミュレーション専用フラグを恒久的に `true` へ変更するのみの最小差分対応 | フラグ名・意味が「シミュレーション専用」のまま残り、要件4（命名整理）を満たさないため不採用 |
+| `point_series.calc_rule` の自動割当（2026-27シーズンのJCF/JCXシリーズ作成時に新得点表を自動選択） | ポイント表管理のUI化・DB化は brief で明示的にスコープ外。運用手順（統合試験チェックリスト）での注意喚起にとどめる |
+
+---
+
+## フェーズゲート承認記録
+
+> 承認状態の正本は `.kiro/specs/ajocc-point-267-prod/spec.json` の
+> `approvals.{requirements,design,tasks}.approved`。ここではブール値を二重管理せず、
+> 合意の経緯・補足のみを残す。
+
+| フェーズ | 合意メモ（理由・補足） |
+|---|---|
+| 要件定義（requirements.md） | ユーザー指示「Create a complete specification」により requirements → design → tasks を一括生成する自動承認モードで作成。ユーザー提示のプロジェクト固有制約（日本語記述、対象コードベース、回帰保証、JCX新列、TDD必須、コード非改修、期限2026-07-31）を全て requirements.md に反映した |
+| 設計（design.md） | brief で必須とされた「submodule ブランチのマージ状況調査」を read-only git コマンドで実施し、`feat/point-table-ajocc-267-sim` が既に `origin/main` にマージ済みであるという重要な事実を確認した上で設計に反映した。Design Review Gate（要件網羅・境界明確性・実行可能性）を機械的チェック・判断チェックの両方で通過 |
+| タスク分解・実装前確認（tasks.md） | Task Plan Review Gate 通過後、独立サブエージェントによる Task-Graph Sanity Review を実施（詳細は下記）。NEEDS_FIXES の指摘5件（`_Requirements:` 欠落、境界値テスト漏れ、PDF差異修正の担当タスク不明確、CSV出力の結合試験項目漏れ）を全て修正し、1回の修正パスで解消した |
+
+### Task-Graph Sanity Review 記録（2026-07-14）
+- 実施方法: 独立サブエージェント（`general-purpose`）が `requirements.md` /
+  `design.md` / `tasks.md` / `tasks-generation.md` / `tasks-parallel-analysis.md` を直接読み、
+  依存関係・境界・網羅性・並列安全性を検証。
+- 初回verdict: `NEEDS_FIXES`（5件の軽微な指摘、依存関係誤り・境界重複は無し）。
+- 対応: (1) task 1.3 に `_Requirements:` を追加、(2) task 3.1 のRED手順に
+  出走人数異常系（1.5）・非JCX表範囲外（1.4）のテスト項目を追加、(3) task 1.2 に
+  PDF差異発覚時の修正先（2.1/3.1のGREEN手順へ織り込む旨）を明記、(4) task 5.2の
+  結合試験チェックリストにCSV出力確認（4.4）を追加。
+- 修正後、指摘事項は全て解消（1回の修正パスで完了、上限2回以内）。
+
+---
+
+## 変更履歴
+
+| 日付 | 変更内容 | 変更者 |
+|---|---|---|
+| 2026-07-14 | 初版作成（requirements/design/tasks 一括生成、自動承認） | Claude |
