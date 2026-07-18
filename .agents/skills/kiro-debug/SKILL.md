@@ -1,16 +1,15 @@
 ---
 name: kiro-debug
 description: Investigate implementation failures using root-cause-first debugging. Use when an implementer is blocked, verification fails, or repeated remediation does not converge.
-allowed-tools: Read, Bash, Grep, Glob, WebSearch, WebFetch
-argument-hint: <failure-summary>
 ---
 
 # kiro-debug
 
-## Overview
-
+<background_information>
 This skill is for fresh-context root cause investigation. It combines local evidence, runtime/config inspection, and external documentation or issue research when available. It is not a patch generator for guess-first debugging.
+</background_information>
 
+<instructions>
 ## When to Use
 
 - Implementer reports `BLOCKED`
@@ -150,3 +149,4 @@ If the issue is fixable by repo changes inside the current task plan, do not esc
 - CONFIDENCE: HIGH | MEDIUM | LOW
 - NOTES: <context the next implementer should know>
 ```
+</instructions>

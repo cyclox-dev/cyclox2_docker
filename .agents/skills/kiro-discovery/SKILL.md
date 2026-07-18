@@ -1,33 +1,32 @@
 ---
 name: kiro-discovery
 description: Entry point for new work. Determines the best action path or work decomposition (update existing spec, create new spec, mixed decomposition, or no spec needed) and refines ideas through structured dialogue.
-disable-model-invocation: true
-allowed-tools: Read, Write, Glob, Grep, Agent, WebSearch, WebFetch, AskUserQuestion
-argument-hint: <idea-or-request>
 ---
 
-# kiro-discovery Skill
 
-## Core Mission
+# Discovery
+
+<background_information>
 - **Success Criteria**:
   - Correct action path or work decomposition identified based on existing project state
   - User's intent clarified through questions, not assumptions
   - Output is an actionable next step (not just a description)
+</background_information>
 
-## Execution Steps
+<instructions>
 
-### Step 1: Lightweight Scan
+## Step 1: Lightweight Scan
 
 Gather **only metadata** to determine the action path. Do NOT read full file contents yet.
 
-- **Specs inventory**: Glob `.kiro/specs/*/spec.json`, read each spec.json for `name`, `phase` fields and `approvals` status. Note feature names and their current status.
+- **Specs inventory**: Scan `.kiro/specs/*/spec.json` for `name`, `phase` fields and `approvals` status. Note feature names and their current status.
 - **Steering existence**: Check which files exist in `.kiro/steering/` (product.md, tech.md, structure.md, roadmap.md). Do NOT read their contents yet.
 - **Roadmap check**: If `.kiro/steering/roadmap.md` exists, read it. This contains project-level context (approach, scope, constraints, spec list) from a previous discovery session. Use it to restore project context.
 - **Top-level structure**: List the project root directory to note key directories and files. Do NOT recurse into subdirectories.
 
 This step should consume minimal context. If `specs/` is empty and no steering exists, note "greenfield project" and move to Step 2.
 
-### Step 2: Determine Action Path
+## Step 2: Determine Action Path
 
 Based on the user's request and the metadata from Step 1, determine which path applies:
 
@@ -56,7 +55,7 @@ Based on the user's request and the metadata from Step 1, determine which path a
 For Path C/D/E, present the determined path (or mixed decomposition) to the user and confirm before proceeding.
 For Path A/B, recommend the next action and stop.
 
-### Step 3: Deep Context Loading
+## Step 3: Deep Context Loading
 
 **Only for Path C, D, and E.** Now load the context needed for discovery.
 
@@ -64,15 +63,14 @@ For Path A/B, recommend the next action and stop.
 - **Steering documents**: Read product.md and tech.md (if they exist) for project goals, constraints, and tech stack
 - **Relevant specs**: If the request is adjacent to an existing spec, read that spec's requirements.md to understand boundaries and avoid overlap
 
-**Delegate to subagent via Agent tool** (keeps exploration out of main context):
-- **Codebase exploration**: Dispatch a subagent to explore the codebase and return a structured summary. Example prompt: "Explore this project's codebase. Summarize: (1) tech stack and frameworks, (2) directory structure and key modules, (3) patterns and conventions used, (4) areas relevant to [user's request]. Return a summary under 200 lines."
-- The subagent uses Read/Glob/Grep to explore, then returns findings. Only the summary enters the main context.
-- For Path D/E, also ask the subagent to identify natural domain boundaries, existing module separation, and which areas look like existing-spec extensions vs new boundaries.
-- Skip subagent dispatch for small/obvious requests where the top-level directory listing from Step 1 is sufficient.
+**Delegate to sub-agent** (keeps exploration out of main context):
+- **Codebase exploration**: Spawn a sub-agent to explore the codebase and return a structured summary. Ask it to summarize: (1) tech stack and frameworks, (2) directory structure and key modules, (3) patterns and conventions used, (4) areas relevant to the user's request. The sub-agent returns findings under 200 lines.
+- For Path D/E, also ask the sub-agent to identify natural domain boundaries, existing module separation, and which areas look like existing-spec extensions vs new boundaries.
+- Skip sub-agent dispatch for small/obvious requests where the top-level directory listing from Step 1 is sufficient.
 
-**Context budget**: Keep total content loaded into main context under ~500 lines. The subagent handles the heavy exploration.
+**Context budget**: Keep total content loaded into main context under ~500 lines. The sub-agent handles the heavy exploration.
 
-### Step 4: Understand the Idea
+## Step 4: Understand the Idea
 
 Ask clarifying questions **sequentially** (not all at once), prioritizing boundary discovery over feature detail:
 
@@ -87,7 +85,7 @@ Ask clarifying questions **sequentially** (not all at once), prioritizing bounda
 Ask only questions whose answers you cannot infer from the context already loaded. Skip questions that steering documents already answer. If the user already provided a clear description, skip to Step 5.
 The goal is NOT to assign final owners yet. The goal is to discover the cleanest responsibility boundaries that can later become specs, tasks, and review scopes.
 
-### Step 5: Propose Approaches
+## Step 5: Propose Approaches
 
 Propose **2-3 concrete approaches** with trade-offs:
 
@@ -98,15 +96,15 @@ For each approach:
 - **Cons**: What are the risks or downsides
 - **Scope estimate**: Rough complexity (small / medium / large)
 
-If technical research is needed (unfamiliar framework, library evaluation), dispatch a subagent via Agent tool. Example prompt: "Research [topic]: compare options, check latest versions, note known issues. Return a summary of findings with recommendation." The subagent uses WebSearch/WebFetch and returns a concise summary. Raw search results never enter the main context.
+If technical research is needed (unfamiliar framework, library evaluation), spawn a sub-agent to research and return a concise summary. Ask it to compare options, check latest versions, and note known issues. Raw search results never enter the main context.
 
 Recommend one approach and explain why.
 
-**After the user selects an approach**, dispatch a subagent to verify viability before proceeding to Step 6. Example prompt: "Verify the viability of this technical approach: [chosen tech stack / key libraries]. Check: (1) Are these technologies still actively maintained? (2) Any license incompatibilities (e.g., GPL contamination)? (3) Do the components actually work together for [use case]? (4) Any known showstoppers (critical bugs, security vulnerabilities, platform limitations)? Return only issues found, or 'No issues found' if everything checks out."
+**After the user selects an approach**, spawn a sub-agent to verify viability before proceeding to Step 6. Ask it to check: (1) Are these technologies still actively maintained? (2) Any license incompatibilities (e.g., GPL contamination)? (3) Do the components actually work together for the use case? (4) Any known showstoppers (critical bugs, security vulnerabilities, platform limitations)? Return only issues found, or "No issues found" if everything checks out.
 
 If the viability check reveals issues, present them to the user and revisit the approach selection. If no issues, proceed to Step 6.
 
-### Step 6: Refine and Confirm
+## Step 6: Refine and Confirm
 
 - Address user's questions or concerns about the approaches
 - Narrow scope if needed: favor smaller, deliverable increments and cleaner responsibility seams
@@ -118,13 +116,13 @@ If the viability check reveals issues, present them to the user and revisit the 
   - Consider vertical slices (end-to-end value) vs horizontal layers (one layer at a time) based on the project needs
 - Confirm the final direction
 
-### Step 7: Write Files to Disk
+## Step 7: Write Files to Disk
 
-**CRITICAL: You MUST use the Write tool to create these files BEFORE suggesting any next command. Conversation text does not survive session boundaries. If you skip this step, all discovery analysis is lost when the session ends.**
+**CRITICAL: You MUST write these files to disk BEFORE suggesting any next command. Conversation text does not survive session boundaries. If you skip this step, all discovery analysis is lost when the session ends.**
 
 **For Path C (single spec)**:
 
-Use the Write tool to create `.kiro/specs/<feature-name>/brief.md` with this structure:
+Write `.kiro/specs/<feature-name>/brief.md` to disk with this structure:
 
 ```
 # Brief: <feature-name>
@@ -166,7 +164,7 @@ Use the Write tool to create `.kiro/specs/<feature-name>/brief.md` with this str
 
 **For Path D (multi-spec decomposition)**:
 
-Use the Write tool to create:
+Write these to disk:
 - `.kiro/steering/roadmap.md`
 - `.kiro/specs/<feature>/brief.md` for every feature listed under `## Specs (dependency order)`
 
@@ -200,7 +198,7 @@ Use this roadmap structure:
 - [ ] feature-c -- [one-line description]. Dependencies: feature-a, feature-b
 ```
 
-Then create `.kiro/specs/<feature>/brief.md` for **every** feature listed under `## Specs (dependency order)` using the Path C brief format. This enables parallel spec creation via `/kiro-spec-batch`.
+Then write `.kiro/specs/<feature>/brief.md` for **every** feature listed under `## Specs (dependency order)` using the Path C brief format. This enables parallel spec creation via `$kiro-spec-batch`.
 
 **For Path E (mixed decomposition)**:
 
@@ -221,36 +219,38 @@ Use the same roadmap structure as Path D, plus these additional sections:
 ```
 
 Path E rules:
-- Keep `## Specs (dependency order)` reserved for **new specs only** so `/kiro-spec-batch` can still parse it unchanged
+- Keep `## Specs (dependency order)` reserved for **new specs only** so `$kiro-spec-batch` can still parse it unchanged
 - Record existing-spec extensions under `## Existing Spec Updates`
 - Record true no-spec work under `## Direct Implementation Candidates`
-- Create `brief.md` only for the **new specs** listed under `## Specs (dependency order)`
+- Write `brief.md` only for the **new specs** listed under `## Specs (dependency order)`
 
 **Re-entry (roadmap.md already exists)**:
-Use the Write tool to create the next new spec's brief.md. Update roadmap.md with Write tool if scope/ordering changed, preserving completed items and prior phases.
+Write the next new spec's brief.md to disk. Update roadmap.md if scope/ordering changed, preserving completed items and prior phases.
 
 After writing, verify the files exist by reading them back.
 
-### Step 8: Suggest Next Steps
+## Step 8: Suggest Next Steps
 
 Suggest the next command and stop. Do NOT automatically run downstream spec generation from this skill.
 
-- Path A: `/kiro-spec-requirements {feature}` to update the existing spec
+- Path A: `$kiro-spec-requirements {feature}` to update the existing spec
 - Path B: Recommend direct implementation without creating a spec
-- Path C: Default to `/kiro-spec-init <feature-name>`
-  - Optional fast path: `/kiro-spec-quick <feature-name>` when the user explicitly wants to continue immediately
-- Path D: Default to `/kiro-spec-batch` (creates all specs in parallel based on roadmap.md dependency order)
-  - Optional cautious path: `/kiro-spec-init <first-feature-name>` when the user wants to validate the first slice before batching the rest
+- Path C: Default to `$kiro-spec-init <feature-name>`
+  - Optional fast path: `$kiro-spec-quick <feature-name>` when the user explicitly wants to continue immediately
+- Path D: Default to `$kiro-spec-batch` (creates all specs in parallel based on roadmap.md dependency order)
+  - Optional cautious path: `$kiro-spec-init <first-feature-name>` when the user wants to validate the first slice before batching the rest
 - Path E: Choose the next command based on the new-spec portion of the decomposition
-  - If there is exactly one new spec: `/kiro-spec-init <new-feature-name>`
-  - If there are multiple new specs: `/kiro-spec-batch`
-  - Also note which existing specs should be revisited with `/kiro-spec-requirements <feature>`
-- Re-entry: `/kiro-spec-init <next-feature-name>` or `/kiro-spec-batch` if multiple specs remain
+  - If there is exactly one new spec: `$kiro-spec-init <new-feature-name>`
+  - If there are multiple new specs: `$kiro-spec-batch`
+  - Also note which existing specs should be revisited with `$kiro-spec-requirements <feature>`
+- Re-entry: `$kiro-spec-init <next-feature-name>` or `$kiro-spec-batch` if multiple specs remain
 
 If the decomposition contains only existing-spec updates plus direct implementation candidates, do NOT use Path E. Prefer Path A when one existing spec is the clear home, or recommend the existing-spec update plus direct implementation work without creating roadmap entries.
 
+</instructions>
+
 ## Critical Constraints
-- **Files on disk are the source of continuity**: For Path C/D/E, create brief.md and roadmap.md as needed before suggesting the next command. Do NOT leave discovery results only in conversation text.
+- **Files on disk are the source of continuity**: For Path C/D/E, write brief.md and roadmap.md to disk as needed before suggesting the next command. Do NOT leave discovery results only in conversation text.
 
 ## Safety & Fallback
 

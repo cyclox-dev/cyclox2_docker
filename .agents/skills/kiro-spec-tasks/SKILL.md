@@ -1,44 +1,43 @@
 ---
 name: kiro-spec-tasks
-description: Generate implementation tasks from requirements and design. Use when creating actionable task lists.
-allowed-tools: Read, Write, Edit, Glob, Grep, Agent
-argument-hint: <feature-name> [-y] [--sequential]
+description: Generate implementation tasks for a specification
 metadata:
   shared-rules: "tasks-generation.md, tasks-parallel-analysis.md"
 ---
 
-# kiro-spec-tasks Skill
 
-## Core Mission
+# Implementation Tasks Generator
+
+<background_information>
 - **Success Criteria**:
   - All requirements mapped to specific tasks
   - Tasks properly sized (1-3 hours each)
   - Clear task progression with proper hierarchy
   - Natural language descriptions focused on capabilities
   - A lightweight task-plan sanity review confirms the task graph is executable before `tasks.md` is written
+</background_information>
 
+<instructions>
 ## Execution Steps
 
-### Step 1: Gather Context
+### Step 1: Load Context
 
-If steering/spec context is already available from conversation, skip redundant file reads.
-Otherwise, load all necessary context:
-- `.kiro/specs/{feature}/spec.json`, `requirements.md`, `design.md`
-- `.kiro/specs/{feature}/tasks.md` (if exists, for merge mode)
+**Read all necessary context**:
+- `.kiro/specs/$1/spec.json`, `requirements.md`, `design.md`
+- `.kiro/specs/$1/tasks.md` (if exists, for merge mode)
 - Core steering context: `product.md`, `tech.md`, `structure.md`
 - Additional steering files only when directly relevant to requirements coverage, design boundaries, runtime prerequisites, or team conventions that affect task executability
 
-- Determine execution mode:
-  - `sequential = (sequential flag is true)`
-
 **Validate approvals**:
-- If auto-approve flag (`-y`) is true: Auto-approve requirements and design in spec.json. Tasks approval is also handled automatically in Step 4.
+- If `-y` flag provided: Auto-approve requirements and design in spec.json. Tasks approval is also handled automatically in Step 4.
 - Otherwise: Verify both approved (stop if not, see Safety & Fallback)
+- Determine sequential mode based on presence of `--sequential`
 
 ### Step 2: Generate Implementation Tasks
 
+**Load generation rules and template**:
 - Read `rules/tasks-generation.md` from this skill's directory for principles
-- Read `rules/tasks-parallel-analysis.md` from this skill's directory for parallel judgement criteria
+- If `sequential` is false: Read `rules/tasks-parallel-analysis.md` from this skill's directory for parallel judgement criteria
 - Read `.kiro/settings/templates/specs/tasks.md` for format (supports `(P)` markers)
 
 #### Parallel Research
@@ -47,18 +46,21 @@ The following research areas are independent and can be executed in parallel:
 1. **Context loading**: Spec documents (requirements.md, design.md), steering files
 2. **Rules loading**: tasks-generation.md, tasks-parallel-analysis.md, tasks template
 
+If multi-agent is enabled, spawn sub-agents for each area above. Otherwise execute sequentially.
+
 After all parallel research completes, synthesize findings before generating tasks.
 
 **Generate task list following all rules**:
 - Use language specified in spec.json
-- Map all requirements to tasks and list numeric requirement IDs only (comma-separated) without descriptive suffixes, parentheses, translations, or free-form labels
+- Map all requirements to tasks
+- When documenting requirement coverage, list numeric requirement IDs only (comma-separated) without descriptive suffixes, parentheses, translations, or free-form labels
 - Ensure all design components included
 - Verify task progression is logical and incremental
 - Ensure each executable sub-task includes at least one detail bullet that states what "done" looks like in observable terms
 - Keep normal implementation tasks within a single responsibility boundary; if work crosses boundaries, make it an explicit integration task
-- Apply `(P)` markers to tasks that satisfy parallel criteria when `!sequential`
-- Explicitly note dependencies preventing `(P)` when tasks appear parallel but are not safe
-- If sequential mode is true, omit `(P)` entirely
+- Collapse single-subtask structures by promoting them to major tasks and avoid duplicating details on container-only major tasks (use template patterns accordingly)
+- Apply `(P)` markers to tasks that satisfy parallel criteria (omit markers when sequential mode requested)
+- Mark optional test coverage subtasks with `- [ ]*` only when they strictly cover acceptance criteria already satisfied by core implementation and can be deferred post-MVP
 - If existing tasks.md found, merge with new content
 
 ### Step 3: Review Task Plan
@@ -101,7 +103,7 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
 ### Step 4: Finalize
 
 **Write tasks.md**:
-- Create/update `.kiro/specs/{feature}/tasks.md`
+- Create/update `.kiro/specs/$1/tasks.md`
 - Update spec.json metadata:
   - Set `phase: "tasks-generated"`
   - Set `approvals.tasks.generated: true, approved: false`
@@ -110,16 +112,16 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
   - Update `updated_at` timestamp
 
 **Approval**:
-- If auto-approve flag (`-y`) is true:
+- If auto-approve flag (`-y`) is provided:
   - Set `approvals.tasks.approved: true` in spec.json
   - Display task summary (task count, major groups, parallel markers)
-  - Respond: "Tasks generated and auto-approved. Start implementation with `/kiro-impl {feature}`"
+  - Respond: "Tasks generated and auto-approved. Start implementation with `$kiro-impl $1`"
 - Otherwise (interactive):
   - Display a summary of the generated tasks (task count, major groups, parallel markers)
   - Ask the user: "Tasks generated. Approve and proceed to implementation?"
   - If the user approves:
     - Set `approvals.tasks.approved: true` in spec.json
-    - Respond: "Tasks approved. Start implementation with `/kiro-impl {feature}`"
+    - Respond: "Tasks approved. Start implementation with `$kiro-impl $1`"
   - If the user wants changes:
     - Keep `approvals.tasks.approved: false`
     - Respond with guidance on what to adjust and re-run
@@ -131,23 +133,24 @@ Before writing `tasks.md`, run one lightweight independent sanity review of the 
 - **Executable deliverable granularity**: Each task must produce a verifiable deliverable (file, endpoint, UI component, config). Infrastructure tasks (project scaffolding, manifest, host integration, build config) must be explicit — never assume they exist
 - **Observable done state**: Each executable sub-task must include at least one detail bullet that makes the completed state visible without adding new bookkeeping fields
 - **No implicit prerequisites**: If a task requires a runtime, SDK, framework setup, or config file, that setup must be a separate preceding task
+</instructions>
 
 ## Output Description
 
 Provide brief summary in the language specified in spec.json:
 
-1. **Status**: Confirm tasks generated at `.kiro/specs/{feature}/tasks.md`
-2. **Task Summary**:
+1. **Status**: Confirm tasks generated at `.kiro/specs/$1/tasks.md`
+2. **Task Summary**: 
    - Total: X major tasks, Y sub-tasks
    - All Z requirements covered
    - Average task size: 1-3 hours per sub-task
 3. **Quality Validation**:
-   - All requirements mapped to tasks
-   - Design coverage and runtime prerequisites reviewed
-   - Task dependencies verified
-   - Task plan review gate passed
-   - Independent task-graph sanity review passed
-   - Testing tasks included
+   - ✅ All requirements mapped to tasks
+   - ✅ Design coverage and runtime prerequisites reviewed
+   - ✅ Task dependencies verified
+   - ✅ Task plan review gate passed
+   - ✅ Independent task-graph sanity review passed
+   - ✅ Testing tasks included
 4. **Next Action**: Review tasks and proceed when ready
 
 **Format**: Concise (under 200 words)
@@ -159,11 +162,11 @@ Provide brief summary in the language specified in spec.json:
 **Requirements or Design Not Approved**:
 - **Stop Execution**: Cannot proceed without approved requirements and design
 - **User Message**: "Requirements and design must be approved before task generation"
-- **Suggested Action**: "Run `/kiro-spec-tasks {feature} -y` to auto-approve all (requirements, design, and tasks) and proceed"
+- **Suggested Action**: "Run `$kiro-spec-tasks $1 -y` to auto-approve both and proceed"
 
 **Missing Requirements or Design**:
 - **Stop Execution**: Both documents must exist
-- **User Message**: "Missing requirements.md or design.md at `.kiro/specs/{feature}/`"
+- **User Message**: "Missing requirements.md or design.md at `.kiro/specs/$1/`"
 - **Suggested Action**: "Complete requirements and design phases first"
 
 **Incomplete Requirements Coverage**:
@@ -173,7 +176,7 @@ Provide brief summary in the language specified in spec.json:
 **Spec Gap Found During Task Review**:
 - **Stop Execution**: Do not write a patched-over `tasks.md`
 - **User Message**: "Requirements/design do not provide enough clear coverage to generate an executable task plan"
-- **Suggested Action**: "Refine requirements.md or design.md, then re-run `/kiro-spec-tasks {feature}`"
+- **Suggested Action**: "Refine requirements.md or design.md, then re-run `$kiro-spec-tasks $1`"
 
 **Template/Rules Missing**:
 - **User Message**: "Template or rules files missing in `.kiro/settings/`"
@@ -185,5 +188,5 @@ Provide brief summary in the language specified in spec.json:
 ### Next Phase: Implementation
 
 Tasks are approved in Step 4 via user confirmation. Once approved:
-- Autonomous implementation: `/kiro-impl {feature}`
-- Specific tasks only: `/kiro-impl {feature} 1.1,1.2`
+- Autonomous implementation: `$kiro-impl $1`
+- Specific tasks only: `$kiro-impl $1 1.1,1.2`
