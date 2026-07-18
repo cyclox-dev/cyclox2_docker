@@ -1,26 +1,27 @@
 ---
 name: kiro-spec-status
 description: Show specification status and progress
-allowed-tools: Read, Glob, Grep
-argument-hint: <feature-name>
 ---
 
-# kiro-spec-status Skill
 
-## Core Mission
+# Specification Status
+
+<background_information>
 - **Success Criteria**:
   - Show current phase and completion status
   - Identify next actions and blockers
   - Provide clear visibility into progress
   - Surface boundary readiness, upstream/downstream context, and likely revalidation needs when available
+</background_information>
 
+<instructions>
 ## Execution Steps
 
 ### Step 1: Load Spec Context
-- Read `.kiro/specs/$ARGUMENTS/spec.json` for metadata and phase status
-- Read `.kiro/specs/$ARGUMENTS/brief.md` if it exists
+- Read `.kiro/specs/$1/spec.json` for metadata and phase status
+- Read `.kiro/specs/$1/brief.md` if it exists
 - Read existing files: `requirements.md`, `design.md`, `tasks.md` (if they exist)
-- Check `.kiro/specs/$ARGUMENTS/` directory for available files
+- Check `.kiro/specs/$1/` directory for available files
 - Read `.kiro/steering/roadmap.md` if it exists and this spec appears in it
 
 ### Step 2: Analyze Status
@@ -49,14 +50,14 @@ Create report in the language specified in spec.json covering:
 6. **Next Actions**: What needs to be done next
 7. **Blockers**: Any issues preventing progress
 
-**Format**: Clear, scannable format with emojis for status
+</instructions>
 
 ## Safety & Fallback
 
 ### Error Scenarios
 
 **Spec Not Found**:
-- **Message**: "No spec found for `$ARGUMENTS`. Check available specs in `.kiro/specs/`"
+- **Message**: "No spec found for `$1`. Check available specs in `.kiro/specs/`"
 - **Action**: List available spec directories
 
 **Incomplete Spec**:

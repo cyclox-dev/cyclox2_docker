@@ -5,43 +5,95 @@ cc-sdd（`/kiro-*` コマンド群）の上に本プロジェクト固有の運�
 
 ---
 
+## 2つの進め方（同一パイプライン・2つの入口）
+
+開発の始め方は2通りありますが、**どちらも同じ1本のSDDパイプラインを通り、適用ルール・成果物・
+出力先は完全に同一**です。違うのは「人間がコマンドを打つか／エージェントに任せるか」だけです。
+
+| 入口 | 始め方 | 向き |
+|---|---|---|
+| **軽量（自然言語SDD）** | 「〇〇を作りたい。簡単な要件定義とプランニングから始めて」と会話で指示。スラッシュコマンド不要 | 小〜中規模 |
+| **フルフロー（kiroコマンドSDD）** | `/kiro-discovery "<やりたいこと>"` から `/kiro-spec-*` → `/kiro-impl` を明示実行 | 中〜大規模 |
+
+- **軽量入口**でも、エージェントは下記「基本の流れ」と等価のフェーズを実行し、**同じ成果物を
+  `.kiro/specs/<id>/` に残す**（task-id はエージェントが決める）。kiro-spec-* は自動発火可能なので
+  内部的に利用してよい。
+- **どちらの入口でも以下は必須**: 人間の承認ゲート / TDD / 自動コミット禁止 / `main` 直禁止・ブランチ→PR /
+  記録の `.kiro/specs/<id>/` 集約。
+- 入口で振る舞いは変えない。**変えてよいのは儀式の深さ（下記 Tier）だけ**で、Tier は規模で選ぶ。
+
+### Tier（規模ダイヤル）
+
+| Tier | 対象 | 要件/設計 | spec.json 承認 | steering | 実装ループ | 共通ガードレール |
+|---|---|---|---|---|---|---|
+| **S（小）** | バグ修正・小改修 | `.kiro/specs/<id>/` に簡潔版（EARS は任意） | 任意 | 任意 | main 文脈の TDD | 承認ゲート/TDD/コミット・ブランチ方針/記録 **必須** |
+| **L（中〜大）** | 新機能・複数機能 | フル EARS / 設計 | **必須・機械強制** | 推奨 | `/kiro-impl`（独立レビュー編成） | 同上 **必須** |
+
+Tier は入口に依存しない。軽量入口でも Tier L を選べるし、コマンド入口でも Tier S 相当に省略してよい。
+
+---
+
+## 人間が入力するもの（この順に進めればよい）
+
+どちらの入口でも、人間は以下を上から順に入力していけば進む。`<...>` は自分の言葉に置き換える。
+
+### 軽量（自然言語SDD）
+
+1. **着手**: 「`<やりたいこと>`。簡単な要件定義とプランニングから始めて」
+2. **要件/設計/タスクの確認**: 提示された内容を読み、合意できたら「この方針でOK。実装を進めて」
+   （直したい点があればその場で指摘 → 反映を繰り返す。承認するまで実装に進ませない）
+3. **実装・テストの確認**: TDD 実装とテスト結果が提示される。問題なければ「結合試験チェックリストを出して」→ 人間が手動確認
+4. **コミット**: 区切りで提案される。確認して「この内容でコミットして」（`main` 直禁止・ブランチ→PR）
+
+### フルフロー（kiroコマンドSDD）
+
+1. `/kiro-discovery "<やりたいこと>"`
+2. `/kiro-spec-requirements <id>` → レビュー → 「承認」
+3. `/kiro-spec-design <id>` → レビュー → 「承認」
+4. `/kiro-spec-tasks <id>` → レビュー → 「承認」（ここで実装可否を確認）
+5. `/kiro-impl <id>`（独立レビュー付き。`main` 直禁止・コミットは提案）
+6. `.kiro/specs/<id>/integration-test-checklist.md` を人間が確認（結合試験）
+7. 提案されたコミットを確認して実行（ブランチ→PR）
+
+> どちらも「承認ゲートで止まる → 人間が承認 → 次へ」が基本リズム。承認なしに実装・コミットへ進めない。
+
+---
+
 ## 基本の流れ
 
 ```
-開発タスク依頼
+開発タスク依頼（軽量入口=会話 / フルフロー入口=/kiro-discovery）
     │
     ▼
 【フェーズ0: 把握・プランニング】
-  /kiro-discovery <idea>
-  → brief.md + roadmap.md 生成
-  → 内容を人間と壁打ち（合意形成）
+  軽量: 会話で課題・方針・スコープを壁打ち
+  フル: /kiro-discovery <idea> → brief.md + roadmap.md 生成
+  → 内容を人間と合意形成（agreement-log.md に記録）
     │
     ▼
 【フェーズ1: 仕様化】 ← 承認ゲート①（要件）
-  /kiro-spec-init
-  /kiro-spec-requirements → requirements.md
-  ★ 人間レビュー・合意 → agreement-log.md に記録
+  軽量: エージェントが要件を .kiro/specs/<id>/requirements.md に起こす
+  フル: /kiro-spec-init → /kiro-spec-requirements → requirements.md
+  ★ 人間レビュー・合意 → agreement-log.md に記録（承認状態は spec.json が正）
     │
     ▼
 【フェーズ1続き: 設計】 ← 承認ゲート②（設計）
-  /kiro-spec-design → design.md
+  → .kiro/specs/<id>/design.md（技術要件・制約チェック節を含む）
   ★ 人間レビュー・合意 → agreement-log.md に追記
     │
     ▼
 【フェーズ1続き: タスク分解】← 承認ゲート③（実装前確認）
-  /kiro-spec-tasks → tasks.md
-  技術要件は design.md の「技術要件・制約チェック」節で確認（初回実装時）
+  → .kiro/specs/<id>/tasks.md
   ★ ドキュメント完成 → 人間に確認を求める（いきなり実装しない）
   ★ 人間から「進めて」の承認を得る
     │
     ▼
 【フェーズ2: 実装（TDD）】
-  テスト項目をドキュメントに起こす（仕様ベース）
-  テストコードを先に実装（RED）
-  実装コードで GREEN にする
-  /kiro-impl（独立レビュー付き）
-  → test-results.md に記録
-  → integration-test-checklist.md を作成
+  テスト項目を test-results.md に先行記載（仕様ベース・RED）
+  テストコードを先に実装（RED）→ 実装コードで GREEN
+  軽量: main 文脈の TDD / フル: /kiro-impl（独立レビュー付き）
+  → .kiro/specs/<id>/test-results.md に記録
+  → .kiro/specs/<id>/integration-test-checklist.md を作成
     │
     ▼
 【フェーズ2後: 人間による結合試験】
@@ -57,9 +109,76 @@ cc-sdd（`/kiro-*` コマンド群）の上に本プロジェクト固有の運�
 
 ## 承認ゲートの原則
 
+### 絶対軸（すべての状況で最優先・非交渉）
+- **設計・実装などの実作業には、いかなる状況でも人間の許可なしに着手しない（絶対禁止）。**
+  標準ルートでも、逸脱・例外・緊急対応・非標準スキームでも、この軸は外さない。迷ったら止めて人間に確認する。
+- **どんな経路でも「壁打ち→承認→設計→承認→（タスク→）実装」の承認ゲート基本パターンを安全の基本軸とする。**
+  標準 SDD ルートから外れる場合（軽量入口・非コーディング作業・緊急対応・途中で判明した手戻り 等）でも、
+  最低限「人間との合意（壁打ち）→承認」を経てから次段へ進む。
+
+### 各ゲートの運用
 - **各フェーズゲートは省略しない。** `-y` オプションによる fast-track は意図的な場合のみ。
 - **ドキュメント完成 ≠ 実装開始の許可。** 必ず人間の「進めてよい」を確認する。
 - **合意内容は必ず `agreement-log.md` に残す。** 決定事項・決定理由・日付を記録。
+- **承認状態の正は `spec.json`**（`approvals.{requirements,design,tasks}.approved`）。agreement-log には
+  「なぜそう決めたか」の経緯を残し、承認ブール値を二重管理しない。
+
+### 逸脱・手戻り・リカバリー時の扱い
+- **承認後に承認済み要件・設計から外れる必要が生じたら、勝手に決めず人間の確認に戻る。**
+  実装フェーズ（tasks 承認後）に入っていても、次のような**設計レベルの逸脱**を発見したら、その場で実装を止め、
+  ギャップと選択肢を人間に提示して**再承認**を得てから続行する:
+  - 承認済み要件・設計の前提が崩れた（想定が誤っていた／実現不能だった）。
+  - 設計に無い**公開インターフェース**を足す必要が出た（CLI コマンド・API・ファイル形式・契約・新規依存 等）。
+  - 承認済みの契約・スコープ境界を変える必要が出た。
+- **経路途中で前段の誤り・前提崩れ・逸脱が判明したら、前へ繕わず該当する前段のゲートに戻ってやり直す**
+  （例: 設計中に要件の誤りが判明 → 要件ゲートへ戻る）。`spec.json` の該当 approvals を false に戻し、再承認を得る。
+- **逸脱ルートからのリカバリーは、必ず「人間への状況共有 → 確認 → 承認」を経てから修正の設計・実装に着手する。**
+  逸脱や異変の発見をもって、黙って修正作業に入らない。再承認後に決定を requirements/design へ反映し、
+  `spec.json` の該当ゲートを更新してから再開する。**agreement-log への事後記録だけで押し通してはならない。**
+- **線引き（運用可能性の担保）**: 新たなゲートが必要なのは**スコープ境界を越える実作業**（未承認の設計・
+  新規実装・公開インターフェース・契約・依存の追加/変更）。**承認済みスコープ内の実行**は、その承認で既に
+  許可されている（タイポ修正等の些末な実装詳細に、そのつど新ゲートは要らない）。
+  判断基準: 「これは人間が承認した設計・タスクの範囲内か？ 範囲外なら止めて戻る」。
+
+---
+
+## タスクディレクトリ構成（単一レイアウト）
+
+入口に関わらず、1タスクの成果物・記録はすべて `.kiro/specs/<id>/` に集約する。
+`docs/specs/` は使わない（廃止）。
+
+```
+.kiro/specs/<id>/
+  ├── spec.json              … cc-sdd管理。承認状態の唯一の正
+  ├── brief.md               … discovery（課題/方針/スコープ）※フルフロー
+  ├── requirements.md        … 要件（EARS形式 / Tier S は簡潔版）
+  ├── design.md              … 設計（アーキ・Mermaid・ファイル構成 ＋ 技術要件・制約チェック節）
+  ├── tasks.md               … タスク一覧（+ Implementation Notes）
+  ├── research.md            … gap分析（任意 / /kiro-validate-gap）
+  ├── agreement-log.md       … 合意形成記録（決定理由・却下/保留の経緯）
+  ├── test-results.md        … 実行テスト記録
+  ├── integration-test-checklist.md … 結合試験項目（人間確認用）
+  └── outputs/                … PII を含む再生成可能な成果物（git 管理外）
+
+.kiro/steering/              … 永続プロジェクトメモリ（product/tech/structure ほか）
+outputs/<id>/                … 二次成果物（PDF/Word/PPT 等のビルド出力・git 管理外）
+```
+
+- 記録テンプレートは `docs/sdd/templates/` を参照（雛形ライブラリ）。実体は上記 `.kiro/specs/<id>/` に作る。
+- 技術要件は独立ファイルにせず `design.md` の各節（Technology Stack / Testing Strategy /
+  Existing Architecture / Modified Files ＋ 技術要件・制約チェック）に一本化する。
+
+---
+
+## 成果物の二層化（一次=正本 / 二次=派生ビュー）
+
+一次成果物(md)を唯一の正本(Source of Truth)とし、人間の検証・共有用の二次成果物(PDF/Word/PPT 等)は
+一次から**一方向で再生成**する。詳細は [deliverables-policy.md](deliverables-policy.md) を参照。
+
+- **承認・差分レビューは常に一次(md)側**で行う。二次成果物は手編集禁止・再生成可能なビルド成果物。
+- 正本 `design.md` は**物理分割しない**。監査対象別の人間向け文書は「二次生成（節スライス）」で満たす。
+- 二次成果物の出力先: ビルド成果物=リポジトリ直下 `outputs/<id>/`、PII 含有=`.kiro/specs/<id>/outputs/`。
+- 横断規約は `.kiro/steering/steering-custom/`、機能別設計は `design.md` の節に置く（DRY・肥大化防止）。
 
 ---
 
@@ -69,46 +188,33 @@ cc-sdd（`/kiro-*` コマンド群）の上に本プロジェクト固有の運�
 「壁打ち→設計→コーディング」という開発フェーズを踏まないことがある。
 **フェーズを踏まない作業であっても、進捗・合意・判定根拠・実行結果のドキュメント化は省略しない。**
 
-- 省略してよいのは「コーディングを前提とした承認ゲート（requirements/design/tasksの段階承認やTDD）」であり、**記録義務ではない**。
-- `.kiro/specs/<task-id>/` を作成し、少なくとも次を常時更新する:
+- 省略してよいのは「コーディングを前提とした承認ゲート（requirements/design/tasks の段階承認や TDD）」
+  であり、**記録義務ではない**。
+- 記録先は他の作業と同一の `.kiro/specs/<id>/`。少なくとも次を常時更新する:
   - `agreement-log.md` … 依頼内容・合意・決定（理由・日付）・却下/保留事項・承認記録
   - 実行結果（`test-results.md` 等）… 何をどう検証し、どういう結果だったか
-  - フェーズを踏まない場合は `design.md` を「判定ロジック・データ構造・手順」の記述に充ててよい。
+- 非コーディング作業では `design.md` を「判定ロジック・データ構造・手順」の記述に充ててよい。
 - **繰り返す運用作業は、再現用の手順書（`runbook.md`）と成果物の所在を必ず残す。**
-  個人情報を含む成果物は `.kiro/specs/<task-id>/outputs/`（git管理外）に置く。
+  個人情報を含む成果物は `.kiro/specs/<id>/outputs/`（git 管理外）に置く。
 - 「ドキュメント更新は作業の都度・常時行う」ことを原則とし、作業完了後にまとめて書く運用にしない。
+- **`agreement-log.md` はファイルとして実在させる。** 会話内での合意だけで済ませず、必ず
+  `.kiro/specs/<id>/agreement-log.md` を作成・更新する（雛形は `docs/sdd/templates/agreement-log.md`）。
 
 ---
 
-## タスクディレクトリ構成
-
-```
-.kiro/specs/<task-id>/
-  ├── spec.json                       … cc-sdd管理ファイル（自動生成、承認状態の正本）
-  ├── requirements.md                 … 要件（EARS形式）
-  ├── design.md                       … 設計（アーキ・Mermaid・ファイル構成・技術要件/制約チェック節）
-  ├── tasks.md                        … タスク一覧
-  ├── agreement-log.md                … 合意形成記録（壁打ち結果・決定事項）
-  ├── test-results.md                 … 実行テスト記録
-  └── integration-test-checklist.md   … 結合試験項目（人間確認用）
-```
-
-> `docs/specs/<task-id>/` は `.kiro/specs/` 統一（2026-07〜）前の既存タスクのみに残る。
-> 新規タスクは作らず、必ず `.kiro/specs/<task-id>/` を使う。
-
----
-
-## フェーズ対応コマンド早見表
+## フェーズ対応コマンド早見表（フルフロー入口）
 
 | フェーズ | コマンド | 出力先 |
 |---|---|---|
-| 把握・振り分け | `/kiro-discovery <idea>` | `.kiro/specs/<task>/brief.md`, `roadmap.md` |
-| 仕様初期化 | `/kiro-spec-init <description>` | `.kiro/specs/<task>/` |
-| 要件定義 | `/kiro-spec-requirements <task>` | `requirements.md` |
-| 設計 | `/kiro-spec-design <task>` | `design.md` |
-| タスク分解 | `/kiro-spec-tasks <task>` | `tasks.md` |
-| 実装（TDD） | `/kiro-impl <task>` | コード + `test-results.md` |
-| 進捗確認 | `/kiro-spec-status <task>` | - |
+| 把握・振り分け | `/kiro-discovery <idea>` | `.kiro/specs/<id>/brief.md`, `roadmap.md` |
+| 仕様初期化 | `/kiro-spec-init <description>` | `.kiro/specs/<id>/` |
+| 要件定義 | `/kiro-spec-requirements <id>` | `requirements.md` |
+| 設計 | `/kiro-spec-design <id>` | `design.md` |
+| タスク分解 | `/kiro-spec-tasks <id>` | `tasks.md` |
+| 実装（TDD） | `/kiro-impl <id>` | コード + `test-results.md` |
+| 進捗確認 | `/kiro-spec-status <id>` | - |
+
+> 軽量入口では上記コマンドを明示的に打たなくても、エージェントが等価の処理を行い同じ成果物を残す。
 
 ---
 

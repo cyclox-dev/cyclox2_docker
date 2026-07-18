@@ -1,23 +1,24 @@
 ---
 name: kiro-spec-batch
-description: Create complete specs (requirements, design, tasks) for all features in roadmap.md using parallel subagent dispatch by dependency wave.
-allowed-tools: Read, Glob, Grep, Agent
+description: Create complete specs (requirements, design, tasks) for all features in roadmap.md using parallel sub-agent dispatch by dependency wave.
 ---
 
-# kiro-spec-batch Skill
 
-## Core Mission
+# Spec Batch
+
+<background_information>
 - **Success Criteria**:
   - All features have complete spec files (spec.json, requirements.md, design.md, tasks.md)
   - Dependency ordering respected (upstream specs complete before downstream)
-  - Independent features processed in parallel via subagent dispatch
+  - Independent features processed in parallel via sub-agent dispatch
   - Cross-spec consistency verified (data models, interfaces, naming)
   - Mixed roadmap context understood without breaking `## Specs (dependency order)` parsing
-  - Controller context stays lightweight (subagents do the heavy work)
+  - Controller context stays lightweight (sub-agents do the heavy work)
+</background_information>
 
-## Execution Steps
+<instructions>
 
-### Step 1: Read Roadmap and Validate
+## Step 1: Read Roadmap and Validate
 
 1. Read `.kiro/steering/roadmap.md`
 2. Parse the `## Specs (dependency order)` section to extract:
@@ -30,9 +31,9 @@ allowed-tools: Read, Glob, Grep, Agent
    - `## Direct Implementation Candidates`
    Do not include these in dependency-wave execution; they are awareness-only inputs for sequencing and consistency review.
 4. For each pending feature in `## Specs (dependency order)`, verify `.kiro/specs/<feature>/brief.md` exists
-5. If any brief.md is missing, stop and report: "Missing brief.md for: [list]. Run `/kiro-discovery` to generate briefs first."
+5. If any brief.md is missing, stop and report: "Missing brief.md for: [list]. Run `$kiro-discovery` to generate briefs first."
 
-### Step 2: Build Dependency Waves
+## Step 2: Build Dependency Waves
 
 Group pending features into waves based on dependencies:
 
@@ -52,11 +53,11 @@ Spec Batch Plan:
 
 If roadmap contains `## Existing Spec Updates` or `## Direct Implementation Candidates`, mention them separately as non-batch items so the user can see the whole decomposition.
 
-### Step 3: Execute Waves
+## Step 3: Execute Waves
 
-For each wave, dispatch all features in the wave as **parallel subagents** via the Agent tool.
+For each wave, dispatch all features in the wave as **parallel sub-agents**.
 
-**For each feature in the wave**, dispatch a subagent with this prompt:
+**For each feature in the wave**, spawn a sub-agent with this task:
 
 ```
 Create a complete specification for feature "{feature-name}".
@@ -72,62 +73,50 @@ Create a complete specification for feature "{feature-name}".
 5. Report completion with file list and task count
 ```
 
-**After all subagents in the wave complete**:
+If multi-agent is not available, execute features in the wave sequentially.
+
+**After all sub-agents in the wave complete**:
 1. Verify each feature has: spec.json, requirements.md, design.md, tasks.md
 2. If any feature failed, report the error and continue with features that succeeded
 3. Display wave completion: "Wave N complete: [features]. Files verified."
 4. Proceed to next wave
 
-### Step 4: Cross-Spec Review
+## Step 4: Cross-Spec Review
 
-After all waves complete, dispatch a **single subagent** for cross-spec consistency review. This is the highest-value quality gate -- it catches issues that per-spec review gates cannot.
+After all waves complete, spawn a **single sub-agent** for cross-spec consistency review. Use the `spec-reviewer` custom agent if available (configured with `model = "gpt-5.4"` and `model_reasoning_effort = "high"` in `.codex/agents/spec-reviewer.toml`). This is the highest-value quality gate -- it catches issues that per-spec review gates cannot.
 
-**Subagent prompt**:
+**Sub-agent task**:
 
-```
-You are a cross-spec reviewer. Read ALL generated specs and check for consistency across the entire project.
-
-Read these files for every feature in the roadmap:
-- .kiro/specs/*/design.md (primary: contains interfaces, data models, architecture)
-- .kiro/specs/*/requirements.md (for scope and acceptance criteria)
-- .kiro/specs/*/tasks.md (for boundary annotations only -- read _Boundary:_ lines, skip task descriptions)
-- .kiro/steering/roadmap.md
+Read ALL generated specs and check for consistency across the entire project:
+- `.kiro/specs/*/design.md` (primary: contains interfaces, data models, architecture)
+- `.kiro/specs/*/requirements.md` (for scope and acceptance criteria)
+- `.kiro/specs/*/tasks.md` (for boundary annotations only -- read _Boundary:_ lines, skip task descriptions)
+- `.kiro/steering/roadmap.md`
 
 Reading priority: Focus on design.md files (they contain interfaces, data models, architecture). For requirements.md, focus on section headings and acceptance criteria. For tasks.md, focus on _Boundary:_ annotations.
 
-Check the following:
-
-1. **Data model consistency**: Do all specs that reference the same entities (tables, types, interfaces) define them consistently? Are field names, types, and relationships aligned?
-
-2. **Interface alignment**: Where spec A produces output that spec B consumes (APIs, events, shared state), do the contracts match exactly? Are request/response shapes, event payloads, and error codes consistent?
-
-3. **No duplicate functionality**: Is any capability specified in more than one spec? Flag overlaps.
-
-4. **Dependency completeness**: Does every spec's design.md reference the correct upstream specs? Are there implicit dependencies not declared in roadmap.md?
-
-5. **Naming conventions**: Are component names, file paths, API routes, and database table names consistent across all specs?
-
-6. **Shared infrastructure**: Are shared concerns (authentication, error handling, logging, configuration) handled in one spec and correctly referenced by others?
-
-7. **Task boundary alignment**: Do task _Boundary:_ annotations across specs partition the codebase cleanly? Are there files claimed by multiple specs?
+Check:
+1. **Data model consistency**: Same entities defined consistently across specs (field names, types, relationships)
+2. **Interface alignment**: Where spec A outputs what spec B consumes, do contracts match exactly?
+3. **No duplicate functionality**: Any capability specified in more than one spec?
+4. **Dependency completeness**: Every design.md references correct upstream specs? Implicit dependencies not in roadmap?
+5. **Naming conventions**: Component names, file paths, API routes, table names consistent across specs?
+6. **Shared infrastructure**: Shared concerns (auth, error handling, logging) handled in one spec and correctly referenced?
+7. **Task boundary alignment**: Task _Boundary:_ annotations partition codebase cleanly? No files claimed by multiple specs?
 8. **Roadmap boundary continuity**: If roadmap includes `Existing Spec Updates` or `Direct Implementation Candidates`, do the generated new specs avoid absorbing that work by accident?
 9. **Architecture boundary integrity**: Do the specs preserve clean responsibility seams, avoid shared ownership, keep dependency direction coherent, and include enough revalidation triggers to catch downstream impact?
 10. **Change-friendly decomposition**: Has any spec absorbed multiple independent seams that should probably be split instead of kept together?
 
-Output format:
-- CONSISTENT: [list areas that are well-aligned]
-- ISSUES: [list each issue with: which specs, what's inconsistent, suggested fix]
-- If no issues found: "All specs are consistent. Ready for implementation."
-```
+Output: CONSISTENT areas + ISSUES with (which specs, what's inconsistent, suggested fix).
 
-**After the review subagent returns**:
-- **Critical/important issues found**: Dispatch fix subagents for each affected spec to apply the suggested fixes. If the issue is really a decomposition problem (for example boundary overlap or one spec carrying multiple independent seams), stop and return to roadmap/discovery instead of papering over it locally. Re-run cross-spec review after fixes (max 3 remediation rounds).
+**After the review sub-agent returns**:
+- **Critical/important issues found**: Dispatch fix sub-agents for each affected spec to apply the suggested fixes. If the issue is really a decomposition problem (for example boundary overlap or one spec carrying multiple independent seams), stop and return to roadmap/discovery instead of papering over it locally. Re-run cross-spec review after fixes (max 3 remediation rounds).
 - **Minor issues only**: Report them for user awareness, proceed to Step 5.
 - **No issues**: Proceed to Step 5.
 
-### Step 5: Finalize
+## Step 5: Finalize
 
-1. Glob `.kiro/specs/*/tasks.md` to verify all specs exist
+1. Scan `.kiro/specs/*/tasks.md` to verify all specs exist
 2. For each completed spec, read spec.json to confirm phase and approvals
 3. Update roadmap.md: mark completed specs as `[x]`
 4. If roadmap.md includes `Existing Spec Updates` or `Direct Implementation Candidates`, leave them untouched and mention them as remaining follow-up items unless already explicitly completed elsewhere
@@ -144,28 +133,33 @@ Spec Batch Complete:
   Existing spec updates pending: <count or none>
   Direct implementation candidates pending: <count or none>
 
-Next: Review generated specs, then start implementation with /kiro-impl <feature>
+Next: Review generated specs, then start implementation with $kiro-impl <feature>
 ```
 
+</instructions>
+
 ## Critical Constraints
-- **Controller stays lightweight**: Only read roadmap.md and brief.md existence checks in main context. All spec generation happens in subagents.
+- **Controller stays lightweight**: Only read roadmap.md and brief.md existence checks in main context. All spec generation happens in sub-agents.
 - **Wave ordering is strict**: Never start a wave until all features in previous waves are complete.
-- **Parallel within waves**: All features in the same wave MUST be dispatched in parallel via Agent tool, not sequentially.
+- **Parallel within waves**: All features in the same wave should be dispatched in parallel if multi-agent is available.
 - **No partial waves**: If a feature in a wave fails, still complete the other features in that wave before reporting.
 - **Skip completed specs**: Features with `[x]` in roadmap.md or existing tasks.md are skipped.
 - **`## Specs (dependency order)` remains authoritative for batch execution**: Other roadmap sections are context, not wave inputs.
 
 ## Safety & Fallback
 
-**Subagent failure**:
+**Sub-agent failure**:
 - Log the error, skip the failed feature
 - Continue with remaining features in the wave
 - Report failed features in the summary
-- Suggest: "Run `/kiro-spec-quick <feature> --auto` manually for failed features."
+- Suggest: "Run `$kiro-spec-quick <feature> --auto` manually for failed features."
 
 **Circular dependencies**:
 - If dependency graph has cycles, report the cycle and stop
 - Suggest: "Fix dependency ordering in roadmap.md"
 
 **Roadmap not found**:
-- Stop and report: "No roadmap.md found. Run `/kiro-discovery` first."
+- Stop and report: "No roadmap.md found. Run `$kiro-discovery` first."
+
+**All specs already complete**:
+- Report: "All specs in roadmap.md are already complete. Nothing to do."

@@ -1,13 +1,12 @@
 ---
 name: kiro-validate-impl
 description: Validate feature-level integration after all tasks are implemented. Checks cross-task consistency, full test suite, and overall spec coverage.
-allowed-tools: Read, Bash, Grep, Glob, Agent
-argument-hint: <feature-name> [task-numbers]
 ---
 
-# kiro-validate-impl Skill
 
-## Role
+# Implementation Integration Validation
+
+<background_information>
 Individual tasks have already been reviewed by the per-task reviewer during implementation. Your job is to catch problems that only become visible when looking across all tasks together.
 
 Boundary terminology continuity:
@@ -16,7 +15,6 @@ Boundary terminology continuity:
 - tasks constrain execution with `_Boundary:_`
 - feature validation checks for cross-task `Boundary Violations`
 
-## Core Mission
 - **Success Criteria**:
   - All tasks marked `[x]` in tasks.md
   - Full test suite passes (not just per-task tests)
@@ -25,34 +23,47 @@ Boundary terminology continuity:
   - Design structure is reflected end-to-end (not just per-component)
   - No orphaned code, conflicting implementations, integration seams, or boundary spillover
 
-## What This Skill Does NOT Do
-Per-task checks are the reviewer's responsibility during `/kiro-impl`. This skill does **not** re-check:
-- Individual task acceptance criteria
-- Per-file reality checks (mock/stub detection)
-- Single-task spec alignment
+**What This Skill Does NOT Do**: Per-task checks are the reviewer's responsibility during `$kiro-impl`. This skill does NOT re-check individual task acceptance criteria, per-file reality checks, or single-task spec alignment.
 
 This skill's main question is: when the completed tasks are viewed together, do they still respect the designed boundary seams and dependency direction?
+</background_information>
 
+<instructions>
 ## Execution Steps
 
-### Step 1: Detect Validation Target
+### 1. Detect Validation Target
 
-**If no arguments provided**:
-- Parse conversation history for `/kiro-impl` commands to detect recently implemented features and tasks
-- Scan `.kiro/specs/` for features with completed tasks `[x]`
+**If no arguments provided** (`$1` empty):
+- Parse conversation history for `$kiro-impl <feature> [tasks]` commands
+- Extract feature names and task numbers from each execution
+- Aggregate all implemented tasks by feature
 - Report detected implementations (e.g., "user-auth: 1.1, 1.2, 1.3")
+- If no history found, scan `.kiro/specs/` for features with completed tasks `[x]`
 
-**If feature provided** (feature specified, tasks empty):
+**If feature provided** (`$1` present, `$2` empty):
 - Use specified feature
-- Detect all completed tasks `[x]` in `.kiro/specs/{feature}/tasks.md`
+- Detect all completed tasks `[x]` in `.kiro/specs/$1/tasks.md`
 
-**If both feature and tasks provided** (explicit mode):
+**If both feature and tasks provided** (`$1` and `$2` present):
 - Validate specified feature and tasks only (e.g., `user-auth 1.1,1.2`)
 
-### Step 2: Gather Context
+#### Sub-agent Dispatch (parallel)
 
-If steering/spec context is already available from conversation, skip redundant file reads.
-Otherwise, for each detected feature:
+The following validation dimensions are independent and can be dispatched as **sub-agents**. The agent should decide the optimal decomposition based on feature scope — split, merge, or skip sub-agents as appropriate. Each sub-agent returns a **structured findings summary** to keep the main context clean for GO/NO-GO synthesis.
+
+**Typical validation dimensions** (adjust as appropriate):
+- **Test execution**: Run the complete test suite, report pass/fail with details
+- **Requirements coverage**: Build requirements → implementation matrix, report gaps
+- **Design alignment**: Verify architecture matches design.md, report drift and dependency violations
+- **Cross-task integration**: Verify data flows, API contracts, shared state consistency
+
+If multi-agent is not available, run checks sequentially in main context.
+
+After all checks complete, synthesize findings for GO/NO-GO/MANUAL_VERIFY_REQUIRED assessment.
+
+### 2. Load Context
+
+For each detected feature:
 - Read `.kiro/specs/<feature>/spec.json` for metadata
 - Read `.kiro/specs/<feature>/requirements.md` for requirements
 - Read `.kiro/specs/<feature>/design.md` for design structure
@@ -67,23 +78,9 @@ Otherwise, for each detected feature:
 - For `SMOKE_COMMANDS`, choose the lightest trustworthy runtime-liveness check for the app shape (for example: root URL load, Electron launch, CLI `--help`, service health endpoint, mobile simulator/e2e harness if one already exists)
 - If multiple candidates exist, prefer the command with the smallest setup cost that still exercises the real built artifact
 
-### Step 3: Execute Integration Validation
-
-#### Subagent Dispatch (parallel)
-
-The following validation dimensions are independent and can be dispatched as **subagents** via the Agent tool. The agent should decide the optimal decomposition based on feature scope — split, merge, or skip subagents as appropriate. Each subagent returns a **structured findings summary** to keep the main context clean for GO/NO-GO synthesis.
-
-**Typical validation dimensions** (adjust as appropriate):
-- **Test execution**: Run the complete test suite, report pass/fail with details
-- **Requirements coverage**: Build requirements → implementation matrix, report gaps
-- **Design alignment**: Verify architecture matches design.md, report drift and dependency violations
-- **Cross-task integration**: Verify data flows, API contracts, shared state consistency
-
-For simple features (few tasks, small scope), run checks in main context without subagent dispatch.
+### 3. Execute Integration Validation
 
 #### Mechanical Checks (run commands, use results)
-
-These checks apply at the feature level. Use command output as the primary signal.
 
 **A. Full Test Suite**
 - Run the discovered canonical full-test command. Use the exit code.
@@ -138,7 +135,7 @@ These checks apply at the feature level. Use command output as the primary signa
 - Check for any tasks still marked `_Blocked:_` — report why and assess impact on feature completeness
 - Review `## Implementation Notes` in tasks.md for cross-cutting insights that need attention
 
-### Step 4: Generate Report
+### 4. Generate Report
 
 Before returning `GO`, apply the `kiro-verify-completion` protocol to the feature-level claim. Tests alone are insufficient: include full-suite, runtime liveness, coverage, integration, design-alignment, and blocked-task status in the evidence.
 
@@ -176,16 +173,17 @@ Provide summary in the language specified in spec.json:
 - REMEDIATION: <if NO-GO: specific, actionable steps to fix each issue>
 ```
 
-If NO-GO, REMEDIATION is mandatory — identify the exact issue and what needs to change. Vague feedback is not acceptable.
+If NO-GO, REMEDIATION is mandatory — identify the exact issue and what needs to change.
 
 ## Important Constraints
 - **Strict Final Gate**: Return `GO` only when all integration checks passed; return `NO-GO` for concrete failures and `MANUAL_VERIFY_REQUIRED` when mandatory validation could not be completed
 - **Boundary integrity over convenience**: Do not return `GO` if the feature only works by smearing responsibilities across boundaries, even when tests pass
+</instructions>
 
 ## Safety & Fallback
 
 ### Error Scenarios
-- **No Implementation Found**: If no `[x]` tasks found, report "No implementations detected"
+- **No Implementation Found**: If no `$kiro-impl` in history and no `[x]` tasks, report "No implementations detected"
 - **Test Command Unknown**: Return `MANUAL_VERIFY_REQUIRED` and explain which validation command is missing; do not return `GO`
 - **Missing Spec Files**: Stop with error if spec.json/requirements.md/design.md missing
 
@@ -195,9 +193,12 @@ If NO-GO, REMEDIATION is mandatory — identify the exact issue and what needs t
 - Feature validated end-to-end and ready for deployment or next feature
 
 **If NO-GO Decision**:
-- Address issues listed in REMEDIATION
-- Re-run `/kiro-impl {feature} [tasks]` for targeted fixes
-- Re-validate with `/kiro-validate-impl {feature}`
+- Address integration issues listed
+- Re-run `$kiro-impl <feature> [tasks]` for targeted fixes
+- Re-validate with `$kiro-validate-impl [feature]`
+
+**Session Interrupted**:
+- Safe to re-run — validation is read-only and idempotent
 
 **If MANUAL_VERIFY_REQUIRED**:
 - Do not treat the feature as complete

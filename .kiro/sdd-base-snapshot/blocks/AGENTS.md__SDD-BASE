@@ -9,12 +9,15 @@
 2. 単体テストは実装とセット。**TDD（テスト先行）** で進める。
 3. **コミットは自動で行わない。** 区切りで推奨提示し、人間が判断・実行する（希望時は自動コミットへ切替可）。
 4. 1タスクの記録は **`.kiro/specs/<id>/` に集約**する（`docs/specs/` は使わない）。合意は `agreement-log.md`、
-   承認状態の正本は `spec.json`。
+   承認状態の正本は `spec.json`。**二次成果物**（PDF/Word/PPT 等）はビルド出力として **`outputs/<id>/`**、
+   **PII を含む成果物**は **`.kiro/specs/<id>/outputs/`**（いずれも git 管理外）に置く。
 5. 技術要件は独立ファイルにせず `design.md` の「技術要件・制約チェック」節で確認する。
+   一次成果物(md)が正本で、二次成果物は一次から**一方向で再生成**する（手編集禁止・承認は一次側）。詳細は [docs/sdd/deliverables-policy.md](docs/sdd/deliverables-policy.md)。
 6. 実行テスト結果は `.kiro/specs/<id>/test-results.md` に記録する。
 7. 結合試験項目は `.kiro/specs/<id>/integration-test-checklist.md` に残す。
 8. **`main` への直接コミット禁止。** ブランチ→push→PR。詳細は [docs/sdd/rules/branching-policy.md](docs/sdd/rules/branching-policy.md)。
 9. **環境越境（Windows × WSL）の確認。** 実行環境が Windows で、かつ作業対象が WSL パス（`\\wsl.localhost\...` / `\\wsl$\...`）の場合は、**そのセッションで最初の自動操作を行う直前に1回だけ**、差分懸念の警告と「WSL内ターミナルから `claude` を起動して作業する」回避策を提示し、このまま続行してよいか確認する。詳細は [docs/sdd/rules/environment-boundary-policy.md](docs/sdd/rules/environment-boundary-policy.md)。（越境でない／非Windowsでは何もしない）
+10. **【絶対軸】設計・実装などの実作業には、いかなる状況でも人間の許可なしに着手しない。** 標準ルートでも逸脱・例外・緊急・手戻りでも、「壁打ち→承認→設計→承認→実装」の承認ゲートを安全の基本軸として外さない。実装フェーズ（tasks 承認後）でも、承認済み要件・設計の前提崩れや、設計に無い公開インターフェース追加（CLI・API・ファイル形式・契約・依存）が必要になったら実装を止めて再承認を得る。**逸脱ルートからのリカバリーは必ず「人間への状況共有→確認→承認」を経てから修正の設計・実装に入る**（黙って修正しない・事後記録だけで進めない）。前段の誤りが判明したら前段ゲートに戻り `spec.json` の該当 approvals を false に戻して再承認。ただし承認済みスコープ内の実行はその承認で許可済み（些末な実装詳細に新ゲートは不要）。詳細は [docs/sdd/workflow.md](docs/sdd/workflow.md) の「承認ゲートの原則」。
 
 ### ベースルールの所在
 - ワークフロー: [docs/sdd/workflow.md](docs/sdd/workflow.md)
@@ -23,6 +26,7 @@
 - ブランチ方針: [docs/sdd/rules/branching-policy.md](docs/sdd/rules/branching-policy.md)
 - 環境越境ポリシー（Windows×WSL）: [docs/sdd/rules/environment-boundary-policy.md](docs/sdd/rules/environment-boundary-policy.md)
 - 秘密情報ポリシー（ハードコード禁止）: [docs/sdd/rules/security-policy.md](docs/sdd/rules/security-policy.md)
+- 成果物二層化ポリシー（一次=正本/二次=派生ビュー）: [docs/sdd/deliverables-policy.md](docs/sdd/deliverables-policy.md)
 - 各テンプレート: [docs/sdd/templates/](docs/sdd/templates/)
 
 ### エージェント整合

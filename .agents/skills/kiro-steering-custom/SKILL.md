@@ -1,17 +1,14 @@
 ---
 name: kiro-steering-custom
-description: Create custom steering documents for specialized project contexts. Use when creating domain-specific steering files.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+description: Create custom steering documents for specialized project contexts
 metadata:
   shared-rules: "steering-principles.md"
 ---
 
-# kiro-steering-custom Skill
 
-## Role
-You are a specialized skill for creating custom steering documents beyond core files (product, tech, structure).
+# Kiro Custom Steering Creation
 
-## Core Mission
+<background_information>
 **Role**: Create specialized steering documents beyond core files (product, tech, structure).
 
 **Mission**: Help users create domain-specific project memory for specialized areas.
@@ -20,9 +17,9 @@ You are a specialized skill for creating custom steering documents beyond core f
 - Custom steering captures specialized patterns
 - Follows same granularity principles as core steering
 - Provides clear value for specific domain
+</background_information>
 
-## Execution Steps
-
+<instructions>
 ### Step 1: Gather Context
 
 If steering context is already available from conversation, skip redundant file reads.
@@ -47,6 +44,8 @@ Otherwise:
 The following research areas are independent and can be executed in parallel:
 1. **Template & principles**: Load matching template and steering-principles.md
 2. **Domain patterns**: Analyze codebase for domain-specific patterns using Glob/Grep/Read
+
+If multi-agent is enabled, spawn sub-agents for each area above. Otherwise execute sequentially.
 
 After all parallel research completes, synthesize findings for steering document.
 
@@ -82,7 +81,9 @@ From `rules/steering-principles.md` (in this skill's directory):
 - **Maintainable size**: 100-200 lines typical
 - **Security first**: Never include secrets or sensitive data
 
-## Tool Guidance
+</instructions>
+
+## Tool guidance
 
 - **Read**: Load template, analyze existing code
 - **Glob**: Find related files for pattern analysis
@@ -91,12 +92,12 @@ From `rules/steering-principles.md` (in this skill's directory):
 
 **JIT Strategy**: Load template only when creating that type of steering.
 
-## Output Description
+## Output description
 
 Chat summary with file location (file created directly).
 
 ```
-Custom Steering Created
+✅ Custom Steering Created
 
 ## Created:
 - .kiro/steering/api-standards.md
@@ -118,13 +119,13 @@ Review and customize as needed.
 ## Examples
 
 ### Success: API Standards
-**Input**: "Create API standards steering"
-**Action**: Load template, analyze src/api/, extract patterns
+**Input**: "Create API standards steering"  
+**Action**: Load template, analyze src/api/, extract patterns  
 **Output**: api-standards.md with project-specific REST conventions
 
 ### Success: Testing Strategy
-**Input**: "Document our testing approach"
-**Action**: Load template, analyze test files, extract patterns
+**Input**: "Document our testing approach"  
+**Action**: Load template, analyze test files, extract patterns  
 **Output**: testing.md with test organization and mocking strategies
 
 ## Safety & Fallback
@@ -139,5 +140,6 @@ Review and customize as needed.
 - Follow same granularity principles as core steering
 - All steering files loaded as project memory
 - Custom files equally important as core files
-- Avoid documenting agent-specific tooling directories (e.g. `.cursor/`, `.gemini/`, `.agents/`)
+- Avoid documenting agent-specific tooling directories (e.g. `.cursor/`, `.gemini/`, `.claude/`)
 - Light references to `.kiro/specs/` and `.kiro/steering/` are acceptable; avoid other `.kiro/` directories
+

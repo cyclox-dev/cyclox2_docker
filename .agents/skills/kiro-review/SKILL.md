@@ -1,14 +1,11 @@
 ---
 name: kiro-review
 description: Review a task implementation against approved specs, task boundaries, and verification evidence. Use after an implementer finishes a task, after remediation, or before accepting a task as complete.
-allowed-tools: Read, Bash, Grep, Glob
-argument-hint: <task-id>
 ---
 
 # kiro-review
 
-## Overview
-
+<background_information>
 This skill performs task-local adversarial review. It verifies that the implementation is real, complete, bounded, aligned with approved requirements and design, and supported by mechanical verification evidence.
 
 Boundary terminology continuity:
@@ -16,7 +13,9 @@ Boundary terminology continuity:
 - design fixes `Boundary Commitments`
 - tasks constrain execution with `_Boundary:_`
 - review rejects concrete `Boundary Violations`
+</background_information>
 
+<instructions>
 ## When to Use
 
 - After an implementer reports `READY_FOR_REVIEW`
@@ -169,3 +168,4 @@ Escalate instead of papering over the issue when:
 - REMEDIATION: <mandatory if REJECTED>
 - SUMMARY: <one sentence>
 ```
+</instructions>
