@@ -1,0 +1,3570 @@
+{
+ "meta": {
+  "task_id": "ajocc-report-2025-26",
+  "season": "2025-2026",
+  "created_by": "Phase 2 worker agent (W2)",
+  "created_date": "2026-07-02",
+  "title_cover": "2025-2026 シーズン実績",
+  "created_month_label": "2026年7月 作成",
+  "notes": "数値の唯一の正はこのJSON。source: db=DB集計 / prior_year_fixed=過去年度PDF転記 / provisional=仮値(合意#1) / placeholder=実データ未入手(null)。地域はdesign.md準拠(CXK→茨城,TYM→北陸,JPN除外)。カテゴリは25-26新コード体系。多大会統合ルールはrunbook.md参照。",
+  "season_boundary_2526": "at_date>='2025-04-01' AND at_date<'2026-04-01'",
+  "season_boundary_2425": "at_date>='2024-04-01' AND at_date<'2025-04-01'"
+ },
+ "p3": {
+  "heading": "1. 2025-2026 シーズンまとめ",
+  "kaisai_jisseki": {
+   "rows": [
+    {
+     "label": "開催予定数",
+     "value": 65,
+     "unit": "戦",
+     "note": "JCX 11戦 + ローカル大会 54戦",
+     "source": "db"
+    },
+    {
+     "label": "中止数",
+     "value": 3,
+     "unit": "戦",
+     "note": "もみじ1・信州3・信州4",
+     "source": "db"
+    },
+    {
+     "label": "開催数",
+     "value": 62,
+     "unit": "戦",
+     "note": null,
+     "source": "db"
+    },
+    {
+     "label": "最大同日開催数",
+     "value": 5,
+     "unit": "戦",
+     "note": "2025/12/21",
+     "source": "db"
+    }
+   ]
+  },
+  "entry_kensu": {
+   "rows": [
+    {
+     "label": "エントリー総数",
+     "value": 21120,
+     "unit": "件",
+     "note": "-0.7% 減少（24-25比 21,268→21,120）",
+     "source": "db"
+    },
+    {
+     "label": "├JCX シリーズ 11戦",
+     "value": 4020,
+     "unit": "件",
+     "note": "宇都宮・お台場は各2日分で1大会にカウント",
+     "source": "db"
+    },
+    {
+     "label": "└ローカル大会 54戦",
+     "value": 17100,
+     "unit": "件",
+     "note": null,
+     "source": "db"
+    },
+    {
+     "label": "平均エントリー数",
+     "value": 325,
+     "unit": "件",
+     "note": "JCX 365件 / ローカル大会 317件（統合後戦数基準）",
+     "source": "db"
+    },
+    {
+     "label": "最大エントリー数",
+     "value": 845,
+     "unit": "件",
+     "note": "2025/10/19 関西 桂川",
+     "source": "db"
+    },
+    {
+     "label": "最大同日エントリー数",
+     "value": 1549,
+     "unit": "件",
+     "note": "2025/12/21",
+     "source": "db"
+    }
+   ]
+  },
+  "senshu_su": {
+   "rows": [
+    {
+     "label": "アクティブ選手数",
+     "value": 3784,
+     "unit": "名",
+     "note": "2.9% 減少（24-25検算3,898比）",
+     "source": "db"
+    },
+    {
+     "label": "└新規参加者",
+     "value": 692,
+     "unit": "名",
+     "note": "エントリー基準。24-25検算756比 -8.5%。P.13参照",
+     "source": "db"
+    },
+    {
+     "label": "平均エントリー回数",
+     "value": 5.6,
+     "unit": "回",
+     "note": "カテゴリ別内訳はP.11参照(新コード)",
+     "source": "db"
+    }
+   ]
+  },
+  "web_view": {
+   "rows": [
+    {
+     "label": "月平均 ビュー数",
+     "value": 100000,
+     "note": "期間 2025/9/1〜2026/3/31（仮値）",
+     "provisional": true,
+     "source": "provisional"
+    }
+   ]
+  }
+ },
+ "p4": {
+  "heading": "2. 前年度との比較",
+  "note": "元資料P.4は22-23/23-24/24-25/前年度比。25-26版は1年シフトし23-24/24-25/25-26/前年度比。23-24・24-25列は元資料PDF P.4から転記(prior_year_fixed)、25-26列は当年DB集計値(p3/p5a由来)。前年度比=25-26−24-25。Web閲覧数の25-26は仮値100,000(合意#1)。",
+  "columns": [
+   "item",
+   "y2324",
+   "y2425",
+   "y2526",
+   "yoy_delta"
+  ],
+  "kaisai_jisseki": {
+   "block": "開催実績",
+   "rows": [
+    {
+     "label": "開催予定数",
+     "unit": "戦",
+     "y2324": 69,
+     "y2425": 68,
+     "y2526": 65,
+     "yoy_delta": -3,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "中止数",
+     "unit": "戦",
+     "y2324": 2,
+     "y2425": 1,
+     "y2526": 3,
+     "yoy_delta": 2,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "開催数",
+     "unit": "戦",
+     "y2324": 67,
+     "y2425": 67,
+     "y2526": 62,
+     "yoy_delta": -5,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "最大同日開催数",
+     "unit": "戦",
+     "y2324": 5,
+     "y2425": 4,
+     "y2526": 5,
+     "yoy_delta": 1,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    }
+   ]
+  },
+  "entry_kensu": {
+   "block": "エントリー件数",
+   "rows": [
+    {
+     "label": "エントリー総数",
+     "unit": "件",
+     "y2324": 21622,
+     "y2425": 21268,
+     "y2526": 21120,
+     "yoy_delta": -148,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "├JCX シリーズ",
+     "unit": "件",
+     "y2324": 3570,
+     "y2425": 4018,
+     "y2526": 4020,
+     "yoy_delta": 2,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "└ローカル大会",
+     "unit": "件",
+     "y2324": 18052,
+     "y2425": 17250,
+     "y2526": 17100,
+     "yoy_delta": -150,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "平均エントリー数",
+     "unit": "件",
+     "y2324": 323,
+     "y2425": 317,
+     "y2526": 341,
+     "yoy_delta": 24,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     },
+     "note": "25-26=340.6(p5a全体avg)を四捨五入。24-25=317."
+    },
+    {
+     "label": "最大エントリー数",
+     "unit": "件",
+     "y2324": 891,
+     "y2425": 983,
+     "y2526": 845,
+     "yoy_delta": -138,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    },
+    {
+     "label": "最大同日エントリー数",
+     "unit": "件",
+     "y2324": 1648,
+     "y2425": 1781,
+     "y2526": 1549,
+     "yoy_delta": -232,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    }
+   ]
+  },
+  "senshu_su": {
+   "block": "選手数",
+   "rows": [
+    {
+     "label": "アクティブ選手数",
+     "unit": "名",
+     "y2324": 4010,
+     "y2425": 3896,
+     "y2526": 3784,
+     "yoy_delta": -112,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     },
+     "note": "25-26=3,784(24-25検算3,898比)。24-25列3,896はPDF転記値。前年度比は転記値基準で-112。"
+    },
+    {
+     "label": "└新規参加者",
+     "unit": "名",
+     "y2324": 774,
+     "y2425": 734,
+     "y2526": 692,
+     "yoy_delta": -42,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     },
+     "note": "エントリー基準。24-25検算756/PDF734の既知差はP.13注記参照。"
+    },
+    {
+     "label": "平均エントリー回数",
+     "unit": "回",
+     "y2324": 5.5,
+     "y2425": 5.6,
+     "y2526": 5.6,
+     "yoy_delta": 0.0,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "db"
+     }
+    }
+   ]
+  },
+  "web_view": {
+   "block": "web 閲覧数",
+   "rows": [
+    {
+     "label": "月平均 ビュー数",
+     "unit": null,
+     "y2324": 129751,
+     "y2425": 144090,
+     "y2526": 100000,
+     "yoy_delta": -44090,
+     "col_source": {
+      "y2324": "prior_year_fixed",
+      "y2425": "prior_year_fixed",
+      "y2526": "provisional"
+     },
+     "provisional": true,
+     "note": "25-26は仮値100,000(合意#1)。23-24/24-25はPDF転記。前年度比は仮値差引=-44,090(暫定)。"
+    }
+   ]
+  }
+ },
+ "p5a": {
+  "heading": "3. エントリー件数推移（AJOCC年度別×シリーズ区分）",
+  "note": "当年度(2025-2026)行のみDB集計。過去年度(2013-2024)はprior_year_fixed(元資料PDF転記=Phase3で歴史セクションに転記)。ME1=C1+UCIME。大会数は多大会統合後(JCX11/ローカル51/全体62)。ME1平均=ME1/大会数。",
+  "columns": [
+   "group",
+   "meets",
+   "entries",
+   "avg",
+   "ME1",
+   "ME1_avg"
+  ],
+  "row_2526": {
+   "JCX": {
+    "meets": 11,
+    "entries": 4020,
+    "avg": 365.5,
+    "ME1": 930,
+    "ME1_avg": 84.5,
+    "source": "db"
+   },
+   "local": {
+    "meets": 51,
+    "entries": 17100,
+    "avg": 335.3,
+    "ME1": 2054,
+    "ME1_avg": 40.3,
+    "source": "db"
+   },
+   "all": {
+    "meets": 62,
+    "entries": 21120,
+    "avg": 340.6,
+    "ME1": 2984,
+    "ME1_avg": 48.1,
+    "source": "db"
+   }
+  },
+  "historical_placeholder": "2013-2014〜2024-2025の各行はPhase3で元資料PDF P.5表Aから転記(prior_year_fixed)。24-25行はDB再集計で整合可(JCX10/4018/401.8/789/78.9, ローカル57/17250/302.6/1847/32.4, 全体67/21268/317.4/2636/39.3)。",
+  "historical": {
+   "note": "P.5表Aの過去年度時系列(2013-2014〜2024-2025)を元資料PDFから転記(prior_year_fixed)。P.6複合グラフ描画用。24-25行はDB再集計で整合(PDF一致)のためsource=db。列=[meets,entries,avg,ME1,ME1_avg]。row_2526(当年25-26)は別途保持。",
+   "columns": [
+    "year",
+    "meets",
+    "entries",
+    "avg",
+    "ME1",
+    "ME1_avg"
+   ],
+   "rows": [
+    {
+     "year": "2013-2014",
+     "JCX": {
+      "meets": 9,
+      "entries": 3317,
+      "avg": 368.6,
+      "ME1": 445,
+      "ME1_avg": 49.4
+     },
+     "local": {
+      "meets": 34,
+      "entries": 7981,
+      "avg": 234.7,
+      "ME1": 977,
+      "ME1_avg": 28.7
+     },
+     "all": {
+      "meets": 43,
+      "entries": 11298,
+      "avg": 262.7,
+      "ME1": 1422,
+      "ME1_avg": 33.1
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2014-2015",
+     "JCX": {
+      "meets": 9,
+      "entries": 3204,
+      "avg": 356.0,
+      "ME1": 529,
+      "ME1_avg": 58.8
+     },
+     "local": {
+      "meets": 38,
+      "entries": 9762,
+      "avg": 256.9,
+      "ME1": 1041,
+      "ME1_avg": 27.4
+     },
+     "all": {
+      "meets": 47,
+      "entries": 12966,
+      "avg": 275.9,
+      "ME1": 1570,
+      "ME1_avg": 33.4
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2015-2016",
+     "JCX": {
+      "meets": 11,
+      "entries": 4723,
+      "avg": 429.4,
+      "ME1": 684,
+      "ME1_avg": 62.2
+     },
+     "local": {
+      "meets": 50,
+      "entries": 13293,
+      "avg": 265.9,
+      "ME1": 1348,
+      "ME1_avg": 27.0
+     },
+     "all": {
+      "meets": 61,
+      "entries": 18016,
+      "avg": 295.3,
+      "ME1": 2032,
+      "ME1_avg": 33.3
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2016-2017",
+     "JCX": {
+      "meets": 12,
+      "entries": 4779,
+      "avg": 398.3,
+      "ME1": 814,
+      "ME1_avg": 67.8
+     },
+     "local": {
+      "meets": 47,
+      "entries": 15011,
+      "avg": 319.4,
+      "ME1": 1373,
+      "ME1_avg": 29.2
+     },
+     "all": {
+      "meets": 59,
+      "entries": 19790,
+      "avg": 335.4,
+      "ME1": 2187,
+      "ME1_avg": 37.1
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2017-2018",
+     "JCX": {
+      "meets": 12,
+      "entries": 5800,
+      "avg": 483.3,
+      "ME1": 1034,
+      "ME1_avg": 86.2
+     },
+     "local": {
+      "meets": 55,
+      "entries": 15631,
+      "avg": 284.2,
+      "ME1": 1377,
+      "ME1_avg": 25.0
+     },
+     "all": {
+      "meets": 67,
+      "entries": 21431,
+      "avg": 319.9,
+      "ME1": 2411,
+      "ME1_avg": 36.0
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2018-2019",
+     "JCX": {
+      "meets": 12,
+      "entries": 5176,
+      "avg": 431.3,
+      "ME1": 995,
+      "ME1_avg": 82.9
+     },
+     "local": {
+      "meets": 58,
+      "entries": 16275,
+      "avg": 280.6,
+      "ME1": 1443,
+      "ME1_avg": 24.9
+     },
+     "all": {
+      "meets": 70,
+      "entries": 21451,
+      "avg": 306.4,
+      "ME1": 2438,
+      "ME1_avg": 34.8
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2019-2020",
+     "JCX": {
+      "meets": 10,
+      "entries": 4015,
+      "avg": 401.5,
+      "ME1": 812,
+      "ME1_avg": 81.2
+     },
+     "local": {
+      "meets": 60,
+      "entries": 17579,
+      "avg": 293.0,
+      "ME1": 1660,
+      "ME1_avg": 27.7
+     },
+     "all": {
+      "meets": 70,
+      "entries": 21594,
+      "avg": 308.5,
+      "ME1": 2472,
+      "ME1_avg": 35.3
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2020-2021",
+     "JCX": {
+      "meets": 3,
+      "entries": 1272,
+      "avg": 424.0,
+      "ME1": 245,
+      "ME1_avg": 81.7
+     },
+     "local": {
+      "meets": 37,
+      "entries": 10391,
+      "avg": 280.8,
+      "ME1": 983,
+      "ME1_avg": 26.6
+     },
+     "all": {
+      "meets": 40,
+      "entries": 11663,
+      "avg": 291.6,
+      "ME1": 1228,
+      "ME1_avg": 30.7
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2021-2022",
+     "JCX": {
+      "meets": 6,
+      "entries": 2542,
+      "avg": 423.7,
+      "ME1": 499,
+      "ME1_avg": 83.2
+     },
+     "local": {
+      "meets": 48,
+      "entries": 15897,
+      "avg": 331.2,
+      "ME1": 1520,
+      "ME1_avg": 31.7
+     },
+     "all": {
+      "meets": 54,
+      "entries": 18439,
+      "avg": 341.5,
+      "ME1": 2019,
+      "ME1_avg": 37.4
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2022-2023",
+     "JCX": {
+      "meets": 10,
+      "entries": 3937,
+      "avg": 393.7,
+      "ME1": 716,
+      "ME1_avg": 71.6
+     },
+     "local": {
+      "meets": 54,
+      "entries": 17571,
+      "avg": 325.4,
+      "ME1": 1536,
+      "ME1_avg": 28.4
+     },
+     "all": {
+      "meets": 64,
+      "entries": 21508,
+      "avg": 336.1,
+      "ME1": 2252,
+      "ME1_avg": 35.2
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2023-2024",
+     "JCX": {
+      "meets": 9,
+      "entries": 3570,
+      "avg": 396.7,
+      "ME1": 720,
+      "ME1_avg": 80.0
+     },
+     "local": {
+      "meets": 58,
+      "entries": 18052,
+      "avg": 311.2,
+      "ME1": 1696,
+      "ME1_avg": 29.2
+     },
+     "all": {
+      "meets": 67,
+      "entries": 21622,
+      "avg": 322.7,
+      "ME1": 2416,
+      "ME1_avg": 36.1
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2024-2025",
+     "JCX": {
+      "meets": 10,
+      "entries": 4018,
+      "avg": 401.8,
+      "ME1": 789,
+      "ME1_avg": 78.9
+     },
+     "local": {
+      "meets": 57,
+      "entries": 17250,
+      "avg": 302.6,
+      "ME1": 1847,
+      "ME1_avg": 32.4
+     },
+     "all": {
+      "meets": 67,
+      "entries": 21268,
+      "avg": 317.4,
+      "ME1": 2636,
+      "ME1_avg": 39.3
+     },
+     "source": "db"
+    }
+   ]
+  }
+ },
+ "p5b": {
+  "heading": "3. 全日本選手権エントリー数推移",
+  "category_max_year": {
+   "note": "第2稿(Phase 2b)追加。各カテゴリ列の最多エントリー年(historical全行+event_2526の2025二色の浜を含む全年から算出)。描画側はmax_yearのセルを網掛けする。yearはevent_2526は'2025'、historicalはyear値。25-26の二色の浜イベントでWE(34)/MM(223)/WM(17)が過去最多を更新。タイなし。元資料P.5Bの網掛けと整合(24-25時点ではWE=2018/33,MM=2024.12/200,WM=2023/14が最多だったが2025イベントで更新)。",
+   "ME": "2015",
+   "MU23": "2021",
+   "MJ": "2024.1",
+   "MU17": "2023",
+   "MU15": "2024.1",
+   "WE": "2025",
+   "WJ": "2020",
+   "WU17": "2024.12",
+   "WU15": "2024.1",
+   "MM": "2025",
+   "WM": "2025",
+   "source": "db"
+  },
+  "event_2526": {
+   "year": "2025",
+   "venue": "二色の浜(大阪府貝塚市)",
+   "dates": [
+    "2025-12-13",
+    "2025-12-14"
+   ],
+   "entries_total": 484,
+   "categories": {
+    "ME": 67,
+    "MU23": 28,
+    "MJ": 19,
+    "MU17": 19,
+    "MU15": 12,
+    "WE": 34,
+    "WJ": 4,
+    "WU17": 5,
+    "WU15": 4,
+    "MM": 223,
+    "WM": 17,
+    "SS_exhibition": 52
+   },
+   "mapping": "ME=UCIME, MU23=UCIMU, MJ=UCIMJ, WE=UCIWE, WJ=UCIWJ, MM=MM35..MM70合算(223), SS(52)=シングルスピード等併催",
+   "source": "db"
+  },
+  "note": "25-26全日本は12/13-12/14の2日開催(合意#3は12/14だがDBは2日)。過去年(2013-2024.12)行はprior_year_fixedでPhase3転記。脚注: *シングルスピード等併催含む。",
+  "historical_placeholder": "2013(マキノ)〜2024.12(宇都宮)の各行は元資料PDF P.5表Bから転記(prior_year_fixed)。",
+  "historical": {
+   "note": "全日本選手権エントリー数推移(2013〜2024.12)を元資料PDF P.5表Bから転記(prior_year_fixed)。列=[year,venue,entries_total, ME,MU23,MJ,MU17,MU15,WE,WJ,WU17,WU15,MM,WM]。'-'表記はnull。脚注:*エンデューロ・シングルスピード等併催含む。25-26(2025二色の浜/484)はevent_2526に別途保持。",
+   "columns": [
+    "year",
+    "venue",
+    "entries_total",
+    "ME",
+    "MU23",
+    "MJ",
+    "MU17",
+    "MU15",
+    "WE",
+    "WJ",
+    "WU17",
+    "WU15",
+    "MM",
+    "WM"
+   ],
+   "rows": [
+    {
+     "year": "2013",
+     "venue": "マキノ",
+     "entries_total": 247,
+     "categories": {
+      "ME": 96,
+      "MU23": null,
+      "MJ": 5,
+      "MU17": null,
+      "MU15": null,
+      "WE": 14,
+      "WJ": null,
+      "WU17": null,
+      "WU15": null,
+      "MM": null,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2014",
+     "venue": "SUGO",
+     "entries_total": 157,
+     "categories": {
+      "ME": 57,
+      "MU23": 12,
+      "MJ": 7,
+      "MU17": null,
+      "MU15": null,
+      "WE": 14,
+      "WJ": null,
+      "WU17": null,
+      "WU15": null,
+      "MM": null,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2015",
+     "venue": "飯山",
+     "entries_total": 250,
+     "categories": {
+      "ME": 97,
+      "MU23": 12,
+      "MJ": 10,
+      "MU17": null,
+      "MU15": 7,
+      "WE": 26,
+      "WJ": null,
+      "WU17": null,
+      "WU15": null,
+      "MM": null,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2016",
+     "venue": "宇都宮",
+     "entries_total": 350,
+     "categories": {
+      "ME": 66,
+      "MU23": 9,
+      "MJ": 15,
+      "MU17": 4,
+      "MU15": 2,
+      "WE": 28,
+      "WJ": null,
+      "WU17": null,
+      "WU15": null,
+      "MM": null,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2017",
+     "venue": "野辺山",
+     "entries_total": 218,
+     "categories": {
+      "ME": 69,
+      "MU23": 13,
+      "MJ": 15,
+      "MU17": null,
+      "MU15": null,
+      "WE": 28,
+      "WJ": null,
+      "WU17": null,
+      "WU15": null,
+      "MM": 90,
+      "WM": 3
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2018",
+     "venue": "マキノ",
+     "entries_total": 265,
+     "categories": {
+      "ME": 78,
+      "MU23": 17,
+      "MJ": 10,
+      "MU17": 3,
+      "MU15": null,
+      "WE": 33,
+      "WJ": null,
+      "WU17": 3,
+      "WU15": null,
+      "MM": 103,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2019",
+     "venue": "内子町",
+     "entries_total": 231,
+     "categories": {
+      "ME": 69,
+      "MU23": 14,
+      "MJ": 11,
+      "MU17": 3,
+      "MU15": 8,
+      "WE": 22,
+      "WJ": 2,
+      "WU17": 4,
+      "WU15": 2,
+      "MM": 90,
+      "WM": null
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2020",
+     "venue": "飯山",
+     "entries_total": 310,
+     "categories": {
+      "ME": 69,
+      "MU23": 35,
+      "MJ": 21,
+      "MU17": 14,
+      "MU15": 10,
+      "WE": 24,
+      "WJ": 5,
+      "WU17": 3,
+      "WU15": 2,
+      "MM": 120,
+      "WM": 4
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2021",
+     "venue": "土浦",
+     "entries_total": 402,
+     "categories": {
+      "ME": 81,
+      "MU23": 39,
+      "MJ": 17,
+      "MU17": 17,
+      "MU15": 11,
+      "WE": 33,
+      "WJ": 3,
+      "WU17": 3,
+      "WU15": 3,
+      "MM": 162,
+      "WM": 10
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2023",
+     "venue": "WNP",
+     "entries_total": 366,
+     "categories": {
+      "ME": 51,
+      "MU23": 23,
+      "MJ": 17,
+      "MU17": 20,
+      "MU15": 12,
+      "WE": 25,
+      "WJ": 2,
+      "WU17": 2,
+      "WU15": 4,
+      "MM": 173,
+      "WM": 14
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2024.1",
+     "venue": "宇都宮",
+     "entries_total": 358,
+     "categories": {
+      "ME": 50,
+      "MU23": 21,
+      "MJ": 23,
+      "MU17": 14,
+      "MU15": 14,
+      "WE": 26,
+      "WJ": 2,
+      "WU17": 4,
+      "WU15": 5,
+      "MM": 169,
+      "WM": 12
+     },
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2024.12",
+     "venue": "宇都宮",
+     "entries_total": 406,
+     "categories": {
+      "ME": 68,
+      "MU23": 23,
+      "MJ": 12,
+      "MU17": 16,
+      "MU15": 12,
+      "WE": 26,
+      "WJ": 2,
+      "WU17": 6,
+      "WU15": 4,
+      "MM": 200,
+      "WM": 7
+     },
+     "source": "prior_year_fixed"
+    }
+   ]
+  }
+ },
+ "p6": {
+  "heading": "3. エントリー件数推移：全体と JCX",
+  "note": "P.5A時系列(p5a.historical + p5a.row_2526)の可視化ページ。左上=AJOCC全体複合グラフ(棒:全体エントリー数+ME1積み上げ, 折れ線:大会数/右軸)、左下=JCX複合グラフ(棒:エントリー数+ME1+WE1積み上げ, 折れ線:大会数/右軸)。右側=前年比較3小表(p5a直近2年抜粋)。",
+  "chart_source": "p5a",
+  "charts": {
+   "ajocc_overall": {
+    "title": "AJOCC大会 エントリー数推移",
+    "series": [
+     "entries(棒)",
+     "ME1(積み上げ棒)",
+     "meets(折れ線・右軸)"
+    ],
+    "data_ref": "p5a.historical[*].all + p5a.row_2526.all (2013-2014〜2025-2026)"
+   },
+   "jcx": {
+    "title": "JCXシリーズ エントリー数推移",
+    "series": [
+     "entries(棒)",
+     "ME1(積み上げ棒)",
+     "WE1(積み上げ棒)",
+     "meets(折れ線・右軸)"
+    ],
+    "data_ref": "p5a.historical[*].JCX + p5a.row_2526.JCX。WE1系列は各年少値(元資料P.6グラフのWE1ラベルは僅少・24-25=166相当はp8参照)。"
+   }
+  },
+  "compare_tables": {
+   "note": "p5a直近2年(24-25=historical/25-26=row_2526)の抜粋。compare=25-26−24-25。",
+   "columns": [
+    "group",
+    "meets",
+    "entries",
+    "avg",
+    "ME1",
+    "ME1_avg"
+   ],
+   "JCX": {
+    "y2425": {
+     "meets": 10,
+     "entries": 4018,
+     "avg": 401.8,
+     "ME1": 789,
+     "ME1_avg": 78.9
+    },
+    "y2526": {
+     "meets": 11,
+     "entries": 4020,
+     "avg": 365.5,
+     "ME1": 930,
+     "ME1_avg": 84.5,
+     "source": "db"
+    },
+    "compare": {
+     "meets": 1,
+     "entries": 2,
+     "avg": -36.3,
+     "ME1": 141,
+     "ME1_avg": 5.6
+    }
+   },
+   "local": {
+    "y2425": {
+     "meets": 57,
+     "entries": 17250,
+     "avg": 302.6,
+     "ME1": 1847,
+     "ME1_avg": 32.4
+    },
+    "y2526": {
+     "meets": 51,
+     "entries": 17100,
+     "avg": 335.3,
+     "ME1": 2054,
+     "ME1_avg": 40.3,
+     "source": "db"
+    },
+    "compare": {
+     "meets": -6,
+     "entries": -150,
+     "avg": 32.7,
+     "ME1": 207,
+     "ME1_avg": 7.9
+    }
+   },
+   "all": {
+    "y2425": {
+     "meets": 67,
+     "entries": 21268,
+     "avg": 317.4,
+     "ME1": 2636,
+     "ME1_avg": 39.3
+    },
+    "y2526": {
+     "meets": 62,
+     "entries": 21120,
+     "avg": 340.6,
+     "ME1": 2984,
+     "ME1_avg": 48.1,
+     "source": "db"
+    },
+    "compare": {
+     "meets": -5,
+     "entries": -148,
+     "avg": 23.2,
+     "ME1": 348,
+     "ME1_avg": 8.8
+    }
+   }
+  },
+  "comments": [
+   "JCX は宇都宮が新規参入し 11戦へ増加。エントリー総数(4,020)はほぼ横ばいだが、宇都宮1大会分(374件)の純増を、他大会の微減が相殺した形。",
+   "ローカル大会のエントリー総数は 17,250→17,100 と微減が続く。平均エントリー数は 21-22 シーズンをピークに徐々に減少する傾向が継続し、全体総数(21,268→21,120, -0.7%)の微減に繋がった。",
+   "関西ブロックの大幅減(-305)を、東海(+105)・関東(宇都宮新規含め+54)・九州(+77)等の増加が一部補ったが、全体では微減となった。"
+  ],
+  "comments_basis": "所見はrunbook P.7(地域別前年度比:関西-305/東海+105/関東+54/九州+77・宇都宮UCX新規374)、P.8(JCX11戦・多大会統合)、P.13(新規692・-8.5%)の知見に基づく25-26版更新。"
+ },
+ "p7": {
+  "heading": "3. エントリー件数：AJOCC 全体",
+  "mapping_note": "ME1 = C1 + UCIME、WE1 = CL1 + UCIWE（24-25検算で確定）。DBは24-25/25-26とも新コード体系。",
+  "noto_excluded": "能登はDBに存在せず25-26では掲載しない",
+  "series_category_table": {
+   "columns": [
+    "region",
+    "ME1",
+    "WE1",
+    "other",
+    "total"
+   ],
+   "rows": [
+    {
+     "region": "関西",
+     "ME1": 887,
+     "WE1": 350,
+     "other": 6791,
+     "total": 8028,
+     "source": "db"
+    },
+    {
+     "region": "東海",
+     "ME1": 417,
+     "WE1": 70,
+     "other": 3327,
+     "total": 3814,
+     "source": "db"
+    },
+    {
+     "region": "茨城",
+     "ME1": 244,
+     "WE1": 32,
+     "other": 1211,
+     "total": 1487,
+     "source": "db"
+    },
+    {
+     "region": "千葉",
+     "ME1": 242,
+     "WE1": 40,
+     "other": 1144,
+     "total": 1426,
+     "source": "db"
+    },
+    {
+     "region": "信州",
+     "ME1": 244,
+     "WE1": 26,
+     "other": 873,
+     "total": 1143,
+     "source": "db"
+    },
+    {
+     "region": "東北",
+     "ME1": 242,
+     "WE1": 36,
+     "other": 691,
+     "total": 969,
+     "source": "db"
+    },
+    {
+     "region": "湘南",
+     "ME1": 167,
+     "WE1": 22,
+     "other": 757,
+     "total": 946,
+     "source": "db"
+    },
+    {
+     "region": "前橋",
+     "ME1": 104,
+     "WE1": 14,
+     "other": 495,
+     "total": 613,
+     "source": "db"
+    },
+    {
+     "region": "四国",
+     "ME1": 78,
+     "WE1": 25,
+     "other": 491,
+     "total": 594,
+     "source": "db"
+    },
+    {
+     "region": "野田",
+     "ME1": 79,
+     "WE1": 17,
+     "other": 360,
+     "total": 456,
+     "source": "db"
+    },
+    {
+     "region": "東京",
+     "ME1": 0,
+     "WE1": 0,
+     "other": 410,
+     "total": 410,
+     "source": "db"
+    },
+    {
+     "region": "宇都宮",
+     "ME1": 148,
+     "WE1": 37,
+     "other": 189,
+     "total": 374,
+     "source": "db"
+    },
+    {
+     "region": "もみじ",
+     "ME1": 38,
+     "WE1": 3,
+     "other": 222,
+     "total": 263,
+     "source": "db"
+    },
+    {
+     "region": "山口",
+     "ME1": 43,
+     "WE1": 6,
+     "other": 162,
+     "total": 211,
+     "source": "db"
+    },
+    {
+     "region": "九州",
+     "ME1": 20,
+     "WE1": 2,
+     "other": 131,
+     "total": 153,
+     "source": "db"
+    },
+    {
+     "region": "中国",
+     "ME1": 16,
+     "WE1": 6,
+     "other": 129,
+     "total": 151,
+     "source": "db"
+    },
+    {
+     "region": "北陸",
+     "ME1": 15,
+     "WE1": 1,
+     "other": 66,
+     "total": 82,
+     "source": "db"
+    }
+   ],
+   "grand_total": {
+    "ME1": 2984,
+    "WE1": 687,
+    "other": 17449,
+    "total": 21120,
+    "source": "db"
+   }
+  },
+  "region_block_table": {
+   "columns": [
+    "block",
+    "total",
+    "yoy_delta"
+   ],
+   "blocks_definition": "関東=茨城+千葉+野田+東京+湘南+前橋+宇都宮 / 中国=もみじ+山口+中国",
+   "rows": [
+    {
+     "block": "東北",
+     "total": 969,
+     "yoy_delta": 15,
+     "source": "db"
+    },
+    {
+     "block": "北陸",
+     "total": 82,
+     "yoy_delta": 51,
+     "source": "db"
+    },
+    {
+     "block": "関東",
+     "total": 5712,
+     "yoy_delta": 54,
+     "source": "db"
+    },
+    {
+     "block": "信州",
+     "total": 1143,
+     "yoy_delta": 13,
+     "source": "db"
+    },
+    {
+     "block": "東海",
+     "total": 3814,
+     "yoy_delta": 105,
+     "source": "db"
+    },
+    {
+     "block": "関西",
+     "total": 8028,
+     "yoy_delta": -305,
+     "source": "db"
+    },
+    {
+     "block": "中国",
+     "total": 625,
+     "yoy_delta": -185,
+     "source": "db"
+    },
+    {
+     "block": "四国",
+     "total": 594,
+     "yoy_delta": 27,
+     "source": "db"
+    },
+    {
+     "block": "九州",
+     "total": 153,
+     "yoy_delta": 77,
+     "source": "db"
+    }
+   ]
+  }
+ },
+ "p8": {
+  "heading": "3. エントリー件数：JCX",
+  "columns": [
+   "ME1",
+   "ME2",
+   "ME3",
+   "ME4",
+   "WE1",
+   "WJ",
+   "WU17",
+   "WU15",
+   "WE2+3",
+   "WM",
+   "CJ",
+   "MU17",
+   "MU15",
+   "MM1",
+   "MM2",
+   "MM3",
+   "MM35",
+   "MM40",
+   "MM50",
+   "MM60",
+   "CK3",
+   "CK2",
+   "CK1",
+   "Ex"
+  ],
+  "meets": [
+   {
+    "meet_label": "#1 茨城",
+    "meet_name": "茨城1",
+    "at_date": "25/10/05",
+    "date": "2025-10-05",
+    "meet_code": "CXK-256-001",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 90,
+     "ME2": 61,
+     "ME3": 49,
+     "ME4": 95,
+     "WE1": 15,
+     "WJ": 3,
+     "WU17": 3,
+     "WU15": 0,
+     "WE2+3": 10,
+     "WM": 6,
+     "CJ": 9,
+     "MU17": 6,
+     "MU15": 6,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 4,
+     "MM40": 28,
+     "MM50": 79,
+     "MM60": 34,
+     "CK3": 8,
+     "CK2": 12,
+     "CK1": 10,
+     "Ex": 0
+    },
+    "total": 528,
+    "source": "db"
+   },
+   {
+    "meet_label": "#2 亘理",
+    "meet_name": "1亘理",
+    "at_date": "25/10/26",
+    "date": "2025-10-26",
+    "meet_code": "TCX-256-001",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 79,
+     "ME2": 31,
+     "ME3": 17,
+     "ME4": 22,
+     "WE1": 12,
+     "WJ": 1,
+     "WU17": 2,
+     "WU15": 1,
+     "WE2+3": 2,
+     "WM": 0,
+     "CJ": 6,
+     "MU17": 7,
+     "MU15": 2,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 1,
+     "MM40": 15,
+     "MM50": 48,
+     "MM60": 15,
+     "CK3": 3,
+     "CK2": 4,
+     "CK1": 5,
+     "Ex": 0
+    },
+    "total": 273,
+    "source": "db"
+   },
+   {
+    "meet_label": "#3 御殿場",
+    "meet_name": "湘南#2御殿場CX",
+    "at_date": "25/11/02",
+    "date": "2025-11-02",
+    "meet_code": "SHN-256-004",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 96,
+     "ME2": 44,
+     "ME3": 42,
+     "ME4": 52,
+     "WE1": 14,
+     "WJ": 1,
+     "WU17": 5,
+     "WU15": 0,
+     "WE2+3": 7,
+     "WM": 3,
+     "CJ": 6,
+     "MU17": 8,
+     "MU15": 5,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 2,
+     "MM40": 26,
+     "MM50": 80,
+     "MM60": 26,
+     "CK3": 8,
+     "CK2": 7,
+     "CK1": 2,
+     "Ex": 0
+    },
+    "total": 434,
+    "source": "db"
+   },
+   {
+    "meet_label": "#4 幕張",
+    "meet_name": "MHCX#12",
+    "at_date": "25/11/09",
+    "date": "2025-11-09",
+    "meet_code": "CHB-256-003",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 86,
+     "ME2": 60,
+     "ME3": 62,
+     "ME4": 86,
+     "WE1": 15,
+     "WJ": 1,
+     "WU17": 1,
+     "WU15": 1,
+     "WE2+3": 12,
+     "WM": 5,
+     "CJ": 9,
+     "MU17": 4,
+     "MU15": 3,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 5,
+     "MM40": 21,
+     "MM50": 76,
+     "MM60": 25,
+     "CK3": 9,
+     "CK2": 10,
+     "CK1": 10,
+     "Ex": 0
+    },
+    "total": 501,
+    "source": "db"
+   },
+   {
+    "meet_label": "#5 琵琶湖",
+    "meet_name": "関西U琵琶GP1",
+    "at_date": "25/11/23",
+    "date": "2025-11-23",
+    "meet_code": "KNS-256-012",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 78,
+     "ME2": 0,
+     "ME3": 0,
+     "ME4": 0,
+     "WE1": 28,
+     "WJ": 0,
+     "WU17": 2,
+     "WU15": 1,
+     "WE2+3": 0,
+     "WM": 12,
+     "CJ": 9,
+     "MU17": 13,
+     "MU15": 8,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 11,
+     "MM40": 44,
+     "MM50": 75,
+     "MM60": 32,
+     "CK3": 0,
+     "CK2": 0,
+     "CK1": 0,
+     "Ex": 14
+    },
+    "total": 327,
+    "source": "db"
+   },
+   {
+    "meet_label": "#6 WNP",
+    "meet_name": "東海CX2 DAY2",
+    "at_date": "25/11/24",
+    "date": "2025-11-24",
+    "meet_code": "TKI-256-002",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 79,
+     "ME2": 0,
+     "ME3": 0,
+     "ME4": 0,
+     "WE1": 15,
+     "WJ": 2,
+     "WU17": 4,
+     "WU15": 2,
+     "WE2+3": 0,
+     "WM": 5,
+     "CJ": 8,
+     "MU17": 17,
+     "MU15": 6,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 8,
+     "MM40": 39,
+     "MM50": 66,
+     "MM60": 24,
+     "CK3": 12,
+     "CK2": 10,
+     "CK1": 5,
+     "Ex": 0
+    },
+    "total": 302,
+    "source": "db"
+   },
+   {
+    "meet_label": "#7 松伏",
+    "meet_name": "松伏#3",
+    "at_date": "25/11/29",
+    "date": "2025-11-29",
+    "meet_code": "MDX-256-001",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 79,
+     "ME2": 49,
+     "ME3": 53,
+     "ME4": 76,
+     "WE1": 17,
+     "WJ": 3,
+     "WU17": 2,
+     "WU15": 0,
+     "WE2+3": 15,
+     "WM": 4,
+     "CJ": 8,
+     "MU17": 5,
+     "MU15": 3,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 6,
+     "MM40": 17,
+     "MM50": 69,
+     "MM60": 25,
+     "CK3": 7,
+     "CK2": 11,
+     "CK1": 7,
+     "Ex": 0
+    },
+    "total": 456,
+    "source": "db"
+   },
+   {
+    "meet_label": "#8 宇都宮",
+    "meet_name": "宇都宮",
+    "at_date": "25/12/07",
+    "date": "2025-12-06",
+    "date_range": [
+     "2025-12-06",
+     "2025-12-07"
+    ],
+    "merged": true,
+    "merged_codes": [
+     "UCX-256-014",
+     "UCX-256-015"
+    ],
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 148,
+     "ME2": 27,
+     "ME3": 20,
+     "ME4": 24,
+     "WE1": 37,
+     "WJ": 0,
+     "WU17": 1,
+     "WU15": 2,
+     "WE2+3": 1,
+     "WM": 3,
+     "CJ": 16,
+     "MU17": 7,
+     "MU15": 4,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 3,
+     "MM40": 12,
+     "MM50": 43,
+     "MM60": 9,
+     "CK3": 6,
+     "CK2": 6,
+     "CK1": 5,
+     "Ex": 0
+    },
+    "total": 374,
+    "source": "db"
+   },
+   {
+    "meet_label": "#9 蔵王",
+    "meet_name": "4蔵王",
+    "at_date": "26/01/18",
+    "date": "2026-01-18",
+    "meet_code": "TCX-256-004",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 70,
+     "ME2": 19,
+     "ME3": 16,
+     "ME4": 20,
+     "WE1": 9,
+     "WJ": 1,
+     "WU17": 0,
+     "WU15": 1,
+     "WE2+3": 4,
+     "WM": 2,
+     "CJ": 2,
+     "MU17": 1,
+     "MU15": 1,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 2,
+     "MM40": 12,
+     "MM50": 27,
+     "MM60": 8,
+     "CK3": 4,
+     "CK2": 2,
+     "CK1": 5,
+     "Ex": 0
+    },
+    "total": 206,
+    "source": "db"
+   },
+   {
+    "meet_label": "#10 山口",
+    "meet_name": "YGC2025-26_#2",
+    "at_date": "26/01/25",
+    "date": "2026-01-25",
+    "meet_code": "YGC-256-002",
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 24,
+     "ME2": 11,
+     "ME3": 0,
+     "ME4": 14,
+     "WE1": 3,
+     "WJ": 0,
+     "WU17": 0,
+     "WU15": 1,
+     "WE2+3": 6,
+     "WM": 1,
+     "CJ": 1,
+     "MU17": 3,
+     "MU15": 1,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 0,
+     "MM40": 6,
+     "MM50": 13,
+     "MM60": 4,
+     "CK3": 1,
+     "CK2": 1,
+     "CK1": 1,
+     "Ex": 0
+    },
+    "total": 91,
+    "source": "db"
+   },
+   {
+    "meet_label": "#11 お台場",
+    "meet_name": "お台場",
+    "at_date": "26/02/07",
+    "date": "2026-02-07",
+    "date_range": [
+     "2026-02-07",
+     "2026-02-08"
+    ],
+    "merged": true,
+    "merged_codes": [
+     "CHB-256-006",
+     "CHB-256-007"
+    ],
+    "is_jcx_confirmed": true,
+    "values": {
+     "ME1": 101,
+     "ME2": 61,
+     "ME3": 56,
+     "ME4": 103,
+     "WE1": 16,
+     "WJ": 1,
+     "WU17": 2,
+     "WU15": 1,
+     "WE2+3": 20,
+     "WM": 6,
+     "CJ": 4,
+     "MU17": 4,
+     "MU15": 5,
+     "MM1": 0,
+     "MM2": 0,
+     "MM3": 0,
+     "MM35": 4,
+     "MM40": 25,
+     "MM50": 65,
+     "MM60": 20,
+     "CK3": 9,
+     "CK2": 12,
+     "CK1": 13,
+     "Ex": 0
+    },
+    "total": 528,
+    "source": "db"
+   }
+  ],
+  "category_totals": {
+   "ME1": 930,
+   "ME2": 363,
+   "ME3": 315,
+   "ME4": 492,
+   "WE1": 181,
+   "WJ": 13,
+   "WU17": 22,
+   "WU15": 10,
+   "WE2+3": 77,
+   "WM": 47,
+   "CJ": 78,
+   "MU17": 75,
+   "MU15": 44,
+   "MM1": 0,
+   "MM2": 0,
+   "MM3": 0,
+   "MM35": 46,
+   "MM40": 245,
+   "MM50": 641,
+   "MM60": 222,
+   "CK3": 67,
+   "CK2": 75,
+   "CK1": 63,
+   "Ex": 14
+  },
+  "grand_total": 4020,
+  "segment_totals": {
+   "counts": {
+    "男子実力別": 2100,
+    "女子": 350,
+    "男子14〜18歳": 197,
+    "男子マスターズ": 1154,
+    "小学生": 205,
+    "その他": 14
+   },
+   "pct": {
+    "男子実力別": 52.2,
+    "女子": 8.7,
+    "男子14〜18歳": 4.9,
+    "男子マスターズ": 28.7,
+    "小学生": 5.1,
+    "その他": 0.3
+   }
+  },
+  "note": "多大会統合: 宇都宮=12/06+12/07, お台場=02/07+02/08。MM1/MM2/MM3は25-26 JCXでは0(マスターズは年齢帯コードのみ)。第2稿(Phase 2b): 11戦全てis_jcx=1・holding_status=1・25-26境界内・JPN除外をDB確認済(is_jcx_confirmed:true)。各meetにdate(YYYY-MM-DD)を付与。統合大会(宇都宮/お台場)はdate=代表日(DAY1)・date_range=[DAY1,DAY2]・merged_codesを保持。#6 WNPはTKI-256-002(DAY2)のみJCX(DAY1該当なし)。表示日付形式はレンダリング側でYYYY/MM/DD等に整形。"
+ },
+ "p9": {
+  "heading": "3. エントリー件数：ローカル大会",
+  "columns": [
+   "region",
+   "meets",
+   "ME1",
+   "WE1",
+   "other",
+   "total"
+  ],
+  "rows": [
+   {
+    "region": "東北",
+    "meets": 3,
+    "ME1": 93,
+    "WE1": 15,
+    "other": 382,
+    "total": 490,
+    "avg_total": 163.3,
+    "avg_ME1": 31.0,
+    "avg_WE1": 5.0,
+    "avg_other": 127.3,
+    "source": "db"
+   },
+   {
+    "region": "前橋",
+    "meets": 3,
+    "ME1": 104,
+    "WE1": 14,
+    "other": 495,
+    "total": 613,
+    "avg_total": 204.3,
+    "avg_ME1": 34.7,
+    "avg_WE1": 4.7,
+    "avg_other": 165.0,
+    "source": "db"
+   },
+   {
+    "region": "茨城",
+    "meets": 3,
+    "ME1": 154,
+    "WE1": 17,
+    "other": 788,
+    "total": 959,
+    "avg_total": 319.7,
+    "avg_ME1": 51.3,
+    "avg_WE1": 5.7,
+    "avg_other": 262.7,
+    "source": "db"
+   },
+   {
+    "region": "千葉",
+    "meets": 1,
+    "ME1": 55,
+    "WE1": 9,
+    "other": 333,
+    "total": 397,
+    "avg_total": 397.0,
+    "avg_ME1": 55.0,
+    "avg_WE1": 9.0,
+    "avg_other": 333.0,
+    "source": "db"
+   },
+   {
+    "region": "東京",
+    "meets": 1,
+    "ME1": 0,
+    "WE1": 0,
+    "other": 410,
+    "total": 410,
+    "avg_total": 410.0,
+    "avg_ME1": 0.0,
+    "avg_WE1": 0.0,
+    "avg_other": 410.0,
+    "source": "db"
+   },
+   {
+    "region": "湘南",
+    "meets": 2,
+    "ME1": 71,
+    "WE1": 8,
+    "other": 433,
+    "total": 512,
+    "avg_total": 256.0,
+    "avg_ME1": 35.5,
+    "avg_WE1": 4.0,
+    "avg_other": 216.5,
+    "source": "db"
+   },
+   {
+    "region": "信州",
+    "meets": 7,
+    "ME1": 244,
+    "WE1": 26,
+    "other": 873,
+    "total": 1143,
+    "avg_total": 163.3,
+    "avg_ME1": 34.9,
+    "avg_WE1": 3.7,
+    "avg_other": 124.7,
+    "source": "db"
+   },
+   {
+    "region": "東海",
+    "meets": 7,
+    "ME1": 338,
+    "WE1": 55,
+    "other": 3119,
+    "total": 3512,
+    "avg_total": 501.7,
+    "avg_ME1": 48.3,
+    "avg_WE1": 7.9,
+    "avg_other": 445.6,
+    "source": "db"
+   },
+   {
+    "region": "北陸",
+    "meets": 1,
+    "ME1": 15,
+    "WE1": 1,
+    "other": 66,
+    "total": 82,
+    "avg_total": 82.0,
+    "avg_ME1": 15.0,
+    "avg_WE1": 1.0,
+    "avg_other": 66.0,
+    "source": "db"
+   },
+   {
+    "region": "関西",
+    "meets": 11,
+    "ME1": 809,
+    "WE1": 322,
+    "other": 6570,
+    "total": 7701,
+    "avg_total": 700.1,
+    "avg_ME1": 73.5,
+    "avg_WE1": 29.3,
+    "avg_other": 597.3,
+    "source": "db"
+   },
+   {
+    "region": "中国",
+    "meets": 1,
+    "ME1": 16,
+    "WE1": 6,
+    "other": 129,
+    "total": 151,
+    "avg_total": 151.0,
+    "avg_ME1": 16.0,
+    "avg_WE1": 6.0,
+    "avg_other": 129.0,
+    "source": "db"
+   },
+   {
+    "region": "もみじ",
+    "meets": 4,
+    "ME1": 38,
+    "WE1": 3,
+    "other": 222,
+    "total": 263,
+    "avg_total": 65.8,
+    "avg_ME1": 9.5,
+    "avg_WE1": 0.8,
+    "avg_other": 55.5,
+    "source": "db"
+   },
+   {
+    "region": "山口",
+    "meets": 2,
+    "ME1": 19,
+    "WE1": 3,
+    "other": 98,
+    "total": 120,
+    "avg_total": 60.0,
+    "avg_ME1": 9.5,
+    "avg_WE1": 1.5,
+    "avg_other": 49.0,
+    "source": "db"
+   },
+   {
+    "region": "四国",
+    "meets": 3,
+    "ME1": 78,
+    "WE1": 25,
+    "other": 491,
+    "total": 594,
+    "avg_total": 198.0,
+    "avg_ME1": 26.0,
+    "avg_WE1": 8.3,
+    "avg_other": 163.7,
+    "source": "db"
+   },
+   {
+    "region": "九州",
+    "meets": 2,
+    "ME1": 20,
+    "WE1": 2,
+    "other": 131,
+    "total": 153,
+    "avg_total": 76.5,
+    "avg_ME1": 10.0,
+    "avg_WE1": 1.0,
+    "avg_other": 65.5,
+    "source": "db"
+   }
+  ],
+  "grand_total": {
+   "meets": 51,
+   "ME1": 2054,
+   "WE1": 506,
+   "other": 14540,
+   "total": 17100,
+   "avg_total": 335.3,
+   "source": "db"
+  },
+  "note": "is_jcx=0。ME1=C1+UCIME, WE1=CL1+UCIWE。平均=合計/大会数。宇都宮はJCX扱いのため除外、能登なし。 第2稿(Phase 2b): 地域行を決定#12順(北→南西・宇都宮除く16地域)に並べ替え。数値は不変。",
+  "region_order": [
+   "東北",
+   "前橋",
+   "茨城",
+   "千葉",
+   "野田",
+   "東京",
+   "湘南",
+   "信州",
+   "東海",
+   "北陸",
+   "関西",
+   "中国",
+   "もみじ",
+   "山口",
+   "四国",
+   "九州"
+  ]
+ },
+ "p10": {
+  "heading": "3. エントリー件数：カテゴリー別",
+  "segments": [
+   "男子実力別",
+   "女子",
+   "男子14〜18歳",
+   "男子マスターズ",
+   "小学生",
+   "その他"
+  ],
+  "table1_entries": {
+   "JCX": {
+    "counts": {
+     "男子実力別": 2100,
+     "女子": 350,
+     "男子14〜18歳": 197,
+     "男子マスターズ": 1154,
+     "小学生": 205,
+     "その他": 14
+    },
+    "total": 4020,
+    "pct": {
+     "男子実力別": 52.2,
+     "女子": 8.7,
+     "男子14〜18歳": 4.9,
+     "男子マスターズ": 28.7,
+     "小学生": 5.1,
+     "その他": 0.3
+    },
+    "source": "db"
+   },
+   "local": {
+    "counts": {
+     "男子実力別": 7320,
+     "女子": 1148,
+     "男子14〜18歳": 545,
+     "男子マスターズ": 6605,
+     "小学生": 1373,
+     "その他": 109
+    },
+    "total": 17100,
+    "pct": {
+     "男子実力別": 42.8,
+     "女子": 6.7,
+     "男子14〜18歳": 3.2,
+     "男子マスターズ": 38.6,
+     "小学生": 8.0,
+     "その他": 0.6
+    },
+    "source": "db"
+   },
+   "all": {
+    "counts": {
+     "男子実力別": 9420,
+     "女子": 1498,
+     "男子14〜18歳": 742,
+     "男子マスターズ": 7759,
+     "小学生": 1578,
+     "その他": 123
+    },
+    "total": 21120,
+    "pct": {
+     "男子実力別": 44.6,
+     "女子": 7.1,
+     "男子14〜18歳": 3.5,
+     "男子マスターズ": 36.7,
+     "小学生": 7.5,
+     "その他": 0.6
+    },
+    "source": "db"
+   }
+  },
+  "table2_participants": {
+   "assignment": "overlap_distinct",
+   "note": "大分類別distinct racer_code(延べ、重複あり)。元資料P.10表2はユニーク代表割当(3,804相当)で定義が異なり厳密再現不可。ユニーク総数は3,784(P.11)。",
+   "counts": {
+    "男子実力別": 1749,
+    "女子": 295,
+    "男子14〜18歳": 150,
+    "男子マスターズ": 1337,
+    "小学生": 365,
+    "その他": 116
+   },
+   "delne_total": 4012,
+   "unique_active_total": 3784,
+   "source": "db"
+  }
+ },
+ "p11": {
+  "heading": "4. 参加者数：カテゴリー別推移",
+  "note": "参加者=各報告カテゴリのdistinct racer_code。平均エントリー回数=当該カテゴリのentries/participants。報告カテゴリ内訳の合計はセグメント内で選手重複があり延べ。ユニークactive総数は3,784。24-25検算は同ロジックのprevで前年度比算出。MM1/MM2/MM3は旧CM1-3相当。第2稿(Phase 2b): 従来のWE2+3(1行)をWE2/WE3の2行に分離。WE2=CL2+CL2+3(合算コードCL2+3はWE2に含む)、WE3=CL3。WE2+WE3を単純合算した参加者(147+62=209)は選手重複によりWE2+3の統合distinct(184)より多い(entriesは493+119=612で一致)。女子行の並びは元資料P.11順(WE1/WJ/WU17/WU15/WE2/WE3/WM)。総計3,784は不変(分離は内訳のみ)。",
+  "columns": [
+   "code",
+   "participants",
+   "yoy_delta",
+   "avg_entries"
+  ],
+  "rows": [
+   {
+    "code": "ME1",
+    "participants": 356,
+    "yoy_delta": 28,
+    "avg_entries": 8.4,
+    "entries": 2984,
+    "source": "db"
+   },
+   {
+    "code": "ME2",
+    "participants": 381,
+    "yoy_delta": -24,
+    "avg_entries": 5.3,
+    "entries": 2019,
+    "source": "db"
+   },
+   {
+    "code": "ME3",
+    "participants": 406,
+    "yoy_delta": -13,
+    "avg_entries": 4.1,
+    "entries": 1683,
+    "source": "db"
+   },
+   {
+    "code": "ME4",
+    "participants": 891,
+    "yoy_delta": -19,
+    "avg_entries": 3.1,
+    "entries": 2734,
+    "source": "db"
+   },
+   {
+    "code": "WE1",
+    "participants": 100,
+    "yoy_delta": 0,
+    "avg_entries": 6.9,
+    "entries": 687,
+    "source": "db"
+   },
+   {
+    "code": "WJ",
+    "participants": 4,
+    "yoy_delta": 3,
+    "avg_entries": 3.8,
+    "entries": 15,
+    "source": "db"
+   },
+   {
+    "code": "WU17",
+    "participants": 8,
+    "yoy_delta": -1,
+    "avg_entries": 8.2,
+    "entries": 66,
+    "source": "db"
+   },
+   {
+    "code": "WU15",
+    "participants": 8,
+    "yoy_delta": 2,
+    "avg_entries": 5.2,
+    "entries": 42,
+    "source": "db"
+   },
+   {
+    "code": "WE2",
+    "participants": 147,
+    "yoy_delta": 2,
+    "avg_entries": 3.4,
+    "entries": 493,
+    "note": "WE2=CL2+CL2+3(合算コードCL2+3はWE2に含む)。24-25参加者145→+2。",
+    "source": "db"
+   },
+   {
+    "code": "WE3",
+    "participants": 62,
+    "yoy_delta": -12,
+    "avg_entries": 1.9,
+    "entries": 119,
+    "note": "WE3=CL3。24-25参加者74→-12。",
+    "source": "db"
+   },
+   {
+    "code": "WM",
+    "participants": 33,
+    "yoy_delta": -1,
+    "avg_entries": 2.3,
+    "entries": 76,
+    "source": "db"
+   },
+   {
+    "code": "CJ",
+    "participants": 33,
+    "yoy_delta": -17,
+    "avg_entries": 5.5,
+    "entries": 181,
+    "source": "db"
+   },
+   {
+    "code": "MU17",
+    "participants": 75,
+    "yoy_delta": 16,
+    "avg_entries": 4.5,
+    "entries": 340,
+    "source": "db"
+   },
+   {
+    "code": "MU15",
+    "participants": 42,
+    "yoy_delta": -17,
+    "avg_entries": 5.3,
+    "entries": 221,
+    "source": "db"
+   },
+   {
+    "code": "MM1",
+    "participants": 218,
+    "yoy_delta": -18,
+    "avg_entries": 8.6,
+    "entries": 1866,
+    "source": "db"
+   },
+   {
+    "code": "MM2",
+    "participants": 378,
+    "yoy_delta": 20,
+    "avg_entries": 4.9,
+    "entries": 1866,
+    "source": "db"
+   },
+   {
+    "code": "MM3",
+    "participants": 488,
+    "yoy_delta": -51,
+    "avg_entries": 4.0,
+    "entries": 1957,
+    "source": "db"
+   },
+   {
+    "code": "MM35",
+    "participants": 32,
+    "yoy_delta": -1,
+    "avg_entries": 1.9,
+    "entries": 60,
+    "source": "db"
+   },
+   {
+    "code": "MM40",
+    "participants": 127,
+    "yoy_delta": -56,
+    "avg_entries": 2.7,
+    "entries": 339,
+    "source": "db"
+   },
+   {
+    "code": "MM50",
+    "participants": 320,
+    "yoy_delta": -35,
+    "avg_entries": 3.4,
+    "entries": 1073,
+    "source": "db"
+   },
+   {
+    "code": "MM60",
+    "participants": 148,
+    "yoy_delta": -21,
+    "avg_entries": 4.0,
+    "entries": 598,
+    "source": "db"
+   },
+   {
+    "code": "CK3",
+    "participants": 102,
+    "yoy_delta": -1,
+    "avg_entries": 4.7,
+    "entries": 484,
+    "source": "db"
+   },
+   {
+    "code": "CK2",
+    "participants": 125,
+    "yoy_delta": 9,
+    "avg_entries": 4.3,
+    "entries": 537,
+    "source": "db"
+   },
+   {
+    "code": "CK1",
+    "participants": 140,
+    "yoy_delta": -15,
+    "avg_entries": 4.0,
+    "entries": 557,
+    "source": "db"
+   },
+   {
+    "code": "Ex",
+    "participants": 116,
+    "yoy_delta": 19,
+    "avg_entries": 1.1,
+    "entries": 123,
+    "source": "db"
+   }
+  ],
+  "segment_volume_delne": {
+   "男子実力別": 2034,
+   "女子": 337,
+   "男子14〜18歳": 150,
+   "男子マスターズ": 1711,
+   "小学生": 367,
+   "その他": 116
+  },
+  "total": {
+   "unique_active": 3784,
+   "prev_unique_active": 3898,
+   "yoy_delta": -114,
+   "avg_entries_overall": 5.6,
+   "source": "db"
+  },
+  "comments_note": "所見はドラフト（人間承認ゲートで確認）。24-25版P.11の論調を踏襲し、25-26のp11実数（参加者数・前年度比、合計3,784/-114）に基づく。事実（数値）と解釈を混同しない。",
+  "comments": [
+   {
+    "label": "■全体",
+    "text": "参加者数は3,784名（前年度比-114名）と引き続き微減。3年連続の減少で、2年連続の4,000名割れとなった。平均エントリー回数は5.6回で前年度から横ばい。"
+   },
+   {
+    "label": "■ME",
+    "text": "ME1が+28と増加した一方、ME2(-24)・ME3(-13)・ME4(-19)は減少。上位カテゴリーが増え下位が減る形で、カテゴリー人数のピラミッドに逆転傾向が見られる点が気になる。"
+   },
+   {
+    "label": "■女子",
+    "text": "WE1は100名で横ばい(±0)、WE2は+2、WE3は-12、WMは-1と、女子カテゴリー間で小幅な増減はあるものの、全体としてはほぼ横ばいで推移している。（WE2はWE2+3合算コードを含む）"
+   },
+   {
+    "label": "■マスターズ",
+    "text": "MM2は+20と増加したが、MM3(-51)・MM40(-56)・MM50(-35)・MM1(-18)は減少。年齢に伴うカテゴリー間の移行は見られるものの、マスターズ全体では減少傾向となった。"
+   },
+   {
+    "label": "■小学生",
+    "text": "CK2は+9と増加したがCK1(-15)・CK3(-1)は減少し、小学生全体ではやや減少。少子化が進む中でCK2の増加は前向きな材料と言える。"
+   }
+  ]
+ },
+ "p12": {
+  "heading": "4. 参加者数：参考資料（年齢分布）",
+  "age_reference": "age = 2025 - YEAR(birth_date)（シーズン開始年基準）",
+  "gender_codes": {
+   "0": "男性",
+   "1": "女性",
+   "-1": "不明"
+  },
+  "columns": [
+   "band",
+   "male",
+   "female"
+  ],
+  "rows": [
+   {
+    "band": "4〜10",
+    "male": 202,
+    "female": 65
+   },
+   {
+    "band": "11〜20",
+    "male": 382,
+    "female": 58
+   },
+   {
+    "band": "21〜30",
+    "male": 481,
+    "female": 50
+   },
+   {
+    "band": "31〜40",
+    "male": 559,
+    "female": 65
+   },
+   {
+    "band": "41〜45",
+    "male": 382,
+    "female": 34
+   },
+   {
+    "band": "46〜50",
+    "male": 459,
+    "female": 38
+   },
+   {
+    "band": "51〜55",
+    "male": 517,
+    "female": 49
+   },
+   {
+    "band": "56〜60",
+    "male": 275,
+    "female": 15
+   },
+   {
+    "band": "61〜74",
+    "male": 131,
+    "female": 10
+   },
+   {
+    "band": "不明",
+    "male": 5,
+    "female": 0
+   }
+  ],
+  "edge_out_of_band": {
+   "male_lt4_gt74": 2,
+   "female_lt4_gt74": 0
+  },
+  "totals": {
+   "male": 3395,
+   "female": 384,
+   "gender_unknown": 5,
+   "grand": 3784
+  },
+  "source": "db",
+  "note": "性別×年齢帯の集計のみ。gender0=男/1=女/-1=不明。合計男+女+不明性別=アクティブ選手ユニーク総数3,784と整合。",
+  "histogram": {
+   "note": "第2稿追加(Phase 2b)。1歳刻み×男女のヒストグラム描画用。年齢=2025-YEAR(birth_date)。対象=25-26アクティブ選手のうちgender∈{0,1}かつbirth_dateあり。ages/male/femaleは同一長・同一index対応の並行配列。範囲外(生年NULL)=男5・女0はhistogram対象外(表の『不明』行と一致)。gender=-1(性別不明)5名もhistogram対象外。男合計3,390(=表male3,395−生年NULL5)、女合計384(表と一致)。表(rows年齢帯)は不変。",
+   "age_reference": "age = 2025 - YEAR(birth_date)",
+   "age_min": 4,
+   "age_max": 77,
+   "ages": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77
+   ],
+   "male": [
+    3,
+    9,
+    23,
+    40,
+    42,
+    45,
+    40,
+    45,
+    40,
+    26,
+    49,
+    37,
+    32,
+    36,
+    38,
+    38,
+    41,
+    28,
+    45,
+    42,
+    50,
+    43,
+    53,
+    49,
+    55,
+    56,
+    60,
+    32,
+    54,
+    44,
+    54,
+    54,
+    48,
+    64,
+    70,
+    69,
+    70,
+    74,
+    80,
+    74,
+    81,
+    73,
+    77,
+    90,
+    84,
+    111,
+    97,
+    114,
+    104,
+    111,
+    94,
+    94,
+    76,
+    56,
+    58,
+    36,
+    49,
+    22,
+    26,
+    13,
+    21,
+    13,
+    17,
+    10,
+    1,
+    2,
+    1,
+    0,
+    0,
+    3,
+    2,
+    1,
+    0,
+    1
+   ],
+   "female": [
+    0,
+    2,
+    7,
+    15,
+    13,
+    20,
+    8,
+    16,
+    7,
+    7,
+    5,
+    4,
+    5,
+    5,
+    1,
+    6,
+    2,
+    3,
+    3,
+    3,
+    4,
+    5,
+    1,
+    8,
+    6,
+    10,
+    7,
+    6,
+    8,
+    8,
+    2,
+    5,
+    2,
+    11,
+    6,
+    5,
+    12,
+    7,
+    2,
+    9,
+    10,
+    6,
+    10,
+    9,
+    3,
+    9,
+    7,
+    13,
+    7,
+    14,
+    11,
+    4,
+    11,
+    2,
+    1,
+    0,
+    1,
+    1,
+    4,
+    0,
+    1,
+    0,
+    1,
+    2,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "male_total": 3390,
+   "female_total": 384,
+   "excluded_from_histogram": {
+    "male_birthdate_null": 5,
+    "female_birthdate_null": 0,
+    "gender_unknown": 5
+   },
+   "source": "db"
+  }
+ },
+ "p13": {
+  "heading": "5. 新規参加者数：推移",
+  "cohort_note": "25-26アクティブ選手を初参戦シーズン(4月始まり)別に集計。2015=DB最古参(2015以前含む)。合計=3,784(active一致)。新規参加者はエントリー基準(初参戦=25-26)=692。24-25検算では755(PDF734、既知+約3%差=削除大会/at_date欠損による初参戦誤判定)。",
+  "cohort": {
+   "note": "第2稿(Phase 2b)再構成＋Phase 2b修正(2026-07-02)。元資料P.13上表『新規参加者と継続者割合』のコホート三角。行=観測年度の全アクティブ選手(total=参加者合計)、列=初参戦年度コホート(季節ベース: 2014以前/15-16/…/24-25/25-26の12列)。cellsはcolumnsと同index対応。対角(各行右端の実データセル)=その年の新規。new_ratio=新規/合計。過去行(2015-2016〜2024-2025)は元資料P.13上表転記(prior_year_fixed・『2014以前』列も原本通り751/833等を保持)。最新行2025-2026はDB集計(合計3,784・新規692・18.3%)。25-26版は列に25-26を追加。【Phase 2b修正の要点】旧稿は継続者割合でDB最古参バケット783を『15-16』コホート残存として1534に対し51%を算出していたが、24-25報告の15-16継続率14%からの急騰は非現実的で不整合(サニティチェック違反)。原因はDB地平線の制約: 当DB(cyclox2)の最古エントリーは2015-09-12で、first_date<2015-04-01の選手は0件。DBの最古参バケット(first_date<2016-04-01=783)は元資料の『2014以前』と『15-16』を分離できない合算値(内訳: DB開始直後2015-10以降の初参戦754+その他29。24-25検算でもDB最古バケット856≒PDF(751+216)−削除欠損)。よって是正: (a)cohort行の783は『2014以前』列に配置し『15-16』列はnull、(b)continuation_rowは2014以前/15-16を継続率null(分離不能)、16-17/17-18はDB境界影響で参考値(reliable:false)、18-19〜24-25はreliable:trueで算出、25-26は当年で対象外。continuation式=round(remaining_2526/initial*100)。元資料の継続者割合行は転記値であり、DBでは早期コホート分離不能+約3%ドリフトのため全列再現は不可(R2b確認)。描画は18-19〜24-25のreliable値を主とする。",
+   "columns": [
+    "2014以前",
+    "15-16",
+    "16-17",
+    "17-18",
+    "18-19",
+    "19-20",
+    "20-21",
+    "21-22",
+    "22-23",
+    "23-24",
+    "24-25",
+    "25-26"
+   ],
+   "rows": [
+    {
+     "year": "2015-2016",
+     "total": null,
+     "cells": [
+      1534,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": null,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2016-2017",
+     "total": null,
+     "cells": [
+      null,
+      null,
+      1506,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": null,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2017-2018",
+     "total": 4239,
+     "cells": [
+      1634,
+      620,
+      763,
+      1222,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "28.8%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2018-2019",
+     "total": 4301,
+     "cells": [
+      1425,
+      502,
+      579,
+      648,
+      1147,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "26.7%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2019-2020",
+     "total": 4415,
+     "cells": [
+      1313,
+      422,
+      456,
+      490,
+      593,
+      1141,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "25.8%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2020-2021",
+     "total": 3173,
+     "cells": [
+      833,
+      284,
+      276,
+      292,
+      348,
+      434,
+      706,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "22.3%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2021-2022",
+     "total": 3851,
+     "cells": [
+      939,
+      286,
+      308,
+      294,
+      362,
+      395,
+      376,
+      891,
+      null,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "23.1%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2022-2023",
+     "total": 4205,
+     "cells": [
+      922,
+      274,
+      290,
+      280,
+      317,
+      333,
+      308,
+      480,
+      1001,
+      null,
+      null,
+      null
+     ],
+     "new_ratio": "23.8%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2023-2024",
+     "total": 4010,
+     "cells": [
+      813,
+      260,
+      258,
+      235,
+      258,
+      283,
+      258,
+      374,
+      497,
+      774,
+      null,
+      null
+     ],
+     "new_ratio": "19.3%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2024-2025",
+     "total": 3896,
+     "cells": [
+      751,
+      216,
+      229,
+      193,
+      233,
+      228,
+      204,
+      309,
+      394,
+      405,
+      734,
+      null
+     ],
+     "new_ratio": "18.8%",
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2025-2026",
+     "total": 3784,
+     "cells": [
+      783,
+      null,
+      238,
+      208,
+      210,
+      216,
+      172,
+      265,
+      317,
+      311,
+      372,
+      692
+     ],
+     "new_ratio": "18.3%",
+     "source": "db",
+     "note": "DB最古参バケット(初参戦first_date<2016-04-01=783)は「2014以前」列に配置。理由: 当DB(cyclox2)の最古エントリーは2015-09-12でそれ以前のデータが存在せず(first_date<2015-04-01=0件)、この最古バケットは実質的にPDF元資料の『2014以前+15-16』の合算(=DB地平線による捕捉不能分)である。783の内訳はDB開始直後(2015-10以降)の初参戦記録754+それ以外29で、大半がDB以前から活動していた既存選手。24-25検算でもDB最古バケット=856≒PDF(2014以前751+15-16 216=967)−削除欠損。よってDBでは『2014以前』と『15-16』を分離不能。列ズレではなく、DB地平線の制約により最古バケットを『2014以前』列に集約し『15-16』列はnull(DBで真の2015-2016単独コホートを分離できないため)とする。25-26=692(新規)。合計3,784(active一致)。"
+    }
+   ],
+   "continuation_note": "継続者割合=round(remaining_2526/initial*100)。initial=各コホート初年度人数(元資料P.13対角=新規)。remaining_2526=2025-2026行の当該コホート残存。元資料P.13の継続者割合行は15-16列から開始(2014以前は継続率なし)。当DBの制約: 最古参バケット783はPDFの『2014以前+15-16』合算相当で分離不能のため、2014以前・15-16の継続率はnull(unseparable)。16-17/17-18はDB地平線の境界影響で残存がPDF前年値をわずかに上回る(238>229/208>193)ため参考値扱い(reliable=false)。18-19以降は単調性(remaining_2526<=remaining_2425)を満たしreliable=true。25-26列は当年=新規のため継続率なし。継続率の可視化は18-19〜24-25のreliable値を主とし、16-17/17-18は参考、2014以前/15-16/25-26は空欄とする。元資料P.13の継続者割合行(15-16:14/16-17:15/17-18:16/18-19:20/19-20:20/20-21:29/21-22:35/22-23:39/23-24:52%)は元資料からの転記値(prior_year_fixed)であり、当DBのremaining_2425/initialでは早期コホートの分離不能(783合算)と既知の約3%ドリフト(削除大会/at_date欠損)により全列は再現できない(R2b独立検証: 20-21/21-22のみ29%/35%が一致、他は乖離)。25-26版で描画する継続率は remaining_2526/initial による18-19〜24-25のreliable値を主とし、16-17/17-18は参考(reliable:false)、2014以前/15-16/25-26は空欄とする。",
+   "continuation_row": [
+    {
+     "cohort": "2014以前",
+     "remaining_2526": 783,
+     "initial": null,
+     "ratio_pct": null,
+     "note": "DB最古参バケット(2014以前+15-16合算相当)。元資料同様2014以前は継続率対象外かつinitial未定義のためnull。"
+    },
+    {
+     "cohort": "15-16",
+     "remaining_2526": null,
+     "initial": 1534,
+     "ratio_pct": null,
+     "reliable": false,
+     "note": "DBは2015-2016単独コホートの残存を『2014以前』分と分離できないためremaining_2526=null→継続率算出不能(旧稿の783/1534=51%は最古参バケット全体を誤って15-16に充当した不整合値。24-25報告の15-16継続率14%から51%への急騰は非現実的であり是正)。"
+    },
+    {
+     "cohort": "16-17",
+     "remaining_2526": 238,
+     "initial": 1506,
+     "ratio_pct": 16,
+     "reliable": false,
+     "note": "参考値。DB残存238がPDF前年229を上回り(境界影響)厳密な単調性を満たさない。"
+    },
+    {
+     "cohort": "17-18",
+     "remaining_2526": 208,
+     "initial": 1222,
+     "ratio_pct": 17,
+     "reliable": false,
+     "note": "参考値。DB残存208がPDF前年193を上回り(境界影響)厳密な単調性を満たさない。"
+    },
+    {
+     "cohort": "18-19",
+     "remaining_2526": 210,
+     "initial": 1147,
+     "ratio_pct": 18,
+     "reliable": true
+    },
+    {
+     "cohort": "19-20",
+     "remaining_2526": 216,
+     "initial": 1141,
+     "ratio_pct": 19,
+     "reliable": true
+    },
+    {
+     "cohort": "20-21",
+     "remaining_2526": 172,
+     "initial": 706,
+     "ratio_pct": 24,
+     "reliable": true
+    },
+    {
+     "cohort": "21-22",
+     "remaining_2526": 265,
+     "initial": 891,
+     "ratio_pct": 30,
+     "reliable": true
+    },
+    {
+     "cohort": "22-23",
+     "remaining_2526": 317,
+     "initial": 1001,
+     "ratio_pct": 32,
+     "reliable": true
+    },
+    {
+     "cohort": "23-24",
+     "remaining_2526": 311,
+     "initial": 774,
+     "ratio_pct": 40,
+     "reliable": true
+    },
+    {
+     "cohort": "24-25",
+     "remaining_2526": 372,
+     "initial": 734,
+     "ratio_pct": 51,
+     "reliable": true
+    },
+    {
+     "cohort": "25-26",
+     "remaining_2526": null,
+     "initial": 692,
+     "ratio_pct": null,
+     "note": "当年=新規692。継続率対象外(自コホート初年度のため)。"
+    }
+   ],
+   "total": 3784,
+   "new_2526": 692,
+   "new_pct": 18.3,
+   "footnote": "※2025-2026行の初参戦コホートは、集計DBが2015年9月開始のため2016シーズン以前の初参戦を分離できず、『2014以前』列に合算表示（『15-16』は空欄）。2017以前は参考値。",
+   "decision": "決定#13(2026-07-02): 783は『2014以前』列へ集約・『15-16』はnull・脚注明記。継続者割合は18-19〜24-25をreliable、16-17/17-18を参考、2014以前/15-16/25-26は空欄。"
+  },
+  "regional_new": {
+   "note": "第2稿(Phase 2b)再構成。元資料P.13下表『シリーズごとの新規参加者』。行=年度(2019-20/2022-23/2023-24/2024-25/2025-26/前年度比)、列=地域(決定#12順:北→南西・宇都宮あり・能登なし)+total。cellsはregion_orderと同index対応。過去年(2019-20〜2024-25)は元資料P.13下表転記(prior_year_fixed)。能登列は25-26版で落とすが総計はPDF値(能登含む)を保持=noto_included_in_total。2025-26行はDB集計(初レース地域帰属、合計692)。前年度比=25-26−24-25(地域ごと)。北陸は24-25列なしのため差分は暫定。地方ブロック集約は25-26で算出。 【新規選手の地域帰属タイブレーク】初レース日に複数地域へ同日エントリーした新規選手は1地域のみへ帰属(例: TKI-256-0045は東海へ帰属)。初レースが全日本(JPN)の新規選手は地域表に載せない(JPN除外)。この規則により地域別合計=692で整合(R2b確認)。",
+   "region_order": [
+    "東北",
+    "宇都宮",
+    "前橋",
+    "茨城",
+    "千葉",
+    "野田",
+    "東京",
+    "湘南",
+    "信州",
+    "東海",
+    "北陸",
+    "関西",
+    "中国",
+    "もみじ",
+    "山口",
+    "四国",
+    "九州"
+   ],
+   "columns": [
+    "year",
+    "東北",
+    "宇都宮",
+    "前橋",
+    "茨城",
+    "千葉",
+    "野田",
+    "東京",
+    "湘南",
+    "信州",
+    "東海",
+    "北陸",
+    "関西",
+    "中国",
+    "もみじ",
+    "山口",
+    "四国",
+    "九州",
+    "total"
+   ],
+   "rows": [
+    {
+     "year": "2019-20",
+     "cells": [
+      39,
+      22,
+      29,
+      71,
+      41,
+      null,
+      116,
+      63,
+      58,
+      170,
+      null,
+      352,
+      53,
+      null,
+      20,
+      4,
+      87
+     ],
+     "total": 1130,
+     "noto_included_in_total": 5,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2022-23",
+     "cells": [
+      29,
+      12,
+      32,
+      85,
+      53,
+      null,
+      129,
+      32,
+      68,
+      137,
+      null,
+      319,
+      10,
+      19,
+      17,
+      19,
+      40
+     ],
+     "total": 1001,
+     "noto_included_in_total": 0,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2023-24",
+     "cells": [
+      19,
+      0,
+      30,
+      52,
+      49,
+      21,
+      66,
+      39,
+      66,
+      94,
+      null,
+      236,
+      5,
+      24,
+      25,
+      16,
+      30
+     ],
+     "total": 774,
+     "noto_included_in_total": 2,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2024-25",
+     "cells": [
+      26,
+      0,
+      19,
+      69,
+      60,
+      28,
+      35,
+      23,
+      38,
+      115,
+      null,
+      241,
+      3,
+      16,
+      14,
+      38,
+      8
+     ],
+     "total": 734,
+     "noto_included_in_total": 1,
+     "source": "prior_year_fixed"
+    },
+    {
+     "year": "2025-26",
+     "cells": [
+      25,
+      1,
+      20,
+      66,
+      43,
+      22,
+      79,
+      22,
+      44,
+      111,
+      5,
+      168,
+      9,
+      12,
+      6,
+      38,
+      21
+     ],
+     "total": 692,
+     "source": "db"
+    },
+    {
+     "year": "前年度比",
+     "cells": [
+      -1,
+      1,
+      1,
+      -3,
+      -17,
+      -6,
+      44,
+      -1,
+      6,
+      -4,
+      5,
+      -73,
+      6,
+      -4,
+      -8,
+      0,
+      13
+     ],
+     "total": -42,
+     "note": "25-26−24-25。北陸は24-25に列なし(能登→北陸差替)のため差分は25-26実数を暫定表示。",
+     "source": "db"
+    }
+   ],
+   "blocks": {
+    "blocks_definition": "関東=宇都宮+前橋+茨城+千葉+野田+東京+湘南 / 中国=中国+もみじ+山口 / 他は単独。北陸=富山(TYM)。",
+    "block_order": [
+     "東北",
+     "北陸",
+     "関東",
+     "信州",
+     "東海",
+     "関西",
+     "中国",
+     "四国",
+     "九州"
+    ],
+    "rows_2526": [
+     {
+      "block": "東北",
+      "new_participants": 25,
+      "source": "db"
+     },
+     {
+      "block": "北陸",
+      "new_participants": 5,
+      "source": "db"
+     },
+     {
+      "block": "関東",
+      "new_participants": 253,
+      "source": "db"
+     },
+     {
+      "block": "信州",
+      "new_participants": 44,
+      "source": "db"
+     },
+     {
+      "block": "東海",
+      "new_participants": 111,
+      "source": "db"
+     },
+     {
+      "block": "関西",
+      "new_participants": 168,
+      "source": "db"
+     },
+     {
+      "block": "中国",
+      "new_participants": 27,
+      "source": "db"
+     },
+     {
+      "block": "四国",
+      "new_participants": 38,
+      "source": "db"
+     },
+     {
+      "block": "九州",
+      "new_participants": 21,
+      "source": "db"
+     }
+    ]
+   }
+  }
+ },
+ "p14": {
+  "heading": "6. AJOCC Web 閲覧数",
+  "subtitle": "ページビュー推移表",
+  "placeholder": true,
+  "note": "決定#8によりプレースホルダ。元資料P.14の23行階層(親/子)の行ラベル・列見出し構造のみ保持。値(y2324/y2425/y2526/yoy_pct)は全てnull=実データ入手後更新(TBD)。集計期間ラベルも実データ入手後確定。",
+  "columns": [
+   "parent",
+   "child",
+   "y2324",
+   "y2425",
+   "y2526",
+   "yoy_pct"
+  ],
+  "period_label": null,
+  "rows": [
+   {
+    "parent": "トップページ",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "リザルト",
+    "child": "一覧",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "リザルト",
+    "child": "大会ごと",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "リザルト",
+    "child": "過去",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ランキング",
+    "child": "一覧",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ランキング",
+    "child": "今季",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ランキング",
+    "child": "過去",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ランキング",
+    "child": "説明",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "カレンダー",
+    "child": "一覧",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "カレンダー",
+    "child": "大会ごと",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "カレンダー",
+    "child": "過去",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "選手検索",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "選手データ",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "概要",
+    "child": "トップ",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "概要",
+    "child": "競技規則",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "概要",
+    "child": "シクロクロスとは?",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "概要",
+    "child": "その他",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ニュース",
+    "child": "一覧",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ニュース",
+    "child": "記事",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "ニュース",
+    "child": "過去",
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "Partners",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "このサイトについて",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "その他",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   },
+   {
+    "parent": "total",
+    "child": null,
+    "y2324": null,
+    "y2425": null,
+    "y2526": null,
+    "yoy_pct": null
+   }
+  ],
+  "comments": [],
+  "comments_note": "所見テキストは実データ入手後に執筆(TBD)。元資料P.14は5点の所見あり。"
+ },
+ "p15": {
+  "heading": "6. AJOCC Web 閲覧数",
+  "subtitle": "ランキング4表",
+  "placeholder": true,
+  "note": "決定#8によりプレースホルダ。4表(ランキングTop10/リザルトTop10/概要Top5/ニュースTop5)の表タイトル・列構成(順位/ページタイトル/ビュー)のみ保持。行データはnull=実データ入手後更新(TBD)。",
+  "tables": [
+   {
+    "title": "ランキング Top 10",
+    "columns": [
+     "順位",
+     "ページタイトル",
+     "ビュー"
+    ],
+    "rows": null,
+    "placeholder": true
+   },
+   {
+    "title": "リザルト Top 10",
+    "columns": [
+     "順位",
+     "ページタイトル",
+     "ビュー"
+    ],
+    "rows": null,
+    "placeholder": true
+   },
+   {
+    "title": "概要 Top 5",
+    "columns": [
+     "順位",
+     "ページタイトル",
+     "ビュー"
+    ],
+    "rows": null,
+    "placeholder": true
+   },
+   {
+    "title": "ニュース Top 5",
+    "columns": [
+     "順位",
+     "ページタイトル",
+     "ビュー"
+    ],
+    "rows": null,
+    "placeholder": true
+   }
+  ]
+ }
+}
