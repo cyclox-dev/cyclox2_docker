@@ -9,7 +9,7 @@ AJOCC 2026-27規則改正（https://www.cyclocross.jp/news/2026/07/20262027amend
 基準を満たせば残留。ME1のみME1成績だけで判定する例外あり。降格は対応表に沿って両系統連動）。
 
 現行のリアルタイム昇格ロジック（`ResultParamCalcComponent`）とシーズン末降格処理
-（`docs/specs/rider-demotion-2025-26/runbook.md` + `sql/`資産）は旧ルール前提で構築されている。
+（`.kiro/specs/rider-demotion-2025-26/runbook.md` + `sql/`資産）は旧ルール前提で構築されている。
 本機能はこれらを2026-27シーズン向けに改訂し、過去シーズンの昇格・降格結果に影響しない形で
 新ルールを適用できるようにする。系統横断残留・連動降格の判定は、upstream spec
 `me-mm-linkage-2026-27` が定義するME⇔MM対応ペア両保有モデル・対応表を前提とする。

@@ -97,7 +97,7 @@
     `ResultParamCalcComponent.php` / `PointSimShell.php` の3ファイルのみ（他コントローラ・
     モデル・ビューからの参照なし）。
   - `PointSimShell` の役割（2025-26シーズンへ新表を適用した場合の what-if 比較）は
-    `point-sim-2025-26` で完了済み・記録済み（`docs/specs/point-sim-2025-26/
+    `point-sim-2025-26` で完了済み・記録済み（`.kiro/specs/point-sim-2025-26/
     comparison-summary.md` 等）であり、本番化後は同シェルを維持する運用上の必要性がない。
 - **Implications**: `PointSimShell.php` は本仕様のスコープで削除する
   （Design Decision 参照）。検証・回帰確認の役割は、本仕様で新規に追加する CakePHP

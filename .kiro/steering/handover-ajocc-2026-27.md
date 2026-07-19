@@ -21,7 +21,7 @@
   現ローカルは古い（PR #12 マージ前の状態が混在。`feat/point-table-ajocc-267-sim` は PR #12 で
   マージ済みと確認済み。AJOCC_267_TEST 等のシンボルは最新 main に存在する）。
 - ローカル DB: docker コンテナ `cyclox2_mysql`（root パスワードは `.env` の `MYSQL_ROOT_PASSWORD`）。
-  本番ダンプ復元手順は `docs/specs/rider-demotion-2025-26/runbook.md` 参照。
+  本番ダンプ復元手順は `.kiro/specs/rider-demotion-2025-26/runbook.md` 参照。
 
 ## 実装順序と次のアクション
 

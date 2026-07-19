@@ -67,3 +67,4 @@ sync --yes` を適用した。
 | 日付 | 変更内容 | 変更者 |
 |---|---|---|
 | 2026-07-02 | 初版作成。sync適用・.kiro/specs統一の決定を記録 | Claude Code |
+| 2026-07-19 | 決定#2（docs/specs不移行）を `docs-spec-legacy-migration-2026-07` で上書き。残存 `docs/specs/*` を `.kiro/specs/*` へ移行済み | Claude Code |

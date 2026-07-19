@@ -16,7 +16,7 @@
       参照ファイルが失われても再現可能。
         例: python3 build_xlsx.py --from-scratch
 
-値の出所・集計SQLは docs/specs/entry-count-2025-26/test-results.md を参照。
+値の出所・集計SQLは test-results.md を参照。
 来年以降は SERIES に1行追加し、いずれかのモードを実行する。
 
 シート仕様（test-results.md「出力フォーマット仕様」と一致させること）:

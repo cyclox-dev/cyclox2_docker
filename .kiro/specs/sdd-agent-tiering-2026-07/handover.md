@@ -87,7 +87,7 @@ cyclox2_docker 側の `.claude/skills/` は再 init/sync で上書きされる�
 
 ## 4. 関連資産・注意点
 
-- 既存の引き継ぎ: `docs/specs/sdd-base-template-upstream-fix/agreement-log.md`
+- 既存の引き継ぎ: `.kiro/specs/sdd-base-template-upstream-fix/agreement-log.md`
   （Part A/B/C 改修。承認済み・実装待ち）。本件はそれに続く独立の改修項目として扱う。
 - sdd_base_template は内部で cc-sdd（MIT, © 2025 gotalab）を利用。cc-sdd 本体の
   アップデートで SKILL.md が更新される可能性があるため、並列化指示の逐次化は

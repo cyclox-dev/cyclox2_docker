@@ -12,15 +12,15 @@
 
 ## 手順（要約）
 ```bash
-OUT=docs/specs/rider-demotion-2025-26/outputs   # PII出力先(git管理外)
+OUT=.kiro/specs/rider-demotion-2025-26/outputs   # PII出力先(git管理外)
 
 # 1) 判定セット生成
-docker cp docs/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
+docker cp .kiro/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
 docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/01_build_demote_set.sql'
 #   → 二重降格が出たら 00_dup_fix.sql を作成し、該当racerを対応downlistから除外
 
 # 2) downlist + 降格SQL 生成
-bash docs/specs/rider-demotion-2025-26/sql/02_gen_koukaku.sh "$OUT"
+bash .kiro/specs/rider-demotion-2025-26/sql/02_gen_koukaku.sh "$OUT"
 
 # 3) ローカル実行（カテゴリー単位 TRANSACTION→検証→COMMIT, runbook §6）
 for f in 00_dup_fix c1_koukaku c2_koukaku c3_koukaku m1_koukaku m2_koukaku we1_koukaku; do
@@ -29,7 +29,7 @@ done
 #   各カテゴリーを START TRANSACTION; SOURCE ...; <検証SELECT>; COMMIT; で実行
 
 # 4) 最終検証
-docker cp docs/specs/rider-demotion-2025-26/sql/03_verify.sql cyclox2_mysql:/tmp/
+docker cp .kiro/specs/rider-demotion-2025-26/sql/03_verify.sql cyclox2_mysql:/tmp/
 docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/03_verify.sql'
 ```
 

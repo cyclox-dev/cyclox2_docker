@@ -58,7 +58,7 @@
 
 ### rider-demotion-2025-26 資産（runbook / SQL）の精査
 - **Context**: category_racers 更新の作法・検証フローの踏襲元
-- **Sources Consulted**: `docs/specs/rider-demotion-2025-26/runbook.md`、`sql/`
+- **Sources Consulted**: `.kiro/specs/rider-demotion-2025-26/runbook.md`、`sql/`
   （01_build_demote_set.sql / 02_gen_koukaku.sh / 03_verify.sql）
 - **Findings**:
   - 更新パターン: 旧所属行に `cancel_date` を UPDATE、降格先を `reason_id=4` +
@@ -179,7 +179,7 @@
 
 ## References
 - `.kiro/specs/me-mm-linkage-2026-27/design.md` — 依存する公開 API 契約（単一の対応表）
-- `docs/specs/rider-demotion-2025-26/runbook.md` — category_racers 更新パターン・検証フロー
+- `.kiro/specs/rider-demotion-2025-26/runbook.md` — category_racers 更新パターン・検証フロー
 - `cyclox2_svr/cyclox2/app/Console/Command/OneTimeShell.php` — logonly/TRANSACTION の既存作法
 - `cyclox2_svr/cyclox2/app/Controller/Component/ResultParamCalcComponent.php` — asCategory() 既存実装
 - `.kiro/steering/roadmap.md` — Shared seams（対応表の単一ソース、是正結果がバリデーションを通ること）

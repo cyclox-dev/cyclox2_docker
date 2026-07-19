@@ -71,4 +71,4 @@
 
 ## コミット・反映（実績）
 - main直コミットなし。submodule・dockerとも作業ブランチ→push→PR で反映。
-- 生成物CSV/PPT（個人情報含む）は `docs/specs/*/outputs/` を `.gitignore` し履歴に含めない。
+- 生成物CSV/PPT（個人情報含む）は `.kiro/specs/*/outputs/` を `.gitignore` し履歴に含めない。

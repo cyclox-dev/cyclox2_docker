@@ -157,4 +157,4 @@ PR #12 レビューで、変更1の日付分岐が**本番 `reCalcResults` か�
 - 残留基準は AJOCC公式規定（cyclocross.jp）に準拠。
 - マスターズ=点数基準(MM1:80/MM2:40) → 新表の点数インフレで降格者激減（76→24 / 49→18）。**閾値再較正が必須**。
 - エリート=順位基準(ME1:240他) → 降格人数は概ね一定、顔ぶれが変化（C1で各12名逆転）。
-- 詳細は `docs/specs/point-sim-2025-26/comparison-summary.md` および PPT を参照。
+- 詳細は `comparison-summary.md` および PPT を参照。
