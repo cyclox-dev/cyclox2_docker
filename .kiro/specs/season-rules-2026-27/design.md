@@ -14,7 +14,7 @@ rider-demotion-2025-26 の runbook/SQL 資産を、残留ライン新値（ME2/M
 
 **Impact**: アプリ側は `ResultParamCalcComponent` への追加のみで、既存のシーズン分岐・
 ルール配列・昇格適用処理は変更しない。SQL 側は `.kiro/specs/season-rules-2026-27/` 配下に
-新資産を作成し、`docs/specs/rider-demotion-2025-26/` の既存資産は変更しない（参照元として温存）。
+新資産を作成し、`.kiro/specs/rider-demotion-2025-26/` の既存資産は変更しない（参照元として温存）。
 本番 DB への降格処理実行は本 spec の成果物に含まれない（2027-03 に人間が実施）。
 
 ### Goals
@@ -53,7 +53,7 @@ rider-demotion-2025-26 の runbook/SQL 資産を、残留ライン新値（ME2/M
 - `category_racers` への保存バリデーション — me-mm-linkage-2026-27 の一元バリデーションが
   適用される。降格 SQL は直接 DB 操作（アプリ層を経由しない）のためバリデーション対象外だが、
   降格結果が対応表準拠であることは本 spec の検証 SQL が保証する
-- 既存資産 `docs/specs/rider-demotion-2025-26/` の変更（読み取り専用の参照元）
+- 既存資産 `.kiro/specs/rider-demotion-2025-26/` の変更（読み取り専用の参照元）
 
 ### Allowed Dependencies
 - me-mm-linkage-2026-27 が定義する ME⇔MM 対応表（C4⇔CM3, C3⇔CM2, C2⇔CM1, C1→CM1 非対称）と
@@ -178,7 +178,7 @@ cyclox2_svr/cyclox2/                        # submodule（cyclox-dev/cyclox2web�
   昇格枠テストを追加。me-mm-linkage-2026-27 が同ファイルを新規作成する計画のため、
   存在すれば追記・なければ本 spec が新規作成する（Fixture も同様に再利用または自前定義）
 
-> `docs/specs/rider-demotion-2025-26/` 配下は変更しない（読み取り専用の改訂ベース）。
+> `.kiro/specs/rider-demotion-2025-26/` 配下は変更しない（読み取り専用の改訂ベース）。
 > 新 SQL 資産のファイル名は 2025-26 版と同名を維持し、ディレクトリで年度を区別する
 > （runbook の年次コピー運用に整合）。
 

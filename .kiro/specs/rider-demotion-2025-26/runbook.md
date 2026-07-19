@@ -94,14 +94,14 @@ docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/dump.
 
 ```bash
 # 5-1. 判定セットを作成（パラメータはファイル冒頭で年次調整）
-docker cp docs/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
+docker cp .kiro/specs/rider-demotion-2025-26/sql/01_build_demote_set.sql cyclox2_mysql:/tmp/
 docker exec -e MYSQL_PWD cyclox2_mysql sh -c 'mysql -u root cyclox2 < /tmp/01_build_demote_set.sql'
 
 # 5-2. downlist 出力（カテゴリー別 racer_code）
 #   demote_all テーブルから src 別に出力（runbook末尾の例参照）
 
 # 5-3. 降格SQL生成
-bash docs/specs/rider-demotion-2025-26/sql/02_gen_koukaku.sh <出力先dir>
+bash .kiro/specs/rider-demotion-2025-26/sql/02_gen_koukaku.sh <出力先dir>
 #   → c1/c2/c3/m1/m2/we1_koukaku.sql（INSERT降格先 + UPDATE旧終了）
 
 # 5-4. 重複修正SQL（必要時）を 00_dup_fix.sql として用意し、該当racerを m1/m2 downlist から除外
@@ -163,4 +163,4 @@ COMMIT;  -- 問題なければ
 ## 参考: 過去事例の所在
 - `tmp/20230427降格処理/`（22-23, `sql_build.sh`/downlist/koukaku）
 - `tmp/20240502降格処理/`（23-24, `make_sql.py`/downlist）
-- 本タスク成果物: `docs/specs/rider-demotion-2025-26/outputs/`（git管理外）
+- 本タスク成果物: `.kiro/specs/rider-demotion-2025-26/outputs/`（git管理外）

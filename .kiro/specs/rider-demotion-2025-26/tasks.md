@@ -39,9 +39,8 @@
 - [x] 最終検証: 降格先別 93/107/202/48/113/20=**583**、二重降格0、旧カテゴリー残存0、CCM-000-7350=CM3のみアクティブ
 
 ### T7: SDDドキュメント整備 ✅
-- [x] `.kiro/specs/rider-demotion-2025-26/`（requirements/design/tasks/spec.json）
-- [x] `docs/specs/rider-demotion-2025-26/`（agreement-log/tech-requirements/test-results/integration-test-checklist/runbook）
-- [x] 再利用スクリプトを `docs/specs/rider-demotion-2025-26/sql/` に整備
+- [x] `.kiro/specs/rider-demotion-2025-26/`（requirements/design/tasks/spec.json/agreement-log/tech-requirements/test-results/integration-test-checklist/runbook。2026-07-19 `docs-spec-legacy-migration-2026-07` で本ディレクトリへ集約統合）
+- [x] 再利用スクリプトを `.kiro/specs/rider-demotion-2025-26/sql/` に整備
 - [x] PII成果物（downlist/koukaku/exec_log）を `outputs/`（git管理外）へ保存
 
 ### T8: 本番反映（人間） ⏳
@@ -49,5 +48,5 @@
 - [ ] 適用後、降格先別件数の最終確認
 
 ## 次年度に向けた引き継ぎ
-- 手順・チェックリストは `docs/specs/rider-demotion-2025-26/runbook.md` に集約。
+- 手順・チェックリストは `.kiro/specs/rider-demotion-2025-26/runbook.md` に集約。
 - 残留基準（順位/点数ライン）は毎年AJOCC公式を参照して更新。runbookの「次年度の更新点」を参照。

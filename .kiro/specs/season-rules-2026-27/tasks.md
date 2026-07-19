@@ -93,7 +93,7 @@
   - 「次年度の更新点」に対応表変更時の SQL 追随チェック（me-mm-linkage の CategoryLineageMap
     変更を Revalidation Trigger とする）を追加する
   - 本番実行（2027-03）の判断・COMMIT は人間のみが行う旨、過去シーズンの判定資産
-    （docs/specs/rider-demotion-2025-26/）は変更しない旨を明記する
+    （.kiro/specs/rider-demotion-2025-26/）は変更しない旨を明記する
   - downlist・降格 SQL・実行ログの出力先を git 管理外とする PII 取り扱い注意を明記する
   - Observable: runbook.md のみを参照して、ダンプ復元→判定→生成→シミュレーション→検証→
     ROLLBACK の一連の手順を人間が実行できる記載になっている

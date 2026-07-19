@@ -130,11 +130,11 @@ M "SELECT count(*) FROM entry_racers er
 cd /Users/kyamady/workspace/cyclox2_docker
 
 # (1) テンプレートモード（既定）: 既存ブック（参照 or 前年出力）に最新行を追記、全シート温存
-python3 docs/specs/entry-count-2025-26/build_xlsx.py --season 25-26
+python3 .kiro/specs/entry-count-2025-26/build_xlsx.py --season 25-26
 #   出力: tmp/20260621_entry_racers.xlsx
 
 # (2) from-scratch モード: 参照ファイル不要。SERIES から「通しでカウント」を1枚ゼロ生成
-python3 docs/specs/entry-count-2025-26/build_xlsx.py --from-scratch
+python3 .kiro/specs/entry-count-2025-26/build_xlsx.py --from-scratch
 #   出力: tmp/entry_racers_25-26_from_scratch.xlsx
 ```
 
@@ -144,7 +144,7 @@ python3 docs/specs/entry-count-2025-26/build_xlsx.py --from-scratch
 3. 前年（25-26）をローカルDBで再現して一致を確認（検算）。
 4. テンプレートモードは `--src` に**前年の出力ブック**を指定して追記、または from-scratch で再生成。
    ```bash
-   python3 docs/specs/entry-count-2025-26/build_xlsx.py \
+   python3 .kiro/specs/entry-count-2025-26/build_xlsx.py \
      --src tmp/20260621_entry_racers.xlsx --season 26-27 --out tmp/26-27_entry_racers.xlsx
    ```
 

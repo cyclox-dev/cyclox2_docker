@@ -12,7 +12,7 @@ AJOCC 2026-27規則改正により、昇格・残留・降格のルール値と�
 
 - リアルタイム昇格の人数枠: `ResultParamCalcComponent` 内の出走人数別ルール
   （40人以上=上位3名、20人以上=2名、10人以上=1名 等）。MM2→MM1 の上限は現行2名。
-- シーズン末降格: `docs/specs/rider-demotion-2025-26/runbook.md` + `sql/` 資産
+- シーズン末降格: `.kiro/specs/rider-demotion-2025-26/runbook.md` + `sql/` 資産
   （2025-26 実績: ME 240/260/280位、MM 80/40点、WE1 出走判定。カテゴリー単位・系統独立に判定）。
 - HoldPoint（昇格時 3pt）が残留判定の材料（一部カテゴリー）。
 - WE1（CL1）は残留基準なし（出走のみで残留）だった。

@@ -11,7 +11,7 @@
 
 - `category_racers` に同一選手の対応外カテゴリーが複数、`cancel_date=NULL` のまま並存。
 - 類似バッチの先例: `OneTimeShell::setupDuplicatedCatRacerDeleted()`（完全重複の削除）、
-  rider-demotion-2025-26 の検出→downlist→SQL生成→検証フロー（`docs/specs/rider-demotion-2025-26/`）。
+  rider-demotion-2025-26 の検出→downlist→SQL生成→検証フロー（`.kiro/specs/rider-demotion-2025-26/`）。
 - どの選手がどれだけ不整合かの全体像は未集計。
 
 ## Desired Outcome

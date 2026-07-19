@@ -104,9 +104,9 @@ NFKC正規化が消す情報は「文字幅・大小文字・空白」に限ら�
 | ファイル | 内容 |
 |---|---|
 | `tmp/team_unique_2015-26.xlsx` | 最終Excel（シート①ユニーク数集計＋前年比、シート②〜各シーズンのチームリスト） |
-| `docs/specs/team-count-2015-26/analyze_teams.py` | 集計・正規化・Excel生成（参照非依存） |
-| `docs/specs/team-count-2015-26/raw_team_by_season.tsv` | 再現用の生集計データ（再生成手順は下記Runbook） |
-| `docs/specs/team-count-2015-26/review_normalization.txt` | レビューゲート①の全材料（A無所属/B統合1,952群/C残存） |
+| `.kiro/specs/team-count-2015-26/analyze_teams.py` | 集計・正規化・Excel生成（参照非依存） |
+| `.kiro/specs/team-count-2015-26/raw_team_by_season.tsv` | 再現用の生集計データ（再生成手順は下記Runbook） |
+| `.kiro/specs/team-count-2015-26/review_normalization.txt` | レビューゲート①の全材料（A無所属/B統合1,952群/C残存） |
 
 ---
 
@@ -129,14 +129,14 @@ FROM entry_racers er
 WHERE er.deleted=0 AND ec.deleted=0 AND eg.deleted=0 AND meets.deleted=0 AND racers.deleted=0
   AND meets.at_date>'2015-04-01' AND meets.at_date<'2026-04-01' AND er.entry_status=0
 GROUP BY 1, er.team_name ORDER BY 1, 2 DESC;" \
-  > docs/specs/team-count-2015-26/raw_team_by_season.tsv
+  > .kiro/specs/team-count-2015-26/raw_team_by_season.tsv
 
 # (2) レビュー材料の再生成
-python3 docs/specs/team-count-2015-26/analyze_teams.py --preview \
-  > docs/specs/team-count-2015-26/review_normalization.txt
+python3 .kiro/specs/team-count-2015-26/analyze_teams.py --preview \
+  > .kiro/specs/team-count-2015-26/review_normalization.txt
 
 # (3) Excel生成
-python3 docs/specs/team-count-2015-26/analyze_teams.py --build
+python3 .kiro/specs/team-count-2015-26/analyze_teams.py --build
 #   出力: tmp/team_unique_2015-26.xlsx
 ```
 

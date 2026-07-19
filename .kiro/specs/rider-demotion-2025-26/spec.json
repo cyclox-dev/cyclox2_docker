@@ -11,5 +11,5 @@
     "tasks": { "approved": true },
     "implementation": { "approved": true, "completed": true }
   },
-  "notes": "ローカルコンテナで降格SQLを実行・検証済み。本番反映(A案: 同SQL適用)は別途人間が実施。次年度以降は docs/specs/rider-demotion-2025-26/runbook.md を参照。"
+  "notes": "ローカルコンテナで降格SQLを実行・検証済み。本番反映(A案: 同SQL適用)は別途人間が実施。次年度以降は .kiro/specs/rider-demotion-2025-26/runbook.md を参照。"
 }

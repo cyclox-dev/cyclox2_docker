@@ -52,7 +52,7 @@
 
 ### rider-demotion-2025-26 SQL 資産の構造
 - **Context**: シーズン末判定 SQL の改訂範囲の特定
-- **Sources Consulted**: `docs/specs/rider-demotion-2025-26/`（runbook.md, sql/01_build_demote_set.sql,
+- **Sources Consulted**: `.kiro/specs/rider-demotion-2025-26/`（runbook.md, sql/01_build_demote_set.sql,
   sql/02_gen_koukaku.sh, sql/03_verify.sql, README.md, tech-requirements.md）
 - **Findings**:
   - `01_build_demote_set.sql`: カテゴリーごとに独立した INSERT 文で `demote_all` テーブルを構築。
@@ -172,6 +172,6 @@
 ## References
 - [AJOCC 2026-2027 ルール改正](https://www.cyclocross.jp/news/2026/07/20262027amendment.html) — 改正内容の一次ソース
 - `.kiro/specs/me-mm-linkage-2026-27/design.md` — ME⇔MM 対応表・両保有モデルの単一ソース定義（upstream）
-- `docs/specs/rider-demotion-2025-26/runbook.md` および `sql/` — 改訂ベースとなる 2025-26 資産
+- `.kiro/specs/rider-demotion-2025-26/runbook.md` および `sql/` — 改訂ベースとなる 2025-26 資産
 - `cyclox2_svr/cyclox2/app/Controller/Component/ResultParamCalcComponent.php` — リアルタイム昇格の既存実装
 - `.kiro/steering/roadmap.md` — プロジェクト全体方針・Shared seams
