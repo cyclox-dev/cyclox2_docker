@@ -6,7 +6,7 @@
 ## Overview
 
 **Purpose**: `point-sim-2025-26` で検証済みの新AJOCC得点表（8区分・新JCX列）を、
-2026-27シーズン（2026-08-01以降開催の大会）の本番ポイント計算へ恒久的に適用する。
+2026-27シーズン（2026-09-01以降開催の大会）の本番ポイント計算へ恒久的に適用する。
 現在この新表は `origin/main`（PR #12でマージ済み）にシミュレーション専用フラグ
 （`__simAjocc267`、既定 `false`）でガードされた状態で存在しており、本設計はこのガードを
 「シーズン起点の恒久判定」へ置き換え、`_TEST` を含む識別子を本番用の名称へ整理する。
@@ -19,7 +19,7 @@
 `app/Console/Command/PointSimShell.php`）に閉じた変更。DBスキーマ変更やUI変更は伴わない。
 
 ### Goals
-- 2026-08-01以降開催の大会のAJOCCポイント（System①）計算に、シミュレーション専用フラグの
+- 2026-09-01以降開催の大会のAJOCCポイント（System①）計算に、シミュレーション専用フラグの
   有効化なしで新8区分表・新JCX列が自動適用される。
 - 2025-26以前の大会のAJOCCポイント計算結果が本改修前と完全に同一である（回帰保証）。
 - JCF/JCXシリーズ点計算（System②）の配点ルールとして、新得点表を本番名称で選択できる。
@@ -73,7 +73,7 @@
 - CakePHP 2.x 組み込みテストスイート（`Console/cake test`, `CakeTestCase`）。
 
 ### Revalidation Triggers
-- `seasons` テーブルの2026-27シーズン `start_date` が `2026-08-01` 以外に変更された場合
+- `seasons` テーブルの2026-27シーズン `start_date` が `2026-09-01` 以外に変更された場合
   （本設計のリテラル日付分岐前提が崩れる）。
 - 新得点表の数値が公式PDFとの照合で修正された場合（テーブル定義・テストの再確認が必要）。
 - `me-mm-linkage-2026-27` が `ResultParamCalcComponent` の同一ファイルへ変更を加える場合
@@ -107,8 +107,8 @@ AJOCCポイントは2系統に分かれて計算される（`point-sim-2025-26` 
 flowchart TD
     Web[Web 結果入力編集] --> RPC[ResultParamCalcComponent]
     RPC --> GMAP[getAjoccPointMap]
-    GMAP -->|meetDate lt 2026-08-01| LegacyTables[既存年度別得点表 変更なし]
-    GMAP -->|meetDate gte 2026-08-01| NewTable[AJOCC267 8区分 or JCX新列]
+    GMAP -->|meetDate lt 2026-09-01| LegacyTables[既存年度別得点表 変更なし]
+    GMAP -->|meetDate gte 2026-09-01| NewTable[AJOCC267 8区分 or JCX新列]
     LegacyTables --> AjoccPt[(RacerResult.ajocc_pt)]
     NewTable --> AjoccPt
 
@@ -170,7 +170,7 @@ app/
   現行のまま維持し、DB互換性リスクをゼロにする）。
 - `app/Controller/Component/ResultParamCalcComponent.php` —
   `__getAjoccPointMap()` 内の `if ($this->__simAjocc267 && $mtDate >= $divDate2025)` を
-  `if ($mtDate >= $divDate2026)`（新規定数 `$divDate2026 = new DateTime('2026-08-01')`）へ
+  `if ($mtDate >= $divDate2026)`（新規定数 `$divDate2026 = new DateTime('2026-09-01')`）へ
   置き換え。`$__simAjocc267` フィールド、`enableSimAjocc267()`, `disableSimAjocc267()`,
   `resetAjoccPtCache()` を削除。
 
@@ -198,7 +198,7 @@ app/
 ```mermaid
 flowchart TD
     Start[reCalcResults呼び出し] --> GetDate[大会開催日 meetDate を取得]
-    GetDate --> Check2026{meetDate is 2026-08-01 or later}
+    GetDate --> Check2026{meetDate is 2026-09-01 or later}
     Check2026 -->|Yes| CheckJcx1{is_jcx is 1}
     CheckJcx1 -->|Yes| NewJcx[新JCX列を使用]
     CheckJcx1 -->|No| NewNonJcx[新8区分表を使用]
@@ -210,7 +210,7 @@ flowchart TD
 
 **Key Decisions**:
 - 分岐条件は `__simAjocc267` を経由せず `meetDate` のみで確定する（Requirement 1.3）。
-- `2026-08-01` より前の全パスは無変更（既存 `if/else if` チェーンの後続部分に一切手を
+- `2026-09-01` より前の全パスは無変更（既存 `if/else if` チェーンの後続部分に一切手を
   加えない）ことで回帰リスクを最小化する（Requirement 2）。
 
 ## Requirements Traceability
@@ -218,7 +218,7 @@ flowchart TD
 | Requirement | Summary | Components | Interfaces | Flows |
 |-------------|---------|------------|------------|-------|
 | 1.1–1.5 | 新得点表のシーズン起点自動適用（非JCX・JCX・範囲外・異常系） | ResultParamCalcComponent | `__getAjoccPointMap()`, `calcAjoccPt()` | AJOCCポイント計算の表選択フロー |
-| 2.1–2.3 | 過去シーズンへの非影響 | ResultParamCalcComponent | `__getAjoccPointMap()` | 同上（`meetDate < 2026-08-01` 経路） |
+| 2.1–2.3 | 過去シーズンへの非影響 | ResultParamCalcComponent | `__getAjoccPointMap()` | 同上（`meetDate < 2026-09-01` 経路） |
 | 3.1–3.3 | シリーズ点計算への新得点表の本番提供 | PointCalculator | `PointCalculator::$AJOCC_267`, `calc()` | （既存のSystem②フロー、変更なし） |
 | 4.1–4.4 | シミュレーション専用フラグ・命名の整理 | ResultParamCalcComponent, PointCalculator, PointSimShell | フィールド・メソッド削除、識別子リネーム | — |
 | 5.1–5.5 | 自動テストの整備 | PointCalculatorTest, ResultParamCalcComponentTest | `CakeTestCase` | — |
@@ -248,7 +248,7 @@ flowchart TD
   （呼び出し元 `__doReCalcResults()` 等への影響を出さない）。
 - `__getAjoccPointMap($mtDate, $startedCount, $isJcx)` の戻り値形式
   （`array($map, $defaultPoint)`）を変更しない。
-- 2026-08-01より前の分岐（`$divDate2017`, `$divDate2022`, `$divDate2024` を用いた既存の
+- 2026-09-01より前の分岐（`$divDate2017`, `$divDate2022`, `$divDate2024` を用いた既存の
   `if/else if` チェーン）には一切変更を加えない。
 
 **Dependencies**
@@ -268,8 +268,8 @@ interface AjoccPointCalculation {
 }
 ```
 - Preconditions: `meetDate` はパース可能な日付文字列であること。
-- Postconditions: `meetDate >= 2026-08-01` の場合は新得点表（8区分／新JCX列）から算出した
-  値を返す。`meetDate < 2026-08-01` の場合は本改修前と同一の値を返す。
+- Postconditions: `meetDate >= 2026-09-01` の場合は新得点表（8区分／新JCX列）から算出した
+  値を返す。`meetDate < 2026-09-01` の場合は本改修前と同一の値を返す。
 - Invariants: 出力値は `meetDate` 以外の入力・呼び出し順序（インスタンスの使い回し）に
   依存しない（キャッシュフィールド `$ajoccPtMap`/`$defaultPt` は同一インスタンス内
   同一結果を保証するための既存最適化であり、本仕様では変更しない）。
@@ -334,7 +334,7 @@ interface AjoccPointCalculation {
 
 | データ | 変更前 | 変更後 | 備考 |
 |---|---|---|---|
-| `racer_results.ajocc_pt` | 2026-08-01以降の大会でも既存年度別表の値 | 2026-08-01以降の大会は新8区分表／新JCX列の値 | 2025-08-01〜2026-07-31開催分は変更なし（`__simAjocc267` 既定 `false` により従来どおり本改修前から変化なし） |
+| `racer_results.ajocc_pt` | 2026-09-01以降の大会でも既存年度別表の値 | 2026-09-01以降の大会は新8区分表／新JCX列の値 | 2025-08-01〜2026-08-31開催分は変更なし（`__simAjocc267` 既定 `false` により従来どおり本改修前から変化なし） |
 | `point_series.calc_rule` | `13` を指定すると `AJOCC_267_TEST`（名称のみ） | `13` を指定すると `AJOCC_267`（名称のみ、計算内容は不変） | 値そのものの意味・計算結果は変わらない。表示名のみ変更 |
 | `point_series_racers.point` | `calc_rule=13` 経由の計算結果（変更なし） | 同左（変更なし） | System②の計算ロジックは本仕様で変更しない |
 
@@ -363,12 +363,12 @@ interface AjoccPointCalculation {
   3. `PointCalculator::getCalculator(13)->name()` / `description()` に「TEST」「テスト」
      「シミュレーション」を含まないこと（Requirement 4.2 の機械的検証）。
 - **Unit Tests**（`ResultParamCalcComponentTest`）:
-  1. 大会開催日 `2026-08-01` 以降・非JCXで、出走人数区分の境界
+  1. 大会開催日 `2026-09-01` 以降・非JCXで、出走人数区分の境界
      （4/5, 9/10, 19/20, 39/40, 59/60, 79/80, 99/100人）ごとに正しいポイントを返すこと
      （Requirement 5.1）。
-  2. 大会開催日 `2026-08-01` 以降・JCXで、順位1位・109位・110位が正しいポイント
+  2. 大会開催日 `2026-09-01` 以降・JCXで、順位1位・109位・110位が正しいポイント
      （1000/1/0）を返すこと（Requirement 5.2）。
-  3. 大会開催日境界（`2026-07-31` と `2026-08-01`）で新旧の表が正しく切り替わること
+  3. 大会開催日境界（`2026-08-31` と `2026-09-01`）で新旧の表が正しく切り替わること
      （Requirement 5.3）。
   4. 2025-26以前の代表的な大会日付（例: `2025-11-01`, `2024-11-01`）・出走人数・順位・
      JCX有無の組み合わせについて、本改修前と同一の値を返すこと（Requirement 5.4 / 2.1–2.3。
@@ -395,7 +395,7 @@ interface AjoccPointCalculation {
 
 ```mermaid
 flowchart LR
-    A[Foundation: 事前確認 seasons.start_date 2026-08-01 and PDF照合] --> B[Core: PointCalculator 命名整理]
+    A[Foundation: 事前確認 seasons.start_date 2026-09-01 and PDF照合] --> B[Core: PointCalculator 命名整理]
     A --> C[Core: ResultParamCalcComponent 恒久分岐化]
     B --> D[Integration: PointSimShell 削除]
     C --> D
