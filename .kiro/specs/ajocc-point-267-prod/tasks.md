@@ -7,17 +7,17 @@
 `git fetch origin` 後の `origin/main`（PR #12 マージ済み）から作成すること（research.md 参照）。
 
 - [ ] 1. Foundation: 前提確認・PDF照合・テスト基盤確認
-- [ ] 1.1 実装ブランチ作成と適用開始日の前提確認
+- [x] 1.1 実装ブランチ作成と適用開始日の前提確認
   - `cyclox2web` の `origin/main` を最新化し、そこから作業ブランチ（例: `feat/ajocc-267-prod`）
     を作成する。
-  - `seasons` テーブルの2026-27シーズンレコードの `start_date` が `2026-08-01` であることを
+  - `seasons` テーブルの2026-27シーズンレコードの `start_date` が `2026-09-01` であることを
     確認する（design.md の `$divDate2026` 前提。値が異なる場合は後続タスクの日付定数を
     実際の値に合わせて修正する）。
   - 観測可能な完了状態: 作業ブランチが `origin/main` を起点に作成されており、
     `seasons.start_date`（2026-27シーズン）の確認結果（日付・確認方法）が記録されている。
   - _Requirements: 4.1_
 
-- [ ] 1.2 公式ポイント表PDFとの数値照合
+- [x] 1.2 公式ポイント表PDFとの数値照合
   - 公式PDF（`https://www.cyclocross.jp/2026/2026-2027ajoccpointtable.pdf`）を取得し、
     既存実装済みの新8区分表（非JCX）・新JCX列（`app/Cyclox/Util/PointCalculator.php` の
     `$TABLE_AJOCC267TEST`、`app/Controller/Component/ResultParamCalcComponent.php` の
@@ -31,7 +31,7 @@
     明記する。
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 1.3 テスト実行基盤の動作確認
+- [x] 1.3 テスト実行基盤の動作確認
   - `docker-compose exec cyclox2_svr bash -c "cd /var/www/html/app && Console/cake test"` 等で
     CakePHP 2.x 組込みテストランナーが実行可能であることを確認する（`app/Test/Case/` 配下は
     現状 `empty` プレースホルダのみで実テストが無いため、本タスクで実行環境そのものの疎通を
@@ -42,7 +42,7 @@
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 2. Core: PointCalculator（System②）の命名整理
-- [ ] 2.1 (P) AJOCC_267 計算器の命名整理と単体テスト
+- [x] 2.1 (P) AJOCC_267 計算器の命名整理と単体テスト
   - RED: `app/Test/Case/Cyclox/Util/PointCalculatorTest.php` を新規作成し、
     `PointCalculator::getCalculator(13)` の順位1位=1000点／109位=1点／110位=`null`、
     グレード1/2で同一結果（グレード非依存）、`name()`/`description()` に
@@ -63,25 +63,25 @@
   - _Boundary: PointCalculator_
 
 - [ ] 3. Core: ResultParamCalcComponent（System①）のシーズン起点恒久適用
-- [ ] 3.1 (P) 新得点表の恒久適用ロジックへの置き換えと単体テスト
+- [x] 3.1 (P) 新得点表の恒久適用ロジックへの置き換えと単体テスト
   - RED: `app/Test/Case/Controller/Component/ResultParamCalcComponentTest.php` を新規作成し、
     以下を検証するテストを先に書き、現状（シミュレーション専用フラグ既定 `false`）では
     失敗する（RED）ことを確認する。
-    - 大会開催日 `2026-08-01` 以降・非JCXで、出走人数区分境界
+    - 大会開催日 `2026-09-01` 以降・非JCXで、出走人数区分境界
       （4/5, 9/10, 19/20, 39/40, 59/60, 79/80, 99/100人）ごとの正しいポイント、および
       各区分の表範囲外（最終順位より下位）でポイント0が返ること（Requirement 1.4）。
-    - 大会開催日 `2026-08-01` 以降・JCXで、順位1位=1000点／109位=1点／110位=0点
+    - 大会開催日 `2026-09-01` 以降・JCXで、順位1位=1000点／109位=1点／110位=0点
       （Requirement 1.4）。
-    - 大会開催日境界（`2026-07-31` は旧表、`2026-08-01` は新表）で正しく切り替わること。
+    - 大会開催日境界（`2026-08-31` は旧表、`2026-09-01` は新表）で正しく切り替わること。
     - フラグを一切呼び出さない素の `ResultParamCalcComponent` インスタンスでも
-      `2026-08-01` 以降は新表が適用されること（恒久適用の確認）。
+      `2026-09-01` 以降は新表が適用されること（恒久適用の確認）。
     - 出走人数が0人以下の場合にエラー値（`-1`）を返す既存の異常系挙動が、大会開催日に
       関わらず変わらないこと（Requirement 1.5）。
   - GREEN: `app/Controller/Component/ResultParamCalcComponent.php` の
     `__getAjoccPointMap()` 内の `if ($this->__simAjocc267 && $mtDate >= $divDate2025)` を、
-    新規定数 `$divDate2026 = new DateTime('2026-08-01')` を用いた
+    新規定数 `$divDate2026 = new DateTime('2026-09-01')` を用いた
     `if ($mtDate >= $divDate2026)`（フラグ非依存の無条件分岐）へ置き換える。
-    `2026-08-01` より前の既存 `if/else if` チェーン（`$divDate2017`, `$divDate2022`,
+    `2026-09-01` より前の既存 `if/else if` チェーン（`$divDate2017`, `$divDate2022`,
     `$divDate2024` を用いた分岐）には変更を加えない。
   - 同一コミット内で `private $__simAjocc267 = false;` フィールド、
     `enableSimAjocc267()`、`disableSimAjocc267()` メソッドを削除する
@@ -93,7 +93,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 4.1, 5.1, 5.2, 5.3_
   - _Boundary: ResultParamCalcComponent_
 
-- [ ] 3.2 過去シーズン回帰テスト（2025-26以前の非影響）
+- [x] 3.2 過去シーズン回帰テスト（2025-26以前の非影響）
   - 3.1 で作成した `ResultParamCalcComponentTest.php` に、2025-26以前の代表的な大会日付
     （例: `2025-11-01`, `2024-11-01`）・出走人数・順位・JCX有無の組み合わせについて、
     本改修前と同一のポイントを返すことを検証するテストを追加する。期待値は
@@ -109,7 +109,7 @@
   - _Boundary: ResultParamCalcComponent_
 
 - [ ] 4. Integration: シミュレーション専用実行手段の削除と整合確認
-- [ ] 4.1 PointSimShell.php の削除
+- [x] 4.1 PointSimShell.php の削除
   - `app/Console/Command/PointSimShell.php` を削除する（`enableSimAjocc267()` 等、3.1で
     削除したメソッドへの参照が唯一の使用元であり、他ファイルからの参照が無いことを
     research.md の調査で確認済み）。
@@ -120,7 +120,7 @@
   - _Depends: 2.1, 3.1_
   - _Requirements: 4.3, 4.4_
 
-- [ ] 4.2 命名・フラグ整理の全体整合確認
+- [x] 4.2 命名・フラグ整理の全体整合確認
   - `grep -rn "simAjocc267\|AJOCC_267_TEST\|TABLE_AJOCC267TEST\|calcAJOCC267Test" app/` を
     実行し、削除・リネーム対象の識別子が `app/` 配下に一切残っていないことを確認する。
   - `app/tmp/logs/debug.log` 等の生成物以外のソースファイルに旧識別子が残っていないことを
@@ -131,7 +131,7 @@
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
 - [ ] 5. Validation: 全体テスト実行と結合試験の記録
-- [ ] 5.1 単体テスト全件実行と結果記録
+- [x] 5.1 単体テスト全件実行と結果記録
   - `docker-compose exec cyclox2_svr bash -c "cd /var/www/html/app && Console/cake test
     Cyclox/Util/PointCalculatorTest"` および
     `Console/cake test Controller/Component/ResultParamCalcComponentTest` を実行し、
@@ -143,7 +143,7 @@
   - _Depends: 4.2_
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 5.2 結合試験チェックリストの作成
+- [x] 5.2 結合試験チェックリストの作成
   - 以下を含む手動確認項目を `.kiro/specs/ajocc-point-267-prod/integration-test-checklist.md`
     に記載する（テンプレート: `docs/sdd/templates/integration-test-checklist.md`）。
     - 開発環境で2025-26シーズンの既存カテゴリーを再計算し `ajocc_pt` が変化しないことの
@@ -160,3 +160,48 @@
     確認日・確認者の記入欄が存在する。
   - _Depends: 5.1_
   - _Requirements: 3.1, 3.3, 4.4_
+
+---
+
+## Implementation Notes
+
+- **1.1（2026-07-22）**: 作業ブランチ `feat/ajocc-point-267-prod` は `release/2026-27-season-rules`
+  から作成（2026-07-20決定のAJOCC 2026-27統合ブランチ運用に準拠）。当該ブランチのHEADは
+  `origin/main` と同一コミット `2c3fd3af8` （PR #12マージ済み）であることを
+  `git merge-base --is-ancestor` および両HEADの一致で確認済み。よって本タスクの
+  「origin/main起点」要件は実質的に満たされている。
+  `seasons` テーブルの2026-27シーズン（id=17）`start_date` を実DBで確認したところ
+  `2026-09-01` であり、design.md等が仮置きしていた `2026-08-01` と1ヶ月の食い違いが
+  判明した。design.md自身がこの食い違いをリスクとして明記済みだったため、実装着手前に
+  人間へ選択肢を提示し確認、DB実値を正としてrequirements.md/design.md/tasks.mdの該当箇所
+  （計31箇所、`$divDate2026`・境界前日`2026-08-31`含む）を一括修正する方針で承認を得た。
+  詳細はagreement-log.md「変更履歴」2026-07-22欄、spec.jsonのamendment_note参照。
+
+- **1.2（2026-07-22）**: 公式PDF（`https://www.cyclocross.jp/2026/2026-2027ajoccpointtable.pdf`、
+  2026.7.7発行、全3ページ）を取得し、`app/Cyclox/Util/PointCalculator.php` の
+  `$TABLE_AJOCC267TEST`（JCX列、109件）と `app/Controller/Component/ResultParamCalcComponent.php`
+  の `__getAjoccPointMap()` 内新8区分表（`started_over` 99/79/59/39/19/9/4/0、各区分の
+  最大順位まで全件）を、PDFの該当列と1件ずつ突き合わせた。**差異なし**（全9列・約500セル完全一致、
+  各区分の上限順位超過時の空欄=0ポイントというフォールバック仕様も実装のdefaultPoint=0挙動と
+  整合）。よって2.1・3.1のGREEN手順への織り込みは不要（テーブル値は現状のまま）。
+
+- **4.2（2026-07-22）**: `grep -rn "simAjocc267\|AJOCC_267_TEST\|TABLE_AJOCC267TEST\|calcAJOCC267Test\|enableSimAjocc267\|disableSimAjocc267\|RUN_PT_AJOCC267TEST" app/`
+  を実行した結果、`.php`ソースファイルは0件（クリーン）。唯一の残存箇所は
+  `app/tmp/logs/debug.log.*`（`.gitignore`対象の生成物、過去のテスト実行ログ）のみで、
+  タスク自身の完了条件「またはソースコード外の生成物のみ」に合致するため完了と判定した。
+
+- **1.3（2026-07-22）**: `docker exec cyclox2_svr bash -c "cd /var/www/html/app && Console/cake test
+  app AppTestFixtureTest"` を実行し、CakePHP Test Shell起動→PHPUnit 3.7.38認識→対象ファイル
+  不在の想定内エラーメッセージ→exit code 0 での正常終了、を確認した（me-mm-linkage-2026-27で
+  解消済みのphar互換パッチが本ブランチでも有効であることも確認）。`Console/cake test core
+  AllTests` はCakePHPフレームワーク自体のテスト対象であり本specのスコープ外と判明したため
+  使用しない。後続タスク（2.1, 3.1, 3.2, 5.1）は `Console/cake test app <対象パス>` 形式で
+  実行する。
+
+- **`/kiro-validate-impl`（2026-07-22）**: 全9タスク完了後の最終検証で、design.md「Modified
+  Files」に3.1と同時削除予定と明記されていた `resetAjoccPtCache()`（呼び出し元ゼロの孤立
+  メソッド、`__simAjocc267`と同時期の2026-06-15コミットで追加）が未削除のまま残存している
+  ことを発見（design-implementation drift）。承認済みdesign.mdの既定スコープ内かつ低リスク
+  （呼び出し元なし・機能への影響なし）と判断し、新規ゲートなしでその場で削除・テスト再確認・
+  コミットして是正した。ほかの検証項目（テストスイート、TODO/secrets grep、requirements
+  網羅、boundary audit）はすべてクリーン。最終判定: GO。
