@@ -1,21 +1,27 @@
 {
   "feature_name": "ajocc-point-267-prod",
   "created_at": "2026-07-14T00:00:00Z",
-  "updated_at": "2026-07-14T00:00:00Z",
+  "updated_at": "2026-07-22T00:00:00Z",
   "language": "ja",
   "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": true
+      "approved": true,
+      "amended_at": "2026-07-22T00:00:00Z",
+      "amendment_note": "実装フェーズ着手時(task 1.1前提確認)で判明した適用開始日の食い違い(design.md想定2026-08-01 vs seasons.start_date実データ2026-09-01)を修正し、人間の承認を得て再承認。詳細はagreement-log.md参照。"
     },
     "design": {
       "generated": true,
-      "approved": true
+      "approved": true,
+      "amended_at": "2026-07-22T00:00:00Z",
+      "amendment_note": "同上。$divDate2026および境界前日の記述を2026-09-01/2026-08-31へ修正。"
     },
     "tasks": {
       "generated": true,
-      "approved": true
+      "approved": true,
+      "amended_at": "2026-07-22T00:00:00Z",
+      "amendment_note": "同上。task 1.1/2.1/3.1の日付記述を修正。"
     }
   },
   "ready_for_implementation": true
