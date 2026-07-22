@@ -217,10 +217,8 @@ sequenceDiagram
 
     Race->>RPC: 昇格条件成立を検知
     RPC->>CR: 旧カテゴリーのcancel_date設定
-    RPC->>CR: 新カテゴリー行の作成保存
-    CR-->>RPC: 保存成功
-    RPC->>HP: 保持ポイント3pt付与保存先は昇格元系統のみ
-    RPC->>Linker: propagateLinkedPromotion 呼び出し
+    Note over RPC,Linker: 新カテゴリー行はまだcreateしない（2026-07-20改訂）
+    RPC->>Linker: propagateLinkedPromotion 呼び出し 未保存の新カテゴリーコードを渡す
     Linker->>Map: 昇格先カテゴリーに対応する相手系統カテゴリーを取得
     Linker->>CR: 選手の相手系統の現在有効カテゴリーを取得
     alt 相手系統を保有していない
@@ -234,6 +232,9 @@ sequenceDiagram
         CR-->>Linker: 保存結果 不正なら保存拒否
         Linker-->>RPC: 連動結果を返す
     end
+    RPC->>CR: 新カテゴリー行の作成保存 相手系統が先に整合済みのためバリデーション通過
+    CR-->>RPC: 保存成功
+    RPC->>HP: 保持ポイント3pt付与保存先は昇格元系統のみ
 ```
 
 **Key Decisions**:
@@ -398,9 +399,20 @@ interface CategoryLineageLinker {
 
     /**
      * 選手統合など複数行の一括更新後に、統合先選手の有効カテゴリー集合全体を検証する。
+     * ME1-4/CM1-3（対応表管理対象）のみが検証範囲。対応表対象外カテゴリー（CL1-3, WM等）の
+     * 重複はこのメソッドでは検出しない（下記validateNoDuplicateAnyCategory()が担う）。
      * @return true|CategoryLineageValidationError
      */
     public function validateActiveSet(string $racerCode): mixed;
+
+    /**
+     * 選手統合など複数行の一括更新後に、対応表管理対象か否かを問わず全カテゴリーについて
+     * 「同一category_codeの有効保有が2件以上になっていないか」のみを検証する（2026-07-20
+     * 実装フェーズでの確認・改訂。Requirement 8.2・9.2、validateActiveSet()のME/MM限定スコープを
+     * 補完する）。ペア妥当性・同系統内複数保有の判定は行わない（それはvalidateActiveSet()の責務）。
+     * @return true|CategoryLineageValidationError
+     */
+    public function validateNoDuplicateAnyCategory(string $racerCode): mixed;
 }
 ```
 - Preconditions: `$racerCode` は存在する選手コード。`$appliedCategoryCode`・
@@ -444,6 +456,21 @@ interface CategoryLineageLinker {
 - `cancel_date` を設定するだけの保存（既存カテゴリーの終了処理）は `checkLineagePair` の対象外
   とする（cancelは集合を縮小するのみで不整合を生まないため。Requirement 3.1の「新しいカテゴリーが
   付与されようとし」に該当しない）
+- **元ME1特例ゲートの適用範囲（2026-07-20 実装フェーズでの確認・改訂）**: `checkLineagePair`が
+  `isValidActiveSet()`を通過した後、保存後の集合が`{C1, CM1}`になる場合にのみ追加で
+  `CategoryLineageLinker::isFormerElite1()`を確認する。この確認は、保存対象行の`reason_id`が
+  `app/Cyclox/Const/CategoryReason`上で`CategoryChangeFlag::$LANKUP`（昇格）に分類される理由
+  （2026-07-20時点の実装では`RESULT_UP`・`SEASON_UP`・`OTHER_UP`の3つ。判定はこの一覧を
+  ハードコードせず`CategoryReason::reasonAt($id)->flag()`を動的参照して行う。将来
+  `CategoryReason`側に理由が追加・変更されても本ロジックの追随修正が不要になるようにするため）の
+  場合はスキップする。
+  レース結果・シーズン成績等による正当な昇格（Requirement 5 AC2の「選手がエリート系統でME2から
+  ME1へ昇格する場合」を含む）は、それ自体が正当な実力証明であり元ME1歴の有無を問わず常に許可される
+  べきであるため。`$LANKUP`以外の理由（`change_em`の`REQUEST_CHANGE`、選手統合、その他手動付与等、
+  Requirement 6.4が対象とする「マスターズ側駆動」の付与）には本ゲートを厳格に適用する。
+  （経緯: 当初、本ゲートを`reason_id`に関わらず一律適用する実装を行ったところ、独立レビューにより
+  Requirement 5 AC2（正当な昇格は成功する前提）と矛盾すると指摘され、人間の確認のうえ本方針に改訂。
+  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」参照）
 - バリデーションエラー時は主催者・システム管理者が理由を理解できるメッセージを返す
   （Requirement 3.3）。CakePHPの標準エラーメッセージ機構（`$validate`の`message`）を用いる
 
@@ -467,6 +494,9 @@ interface CategoryLineageLinker {
 - Validation: `checkLineagePair`は「保存後に有効となるME/MMカテゴリー集合」を`CategoryLineageLinker`
   に渡すために、保存対象レコード自身のID（更新時）を除外した「現在の有効カテゴリー一覧」をDBから
   取得したうえで、保存しようとしているcategory_codeを加えた集合を構築する
+- Validation: 元ME1特例ゲート（上記Responsibilities & Constraints参照）は`reason_id`から
+  `CategoryReason::reasonAt($id)->flag()`（またはそれに相当する参照）で`CategoryChangeFlag`を
+  取得し、`$LANKUP`かどうかで分岐する
 - Risks: 大量一括処理（既存の是正バッチ等、将来のcatracer-cleanup-2026-27）で本バリデーションが
   性能上のボトルネックになる可能性。本specでは通常運用の保存頻度を前提とし、性能要件は非対象
   （catracer-cleanup-2026-27側の設計で個別に検討する）
@@ -481,13 +511,55 @@ interface CategoryLineageLinker {
 | Requirements | 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.2, 5.3 |
 
 **Responsibilities & Constraints**
-- `__execApplyRankUp()`（エリート系昇格の汎用適用）・`__applyRankUp2CM()`（`CM1`/`CM2`昇格適用）の
-  末尾、新カテゴリー行の保存とHoldPoint付与が両方成功した直後に
-  `CategoryLineageLinker::propagateLinkedPromotion()` を呼び出す
-- 既存の分岐・cancel処理・HoldPoint付与ロジックは変更しない（Simplification: 新規責務は追加箇所を
-  最小化したフック呼び出しに限定する）
+- 既存の分岐・HoldPoint付与ロジックは変更しない（Simplification: 新規責務は追加箇所を最小化した
+  フック呼び出しに限定する）。**ただし例外として**、下記「保存順序の是正」のみ行う
 - 連動保存が失敗した場合、昇格処理全体の戻り値ステータスを`Constant::RET_FAILED`とし、呼び出し元の
   トランザクション制御に委ねる（既存の他の部分的失敗パターンと同じ扱い）
+- **保存順序の是正・連動フック呼び出し位置（2026-07-20 実装フェーズでの確認・改訂、確定版）**:
+  当初「新カテゴリー行の保存とHoldPoint付与が両方成功した直後に`propagateLinkedPromotion()`を呼ぶ」
+  という設計だったが、タスク4.1の実装・独立レビューで2段階の問題が判明し、以下の順序に改訂した。
+  1. **問題1（保存順序）**: `__applyRankUp2CM()`（マスターズ側）は元々「cancel→create」の順序
+     だったが、`__execApplyRankUp()`（エリート側の実処理本体）を呼び出す**5箇所**
+     （CL2単独昇格・少人数シーズン2勝・シーズン2勝・通常のランクアップ`__applyRankUp()`経由・
+     少人数シーズン2勝の別分岐）のうち、少なくとも1箇所（通常のランクアップ、
+     `__applyRankUp()`→`__execApplyRankUp()`経由）は「create→cancel」の順序だった
+     （research.mdの前提記載と実コードが食い違っていたことをタスク3の独立レビューで発見。
+     `__execApplyRankUp()`を直接呼ぶ4箇所は当初の対応で是正済みだったが、`__applyRankUp()`
+     という薄いラッパー経由の5箇所目を見落としていたことがタスク4.1の独立レビューで判明）。
+     `__execApplyRankUp()`へ到達する全呼び出し経路で、cancelをcreateより先に行う順序へ統一する
+     （最終的なDB状態は変更前と同一。呼び出し順序のみの是正であり、分岐・判定ロジック自体は
+     変更しない）。
+  2. **問題2（連動フックの呼び出し位置）**: 問題1を是正しても、両系統保有選手（例: C3+CM2保有）が
+     エリート側で昇格（例: C3→C2）すると、**新エリートカテゴリーのcreate自体**がタスク3の
+     `checkLineagePair`に拒否される。create時点ではマスターズ側がまだ更新前の値（例: CM2）のままで、
+     `checkLineagePair`が見る保存後集合`{CM2, C2}`が対応表上の正当なペアにならないため
+     （C2の対応先はCM1）。両系統保有選手の昇格というRequirement 4の中核シナリオに影響する。
+     **是正**: `propagateLinkedPromotion()`の呼び出し位置を、新カテゴリー行のcreateの**前**へ移動する。
+     `resolveLinkedTarget()`/`propagateLinkedPromotion()`は`$appliedCategoryCode`を不透明な文字列
+     パラメータとしてのみ使用し、そのカテゴリー行がDBに保存済みであることに依存しないため、
+     未保存の新カテゴリーコードを先行して渡すことができる（`CategoryLineageLinker`側の実装・契約は
+     変更不要、タスク2.3/2.4の既承認コードのまま）。これにより、新エリートカテゴリーをcreateする
+     時点では既にマスターズ側が正しい連動先へ更新済みとなり、`checkLineagePair`が見る保存後集合は
+     最初から正当なペアになる。
+  最終的な`__execApplyRankUp()`内の順序: (1) 旧エリートカテゴリーをcancel → (2) 新エリート
+  カテゴリーコード（未保存の値）を引数に`CategoryLineageLinker::propagateLinkedPromotion()`を呼び、
+  マスターズ側を先に解決・cancel・create → (3) 新エリートカテゴリーをcreate → (4) HoldPoint付与
+  （エリート側のみ、Requirement 4.5）。`__applyRankUp2CM()`（マスターズ側、タスク4.2）も同様の
+  順序（cancel旧マスターズ→propagateLinkedPromotion（エリート側解決・更新）→create新マスターズ→
+  HoldPoint）とする。
+  3. **問題3（マスターズ側呼び出し元の戻り値未捕捉、2026-07-21 タスク8の結合試験で確認・是正）**:
+     `__applyRankUp2CM()`の呼び出し元（`CM1+2+3`分岐、`rank==1`でCM1・`rank>1`でCM2を付与する
+     2箇所）が戻り値を一切受け取っていなかった（エリート側`__execApplyRankUp()`の呼び出し元
+     `__applyRankUp()`・行864は正しく戻り値を見て`RET_FAILED`時に`return false`する一方、
+     マスターズ側だけこの処理が欠落）。このため`__applyRankUp2CM()`内部で連動保存や新カテゴリー
+     createが失敗しても`__reCalcResults()`は成功したまま処理を継続し、トランザクションが
+     コミットされてしまい、旧カテゴリーがcancelされたのに新カテゴリーが付与されない、
+     または連動更新が中途半端な状態のまま確定するおそれがあった（Requirement 4.6違反）。
+     タスク4.2レビューで低優先度懸念として指摘・タスク8での検討を申し送り済みだったが、
+     タスク8の結合試験実施時に実際に到達可能な不具合と判明したため是正する。**是正**:
+     呼び出し元2箇所で戻り値を受け取り、エリート側と同じパターン（`RET_FAILED`/`RET_ERROR`なら
+     `return false`）を適用する。
+  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」（その1・その2・その4）参照
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（連動判定・実行, P0）
@@ -497,9 +569,11 @@ interface CategoryLineageLinker {
 **Contracts**: Service [x] / API [ ] / Event [ ] / Batch [ ] / State [ ]
 
 ##### Service Interface
-- 既存の `private function __execApplyRankUp(...)` / `__applyRankUp2CM(...)` の内部末尾に
-  `$this->CategoryLineageLinker->propagateLinkedPromotion($racerCode, $categoryTo, $result, $applyDate)`
-  を追加する（新規public APIの追加はしない。既存メソッドのシグネチャは変更しない）
+- 既存の `private function __execApplyRankUp(...)` / `__applyRankUp2CM(...)` の内部、新カテゴリー
+  行のcreateより**前**（cancel処理の直後）に
+  `CategoryLineageLinker::propagateLinkedPromotion($racerCode, $categoryTo, $result, $applyDate)`
+  を追加する（新規public APIの追加はしない。既存メソッドのシグネチャは変更しない。
+  `CategoryLineageLinker`は静的メソッドのみのクラスのためインスタンス化不要）
 
 **Implementation Notes**
 - Integration: `App::uses('CategoryLineageLinker', 'Cyclox/Util')` を追加し、
@@ -527,8 +601,20 @@ interface CategoryLineageLinker {
   全部」から「切替先カテゴリーとの対応表上のペアに**ならない**反対系統の有効カテゴリーのみ」に
   限定する。既に対応表上の正しいペアになっている反対系統カテゴリーは`keep_cats`として保持し
   cancelしない
-- `exec_change_em()`: 保存処理自体は変更しない（`CategoryRacer`モデルの一元バリデーションが
-  Requirement 6.1/6.4の拒否を担う）
+- `exec_change_em()`: 保存処理の判定ロジック自体は変更しない（`CategoryRacer`モデルの一元
+  バリデーションがRequirement 6.1/6.4の拒否を担う）。**ただし例外として**、下記「既存バグの是正」
+  のみ行う
+- **既存バグの是正（2026-07-20 実装フェーズでの確認・改訂）**: `exec_change_em()`は
+  `$this->request->data['sub']['end_ids_json']`の空判定を`!empty(...)`（JSON文字列自体の
+  PHP空判定）で行っているため、cancel対象が0件のとき送信される空配列のJSON文字列`"[]"`が
+  「空でない文字列」として真になり、`CategoryRacer->saveMany(array(), ...)`が実行されてしまう。
+  CakePHPの`Model::saveMany()`は空配列を渡されると`$this->data`にフォールバックし、必須フィールド
+  欠落のSQLエラーで保存全体がロールバックする既存バグ（タスク5と無関係に元から存在）。本specの
+  タスク5改修により「反対系統に解除対象カテゴリーが無い」状態（単独保有へのペア補完・既に正しい
+  ペアの維持）がRequirement 6の主要シナリオになるため、このバグを踏む頻度が大幅に増える。
+  対応: `json_decode`後の配列（`$cancel_crs`）が空でない場合にのみ`saveMany()`を呼ぶようガードを
+  追加する（保存判定ロジック自体は変更しない、空配列時の呼び出しをスキップするだけの是正）。
+  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」参照
 
 **Dependencies**
 - Outbound: CategoryLineageMap（対応表参照, P0）
@@ -555,7 +641,7 @@ interface CategoryLineageLinker {
 | Field | Detail |
 |-------|--------|
 | Intent | 選手統合処理が統合後に対応外ペア・重複を残さないことを保証する |
-| Requirements | 8.1, 8.2 |
+| Requirements | 8.1, 8.2, 9.2 |
 
 **Responsibilities & Constraints**
 - 既存の `CategoryRacer->saveAll($param)`（統合元の`category_racers`行の`racer_code`書換え）の
@@ -566,6 +652,13 @@ interface CategoryLineageLinker {
 - 統合元・統合先が同一カテゴリーを共に有効保有していた場合の重複は、`saveAll()`によって
   同一`racer_code`・同一`category_code`の行が複数存在する状態になるため、`validateActiveSet()`の
   重複検知（Requirement 3.2相当のロジックをUtil層で再利用）で検出する
+- **対応表対象外カテゴリーの重複防止（2026-07-20 実装フェーズでの確認・改訂）**: `validateActiveSet()`
+  はME1-4/CM1-3のみをDBから取得して検証するため、統合元・統合先が同一の対応表対象外カテゴリー
+  （例: WM）を共に有効保有していた場合の重複はこの呼び出しだけでは検出できない
+  （タスク2.5レビューで判明、Requirement 8.2・9.2の文言はカテゴリー種別を問わず重複拒否を
+  求めている）。`validateActiveSet($uniteTo)`と同じ呼び出し位置で、追加で
+  `CategoryLineageLinker::validateNoDuplicateAnyCategory($uniteTo)`（新設）も呼び出し、
+  いずれかが失敗した場合に`uniteRacer()`は`false`を返す
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（統合後集合の検証, P0）
@@ -664,6 +757,17 @@ interface CategoryLineageLinker {
   （`LOG_ERR`）のうえ`Constant::RET_FAILED`を返し、既存のトランザクション制御に委ねる
 - **統合後不整合**: `OrgUtilController::uniteRacer()`が`false`を返し、既存の
   ロールバック＋Flashメッセージパターンに委ねる
+- **操作者向けメッセージの具体化（2026-07-21 結合検証で確認・改訂）**: `/kiro-validate-impl`の
+  結合検証で、`change_em`（`exec_change_em()`）・選手統合（`do_unite_racer()`）の2画面において、
+  拒否理由（対応外ペア・重複・ME1特例等）を保持する`CategoryRacer::$validationErrors`／
+  `CategoryLineageValidationError::getMessage()`が、実際に画面へ表示されるFlashメッセージには
+  汎用文言（「新規カテゴリー所属の設定に失敗しました。」「選手データの統合に失敗しました」）
+  のみが渡っており、具体的な拒否理由が操作者に届いていないことが判明した（Requirement 3.3
+  未充足）。是正: `exec_change_em()`は保存失敗時に`$this->CategoryRacer->validationErrors`の
+  内容をエラーメッセージへ含める。`uniteRacer()`は既存の公開シグネチャ（`bool`を返す）を
+  変更せず、代わりに検証失敗時の具体的理由をコントローラのプロパティに保持し、
+  `do_unite_racer()`がFlashメッセージ組み立て時にこれを参照する。判定ロジック自体・保存処理の
+  分岐は変更しない（メッセージの経路のみの是正）。詳細はagreement-log.md参照。
 
 ### Monitoring
 - 既存の`$this->log(...)`（CakePHPログ機構）による記録パターンを踏襲する。新規の監視基盤は

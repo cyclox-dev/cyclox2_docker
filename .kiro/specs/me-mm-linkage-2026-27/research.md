@@ -176,9 +176,17 @@
   （例: 2行のうち1行だけ保存された瞬間の不整合） — 対策: これらの経路はトランザクション
   （`TransactionManager`）内で実行されており、最終コミット前に統合後の集合を明示的に検証する
   呼び出し側チェックを追加する（design.mdのComponents参照）。
-- `ResultParamCalcComponent`は2343行と大規模で、既存の暗黙的な呼び出し順序（cancel→create、
-  reasonごとの分岐）を壊すと他の既存昇格ロジック（少人数シーズン2勝等）に影響しうる — 対策: 連動処理は
-  既存関数の「末尾に追加するフック呼び出し」として実装し、既存ロジックの分岐・削除は行わない。
+- `ResultParamCalcComponent`は2343行と大規模で、既存の暗黙的な呼び出し順序（reasonごとの分岐）を
+  壊すと他の既存昇格ロジック（少人数シーズン2勝等）に影響しうる — 対策: 連動処理は既存関数の
+  「末尾に追加するフック呼び出し」として実装し、既存ロジックの分岐・削除は行わない。
+  **【2026-07-20訂正】** 当初「既存の呼び出し順序はcancel→create」と記載していたが、これは事実誤認
+  だった。実際には`__applyRankUp2CM()`（マスターズ側）のみcancel→createで、`__execApplyRankUp()`
+  （エリート側、4呼び出し箇所）はcreate→cancelだった。タスク3の独立レビューでこの食い違いが
+  発見され、`checkLineagePair`（同系統内複数保有の拒否）を有効化した状態で正当なエリート系統内昇格が
+  誤って拒否される問題につながることが判明。対策として、`__execApplyRankUp()`の4呼び出し箇所を
+  cancel→createに是正する（タスク4.1のスコープに含める。design.md「Component層 >
+  ResultParamCalcComponent（拡張）」参照）。詳細は
+  `.kiro/specs/me-mm-linkage-2026-27/agreement-log.md`「実装フェーズでの前提崩れ検出」参照。
 - 元ME1判定は`category_racers`の論理削除（`deleted`）を含む全履歴を参照する必要があり、
   `SoftDelete`ビヘイビアのデフォルトスコープ（`deleted=0`のみ取得）に注意が必要 — 対策:
   履歴判定クエリでは`SoftDelete`を明示的に無視する（既存コードの`Behaviors->unload('Utils.SoftDelete')`
