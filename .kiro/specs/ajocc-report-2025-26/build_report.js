@@ -190,7 +190,7 @@ function lcell(text, color, extra) {
     ]);
   });
   tbl(s, 0.5, 0.95, 12.3, rows, { fs: 11, colW: [3.4, 2.4, 6.5], rowH: 0.28 });
-  s.addText("※Web閲覧数は実データ入手後に更新予定（決定#1・#11）。",
+  s.addText("※月平均ビュー数はGA実データ（2026-07-19反映）。ページ別内訳（P.14/P.15）は一部項目が実データ入手後更新予定（決定#1・#11）。",
     { x: 0.5, y: 6.55, w: 9, h: 0.35, fontFace: BF, fontSize: 10.5, italic: true, color: MUTE });
 }
 
@@ -199,17 +199,19 @@ function lcell(text, color, extra) {
   const s = newSlide(D.p4.heading, 4);
   const yrHead = () => [thcell(""), thcell("2023-2024"), thcell("2024-2025"), thcell("2025-2026"), thcell("前年度比")];
   const rows = [];
-  const addBlock = (block) => {
+  const addBlock = (block, opts) => {
+    opts = opts || {};
     rows.push([hcell(block.block, 5)]);
     rows.push(yrHead());
     block.rows.forEach(r => {
       const isProv = r.provisional === true;
       const y2526 = isProv ? (r.y2526 != null ? nf(r.y2526) + (r.unit || "") + "（仮）" : "TBD") : sf(r.y2526, r.unit);
+      const y2526Fill = opts.highlightY2526 ? { color: SH_ORANGE } : undefined;
       rows.push([
         { text: r.label, options: { align: "left" } },
         { text: sf(r.y2324, r.unit), options: { align: "right" } },
         { text: sf(r.y2425, r.unit), options: { align: "right" } },
-        { text: y2526, options: { align: "right", bold: true } },
+        { text: y2526, options: { align: "right", bold: true, fill: y2526Fill } },
         { text: (r.yoy_delta != null ? df(r.yoy_delta, r.unit) : "") + (isProv ? "（暫定）" : ""),
           options: { align: "right", color: (r.yoy_delta != null && r.yoy_delta < 0) ? RED : INK } },
       ]);
@@ -218,10 +220,10 @@ function lcell(text, color, extra) {
   addBlock(D.p4.kaisai_jisseki);
   addBlock(D.p4.entry_kensu);
   addBlock(D.p4.senshu_su);
-  addBlock(D.p4.web_view);
-  tbl(s, 0.5, 0.92, 12.3, rows, { fs: 10.5, colW: [3.3, 2.25, 2.25, 2.25, 2.25], rowH: 0.2 });
-  s.addText("※Web閲覧数の25-26は仮値（決定#1）。実データ入手後更新（決定#11）。",
-    { x: 0.5, y: 6.9, w: 9, h: 0.3, fontFace: BF, fontSize: 10, italic: true, color: MUTE });
+  addBlock(D.p4.web_view, { highlightY2526: true });
+  tbl(s, 0.5, 0.8, 12.3, rows, { fs: 10.5, colW: [3.3, 2.25, 2.25, 2.25, 2.25], rowH: 0.185, margin: [2, 4, 2, 4] });
+  s.addText("※Web閲覧数の25-26はGA実データ（2026-07-19反映）。23-24/24-25はPDF転記。\n※網掛けの2025-2026列は集計方法が23-24/24-25と異なる可能性があり単純比較不可。",
+    { x: 0.5, y: 6.55, w: 12.3, h: 0.58, fontFace: BF, fontSize: 12, italic: true, color: RED, lineSpacingMultiple: 0.95, valign: "top" });
 }
 
 // ================= P.5 表A(AJOCC年度別×シリーズ) + 表B(全日本) =================
@@ -827,19 +829,24 @@ function lcell(text, color, extra) {
   const period = D.p14.period_label || "集計期間: 実データ入手後確定（TBD）";
   s.addText(period, { x: 0.3, y: 1.15, w: 9, h: 0.3, fontFace: BF, fontSize: 10.5, color: MUTE });
 
-  // 列見出しは出す。値はnull/placeholderならTBD、あれば実値を描画（両対応）
+  // 列見出しは出す。値はnull=TBD／"集計不能"="集計不能"／"-"="-"／数値は実値を描画（両対応）
   const head = [thcell("親ページ"), thcell("子ページ"), thcell("2023-2024"), thcell("2024-2025"), thcell("2025-2026"), thcell("前年度比")];
   const rows = [head];
-  const cell = (v, isPct) => {
-    if (v == null) return { text: "TBD", options: { align: "right", color: MUTE, fontSize: 9.5, italic: true } };
-    return { text: isPct ? nf(v) + "%" : nf(v), options: { align: "right", fontSize: 9.5 } };
+  const cell = (v, isPct, fillColor) => {
+    const fillOpt = fillColor ? { color: fillColor } : undefined;
+    if (v === "集計不能") return { text: "集計不能", options: { align: "right", color: MUTE, fontSize: 8.5, italic: true, fill: fillOpt } };
+    if (v === "-") return { text: "-", options: { align: "right", color: MUTE, fontSize: 9.5, fill: fillOpt } };
+    if (v == null) return { text: "TBD", options: { align: "right", color: MUTE, fontSize: 9.5, italic: true, fill: fillOpt } };
+    return { text: isPct ? nf(v) + "%" : nf(v), options: { align: "right", fontSize: 9.5, fill: fillOpt } };
   };
   D.p14.rows.forEach(r => {
     const isTotal = r.parent === "total";
+    const fillColor = isTotal ? GRAY : (r.highlight === true ? SH_ORANGE : undefined);
+    const fillOpt = fillColor ? { color: fillColor } : undefined;
     rows.push([
-      { text: isTotal ? "合計" : r.parent, options: { align: "left", fontSize: 9.5, bold: isTotal, fill: isTotal ? { color: GRAY } : undefined } },
-      { text: r.child || "", options: { align: "left", fontSize: 9.5, color: MUTE, fill: isTotal ? { color: GRAY } : undefined } },
-      cell(r.y2324), cell(r.y2425), cell(r.y2526), cell(r.yoy_pct, true),
+      { text: isTotal ? "合計" : r.parent, options: { align: "left", fontSize: 9.5, bold: isTotal, fill: fillOpt } },
+      { text: r.child || "", options: { align: "left", fontSize: 9.5, color: MUTE, fill: fillOpt } },
+      cell(r.y2324, false, fillColor), cell(r.y2425, false, fillColor), cell(r.y2526, false, fillColor), cell(r.yoy_pct, true, fillColor),
     ]);
   });
   // 23行 → 2列分割。colW合計を実幅に一致させ（親/子列を確保し年列を詰める）文字重なりを解消。
@@ -847,12 +854,17 @@ function lcell(text, color, extra) {
   const half = Math.ceil(body.length / 2);
   // 6列 colW 合計 = 6.2（親1.35/子1.25/年0.9×3/前年度比0.9）。左右とも同一。
   const p14cw = [1.35, 1.25, 0.9, 0.9, 0.9, 0.9];
-  tbl(s, 0.3, 1.55, 6.2, [head].concat(body.slice(0, half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
-  tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
+  tbl(s, 0.3, 1.55, 6.2, [head].concat(body.slice(0, half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle", margin: [2, 3, 2, 3] });
+  tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle", margin: [2, 3, 2, 3] });
 
   if (isPlaceholder) {
-    s.addText("※本ページはプレースホルダです（決定#8・#11）。ページ階層（親/子）・列見出しのみ保持し、値は実データ入手後に更新（TBD）。所見テキストも実データ入手後に執筆。",
-      { x: 0.3, y: 6.7, w: 12.7, h: 0.5, fontFace: BF, fontSize: 9.5, italic: true, color: RED, lineSpacingMultiple: 1.1 });
+    let lines = ["※23-24/24-25は24-25シーズンレポートPDFより転記、25-26はGA実データ（2026-07-19反映）。"];
+    if (D.p14.method_note) {
+      // 「※」区切りで項目ごとに改行（1文1行）
+      lines = lines.concat(D.p14.method_note.split("※").map(s => s.trim()).filter(Boolean).map(s => "※" + s));
+    }
+    s.addText(lines.join("\n"),
+      { x: 0.3, y: 5.55, w: 12.7, h: 1.5, fontFace: BF, fontSize: 13, italic: true, color: RED, lineSpacingMultiple: 1.05, valign: "top" });
   }
 }
 
@@ -879,11 +891,23 @@ function lcell(text, color, extra) {
         ]);
       }
     } else {
-      // 実データあり: そのまま描画
+      // 実データあり: そのまま描画。タイトルは1行に収まる幅へ省略（全角=2/半角=1の視認幅換算、折返しによる縦オーバーフロー防止。全文はdataset側に保持）
+      const vw = (ch) => (ch.codePointAt(0) > 0x2E80 ? 2 : 1);
+      const maxWidth = 46;
+      const clip = (str) => {
+        let w = 0, out = "";
+        for (const ch of str) {
+          w += vw(ch);
+          if (w > maxWidth) return out + "…";
+          out += ch;
+        }
+        return out;
+      };
       t.rows.forEach((row, idx) => {
+        const short = clip(row.title || row.page || "");
         trows.push([
           { text: String(row.rank != null ? row.rank : idx + 1), options: { align: "center", fontSize: 9.5 } },
-          { text: row.title || row.page || "", options: { align: "left", fontSize: 9.5 } },
+          { text: short, options: { align: "left", fontSize: 9.5 } },
           { text: nf(row.views != null ? row.views : row.value), options: { align: "right", fontSize: 9.5 } },
         ]);
       });
@@ -891,7 +915,7 @@ function lcell(text, color, extra) {
     tbl(s, pos.x, pos.y, 6.0, trows, { fs: 8.5, colW: [0.7, 4.0, 1.3], rowH: 0.135 });
   });
   if (D.p15.placeholder === true) {
-    s.addText("※本ページはプレースホルダです（決定#8・#11）。4表の表タイトル・列構成（順位/ページタイトル/ビュー）のみ保持し、行データは実データ入手後に更新（TBD）。",
+    s.addText("※概要Top5・ニュースTop5はGA実データを反映済み（2026-07-19）。ランキングTop10・リザルトTop10は対応するアクセス解析データが未取得のためTBD。",
       { x: 0.3, y: 6.95, w: 12.7, h: 0.3, fontFace: BF, fontSize: 9.5, italic: true, color: RED });
   }
 }

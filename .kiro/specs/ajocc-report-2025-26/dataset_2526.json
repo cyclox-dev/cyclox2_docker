@@ -119,10 +119,10 @@
    "rows": [
     {
      "label": "月平均 ビュー数",
-     "value": 100000,
-     "note": "期間 2025/9/1〜2026/3/31（仮値）",
-     "provisional": true,
-     "source": "provisional"
+     "value": 94525,
+     "note": "期間 2025/9/1〜2026/3/31（GA実データ、7ヶ月平均）",
+     "provisional": false,
+     "source": "ga"
     }
    ]
   }
@@ -332,15 +332,15 @@
      "unit": null,
      "y2324": 129751,
      "y2425": 144090,
-     "y2526": 100000,
-     "yoy_delta": -44090,
+     "y2526": 94525,
+     "yoy_delta": -49565,
      "col_source": {
       "y2324": "prior_year_fixed",
       "y2425": "prior_year_fixed",
-      "y2526": "provisional"
+      "y2526": "ga"
      },
-     "provisional": true,
-     "note": "25-26は仮値100,000(合意#1)。23-24/24-25はPDF転記。前年度比は仮値差引=-44,090(暫定)。"
+     "provisional": false,
+     "note": "25-26はGA実データ（2025/9〜2026/3の月平均、7ヶ月）。23-24/24-25はPDF転記（同期間ベース）。前年度比=94,525−144,090=-49,565。"
     }
    ]
   }
@@ -3312,7 +3312,7 @@
   "heading": "6. AJOCC Web 閲覧数",
   "subtitle": "ページビュー推移表",
   "placeholder": true,
-  "note": "決定#8によりプレースホルダ。元資料P.14の23行階層(親/子)の行ラベル・列見出し構造のみ保持。値(y2324/y2425/y2526/yoy_pct)は全てnull=実データ入手後更新(TBD)。集計期間ラベルも実データ入手後確定。",
+  "note": "24-25シーズンレポートPDF(P.14)より23-24/24-25の全24行を転記。25-26は今回のGA実データを反映。リザルト・ランキング・選手検索・選手データ・その他の10行は、新トラッキング設定で個別分離不能なため25-26値を「集計不能」と表示（下記注意書き参照）。",
   "columns": [
    "parent",
    "child",
@@ -3321,209 +3321,213 @@
    "y2526",
    "yoy_pct"
   ],
-  "period_label": null,
+  "period_label": "集計期間: 2025/9/1〜2026/3/31（23-24/24-25はPDF転記、25-26はGA実データ）",
   "rows": [
    {
     "parent": "トップページ",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 103409,
+    "y2425": 101740,
+    "y2526": 98401,
+    "yoy_pct": 97
    },
    {
     "parent": "リザルト",
     "child": "一覧",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 100265,
+    "y2425": 132963,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "リザルト",
     "child": "大会ごと",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 229728,
+    "y2425": 273228,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "リザルト",
     "child": "過去",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 29900,
+    "y2425": 44351,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "ランキング",
     "child": "一覧",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 987,
+    "y2425": 814,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "ランキング",
     "child": "今季",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 109112,
+    "y2425": 99049,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "ランキング",
     "child": "過去",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 10717,
+    "y2425": 15188,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "ランキング",
     "child": "説明",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 2744,
+    "y2425": 1943,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "カレンダー",
     "child": "一覧",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 79566,
+    "y2425": 79501,
+    "y2526": 67142,
+    "yoy_pct": 84
    },
    {
     "parent": "カレンダー",
     "child": "大会ごと",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 25079,
+    "y2425": 26774,
+    "y2526": 19063,
+    "yoy_pct": 71
    },
    {
     "parent": "カレンダー",
     "child": "過去",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 626,
+    "y2425": 764,
+    "y2526": 83611,
+    "yoy_pct": "-",
+    "highlight": true
    },
    {
     "parent": "選手検索",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 71432,
+    "y2425": 73137,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "選手データ",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 92999,
+    "y2425": 113506,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "概要",
     "child": "トップ",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 4568,
+    "y2425": 3939,
+    "y2526": 3418,
+    "yoy_pct": 87
    },
    {
     "parent": "概要",
     "child": "競技規則",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 13990,
+    "y2425": 11083,
+    "y2526": 9515,
+    "yoy_pct": 86
    },
    {
     "parent": "概要",
     "child": "シクロクロスとは?",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 10314,
+    "y2425": 11819,
+    "y2526": 14058,
+    "yoy_pct": 119
    },
    {
     "parent": "概要",
     "child": "その他",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 3932,
+    "y2425": 4069,
+    "y2526": 6965,
+    "yoy_pct": 171
    },
    {
     "parent": "ニュース",
     "child": "一覧",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 2038,
+    "y2425": 2197,
+    "y2526": 2561,
+    "yoy_pct": 117
    },
    {
     "parent": "ニュース",
     "child": "記事",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 10057,
+    "y2425": 6261,
+    "y2526": 7275,
+    "yoy_pct": 116
    },
    {
     "parent": "ニュース",
     "child": "過去",
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 2225,
+    "y2425": 2093,
+    "y2526": 64389,
+    "yoy_pct": "-",
+    "highlight": true
    },
    {
     "parent": "Partners",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 3118,
+    "y2425": 2827,
+    "y2526": 4632,
+    "yoy_pct": 164
    },
    {
     "parent": "このサイトについて",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 406,
+    "y2425": 356,
+    "y2526": 910,
+    "yoy_pct": 256
    },
    {
     "parent": "その他",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 1046,
+    "y2425": 1027,
+    "y2526": "集計不能",
+    "yoy_pct": "集計不能"
    },
    {
     "parent": "total",
     "child": null,
-    "y2324": null,
-    "y2425": null,
-    "y2526": null,
-    "yoy_pct": null
+    "y2324": 908258,
+    "y2425": 1008629,
+    "y2526": 661677,
+    "yoy_pct": 66
    }
   ],
   "comments": [],
-  "comments_note": "所見テキストは実データ入手後に執筆(TBD)。元資料P.14は5点の所見あり。"
+  "comments_note": "所見テキストは実データ入手後に執筆(TBD)。元資料P.14は5点の所見あり。",
+  "anomaly_note": null,
+  "method_note": "※リザルト・ランキング・選手検索・選手データ・その他の10行は、昨シーズンまでの集計方法が不明のため25-26シーズン分を算出不能（集計不能）。※網掛けの「カレンダー/過去」「ニュース/過去」は23-24/24-25と25-26で集計方法が異なり数値の桁が異なるため、前年度比は算出せず「-」表示とする。"
  },
  "p15": {
   "heading": "6. AJOCC Web 閲覧数",
   "subtitle": "ランキング4表",
-  "placeholder": true,
-  "note": "決定#8によりプレースホルダ。4表(ランキングTop10/リザルトTop10/概要Top5/ニュースTop5)の表タイトル・列構成(順位/ページタイトル/ビュー)のみ保持。行データはnull=実データ入手後更新(TBD)。",
+  "placeholder": false,
+  "note": "決定#8によりプレースホルダ。4表(ランキングTop10/リザルトTop10/概要Top5/ニュースTop5)の表タイトル・列構成(順位/ページタイトル/ビュー)のみ保持。行データはnull=実データ入手後更新(TBD)。 Phase4(Web実データ反映, 2026-07-19): 概要Top5/ニュースTop5にGA実データを反映。ランキングTop10/リザルトTop10は対応するアクセス解析データ未取得のためTBD維持。 Phase5(2026-07-19): ランキングTop10/リザルトTop10にGA実データを反映。4表すべて実データ化完了。",
   "tables": [
    {
     "title": "ランキング Top 10",
@@ -3532,8 +3536,59 @@
      "ページタイトル",
      "ビュー"
     ],
-    "rows": null,
-    "placeholder": true
+    "rows": [
+     {
+      "rank": 1,
+      "title": "2025-26AJOCC ランキング ME1",
+      "views": 28936
+     },
+     {
+      "rank": 2,
+      "title": "JCFシクロクロスランキング 男子エリート",
+      "views": 12249
+     },
+     {
+      "rank": 3,
+      "title": "2025-26 JCX 男子エリート",
+      "views": 7973
+     },
+     {
+      "rank": 4,
+      "title": "2025-26AJOCC ランキング MM1",
+      "views": 6757
+     },
+     {
+      "rank": 5,
+      "title": "2025-26AJOCC ランキング ME2",
+      "views": 5467
+     },
+     {
+      "rank": 6,
+      "title": "2025-26AJOCC ランキング MM2",
+      "views": 5008
+     },
+     {
+      "rank": 7,
+      "title": "2025-26AJOCC ランキング ME3",
+      "views": 4250
+     },
+     {
+      "rank": 8,
+      "title": "2025-26 関西シクロクロスシリーズランキング E1",
+      "views": 3646
+     },
+     {
+      "rank": 9,
+      "title": "2025-26AJOCC ランキング ME4",
+      "views": 3196
+     },
+     {
+      "rank": 10,
+      "title": "2025-26AJOCC ランキング ME1 2025-26東海シリーズ",
+      "views": 2728
+     }
+    ],
+    "placeholder": false
    },
    {
     "title": "リザルト Top 10",
@@ -3542,8 +3597,59 @@
      "ページタイトル",
      "ビュー"
     ],
-    "rows": null,
-    "placeholder": true
+    "rows": [
+     {
+      "rank": 1,
+      "title": "2025-10-19 関西シクロクロス 第1戦 桂川",
+      "views": 4310
+     },
+     {
+      "rank": 2,
+      "title": "2025-10-05 お米の田島屋170周年 presents 茨城シクロクロス 土浦ステージ",
+      "views": 4100
+     },
+     {
+      "rank": 3,
+      "title": "2025-11-23 関西シクロクロス 琵琶湖グランプリ(1日目)",
+      "views": 3310
+     },
+     {
+      "rank": 4,
+      "title": "2026-01-10 東海シクロクロス 第5戦 愛知県 愛知牧場 AIBOKU CROSS DAY1",
+      "views": 3277
+     },
+     {
+      "rank": 5,
+      "title": "2026-01-11 関西シクロクロス 第7戦 堺浜",
+      "views": 3257
+     },
+     {
+      "rank": 6,
+      "title": "2025-11-09 関西シクロクロス 第3戦 美山向山",
+      "views": 3237
+     },
+     {
+      "rank": 7,
+      "title": "2025-11-24 関西シクロクロス 第4戦 烏丸半島(2日目)",
+      "views": 3189
+     },
+     {
+      "rank": 8,
+      "title": "2025-11-30 関西シクロクロス 第5戦 マキノ",
+      "views": 3046
+     },
+     {
+      "rank": 9,
+      "title": "2026-01-18 関西シクロクロス 第8戦 希望が丘",
+      "views": 2998
+     },
+     {
+      "rank": 10,
+      "title": "2025-10-26 関西シクロクロス 第2戦 御坊",
+      "views": 2983
+     }
+    ],
+    "placeholder": false
    },
    {
     "title": "概要 Top 5",
@@ -3552,8 +3658,34 @@
      "ページタイトル",
      "ビュー"
     ],
-    "rows": null,
-    "placeholder": true
+    "rows": [
+     {
+      "rank": 1,
+      "title": "シクロクロスとは？",
+      "views": 14058
+     },
+     {
+      "rank": 2,
+      "title": "AJOCC競技規則",
+      "views": 9515
+     },
+     {
+      "rank": 3,
+      "title": "ABOUTのトップ",
+      "views": 3418
+     },
+     {
+      "rank": 4,
+      "title": "JCXシリーズとは",
+      "views": 3344
+     },
+     {
+      "rank": 5,
+      "title": "AJOCC（一般社団法人日本シクロクロス競技主催者協会）とは",
+      "views": 657
+     }
+    ],
+    "placeholder": false
    },
    {
     "title": "ニュース Top 5",
@@ -3562,8 +3694,34 @@
      "ページタイトル",
      "ビュー"
     ],
-    "rows": null,
-    "placeholder": true
+    "rows": [
+     {
+      "rank": 1,
+      "title": "あの日のキッズ・ユースライダーたちが、世界へ ー 2026 UCIシクロクロス世界選手権 日本代表選手団紹介",
+      "views": 2467
+     },
+     {
+      "rank": 2,
+      "title": "全日本シクロクロス開催地決定のお知らせ（2026-2027）",
+      "views": 1685
+     },
+     {
+      "rank": 3,
+      "title": "AJOCC規則改正のお知らせ（2025-2026以降）",
+      "views": 924
+     },
+     {
+      "rank": 4,
+      "title": "AJOCC公認大会日程を発表します（2025-2026）",
+      "views": 661
+     },
+     {
+      "rank": 5,
+      "title": "AJOCCカレンダーについてのお詫びとお知らせ",
+      "views": 622
+     }
+    ],
+    "placeholder": false
    }
   ]
  }
