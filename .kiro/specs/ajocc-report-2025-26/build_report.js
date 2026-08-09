@@ -199,17 +199,19 @@ function lcell(text, color, extra) {
   const s = newSlide(D.p4.heading, 4);
   const yrHead = () => [thcell(""), thcell("2023-2024"), thcell("2024-2025"), thcell("2025-2026"), thcell("前年度比")];
   const rows = [];
-  const addBlock = (block) => {
+  const addBlock = (block, opts) => {
+    opts = opts || {};
     rows.push([hcell(block.block, 5)]);
     rows.push(yrHead());
     block.rows.forEach(r => {
       const isProv = r.provisional === true;
       const y2526 = isProv ? (r.y2526 != null ? nf(r.y2526) + (r.unit || "") + "（仮）" : "TBD") : sf(r.y2526, r.unit);
+      const y2526Fill = opts.highlightY2526 ? { color: SH_ORANGE } : undefined;
       rows.push([
         { text: r.label, options: { align: "left" } },
         { text: sf(r.y2324, r.unit), options: { align: "right" } },
         { text: sf(r.y2425, r.unit), options: { align: "right" } },
-        { text: y2526, options: { align: "right", bold: true } },
+        { text: y2526, options: { align: "right", bold: true, fill: y2526Fill } },
         { text: (r.yoy_delta != null ? df(r.yoy_delta, r.unit) : "") + (isProv ? "（暫定）" : ""),
           options: { align: "right", color: (r.yoy_delta != null && r.yoy_delta < 0) ? RED : INK } },
       ]);
@@ -218,10 +220,10 @@ function lcell(text, color, extra) {
   addBlock(D.p4.kaisai_jisseki);
   addBlock(D.p4.entry_kensu);
   addBlock(D.p4.senshu_su);
-  addBlock(D.p4.web_view);
-  tbl(s, 0.5, 0.92, 12.3, rows, { fs: 10.5, colW: [3.3, 2.25, 2.25, 2.25, 2.25], rowH: 0.2 });
-  s.addText("※Web閲覧数の25-26はGA実データ（2026-07-19反映）。23-24/24-25はPDF転記。",
-    { x: 0.5, y: 6.9, w: 9, h: 0.3, fontFace: BF, fontSize: 10, italic: true, color: MUTE });
+  addBlock(D.p4.web_view, { highlightY2526: true });
+  tbl(s, 0.5, 0.8, 12.3, rows, { fs: 10.5, colW: [3.3, 2.25, 2.25, 2.25, 2.25], rowH: 0.185, margin: [2, 4, 2, 4] });
+  s.addText("※Web閲覧数の25-26はGA実データ（2026-07-19反映）。23-24/24-25はPDF転記。\n※網掛けの2025-2026列は集計方法が23-24/24-25と異なる可能性があり単純比較不可。",
+    { x: 0.5, y: 6.55, w: 12.3, h: 0.58, fontFace: BF, fontSize: 12, italic: true, color: RED, lineSpacingMultiple: 0.95, valign: "top" });
 }
 
 // ================= P.5 表A(AJOCC年度別×シリーズ) + 表B(全日本) =================
@@ -852,14 +854,17 @@ function lcell(text, color, extra) {
   const half = Math.ceil(body.length / 2);
   // 6列 colW 合計 = 6.2（親1.35/子1.25/年0.9×3/前年度比0.9）。左右とも同一。
   const p14cw = [1.35, 1.25, 0.9, 0.9, 0.9, 0.9];
-  tbl(s, 0.3, 1.55, 6.2, [head].concat(body.slice(0, half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
-  tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
+  tbl(s, 0.3, 1.55, 6.2, [head].concat(body.slice(0, half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle", margin: [2, 3, 2, 3] });
+  tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle", margin: [2, 3, 2, 3] });
 
   if (isPlaceholder) {
-    const lines = ["※23-24/24-25は24-25シーズンレポートPDFより転記、25-26はGA実データ（2026-07-19反映）。"];
-    if (D.p14.method_note) lines.push(D.p14.method_note);
+    let lines = ["※23-24/24-25は24-25シーズンレポートPDFより転記、25-26はGA実データ（2026-07-19反映）。"];
+    if (D.p14.method_note) {
+      // 「※」区切りで項目ごとに改行（1文1行）
+      lines = lines.concat(D.p14.method_note.split("※").map(s => s.trim()).filter(Boolean).map(s => "※" + s));
+    }
     s.addText(lines.join("\n"),
-      { x: 0.3, y: 6.05, w: 12.7, h: 1.0, fontFace: BF, fontSize: 8.5, italic: true, color: RED, lineSpacingMultiple: 1.05, valign: "top" });
+      { x: 0.3, y: 5.55, w: 12.7, h: 1.5, fontFace: BF, fontSize: 13, italic: true, color: RED, lineSpacingMultiple: 1.05, valign: "top" });
   }
 }
 
