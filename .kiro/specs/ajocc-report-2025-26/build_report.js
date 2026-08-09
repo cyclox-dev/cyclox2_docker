@@ -827,19 +827,24 @@ function lcell(text, color, extra) {
   const period = D.p14.period_label || "集計期間: 実データ入手後確定（TBD）";
   s.addText(period, { x: 0.3, y: 1.15, w: 9, h: 0.3, fontFace: BF, fontSize: 10.5, color: MUTE });
 
-  // 列見出しは出す。値はnull/placeholderならTBD、あれば実値を描画（両対応）
+  // 列見出しは出す。値はnull=TBD／"集計不能"="集計不能"／"-"="-"／数値は実値を描画（両対応）
   const head = [thcell("親ページ"), thcell("子ページ"), thcell("2023-2024"), thcell("2024-2025"), thcell("2025-2026"), thcell("前年度比")];
   const rows = [head];
-  const cell = (v, isPct) => {
-    if (v == null) return { text: "TBD", options: { align: "right", color: MUTE, fontSize: 9.5, italic: true } };
-    return { text: isPct ? nf(v) + "%" : nf(v), options: { align: "right", fontSize: 9.5 } };
+  const cell = (v, isPct, fillColor) => {
+    const fillOpt = fillColor ? { color: fillColor } : undefined;
+    if (v === "集計不能") return { text: "集計不能", options: { align: "right", color: MUTE, fontSize: 8.5, italic: true, fill: fillOpt } };
+    if (v === "-") return { text: "-", options: { align: "right", color: MUTE, fontSize: 9.5, fill: fillOpt } };
+    if (v == null) return { text: "TBD", options: { align: "right", color: MUTE, fontSize: 9.5, italic: true, fill: fillOpt } };
+    return { text: isPct ? nf(v) + "%" : nf(v), options: { align: "right", fontSize: 9.5, fill: fillOpt } };
   };
   D.p14.rows.forEach(r => {
     const isTotal = r.parent === "total";
+    const fillColor = isTotal ? GRAY : (r.highlight === true ? SH_ORANGE : undefined);
+    const fillOpt = fillColor ? { color: fillColor } : undefined;
     rows.push([
-      { text: isTotal ? "合計" : r.parent, options: { align: "left", fontSize: 9.5, bold: isTotal, fill: isTotal ? { color: GRAY } : undefined } },
-      { text: r.child || "", options: { align: "left", fontSize: 9.5, color: MUTE, fill: isTotal ? { color: GRAY } : undefined } },
-      cell(r.y2324), cell(r.y2425), cell(r.y2526), cell(r.yoy_pct, true),
+      { text: isTotal ? "合計" : r.parent, options: { align: "left", fontSize: 9.5, bold: isTotal, fill: fillOpt } },
+      { text: r.child || "", options: { align: "left", fontSize: 9.5, color: MUTE, fill: fillOpt } },
+      cell(r.y2324, false, fillColor), cell(r.y2425, false, fillColor), cell(r.y2526, false, fillColor), cell(r.yoy_pct, true, fillColor),
     ]);
   });
   // 23行 → 2列分割。colW合計を実幅に一致させ（親/子列を確保し年列を詰める）文字重なりを解消。
@@ -851,8 +856,8 @@ function lcell(text, color, extra) {
   tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
 
   if (isPlaceholder) {
-    const lines = ["※GA実データを14/24行に反映済み（2026-07-19）。リザルト・ランキング・選手検索・選手データ・その他の10行は新トラッキング設定で分離不能なためTBD（詳細はagreement-log.md参照）。所見は全項目確定後に執筆。"];
-    if (D.p14.anomaly_note) lines.push("※" + D.p14.anomaly_note);
+    const lines = ["※23-24/24-25は24-25シーズンレポートPDFより転記、25-26はGA実データ（2026-07-19反映）。"];
+    if (D.p14.method_note) lines.push(D.p14.method_note);
     s.addText(lines.join("\n"),
       { x: 0.3, y: 6.05, w: 12.7, h: 1.0, fontFace: BF, fontSize: 8.5, italic: true, color: RED, lineSpacingMultiple: 1.05, valign: "top" });
   }
@@ -881,11 +886,23 @@ function lcell(text, color, extra) {
         ]);
       }
     } else {
-      // 実データあり: そのまま描画
+      // 実データあり: そのまま描画。タイトルは1行に収まる幅へ省略（全角=2/半角=1の視認幅換算、折返しによる縦オーバーフロー防止。全文はdataset側に保持）
+      const vw = (ch) => (ch.codePointAt(0) > 0x2E80 ? 2 : 1);
+      const maxWidth = 46;
+      const clip = (str) => {
+        let w = 0, out = "";
+        for (const ch of str) {
+          w += vw(ch);
+          if (w > maxWidth) return out + "…";
+          out += ch;
+        }
+        return out;
+      };
       t.rows.forEach((row, idx) => {
+        const short = clip(row.title || row.page || "");
         trows.push([
           { text: String(row.rank != null ? row.rank : idx + 1), options: { align: "center", fontSize: 9.5 } },
-          { text: row.title || row.page || "", options: { align: "left", fontSize: 9.5 } },
+          { text: short, options: { align: "left", fontSize: 9.5 } },
           { text: nf(row.views != null ? row.views : row.value), options: { align: "right", fontSize: 9.5 } },
         ]);
       });
