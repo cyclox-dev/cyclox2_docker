@@ -190,7 +190,7 @@ function lcell(text, color, extra) {
     ]);
   });
   tbl(s, 0.5, 0.95, 12.3, rows, { fs: 11, colW: [3.4, 2.4, 6.5], rowH: 0.28 });
-  s.addText("※Web閲覧数は実データ入手後に更新予定（決定#1・#11）。",
+  s.addText("※月平均ビュー数はGA実データ（2026-07-19反映）。ページ別内訳（P.14/P.15）は一部項目が実データ入手後更新予定（決定#1・#11）。",
     { x: 0.5, y: 6.55, w: 9, h: 0.35, fontFace: BF, fontSize: 10.5, italic: true, color: MUTE });
 }
 
@@ -220,7 +220,7 @@ function lcell(text, color, extra) {
   addBlock(D.p4.senshu_su);
   addBlock(D.p4.web_view);
   tbl(s, 0.5, 0.92, 12.3, rows, { fs: 10.5, colW: [3.3, 2.25, 2.25, 2.25, 2.25], rowH: 0.2 });
-  s.addText("※Web閲覧数の25-26は仮値（決定#1）。実データ入手後更新（決定#11）。",
+  s.addText("※Web閲覧数の25-26はGA実データ（2026-07-19反映）。23-24/24-25はPDF転記。",
     { x: 0.5, y: 6.9, w: 9, h: 0.3, fontFace: BF, fontSize: 10, italic: true, color: MUTE });
 }
 
@@ -851,8 +851,10 @@ function lcell(text, color, extra) {
   tbl(s, 6.9, 1.55, 6.2, [head].concat(body.slice(half)), { fs: 9, colW: p14cw, rowH: 0.19, valign: "middle" });
 
   if (isPlaceholder) {
-    s.addText("※本ページはプレースホルダです（決定#8・#11）。ページ階層（親/子）・列見出しのみ保持し、値は実データ入手後に更新（TBD）。所見テキストも実データ入手後に執筆。",
-      { x: 0.3, y: 6.7, w: 12.7, h: 0.5, fontFace: BF, fontSize: 9.5, italic: true, color: RED, lineSpacingMultiple: 1.1 });
+    const lines = ["※GA実データを14/24行に反映済み（2026-07-19）。リザルト・ランキング・選手検索・選手データ・その他の10行は新トラッキング設定で分離不能なためTBD（詳細はagreement-log.md参照）。所見は全項目確定後に執筆。"];
+    if (D.p14.anomaly_note) lines.push("※" + D.p14.anomaly_note);
+    s.addText(lines.join("\n"),
+      { x: 0.3, y: 6.05, w: 12.7, h: 1.0, fontFace: BF, fontSize: 8.5, italic: true, color: RED, lineSpacingMultiple: 1.05, valign: "top" });
   }
 }
 
@@ -891,7 +893,7 @@ function lcell(text, color, extra) {
     tbl(s, pos.x, pos.y, 6.0, trows, { fs: 8.5, colW: [0.7, 4.0, 1.3], rowH: 0.135 });
   });
   if (D.p15.placeholder === true) {
-    s.addText("※本ページはプレースホルダです（決定#8・#11）。4表の表タイトル・列構成（順位/ページタイトル/ビュー）のみ保持し、行データは実データ入手後に更新（TBD）。",
+    s.addText("※概要Top5・ニュースTop5はGA実データを反映済み（2026-07-19）。ランキングTop10・リザルトTop10は対応するアクセス解析データが未取得のためTBD。",
       { x: 0.3, y: 6.95, w: 12.7, h: 0.3, fontFace: BF, fontSize: 9.5, italic: true, color: RED });
   }
 }
