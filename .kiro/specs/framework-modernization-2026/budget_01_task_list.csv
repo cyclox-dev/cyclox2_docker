@@ -1,0 +1,50 @@
+アプリ,フェーズ,タスクID,タスク,基準工数(人日),最大見積工数(人日,+40%),依存,優先度
+cyclox2web,W0 足場・テスト基盤,W0.1,PHP8.3コンテナ追加,1.5,2.1,,高
+cyclox2web,W0 足場・テスト基盤,W0.2,characterizationテスト基盤,3.0,4.2,,高
+cyclox2web,W0 足場・テスト基盤,W0.3,計算系スナップショット,3.0,4.2,,最高
+cyclox2web,W0 足場・テスト基盤,W0.4,インベントリ+権限マトリクス,2.5,3.5,,高
+cyclox2web,W1 Laravel足場,W1.1,Laravel12初期化,2.0,2.8,W0.1,高
+cyclox2web,W1 Laravel足場,W1.2,Eloquent接続/スキーマ所有,3.0,4.2,W1.1,高
+cyclox2web,W1 Laravel足場,W1.3,認証・認可土台,4.0,5.6,W1.1,高
+cyclox2web,W1 Laravel足場,W1.4,スケジューラ/キュー,1.5,2.1,W1.1,中
+cyclox2web,W2 共通基盤・横断,W2.1,Cyclox共通ライブラリ移植,4.0,5.6,W1.2,高
+cyclox2web,W2 共通基盤・横断,W2.2,SoftDelete/Search/ヘルパー,3.0,4.2,W1.2,中
+cyclox2web,W2 共通基盤・横断,W2.3,レイアウト/テンプレ土台,2.5,3.5,W1.1,中
+cyclox2web,W3 機能グループ移行,W3.1,基本UI,5.0,7.0,W2.3,高
+cyclox2web,W3 機能グループ移行,W3.2,選手管理,5.0,7.0,W2.1,高
+cyclox2web,W3 機能グループ移行,W3.3,大会・エントリ管理,5.0,7.0,W2.1,高
+cyclox2web,W3 機能グループ移行,W3.4,カテゴリ管理(昇格降格),5.0,7.0,W0.3,最高
+cyclox2web,W3 機能グループ移行,W3.5,ポイント管理,5.0,7.0,W0.3,最高
+cyclox2web,W3 機能グループ移行,W3.6,成績/記録,7.0,9.8,W0.3,最高
+cyclox2web,W3 機能グループ移行,W3.7,API,4.0,5.6,W2.1,高
+cyclox2web,W3 機能グループ移行,W3.8,バッチ/cron,4.0,5.6,W1.4,高
+cyclox2web,W3 機能グループ移行,W3.9,運用ユーティリティ/CSV,3.0,4.2,W2.1,中
+cyclox2web,W4 共有PKG抽出(S3b),W4.1,共有パッケージ雛形,2.0,2.8,W3.6,高
+cyclox2web,W4 共有PKG抽出(S3b),W4.2,共有ロジック抽出,4.0,5.6,W4.1,高
+cyclox2web,W4 共有PKG抽出(S3b),W4.3,両consumer CI,2.0,2.8,W4.2,高
+cyclox2web,W5 結合/性能/切替,W5.1,結合テスト,3.0,4.2,W3.9,高
+cyclox2web,W5 結合/性能/切替,W5.2,性能・計算系突合,3.0,4.2,W5.1,最高
+cyclox2web,W5 結合/性能/切替,W5.3,セキュリティテスト,2.0,2.8,W5.1,高
+cyclox2web,W5 結合/性能/切替,W5.4,本番切替,3.0,4.2,W5.2,高
+cyclox2web,,,合計,92.0,128.8,,
+cyclox2res-sys,R0 足場・テスト基盤,R0.1,PHP8.3コンテナ追加,1.0,1.4,,高
+cyclox2res-sys,R0 足場・テスト基盤,R0.2,HTTPゴールデン取得,2.0,2.8,,高
+cyclox2res-sys,R0 足場・テスト基盤,R0.3,現状インベントリ,1.0,1.4,,中
+cyclox2res-sys,R1 Laravel足場,R1.1,Laravel12初期化,1.0,1.4,R0.1,高
+cyclox2res-sys,R1 Laravel足場,R1.2,read-only DB接続,1.0,1.4,R1.1,高
+cyclox2res-sys,R1 Laravel足場,R1.3,ベースレイアウト/ビルド,1.5,2.1,R1.1,中
+cyclox2res-sys,R2 機能スライス移行,R2.1,テンプレート+Pages,1.5,2.1,R1.3,高
+cyclox2res-sys,R2 機能スライス移行,R2.2,Racer(選手成績),2.5,3.5,R2.1,高
+cyclox2res-sys,R2 機能スライス移行,R2.3,Race(レース結果),3.5,4.9,R2.1,最高
+cyclox2res-sys,R2 機能スライス移行,R2.4,Meet(大会),1.5,2.1,R2.1,中
+cyclox2res-sys,R2 機能スライス移行,R2.5,Point_series,2.0,2.8,R2.1,中
+cyclox2res-sys,R2 機能スライス移行,R2.6,Ajocc_ranking(集計),3.0,4.2,R2.1,高
+cyclox2res-sys,R3 結合・表示・性能,R3.1,ゴールデン突合・画面回帰,2.0,2.8,R2.6,高
+cyclox2res-sys,R3 結合・表示・性能,R3.2,性能・read-only整合確認,1.0,1.4,R3.1,中
+cyclox2res-sys,R4 独立デプロイ,R4.1,8081独立デプロイ,2.0,2.8,R3.2,高
+cyclox2res-sys,R5 共有PKG収束(S3b),R5.1,Composer VCS参照追加,0.5,0.7,W4.2,高
+cyclox2res-sys,R5 共有PKG収束(S3b),R5.2,共有パッケージ参照へ置換,2.0,2.8,R5.1,高
+cyclox2res-sys,R5 共有PKG収束(S3b),R5.3,収束後の回帰テスト,1.0,1.4,R5.2,高
+cyclox2res-sys,,,合計(行内訳),30.0,42.0,,
+cyclox2res-sys,,,合計(採用値・tasks-cyclox2res-sys.csv/gantt.md準拠),30.5,42.7,,
+合計,,,総合計(採用値),122.5,171.5,,
