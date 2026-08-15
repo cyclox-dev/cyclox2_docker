@@ -21,3 +21,6 @@ outputs/
 
 # macOS Finder のメタデータ
 .DS_Store
+
+# npm依存（再インストール可能なため履歴に残さない）
+node_modules/
