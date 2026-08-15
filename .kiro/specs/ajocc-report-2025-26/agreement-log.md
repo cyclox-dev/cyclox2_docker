@@ -285,6 +285,23 @@ R2がW2のSQLをコピーせず別クエリで主要項目を独立再計算し�
 （`dataset_2526.json`+`build_report.js`+`rebuild.sh`）があれば再開可能な状態。次回作業時の
 入り口は`ga4-automation-handover.md`（自動化する場合）または本ログの「残課題」節（手動継続の場合）。
 
+## Phase 9（外部ディレクトリ依存の解消・完全自己完結化）記録 — 2026-08-15
+
+ユーザーから「ワークツリーの存在・不存在に依存せず、新たなセッションから再開可能になっているか」と
+再確認され、Phase 8よりさらに検証を進めた結果、worktreeとは別の依存問題（`build_report.js`が
+開発者個人の一時ディレクトリ`tmp/ppt_build/`を絶対パスでrequireしていた）を追加で発見・解消した。
+
+- `.kiro/specs/ajocc-report-2025-26/package.json`を新設し`pptxgenjs`をこのディレクトリ内にnpm install
+  する自己完結型構成に変更。`build_report.js`は標準の`require("pptxgenjs")`に変更。
+- `node_modules/`を`.gitignore`に追加。`rebuild.sh`に`mkdir -p "$OUT"`を追加（`outputs/`未作成環境でも動作するよう修正）。
+- `design.md`に「セットアップ・実行環境」節を新設し、前提ソフトウェア（Node.js/LibreOffice/Poppler）と
+  初回セットアップ手順（`npm install && bash rebuild.sh`）を明記。
+- `tmp/ppt_build/`を一切参照しない状態での`npm install && bash rebuild.sh`実行で15ページ再現を確認。
+- 詳細は`test-results.md`「Phase 9（外部ディレクトリ依存の解消・完全自己完結化）実行結果」参照。
+
+→ worktreeの存在・不存在、開発者個人の一時ディレクトリの存在・不存在のいずれにも依存せず、
+新規セッション・新規環境から`npm install && bash rebuild.sh`のみで再現可能な状態を確認。
+
 ## 変更履歴
 
 | 日付 | 変更内容 | 変更者 |
@@ -300,3 +317,4 @@ R2がW2のSQLをコピーせず別クエリで主要項目を独立再計算し�
 | 2026-07-19 | Phase 6完了。決定#17（P.4網掛け・P.14注意書き分割・両ページ文字拡大）を反映 | Claude Code |
 | 2026-08-09 | Phase 7完了。GA4自動化向け引き継ぎ資料を作成しIssue #37を更新 | Claude Code |
 | 2026-08-09 | Phase 8完了。ビルドスクリプトのworktree依存パスを解消し作業再開性を確保 | Claude Code |
+| 2026-08-15 | Phase 9完了。個人一時ディレクトリ依存を解消し完全自己完結化（npm install化） | Claude Code |

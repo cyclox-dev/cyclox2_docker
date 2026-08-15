@@ -15,7 +15,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const pptxgen = require("/Users/kyamady/workspace/cyclox2_docker/tmp/ppt_build/node_modules/pptxgenjs");
+// pptxgenjsはこのディレクトリ内でnpm installする（初回セットアップ: `npm install pptxgenjs`）。
+// node_modules/はgitignore対象（再インストール可能なため履歴に残さない）。
+const pptxgen = require("pptxgenjs");
 
 // ---- 入出力パス ----
 // SPEC_DIRはこのスクリプト自身の場所から解決する（特定のgit worktree/checkoutパスに依存しない）。

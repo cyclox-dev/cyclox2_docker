@@ -83,3 +83,27 @@ ORDER BY entry_count DESC;
 ## 出力先
 - 抽出CSV: `.kiro/specs/ajocc-report-2025-26/outputs/`（git管理外）
 - レポート本体: `.kiro/specs/ajocc-report-2025-26/outputs/25-26_AJOCC_report.pptx`（git管理外、個人情報を含み得るため）
+
+## セットアップ・実行環境（技術要件・制約チェック）
+
+`bash rebuild.sh`（本ディレクトリ内で実行）でPPTX/PDF/QA画像一式を再生成できる。
+どのgit worktree・checkoutからでも動作する（Phase 8でworktree依存パスを解消済み）。
+
+### 前提ソフトウェア（マシン側にインストール要、リポジトリ管理外）
+- Node.js（動作確認済み: v26系。`npm install`可能なこと）
+- Homebrew版 LibreOffice（`soffice`コマンド。PPTX→PDF変換用）
+- Homebrew版 Poppler（`pdftoppm`コマンド。PDF→PNG QA画像生成用）
+
+### 初回セットアップ手順
+```bash
+cd .kiro/specs/ajocc-report-2025-26
+npm install          # package.json（pptxgenjs）を読み node_modules/ を生成。node_modules/はgitignore対象
+bash rebuild.sh       # PPTX/PDF/QA画像を生成
+```
+
+### 依存関係の変遷（履歴）
+- 初期実装時（Phase 3）は開発者個人の`tmp/ppt_build/node_modules/pptxgenjs`（リポジトリ非管理の
+  別タスク由来のディレクトリ）を絶対パスで直接requireしていた。
+- Phase 9（2026-08-15）で`package.json`を追加し、本ディレクトリ内に`npm install pptxgenjs`する
+  自己完結型の構成に変更。`build_report.js`は標準の`require("pptxgenjs")`に変更し、
+  外部の一時ディレクトリへの依存を解消した。

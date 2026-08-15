@@ -318,5 +318,47 @@ Phase 4の残課題を追加で解消した。
   ため変更不要（環境前提としてこのまま維持）。
 
 ### 判定
-- **完了**。本タスクの成果物（`build_report.js`/`rebuild.sh`）は特定worktreeへの依存を解消し、
-  将来レポート作成を再開する際にどのcheckout/worktreeからでも`bash rebuild.sh`のみで再現可能。
+- Phase 8完了時点。worktree依存は解消。ただし後続のPhase 9で、worktreeとは別の依存問題が
+  追加で見つかった（下記参照）。
+
+---
+
+## Phase 9（外部ディレクトリ依存の解消・完全自己完結化）実行結果 — 2026-08-15
+
+ユーザーから「ワークツリーの存在・不存在に依存せず、新たなセッションから再開可能になっているか」との
+再確認を受け、Phase 8よりさらに踏み込んで検証したところ、`build_report.js`が
+`require("/Users/kyamady/workspace/cyclox2_docker/tmp/ppt_build/node_modules/pptxgenjs")`という、
+**worktreeとは無関係の別の絶対パス依存**を持っていることを発見した。
+
+### 問題
+- `tmp/ppt_build/`は、本タスクとは無関係な過去の別タスクが作成した個人用の一時ディレクトリで、
+  `.gitignore`の`tmp/`ルールによりgit管理外。ドキュメントにも記載がなかった。
+- worktreeパス問題（Phase 8）は解消済みだったが、この依存は「特定のworktreeか否か」ではなく
+  「開発者個人のマシン上に、無関係な過去タスクの残骸ディレクトリが存在するか否か」に依存しており、
+  そのディレクトリが将来クリーンアップされた場合、あるいは別マシンでこのリポジトリをcloneした場合に
+  `require`が失敗し、`bash rebuild.sh`が動作しなくなる状態だった。
+
+### 対応
+- `.kiro/specs/ajocc-report-2025-26/`配下に`package.json`（`pptxgenjs`依存のみ）を新規追加し、
+  `npm install`でこのディレクトリ内に`node_modules/`を生成する自己完結型構成に変更。
+- `build_report.js`のrequireを標準の`require("pptxgenjs")`に変更（Node標準のモジュール解決で
+  自ディレクトリ配下の`node_modules/`から解決される。上位ディレクトリの`tmp/`は参照されない）。
+- `node_modules/`を`.gitignore`に追加（既存の`outputs/`と同様、再生成可能なため非管理）。
+- `rebuild.sh`に`mkdir -p "$OUT"`を追加（`outputs/`ディレクトリが存在しない新規環境でも動作するよう修正。
+  これも同じ検証過程で発覚した副次的な不具合）。
+- `design.md`に「セットアップ・実行環境」節を新設し、前提ソフトウェア（Node.js/LibreOffice/Poppler、
+  いずれもリポジトリ管理外でマシン側にインストールが必要）と初回セットアップ手順を明記。
+
+### 検証
+- `tmp/ppt_build/`配下を一切参照しない状態で、`npm install`→`bash rebuild.sh`を実行し、15ページの
+  PPTX/PDF/QA画像が正常に生成されることを確認（`outputs/`を事前に削除した状態からの実行でも成功）。
+- `grep -rn "/Users/kyamady" build_report.js rebuild.sh`でリポジトリ外の個人パスへの直接依存が
+  ゼロになったことを確認。
+- LibreOffice（`soffice`）・Poppler（`pdftoppm`）はHomebrewでインストールされたシステムコマンドで
+  あり、リポジトリで管理・自動化する対象外（Node.js自体と同様の前提ソフトウェアとして扱う）。
+  存在確認のみ実施し、`design.md`に前提として明記した。
+
+### 判定
+- **完了**。本タスクの成果物は、worktreeの存在・不存在、および開発者個人の一時ディレクトリの
+  存在・不存在のいずれにも依存せず、`npm install && bash rebuild.sh`のみで新規セッション・新規環境
+  からでも再現可能な状態になった。
