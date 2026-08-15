@@ -375,6 +375,55 @@ cyclox2web PR #13（https://github.com/cyclox-dev/cyclox2web/pull/13）に対し
 該当 approvals を false に戻して再承認」に基づく。PR #13 はマージ保留とし、design 改訂の承認後に
 実装を修正する。
 
+## design.md 第2版の改訂内容（2026-08-15・承認待ち）
+
+requirements 第2版の承認を受けて design.md を改訂した。**設計上の核心は、不整合の検知を
+`CategoryRacer::$validate`（保存前・保存を失敗させる）から `CategoryRacer::afterSave()`
+（保存後・保存に影響しない）へ移すこと**。
+
+### なぜ `afterSave()` か（設計判断）
+
+| 観点 | 理由 |
+|---|---|
+| 安全性 | CakePHP 2.x では `afterSave()` の戻り値は無視され、例外を投げない限り保存に影響しない。「検知が保存を壊さない」ことが**構造的に保証**され、実装者が誤って保存を止める余地が設計段階で消える（Requirement 3.3, 10.1） |
+| 網羅性 | `save()` / `saveAll()` / `saveMany()` のいずれからも1行ごとに必ず呼ばれるため、第1版の `$validate` と同じく**全保存経路に自動適用**される（Requirement 3.4）。経路ごとに検査を書く方式は呼び出し漏れが起きうる |
+| 単純化 | 保存**後**に走るため、DBの現在の実状態をそのまま読めばよい。第1版の「自身のIDを除外して現在集合を取得し保存予定値を加えてプロスペクティブ集合を構築する」手続きが不要になる。第1版の Risk「呼び出し元ごとに集合の算出方法が異なると判定がずれる」も構造的に解消 |
+
+### 主な改訂点
+
+| # | 箇所 | 改訂内容 |
+|---|---|---|
+| 1 | Model層 `CategoryRacer` | `$validate` への2ルール追加を撤回し `afterSave()` へ移行。警告蓄積用に `getLineageWarnings()` / `resetLineageWarnings()` を追加（**既存の `getUpdatedIdList()` / `resetUpdatedIdList()` と同一パターン**。`ApiController::upload_category_racers()` が実際に使用しており新機構の導入にあたらない）。大量一括処理向けに `$skipsLineageInspection` フラグを設置 |
+| 2 | Controller層 `ApiController`（新規） | `upload_category_racers()` / `execAddResult()` の成功応答に `warnings` フィールドを追加。既存の成功／失敗判定・HTTPステータス・既存フィールドは一切変更しない。`saveMany()` のオプションも変更しない（`afterSave` 方式によりバリデーション由来の失敗自体が起きなくなるため `atomic=true` のままで Requirement 10.1/10.2 を満たす） |
+| 3 | Component層 `ResultParamCalcComponent` | 連動失敗時に `Constant::RET_FAILED` を返さずログ＋警告に留め、昇格処理を継続（Requirement 10.3, 10.4）。**第1版の「問題3（`__applyRankUp2CM()` 呼び出し元の戻り値未捕捉）の是正」を撤回**し従来どおり戻り値を捕捉しない（当該是正は「1名の失敗が後続全選手の昇格を止める」挙動そのもので Requirement 10.3 に正面から違反するため） |
+| 4 | Controller層 `change_em` / `uniteRacer` | 保存成功後に警告を Flash へ併記。`uniteRacer()` は検知してもロールバックせず統合を完了させる |
+| 5 | System Flows | 「バリデーション判定フロー」を「検知フロー」へ全面差し替え。連動フローに「連動失敗でも継続」の注記を追加 |
+| 6 | Error Handling | **エラー（処理を止める）と警告（処理は続くが人に知らせる）を明確に分離**。警告4種別（`duplicate_category` / `invalid_pair` / `multiple_in_lineage` / `me1_exception`）とメッセージ例、3経路の伝達方式を定義 |
+| 7 | Testing Strategy | 「拒否されること」を主張するテストを「成功し、かつ警告が蓄積されること」へ書き換える方針を明記。`ApiControllerTest`（不整合を含む一括アップロードが HTTP 200 かつ全行保存されること）を新設 |
+
+### 維持される決定（第1版から変更なし）
+
+- 保存順序（cancel→create）と連動フックの呼び出し位置（create の前）。第2版では保存拒否が
+  無くなるため必須ではなくなるが、論理的に自然で既に実装・テスト済み、最終DB状態も同一のため、
+  変更しない方がリスクが低いと判断
+- ME1特例ゲートの LANKUP スキップ判定（2026-07-20 改訂）。正当な昇格に毎回警告を出すのは
+  運用ノイズであり、警告方式では特に有害なため維持
+- `CategoryLineageMap` / `CategoryLineageLinker` の公開API・判定ロジック・戻り値契約は**無変更**。
+  変わるのは呼び出し元が判定結果をどう使うか（拒否→警告）だけ
+
+### 実装資産への影響見積り
+
+| 資産 | 影響 |
+|---|---|
+| `CategoryLineageMap` / `CategoryLineageLinker`（782行） | **無変更で流用可** |
+| `CategoryLineageMapTest` / `CategoryLineageLinkerTest`（725行） | **無変更で流用可** |
+| `CatLimitShell` / `EntryCatLimit::$BOTH` / `CatLimitShellTest` | **無変更で流用可** |
+| `CategoryRacer.php` | `$validate` 登録を撤去し判定を `afterSave()` へ移設。判定の中身は流用可 |
+| `ResultParamCalcComponent.php` | 連動失敗時の `RET_FAILED` 撤回、`__applyRankUp2CM()` 戻り値チェック撤回 |
+| `CategoryRacersController.php` / `OrgUtilController.php` | メッセージ経路を「拒否理由」→「成功＋警告」へ |
+| `ApiController.php` | `warnings` 付与を新規追加 |
+| `CategoryRacerTest` / `CategoryRacersControllerTest` / `OrgUtilControllerTest` / `MeMmLinkageIntegrationTest` | 「拒否される」アサーションを「成功し警告が出る」へ書き換え |
+
 ## 変更履歴
 
 | 日付 | 変更内容 | 変更者 |
@@ -384,3 +433,4 @@ cyclox2web PR #13（https://github.com/cyclox-dev/cyclox2web/pull/13）に対し
 | 2026-07-19 | 実装フェーズ着手。タスク1.1実施に伴うテスト環境整備・phpunit.pharバグ修正・フィクスチャ追加スコープの補足を記録（上表参照） | Claude |
 | 2026-08-15 | 有識者レビュー（PR #13）を受け Requirement 3 の根幹方針を「エラーで拒否」→「検知して警告・保存は完了」へ転換。requirements.md を第2版へ改訂（Req 10 新設）、spec.json の全 approvals を false に差し戻し、roadmap.md の合意事項を更新 | Claude |
 | 2026-08-15 | 改訂版 requirements.md（第2版）を人間が承認。spec.json の `approvals.requirements.approved` を true・`revision: 2` に更新。design/tasks は false のまま（第2版への追随改訂が必要） | Claude |
+| 2026-08-15 | design.md を第2版へ改訂（`$validate` による拒否 → `afterSave()` による検知・警告蓄積。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動を撤回）。**design 承認待ち** | Claude |
