@@ -17,8 +17,9 @@ const fs = require("fs");
 const path = require("path");
 const pptxgen = require("/Users/kyamady/workspace/cyclox2_docker/tmp/ppt_build/node_modules/pptxgenjs");
 
-// ---- 入出力パス（絶対パス） ----
-const SPEC_DIR = "/Users/kyamady/workspace/cyclox2_docker/.claude/worktrees/interesting-bouman-d5368b/.kiro/specs/ajocc-report-2025-26";
+// ---- 入出力パス ----
+// SPEC_DIRはこのスクリプト自身の場所から解決する（特定のgit worktree/checkoutパスに依存しない）。
+const SPEC_DIR = __dirname;
 const DATA_PATH = path.join(SPEC_DIR, "dataset_2526.json");
 const OUT_PATH = path.join(SPEC_DIR, "outputs", "25-26_AJOCC_report.pptx");
 

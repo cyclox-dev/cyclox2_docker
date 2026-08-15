@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-DIR="/Users/kyamady/workspace/cyclox2_docker/.claude/worktrees/interesting-bouman-d5368b/.kiro/specs/ajocc-report-2025-26"
+# DIRはこのスクリプト自身の場所から解決する（特定のgit worktree/checkoutパスに依存しない）。
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="$DIR/outputs"
 cd "$DIR"
 node build_report.js

@@ -293,3 +293,30 @@ Phase 4の残課題を追加で解消した。
 
 ### 判定
 - **完了**。P.3/P.4/P.14/P.15すべてのWeb閲覧数表示・注意書きが確定。
+
+---
+
+## Phase 8（パスのポータブル化）実行結果 — 2026-08-09
+
+セッション終了時の作業再開性を確認する過程で、`build_report.js`の`SPEC_DIR`と`rebuild.sh`の`DIR`が
+本タスク専用に割り当てられていた特定のgit worktree（`.claude/worktrees/interesting-bouman-d5368b`）
+の絶対パスをハードコードしていることを発見した。このワークツリーは既に別セッションが別タスク
+（`claude/cyclox2-2026-27-season-51ac4d`）用に転用しており、将来的に削除・再利用されると
+`rebuild.sh`が動作しなくなる状態だった。
+
+### 対応
+- `build_report.js`: `SPEC_DIR`を固定絶対パスから`__dirname`（スクリプト自身の場所）に変更。
+- `rebuild.sh`: `DIR`を固定絶対パスから`$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)`に変更。
+- 上記2点以外のロジック・数値・レイアウトは無変更。
+
+### 検証
+- mainリポジトリの通常チェックアウト（`/Users/kyamady/workspace/cyclox2_docker/.kiro/specs/ajocc-report-2025-26/`、
+  当該worktreeとは別の場所）から`bash rebuild.sh`を実行し、15ページのPPTX/PDF/QA画像が正常に生成されることを確認。
+  どのworktree・checkoutパスからでも再現できることを実証。
+- `pptxgenjs`本体（`tmp/ppt_build/node_modules/pptxgenjs`）はリポジトリ非管理の共有ローカル環境
+  （mainリポジトリルート直下の`tmp/`）に依存しており、この参照は元々worktree非依存の絶対パスだった
+  ため変更不要（環境前提としてこのまま維持）。
+
+### 判定
+- **完了**。本タスクの成果物（`build_report.js`/`rebuild.sh`）は特定worktreeへの依存を解消し、
+  将来レポート作成を再開する際にどのcheckout/worktreeからでも`bash rebuild.sh`のみで再現可能。
