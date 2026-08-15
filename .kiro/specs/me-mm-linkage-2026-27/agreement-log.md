@@ -293,6 +293,182 @@ Requirement 3 AC3（「拒否理由が分かるメッセージを提示する」
 `feat/me-mm-linkage-2026-27`ブランチへコミット・push、`release/2026-27-season-rules`
 統合ブランチへPR発行済み: https://github.com/cyclox-dev/cyclox2web/pull/13
 
+## 有識者レビューによる方針転換と requirements 差し戻し（2026-08-15）
+
+### 経緯
+
+cyclox2web PR #13（https://github.com/cyclox-dev/cyclox2web/pull/13）に対し、有識者レビューを実施。
+**本 spec の根幹方針である「対応外ペア・重複付与をバリデーションエラーで拒否する」が、cyclox2 の
+運用思想および外部クライアント cyclox2app との整合上、成立しないとの指摘を受けた。**
+
+### レビュー指摘の要旨
+
+1. 本 spec は「A: カテゴリー連携（Elite⇔Masters）」と「B: カテゴリーの厳密な管理（重複許すまじ）」を
+   同時に達成しようとしており、影響範囲が過大になっている
+2. cyclox2 がこれまでカテゴリー付与を厳密に管理してこなかったのは**意図的**であり、
+   「厳密な運用よりもシーズン運営がスムーズに進んでいくこと」を優先する設計思想による
+3. 例: 誤所属の C3 と正しい C2 を持つ選手が C2→C1 昇格する際、「なぜ C3 を持っているのか」と
+   厳密判定してリザルトを弾くより、C3 は放置して C2 の cancel と C1 付与がスムーズに通る方が
+   運用上健全（開発チームへの問い合わせも発生しない）
+4. `CategoryRacer` のバリデーション（根っこの層）を変更したため影響範囲が大きい。
+   cyclox2app という外部要素があるため、うまく動くか不安
+5. 最大の懸念は、シーズン中の毎週明けに「cyclox2app からリザルト／選手データがアップできない」と
+   いう問い合わせが多数届くこと。多少間違っていてもレース2日後にリザルトが上がる方が健全
+6. 残り期間と既存データ整理の負担を考えると、B を完全運用するのは困難
+
+### 指摘の技術的裏取り（2026-08-15・実コードで確認）
+
+| 経路 | 確認結果 |
+|---|---|
+| `ApiController::upload_category_racers()` (ApiController.php:1225-1295) | `CategoryRacer::saveMany($saveCatRacers)` をオプション未指定で呼ぶ。CakePHP 2.x の既定は `atomic=true` / `validate=true` のため、**バッチ内1行のバリデーション失敗で全行が保存されず HTTP 400** を返す。返却メッセージは固定文字列 `'Saving category-racers failed.'` で、原因となった選手・カテゴリーを呼び出し元に一切返さない。指摘5がそのまま発生する構造 |
+| `ApiController::execAddResult()` (ApiController.php:619-631) | `reCalcResults()` の失敗を `// not return` としてログのみに留め `array('ok')` を返すため、**リザルト取込自体は API レベルでは失敗しない** |
+| `ResultParamCalcComponent` の昇格ループ | 昇格保存失敗時に `return false` するため、`reCalcResults` が中断し**同一レースカテゴリーの以降の選手の昇格が無言で不適用**になる |
+| 同上・`__applyRankUp2CM()` | PR #13 で戻り値チェックを新規追加（従来は戻り値を破棄）。**従来は無害だったマスターズ側昇格の失敗が、後続選手の昇格全停止のトリガーになる退行**が入っていた |
+| `CategoryRacer::$validate['category_code']` | `checkNoDuplicateCategory` / `checkLineagePair` をモデルのバリデーション配列に組み込んでいるため、アプリ層の全 `save()` 経路（API 含む）に自動適用される。指摘4は正確 |
+
+### 決定事項（人間承認 2026-08-15）
+
+| # | 論点 | 決定 |
+|---|---|---|
+| 1 | 差し戻し範囲 | **requirements まで戻して再承認**。`spec.json` の `approvals.requirements/design/tasks` をすべて `false`、`ready_for_implementation: false`、`phase: requirements-revision` に更新 |
+| 2 | 同一カテゴリーの重複付与の扱い | **これも警告止まりとする**（保存時バリデーションによる拒否は行わない）。対応外ペアと同様に検知・警告のみ |
+| 3 | 警告の到達先 | 次の3経路すべて: (a) cyclox2web の画面（Flash）、(b) API レスポンスの警告フィールド（成功応答の互換性を損なわない追加情報として。cyclox2app は解釈しなくても従来どおり動作）、(c) 管理者向け不整合一覧（**catracer-cleanup-2026-27 Requirement 1 のレポート機能を参照**。本 spec では重複実装しない） |
+
+### requirements.md 改訂内容（第2版）
+
+- **Requirement 3**「対応外ペア・重複付与のバリデーション」→「**対応外ペア・重複付与の検知と警告**」へ
+  全面改訂。AC3 に「検知を理由に保存操作を失敗させない」を明記。AC7〜AC10 で警告の到達先
+  （画面／API レスポンス／サーバログ）と後方互換性を規定
+- **Requirement 10「外部連携アプリからの処理継続性の保証」を新設**。一括アップロードの部分失敗禁止、
+  昇格処理の中断禁止、導入前後で cyclox2app の成功／失敗判定を変化させないことを AC 化
+- Requirement 5 AC3/AC4、Requirement 6 AC1/AC4、Requirement 8 AC1、Requirement 9 AC2 の
+  「拒否する」表現を「警告を提示したうえで操作を完了させる」へ変更
+- Requirement 2 AC3 に「この判定は検知・警告の基準であり保存を妨げない」を追記
+- Requirement 4 AC6 の「保証する」を「該当しない場合は警告記録するが昇格処理は完了させる」へ変更
+- Boundary Context に cyclox2app 側の非改修（従来どおり動作すること）を Out of scope として明記
+- Adjacent expectations に「本機能は不整合の新規発生を防止しないため、catracer-cleanup は
+  一度きりの移行処理ではなくシーズン中も繰り返す運用ツールと位置づける」を追加
+
+### 影響を受けない部分（維持される資産）
+
+`CategoryLineageMap`（対応表の単一定義）、`CategoryLineageLinker`（ペア判定・連動・元ME1判定）、
+`CatLimitShell` の両系統出走対応、`EntryCatLimit::$BOTH`、`CategoryRacersController::change_em` の
+対応表参照化。**すなわち「A: カテゴリー連携」は当初方針どおり維持し、「B: 厳密管理の強制」のみを
+警告方式へ緩和する**。design 以降の改訂は `CategoryRacer` の `$validate` 組み込み撤回と、
+それに連なる呼び出し元の失敗ハンドリング（特に `__applyRankUp2CM()` の戻り値チェック撤回）に
+限定される見込み。
+
+### 他 spec への波及
+
+- **catracer-cleanup-2026-27**: requirements L14 / L48-49 の「是正後データがバリデーションを通ること」
+  という前提記述が不要になる。**是正完了が本 spec 適用の前提条件でなくなり、リリース順序の制約が解消**。
+  design の位置づけを「移行処理」から「継続運用ツール」へ更新する必要あり
+- **jcx-lineage-lock-2026-27**: 既に案B（警告＋管理者確認）を採用済みで方針は同方向。
+  design.md L511 の「override 無しなら拒否する」記述のみ、本方針と照らして再確認が必要
+- **season-rules-2026-27**: 実質影響なし（design L53-54 で降格 SQL は直接 DB 操作でバリデーション
+  非経由と明記済み）
+- **ajocc-point-267-prod**: 影響なし（PR #14 で独立完了）
+
+### 手続き上の記録
+
+本差し戻しは CLAUDE.md 開発ルール10（絶対軸）「前段の誤りが判明したら前段ゲートに戻り spec.json の
+該当 approvals を false に戻して再承認」に基づく。PR #13 はマージ保留とし、design 改訂の承認後に
+実装を修正する。
+
+## design.md 第2版の改訂内容（2026-08-15・承認待ち）
+
+requirements 第2版の承認を受けて design.md を改訂した。**設計上の核心は、不整合の検知を
+`CategoryRacer::$validate`（保存前・保存を失敗させる）から `CategoryRacer::afterSave()`
+（保存後・保存に影響しない）へ移すこと**。
+
+### なぜ `afterSave()` か（設計判断）
+
+| 観点 | 理由 |
+|---|---|
+| 安全性 | CakePHP 2.x では `afterSave()` の戻り値は無視され、例外を投げない限り保存に影響しない。「検知が保存を壊さない」ことが**構造的に保証**され、実装者が誤って保存を止める余地が設計段階で消える（Requirement 3.3, 10.1） |
+| 網羅性 | `save()` / `saveAll()` / `saveMany()` のいずれからも1行ごとに必ず呼ばれるため、第1版の `$validate` と同じく**全保存経路に自動適用**される（Requirement 3.4）。経路ごとに検査を書く方式は呼び出し漏れが起きうる |
+| 単純化 | 保存**後**に走るため、DBの現在の実状態をそのまま読めばよい。第1版の「自身のIDを除外して現在集合を取得し保存予定値を加えてプロスペクティブ集合を構築する」手続きが不要になる。第1版の Risk「呼び出し元ごとに集合の算出方法が異なると判定がずれる」も構造的に解消 |
+
+### 主な改訂点
+
+| # | 箇所 | 改訂内容 |
+|---|---|---|
+| 1 | Model層 `CategoryRacer` | `$validate` への2ルール追加を撤回し `afterSave()` へ移行。警告蓄積用に `getLineageWarnings()` / `resetLineageWarnings()` を追加（**既存の `getUpdatedIdList()` / `resetUpdatedIdList()` と同一パターン**。`ApiController::upload_category_racers()` が実際に使用しており新機構の導入にあたらない）。大量一括処理向けに `$skipsLineageInspection` フラグを設置 |
+| 2 | Controller層 `ApiController`（新規） | `upload_category_racers()` / `execAddResult()` の成功応答に `warnings` フィールドを追加。既存の成功／失敗判定・HTTPステータス・既存フィールドは一切変更しない。`saveMany()` のオプションも変更しない（`afterSave` 方式によりバリデーション由来の失敗自体が起きなくなるため `atomic=true` のままで Requirement 10.1/10.2 を満たす） |
+| 3 | Component層 `ResultParamCalcComponent` | 連動失敗時に `Constant::RET_FAILED` を返さずログ＋警告に留め、昇格処理を継続（Requirement 10.3, 10.4）。**第1版の「問題3（`__applyRankUp2CM()` 呼び出し元の戻り値未捕捉）の是正」を撤回**し従来どおり戻り値を捕捉しない（当該是正は「1名の失敗が後続全選手の昇格を止める」挙動そのもので Requirement 10.3 に正面から違反するため） |
+| 4 | Controller層 `change_em` / `uniteRacer` | 保存成功後に警告を Flash へ併記。`uniteRacer()` は検知してもロールバックせず統合を完了させる |
+| 5 | System Flows | 「バリデーション判定フロー」を「検知フロー」へ全面差し替え。連動フローに「連動失敗でも継続」の注記を追加 |
+| 6 | Error Handling | **エラー（処理を止める）と警告（処理は続くが人に知らせる）を明確に分離**。警告4種別（`duplicate_category` / `invalid_pair` / `multiple_in_lineage` / `me1_exception`）とメッセージ例、3経路の伝達方式を定義 |
+| 7 | Testing Strategy | 「拒否されること」を主張するテストを「成功し、かつ警告が蓄積されること」へ書き換える方針を明記。`ApiControllerTest`（不整合を含む一括アップロードが HTTP 200 かつ全行保存されること）を新設 |
+
+### 維持される決定（第1版から変更なし）
+
+- 保存順序（cancel→create）と連動フックの呼び出し位置（create の前）。第2版では保存拒否が
+  無くなるため必須ではなくなるが、論理的に自然で既に実装・テスト済み、最終DB状態も同一のため、
+  変更しない方がリスクが低いと判断
+- ME1特例ゲートの LANKUP スキップ判定（2026-07-20 改訂）。正当な昇格に毎回警告を出すのは
+  運用ノイズであり、警告方式では特に有害なため維持
+- `CategoryLineageMap` / `CategoryLineageLinker` の公開API・判定ロジック・戻り値契約は**無変更**。
+  変わるのは呼び出し元が判定結果をどう使うか（拒否→警告）だけ
+
+### 実装資産への影響見積り
+
+| 資産 | 影響 |
+|---|---|
+| `CategoryLineageMap` / `CategoryLineageLinker`（782行） | **無変更で流用可** |
+| `CategoryLineageMapTest` / `CategoryLineageLinkerTest`（725行） | **無変更で流用可** |
+| `CatLimitShell` / `EntryCatLimit::$BOTH` / `CatLimitShellTest` | **無変更で流用可** |
+| `CategoryRacer.php` | `$validate` 登録を撤去し判定を `afterSave()` へ移設。判定の中身は流用可 |
+| `ResultParamCalcComponent.php` | 連動失敗時の `RET_FAILED` 撤回、`__applyRankUp2CM()` 戻り値チェック撤回 |
+| `CategoryRacersController.php` / `OrgUtilController.php` | メッセージ経路を「拒否理由」→「成功＋警告」へ |
+| `ApiController.php` | `warnings` 付与を新規追加 |
+| `CategoryRacerTest` / `CategoryRacersControllerTest` / `OrgUtilControllerTest` / `MeMmLinkageIntegrationTest` | 「拒否される」アサーションを「成功し警告が出る」へ書き換え |
+
+## tasks.md 第2版の構成（2026-08-15・実装着手前で停止中）
+
+design 第2版の承認（2026-08-15）を受けて tasks.md を改訂した。
+
+**第1版の全8タスク（15実行タスク）は 2026-07-21 に実装完了・`/kiro-validate-impl` GO 判定済み**
+であり、submodule 側 PR #13 として発行済み（マージ保留中）。したがって第2版のタスクは
+**ゼロからの作り直しではなく、既存実装への差分修正**として構成した。
+
+### 第1版タスクの流用・修正の別
+
+| 区分 | 対象 |
+|---|---|
+| **そのまま流用**（10タスク相当） | 1.1 テストデータ基盤 / 1.2 対応表 / 2.1 ペア・重複判定 / 2.2 元ME1判定 / 2.3 連動先解決 / 2.4 連動保存実行 / 2.5 統合後集合検証 / 4.3 単独保有・実績重複防止 / 6 CatLimitShell 両系統対応 |
+| **修正が必要** | 3 保存時バリデーション（→ R1）/ 4.1・4.2 連動統合の失敗ハンドリング（→ R2）/ 5 change_em のメッセージ経路（→ R4）/ 7 選手統合のロールバック（→ R5）/ 8 結合シナリオ（→ R6） |
+| **新規** | API 応答への警告付与（→ R3）/ 他 spec の前提記述追随（→ R7） |
+
+### 第2版タスク一覧
+
+| # | 内容 | Boundary | Depends |
+|---|---|---|---|
+| R1 | 検知を `$validate` から `afterSave()` へ移設（警告蓄積API・スキップフラグ含む） | CategoryRacer model | なし |
+| R2 | 昇格処理が不整合を理由に中断しないようにする（`RET_FAILED` 撤回・`__applyRankUp2CM()` 戻り値チェック撤回） | ResultParamCalcComponent | R1 |
+| R3 | (P) 外部連携APIの応答に警告を付与する | ApiController | R1 |
+| R4 | (P) 系統切替の警告表示を「拒否理由」→「成功＋注意喚起」へ | CategoryRacersController | R1 |
+| R5 | (P) 選手統合の不整合検知をロールバックから警告へ | OrgUtilController | R1 |
+| R6 | 第2版の結合シナリオ検証（期待値の反転） | 全体 | R1〜R5 |
+| R7 | 他 spec（catracer-cleanup / jcx-lineage-lock）の前提記述追随 | spec 文書 | なし（並行可） |
+
+### 実装時に特に注意する点（tasks.md Implementation Notes に記載）
+
+- **`afterSave()` で例外を漏らさないこと**。戻り値は無視されるが例外を投げれば保存が巻き戻り、
+  本改訂の目的（保存を絶対に妨げない）が壊れる
+- **`saveMany()` のオプションを変更しないこと**。`atomic=false` は既存のトランザクション保証を
+  弱める。第2版ではバリデーション由来の失敗自体が起きなくなるため `atomic=true` のままでよい
+- **API の既存フィールドを変更しないこと**（Requirement 10.5）
+- **一括保存では `afterSave()` が行ごとに呼ばれる**ため、警告は蓄積時に重複排除する
+- `propagateLinkedPromotion()` はメソッド内でトランザクションを張っていない。第2版では連動失敗で
+  ロールバックしなくなるため、create 失敗時に相手系統が無保有のまま取り残されるケースが実際に
+  起こりうる。この状態は R1 の検知で警告として捕捉される（**意図的な許容**）
+
+### 現在の状態
+
+**人間の指示により実装着手前で停止中。** `spec.json` は `approvals.tasks.approved: false` /
+`ready_for_implementation: false`。tasks の確認・承認後に R1 から着手する。
+
 ## 変更履歴
 
 | 日付 | 変更内容 | 変更者 |
@@ -300,3 +476,7 @@ Requirement 3 AC3（「拒否理由が分かるメッセージを提示する」
 | 2026-07-14 | 初版作成（spec.json / requirements.md 初期化に伴う agreement-log 作成） | Claude |
 | 2026-07-14 | requirements.md／design.md／research.md／tasks.md を自動承認モードで生成完了。spec.json の全承認を true に設定し `ready_for_implementation: true` へ更新 | Claude |
 | 2026-07-19 | 実装フェーズ着手。タスク1.1実施に伴うテスト環境整備・phpunit.pharバグ修正・フィクスチャ追加スコープの補足を記録（上表参照） | Claude |
+| 2026-08-15 | 有識者レビュー（PR #13）を受け Requirement 3 の根幹方針を「エラーで拒否」→「検知して警告・保存は完了」へ転換。requirements.md を第2版へ改訂（Req 10 新設）、spec.json の全 approvals を false に差し戻し、roadmap.md の合意事項を更新 | Claude |
+| 2026-08-15 | 改訂版 requirements.md（第2版）を人間が承認。spec.json の `approvals.requirements.approved` を true・`revision: 2` に更新。design/tasks は false のまま（第2版への追随改訂が必要） | Claude |
+| 2026-08-15 | design.md を第2版へ改訂（`$validate` による拒否 → `afterSave()` による検知・警告蓄積。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動を撤回）。**design 承認待ち** | Claude |
+| 2026-08-15 | design 第2版を人間が承認（approvals.design = true, revision 2）。tasks.md を第2版へ改訂（差分修正タスク R1〜R7）。人間の指示により実装着手前で停止 | Claude |

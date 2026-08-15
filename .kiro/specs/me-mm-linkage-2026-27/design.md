@@ -1,5 +1,12 @@
 # Design Document: me-mm-linkage-2026-27
 
+> **第2版（2026-08-15 改訂）**: requirements 第2版（Requirement 3 の「拒否」→「検知と警告」転換、
+> Requirement 10「外部連携アプリからの処理継続性の保証」新設）に追随する改訂。
+> **設計上の核心的な変更は、不整合の検知を `CategoryRacer::$validate`（保存を失敗させる）から
+> `CategoryRacer::afterSave()`（保存後に検知し警告を蓄積する）へ移すこと**。
+> 対応表・判定ロジック（`CategoryLineageMap` / `CategoryLineageLinker`）は無変更で流用できる。
+> 経緯・レビュー指摘の詳細は agreement-log.md「有識者レビューによる方針転換」節を参照。
+
 ## Overview
 
 本機能は、cyclox2web（CakePHP 2.x / PHP 7.3 / MySQL 5.7、`cyclox2_svr/cyclox2/`）における選手の
@@ -19,10 +26,13 @@
 - ME⇔MM対応表を単一のソースとして定義し、本specおよび後続4spec（catracer-cleanup-2026-27、
   season-rules-2026-27、jcx-lineage-lock-2026-27、ajocc-point-267-prod）から参照可能にする
 - レース結果に基づくリアルタイム昇格が、対応表に沿って相手系統のカテゴリーへ連動する
-- 対応外ペア・重複付与を、カテゴリー認定情報のあらゆる保存経路でエラー拒否する（自動整合はしない）
+- 対応外ペア・重複付与を、カテゴリー認定情報のあらゆる保存経路で**検知し警告する**
+  （保存操作は完了させる。自動整合もしない）
+- **不整合の検知を理由に、cyclox2app からの選手データ一括アップロード・リザルト取込を
+  失敗させたり中断させたりしない**（Requirement 10）
 - `change_em`・`CatLimitShell`・`unite_racer` の既存不具合（brief記載の要改修項目）を、
-  対応表と一元バリデーションを土台にして解消する
-- 2026-07-31までにTDDで実装可能な粒度に分解できる設計にする
+  対応表と一元検知を土台にして解消する
+- TDDで実装可能な粒度に分解できる設計にする
 
 ### Non-Goals
 - 既存の対応外ペアデータの是正（catracer-cleanup-2026-27）
@@ -36,8 +46,9 @@
 
 ### This Spec Owns
 - ME⇔MM対応表の定義（`CategoryLineageMap`）とその判定API（`CategoryLineageLinker`）
-- `category_racers` への保存時に対応外ペア・重複付与を拒否するバリデーションロジック
-  （`CategoryRacer` モデル）
+- `category_racers` への保存時に対応外ペア・重複付与を**検知し警告を蓄積する**ロジック
+  （`CategoryRacer` モデルの `afterSave`）と、蓄積された警告の取得API
+- 蓄積された警告の伝達経路（画面 Flash / API レスポンスの `warnings` / サーバログ）
 - レース結果によるリアルタイム昇格時の系統間連動ロジック（`ResultParamCalcComponent`拡張）
 - 元ME1判定ロジック
 - `change_em`（系統切替画面）の新ルール下での役割・挙動
@@ -65,7 +76,8 @@
 - `CategoryLineageMap` の対応ペア定義（コード一覧・対応関係）が変更された場合
 - `CategoryLineageLinker` の公開メソッドのシグネチャ・戻り値契約が変更された場合
 - HoldPoint付与先の決定方針（本設計の Decision 参照）が変更された場合
-- `category_racers` への新しい保存経路が追加され、一元バリデーションの適用対象から漏れる場合
+- `category_racers` への新しい保存経路が追加され、一元検知（`afterSave`）の適用対象から漏れる場合
+- 警告の伝達経路（画面 Flash / API 応答の `warnings` / サーバログ）の契約が変更された場合
 
 ## Architecture
 
@@ -110,8 +122,8 @@ graph TB
 - 選定パターン: 既存の層構造（Const → Util → Model → Component/Controller/Console）をそのまま
   踏襲する拡張型パターン。新規サブシステムは作らない。
 - ドメイン境界: 「対応表の定義」（Const）と「対応表を使った判定ロジック」（Util）を分離し、
-  「判定結果に基づく保存時拒否」（Model）と「判定結果に基づく連動更新」（Component/Controller/
-  Console）を利用側に委ねる。判定ロジックを単一のUtilクラスに集約することで、Model層・
+  「判定結果に基づく保存後の検知・警告蓄積」（Model の `afterSave`）と「判定結果に基づく連動更新」
+  （Component/Controller/Console）を利用側に委ねる。判定ロジックを単一のUtilクラスに集約することで、Model層・
   Component層・Controller層・Console層のいずれからも同じ判定基準を参照できる。
 - 既存パターンの継承: `app/Cyclox/Const/*` のenum風パターン、`App::uses()`によるレイヤー読込規約、
   `TransactionManager`によるトランザクション境界を維持する。
@@ -142,8 +154,9 @@ app/
 │   └── Util/
 │       └── CategoryLineageLinker.php  # 新規: 対応表を使った判定・連動ロジック（Requirement 2-9）
 ├── Model/
-│   └── CategoryRacer.php              # 変更: $validate にカスタムルールを追加（Requirement 3, 8, 9）
+│   └── CategoryRacer.php              # 変更: afterSave() で検知し警告を蓄積（Requirement 3, 9, 10）
 ├── Controller/
+│   ├── ApiController.php              # 変更: 成功応答に warnings を追加（Requirement 3.8, 3.9, 10.5）
 │   ├── CategoryRacersController.php   # 変更: change_em系メソッドの対応表参照・cancel範囲限定（Requirement 6）
 │   ├── OrgUtilController.php          # 変更: uniteRacer() に統合後整合性チェックを追加（Requirement 8）
 │   └── Component/
@@ -165,6 +178,7 @@ app/
     │   ├── Model/
     │   │   └── CategoryRacerTest.php                # 新規
     │   ├── Controller/
+    │   │   ├── ApiControllerTest.php                  # 新規（第2版: 一括アップロードの非失敗・warnings）
     │   │   ├── CategoryRacersControllerTest.php      # 新規
     │   │   ├── OrgUtilControllerTest.php              # 新規
     │   │   └── Component/
@@ -180,18 +194,27 @@ app/
 ```
 
 ### Modified Files
-- `app/Model/CategoryRacer.php` — `$validate` にカスタムルール `checkLineagePair` /
-  `checkNoDuplicateCategory` を追加し、`CategoryLineageLinker` へ委譲する。
+- `app/Model/CategoryRacer.php` — **【第2版で改訂】** `$validate` へのカスタムルール追加は行わない。
+  代わりに `afterSave()` コールバックで不整合を検知し、インスタンスプロパティへ警告を蓄積する。
+  警告の取得・リセット用に `getLineageWarnings()` / `resetLineageWarnings()` を追加する
+  （既存の `getUpdatedIdList()` / `resetUpdatedIdList()` と同一のパターン）。
+  検知をスキップするフラグ `$skipsLineageInspection` も設ける（大量一括処理向け）。
+- `app/Controller/ApiController.php` — **【第2版で新規】** `upload_category_racers()` と
+  `execAddResult()` が、蓄積された警告を成功応答の `warnings` フィールドとして返す。
+  既存の成功／失敗判定・レスポンス構造は変更しない（クライアントが解釈しなくても従来どおり動作）。
 - `app/Controller/Component/ResultParamCalcComponent.php` — `__execApplyRankUp()` と
-  `__applyRankUp2CM()` の末尾（新カテゴリー行保存とHoldPoint付与が成功した直後）に
-  `CategoryLineageLinker::propagateLinkedPromotion()` 呼び出しを追加する。既存の分岐・
-  削除・cancel処理は変更しない。
+  `__applyRankUp2CM()` に `CategoryLineageLinker::propagateLinkedPromotion()` 呼び出しを追加する
+  （呼び出し位置は後述の確定版順序に従う）。**【第2版で改訂】** 連動更新の失敗は
+  `Constant::RET_FAILED` ではなくログ出力＋警告蓄積として扱い、昇格処理・リザルト取込を
+  中断させない。`__applyRankUp2CM()` の呼び出し元での戻り値チェック追加（第1版の是正3）は撤回する。
 - `app/Controller/CategoryRacersController.php` — `__check_category_to()` の対応マップを
   `CategoryLineageMap` 参照に置換。`check_change_em()` の `end_cats` 算出を「反対系統の
   有効カテゴリー全部」から「切替先との対応表上のペアにならないもののみ」へ限定。
+  **【第2版で改訂】** `exec_change_em()` は保存成功後に蓄積された警告を Flash へ載せる。
 - `app/Controller/OrgUtilController.php` — `uniteRacer()` の `CategoryRacer->saveAll()`
-  呼び出し後（同一トランザクション内・コミット前）に、統合先選手の統合後有効カテゴリー集合を
-  `CategoryLineageLinker::validateActiveSet()` で検証し、不正なら統合全体をロールバックする。
+  呼び出し後に、統合先選手の統合後有効カテゴリー集合を `CategoryLineageLinker::validateActiveSet()`
+  および `validateNoDuplicateAnyCategory()` で検査する。**【第2版で改訂】** 検査結果が不正でも
+  ロールバックせず、警告として `do_unite_racer()` へ伝達し統合は完了させる。
 - `app/Console/Command/CatLimitShell.php` — `setupCatLimit()` 内のシーズン判定処理を、
   「シーズン最初の出走のみ参照」から「シーズン中のElite/Masters双方の出走有無を判定」へ変更。
 - `app/Cyclox/Const/EntryCatLimit.php` — `$BOTH`（charVal `b`）を追加。
@@ -228,59 +251,90 @@ sequenceDiagram
     else 相手系統の更新が必要
         Linker->>Linker: 元ME1判定 対応先がC1の場合のみ
         Linker->>CR: 相手系統の旧カテゴリーをcancel
-        Linker->>CR: 相手系統の新カテゴリーを作成保存 バリデーション経由
-        CR-->>Linker: 保存結果 不正なら保存拒否
+        Linker->>CR: 相手系統の新カテゴリーを作成保存
+        CR-->>Linker: 保存結果
         Linker-->>RPC: 連動結果を返す
     end
-    RPC->>CR: 新カテゴリー行の作成保存 相手系統が先に整合済みのためバリデーション通過
+    RPC->>CR: 新カテゴリー行の作成保存
     CR-->>RPC: 保存成功
     RPC->>HP: 保持ポイント3pt付与保存先は昇格元系統のみ
+    Note over RPC: 連動が失敗してもログと警告に記録し昇格処理は継続する
 ```
 
 **Key Decisions**:
-- 連動更新（相手系統への保存）も必ず `CategoryRacer` モデルの一元バリデーションを経由させる。
-  これにより連動更新自体が新たな不整合を生む可能性を構造的に排除する（Requirement 4.6）。
+- **【第2版で改訂】** 連動更新の失敗は昇格処理を中断させない。ログ出力と警告蓄積に留め、
+  リザルト取込全体（および同一レースカテゴリーの他選手の昇格処理）を継続する
+  （Requirement 10.3, 10.4）。第1版では `Constant::RET_FAILED` を返して中断させていた。
+- **【第2版で改訂】** 連動更新後の状態が正常でない場合も、Requirement 3 の検知・警告に委ねる
+  （Requirement 4.6）。第1版のような「バリデーションによる構造的な排除」は行わない。
 - HoldPointは昇格元系統にのみ1回付与する（research.md Decision参照、Requirement 4.5）。
 - 相手系統を保有していない選手には新規にカテゴリーを付与しない（Requirement 4.4）。
+- 保存順序（cancel→create）および連動フックの呼び出し位置（create の前）は第1版の確定版を
+  維持する。第2版では保存拒否が無くなるため順序は必須ではなくなるが、論理的に自然であり
+  既に実装・テスト済みで最終DB状態も同一のため、変更しない方がリスクが低いと判断した。
 
-### 対応外ペア・重複バリデーション判定フロー
+### 対応外ペア・重複の検知フロー（第2版で全面改訂）
+
+**第1版からの変更点**: 判定は `CategoryRacer::$validate`（保存前・失敗させる）ではなく
+`CategoryRacer::afterSave()`（保存後・失敗させない）で行う。保存後に走るため
+「保存後に有効となる集合」をプロスペクティブに構築する必要がなくなり、
+**DBの現在の実状態をそのまま読めばよくなる**（判定ロジックの単純化）。
+どの分岐も保存結果を左右せず、出力は警告のみ。
 
 ```mermaid
 flowchart TD
-    Start[category_racers への保存要求] --> IsTarget{ME1-4またはMM1-3のカテゴリーか}
-    IsTarget -- いいえ --> DupCheck{同一カテゴリーの重複か}
-    IsTarget -- はい --> IsCancel{この保存はcancel_date設定のみか}
-    IsCancel -- はい --> DupCheck
-    IsCancel -- いいえ --> Dup2{既に同一カテゴリーを有効保有しているか}
-    Dup2 -- はい --> Reject[エラー拒否 重複付与]
-    Dup2 -- いいえ --> BuildSet[保存後に有効となるME MMカテゴリー集合を算出]
-    BuildSet --> SetSize{集合の要素数}
-    SetSize -- 0または1 --> Allow[許可 単独保有または無保有]
+    Start[category_racers への保存が完了] --> Skip{検知スキップフラグが立っているか}
+    Skip -- はい --> End[何もしない 大量一括処理向け]
+    Skip -- いいえ --> IsCancel{この保存はcancel_date設定のみか}
+    IsCancel -- はい --> End
+    IsCancel -- いいえ --> Load[選手の現在の有効カテゴリー集合をDBから取得]
+    Load --> DupCheck{同一カテゴリーコードを複数行で有効保有しているか}
+    DupCheck -- はい --> WarnDup[警告を蓄積 重複付与 全カテゴリー共通]
+    DupCheck -- いいえ --> Managed[集合からME1-4 MM1-3のみを抽出]
+    WarnDup --> Managed
+    Managed --> SetSize{要素数}
+    SetSize -- 0または1 --> Ok[警告なし 無保有または単独保有]
     SetSize -- 2 --> PairCheck{対応表上の正当なペアか}
-    PairCheck -- いいえ --> Reject2[エラー拒否 対応外ペア]
-    PairCheck -- はい --> C1Check{ペアにC1が含まれるか}
-    C1Check -- いいえ --> Allow2[許可]
-    C1Check -- はい --> FormerCheck{元ME1か}
-    FormerCheck -- はい --> Allow3[許可]
-    FormerCheck -- いいえ --> Reject3[エラー拒否 ME1特例違反]
-    SetSize -- 3以上 --> Reject4[エラー拒否 同系統内複数保有]
-    DupCheck -- はい --> Reject5[エラー拒否 重複付与]
-    DupCheck -- いいえ --> Allow4[許可]
+    PairCheck -- いいえ --> WarnPair[警告を蓄積 対応外ペア]
+    PairCheck -- はい --> C1Check{ペアがC1とCM1か}
+    C1Check -- いいえ --> Ok
+    C1Check -- はい --> LankUp{保存理由がLANKUP 正当な昇格か}
+    LankUp -- はい --> Ok
+    LankUp -- いいえ --> FormerCheck{元ME1か}
+    FormerCheck -- はい --> Ok
+    FormerCheck -- いいえ --> WarnMe1[警告を蓄積 ME1特例に非該当]
+    SetSize -- 3以上 --> WarnMulti[警告を蓄積 同系統内複数保有]
 ```
+
+**Key Decisions**:
+- 検知結果は保存の成否に一切影響しない。`afterSave()` の戻り値は CakePHP 2.x では無視されるため、
+  構造的に「検知が保存を壊さない」ことが保証される（Requirement 3.3, 10.1）。
+- `cancel_date` を設定するだけの保存は検知対象外（集合を縮小するのみで不整合を生まないため）。
+- ME1特例の LANKUP スキップ判定（第1版の 2026-07-20 改訂）は維持する。正当な昇格に対して
+  毎回警告を出すのは運用ノイズであり、警告方式では特に有害なため。
+- 検知スキップフラグは catracer-cleanup-2026-27 の是正バッチのような大量一括処理が
+  自ら不整合を解消する過程で大量の警告を出さないために設ける（性能対策も兼ねる）。
 
 ## Requirements Traceability
 
 | Requirement | Summary | Components | Interfaces | Flows |
 |-------------|---------|------------|------------|-------|
 | 1.1-1.4 | 対応表の単一定義 | CategoryLineageMap | `pairedCategory()`, `eliteCategories()`, `mastersCategories()` | - |
-| 2.1-2.3 | 対応ペア両保有の正常系 | CategoryLineageLinker, CategoryRacer | `isValidActiveSet()` | 対応外ペア判定フロー |
-| 3.1-3.6 | 対応外ペア・重複のバリデーション | CategoryRacer, CategoryLineageLinker | `$validate`カスタムルール, `isValidActiveSet()` | 対応外ペア判定フロー |
+| 2.1-2.3 | 対応ペア両保有の正常系 | CategoryLineageLinker, CategoryRacer | `isValidActiveSet()` | 検知フロー |
+| 3.1-3.6 | 対応外ペア・重複の検知 | CategoryRacer, CategoryLineageLinker | `afterSave()`, `isValidActiveSet()` | 検知フロー |
+| 3.7 | 画面への警告提示 | CategoryRacersController, OrgUtilController | `getLineageWarnings()` → Flash | 検知フロー |
+| 3.8-3.9 | API応答への警告付与（後方互換） | ApiController | `success()` の `warnings` フィールド | 検知フロー |
+| 3.10 | サーバログへの記録 | CategoryRacer | `afterSave()` 内の `log()` | 検知フロー |
 | 4.1-4.6 | リアルタイム昇格の系統間連動 | ResultParamCalcComponent, CategoryLineageLinker | `propagateLinkedPromotion()` | 系統間連動フロー |
-| 5.1-5.4 | ME1特例（元ME1判定） | CategoryLineageLinker | `isFormerElite1()`, `resolveLinkedTarget()` | 系統間連動フロー |
+| 5.1-5.5 | ME1特例（元ME1判定） | CategoryLineageLinker | `isFormerElite1()`, `resolveLinkedTarget()` | 系統間連動フロー・検知フロー |
 | 6.1-6.4 | change_emの役割再定義 | CategoryRacersController, CategoryLineageMap | `__check_category_to()`（改修） | - |
 | 7.1-7.2 | CatLimitShellの両系統対応 | CatLimitShell, EntryCatLimit | `setupCatLimit()`（改修） | - |
-| 8.1-8.2 | 選手統合時の重複防止 | OrgUtilController, CategoryLineageLinker | `validateActiveSet()` | - |
-| 9.1-9.2 | 女子系統の対応表対象外 | CategoryLineageMap, CategoryRacer | `pairedCategory()`が対象外カテゴリーに`null`を返す | - |
+| 8.1-8.2 | 選手統合時の不整合検知 | OrgUtilController, CategoryLineageLinker | `validateActiveSet()`, `validateNoDuplicateAnyCategory()` | - |
+| 9.1-9.2 | 女子系統の対応表対象外 | CategoryLineageMap, CategoryRacer | `pairedCategory()`が対象外カテゴリーに`null`を返す | 検知フロー |
+| 10.1-10.2 | 一括アップロードの部分失敗禁止 | CategoryRacer, ApiController | `afterSave()`が保存に影響しない構造 | 検知フロー |
+| 10.3-10.4 | 昇格処理・リザルト取込の非中断 | ResultParamCalcComponent | 連動失敗時にログ＋警告のみ（`RET_FAILED`を返さない） | 系統間連動フロー |
+| 10.5 | 既存クライアントとの後方互換 | ApiController | 成功/失敗判定は不変・`warnings`は追加情報 | - |
+| 10.6 | 失敗の事後追跡 | ResultParamCalcComponent, CategoryRacer | `log()` | - |
 
 ## Components and Interfaces
 
@@ -288,8 +342,9 @@ flowchart TD
 |-----------|--------------|--------|---------------|---------------------------|-----------|
 | CategoryLineageMap | Const | ME⇔MM対応表の単一ソース | 1, 9 | なし（最下層） | State |
 | CategoryLineageLinker | Util | 対応表を使った判定・連動ロジック | 2, 3, 4, 5, 8, 9 | CategoryLineageMap (P0), CategoryRacer model (P0) | Service |
-| CategoryRacer (model) | Model | 保存時の一元バリデーション | 3, 8, 9 | CategoryLineageLinker (P0) | State |
-| ResultParamCalcComponent (拡張) | Component | リアルタイム昇格の系統間連動フック | 4, 5 | CategoryLineageLinker (P0), CategoryRacer model (P0) | Service |
+| CategoryRacer (model) | Model | 保存後の一元検知と警告蓄積 | 3, 9, 10 | CategoryLineageLinker (P0) | State |
+| ApiController (拡張) | Controller | 蓄積された警告の API 応答への付与（後方互換） | 3, 10 | CategoryRacer model (P0) | API |
+| ResultParamCalcComponent (拡張) | Component | リアルタイム昇格の系統間連動フック | 4, 5, 10 | CategoryLineageLinker (P0), CategoryRacer model (P0) | Service |
 | CategoryRacersController (change_em系, 拡張) | Controller | 系統切替の対応表準拠化 | 6 | CategoryLineageMap (P0), CategoryRacer model (P0) | Service |
 | CatLimitShell (拡張) | Console | 両系統出走の正しい記録 | 7 | EntryCatLimit (P1) | Batch |
 | OrgUtilController.uniteRacer (拡張) | Controller | 統合後の整合性保証 | 8 | CategoryLineageLinker (P0), CategoryRacer model (P0) | Service |
@@ -348,7 +403,7 @@ flowchart TD
 | Requirements | 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 8.1, 8.2, 9.1, 9.2 |
 
 **Responsibilities & Constraints**
-- `CategoryRacer` モデルの保存時バリデーション、`ResultParamCalcComponent` の連動フック、
+- `CategoryRacer` モデルの保存後検知（`afterSave`）、`ResultParamCalcComponent` の連動フック、
   `CategoryRacersController` の`change_em`系処理、`OrgUtilController::uniteRacer()`、
   `CatLimitShell` のいずれからも同一のロジックを呼び出す単一の判定エンジンとする
 - 元ME1判定はSoftDelete適用済みの論理削除を含む全履歴（`deleted=0`のもの。cancel_date の有無は
@@ -417,24 +472,31 @@ interface CategoryLineageLinker {
 ```
 - Preconditions: `$racerCode` は存在する選手コード。`$appliedCategoryCode`・
   `$prospectiveActiveCodes` はカテゴリーコード（`categories.code`）。
-- Postconditions: `propagateLinkedPromotion()` が連動更新を行った場合、更新後の状態は必ず
-  `isValidActiveSet()` を満たす（Requirement 4.6）。判定系メソッド（`isValidActiveSet`,
-  `validateActiveSet`）はDBを変更しない。
+- Postconditions: **【第2版で改訂】** `propagateLinkedPromotion()` が連動更新を行った場合、
+  更新後の状態は `isValidActiveSet()` を満たすことを**意図する**が、これは保証ではない
+  （第2版では保存が拒否されないため、既存不整合データを持つ選手では満たさない結果になりうる）。
+  満たさない場合は `CategoryRacer::afterSave()` の検知が警告を上げる（Requirement 4.6）。
+  判定系メソッド（`isValidActiveSet`, `validateActiveSet`）はDBを変更しない。
 - Invariants: 対応表対象外のカテゴリー（`CL1〜CL3`, `WM`等）は判定対象集合から除外される
   （Requirement 9.1, 9.2）。
 
 **Implementation Notes**
-- Integration: `CategoryRacer::$validate` のカスタムルールから `isValidActiveSet()` を呼び出す。
+- **【第2版の要点】本クラスは無変更で流用できる。** 公開メソッドのシグネチャ・判定ロジック・
+  戻り値契約はいずれも第1版のまま。変わるのは**呼び出し元が判定結果をどう使うか**（保存の拒否
+  →警告の蓄積）だけである。第1版で作成した `CategoryLineageMapTest` /
+  `CategoryLineageLinkerTest`（計725行）もそのまま有効
+- Integration: **【第2版で改訂】** `CategoryRacer::afterSave()` から `isValidActiveSet()` を
+  呼び出す（第1版では `$validate` のカスタムルールから呼んでいた）。
   `ResultParamCalcComponent` からは `propagateLinkedPromotion()` を呼び出す。
   `CategoryRacersController` は `resolveLinkedTarget()` 相当のロジックで `__check_category_to()`
-  のマップを置換する。`OrgUtilController::uniteRacer()` は `saveAll()` 実行後・トランザクション
-  コミット前に `validateActiveSet()` を呼び出す。
+  のマップを置換する。`OrgUtilController::uniteRacer()` は `saveAll()` 実行後に
+  `validateActiveSet()` を呼び出す（コミット前という制約は不要になった。ロールバックしないため）
 - Validation: 元ME1判定はSoftDeleteを無視した全履歴検索で行う（既存コードの
   `Behaviors->unload('Utils.SoftDelete')` パターンを踏襲）。
-- Risks: `isValidActiveSet` が呼び出し元によって「保存後に有効となる集合」の算出方法が異なると
-  判定がずれる。呼び出し元は必ず「対象レコードを除いた現在の有効集合 + 今回保存しようとしている
-  カテゴリー」を渡す契約とし、`CategoryRacerTest`/`CategoryLineageLinkerTest`双方でこの契約を
-  固定するテストケースを用意する。
+- **【第2版で解消】** 第1版の Risk「`isValidActiveSet` に渡す集合の算出方法が呼び出し元ごとに
+  異なると判定がずれる」は、`afterSave()` 方式では**渡す集合が常に「保存後のDBの実状態」に
+  一本化される**ため構造的に解消する。プロスペクティブ集合を組み立てる必要がなくなり、
+  呼び出し元ごとの算出差異という失敗モードそのものが無くなる
 
 ### Model層
 
@@ -442,37 +504,53 @@ interface CategoryLineageLinker {
 
 | Field | Detail |
 |-------|--------|
-| Intent | `category_racers` への保存経路すべてに対応外ペア・重複付与の拒否を一元適用する |
-| Requirements | 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 8.2, 9.1, 9.2 |
+| Intent | `category_racers` への保存経路すべてに対応外ペア・重複付与の**検知と警告蓄積**を一元適用する（保存は妨げない） |
+| Requirements | 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.10, 9.1, 9.2, 10.1, 10.2 |
 
 **Responsibilities & Constraints**
-- 既存の `$validate`（`racer_code`/`category_code`/`apply_date`/`reason_id`の必須・形式チェック）
-  に加え、以下2つのカスタムルールを追加する:
-  - `checkNoDuplicateCategory`（`category_code`に付与）: 保存後に同一カテゴリーコードが
-    重複して有効保有されないことを検証する（対応表対象外カテゴリーも含め全カテゴリー共通）
-  - `checkLineagePair`（`category_code`に付与）: 保存によって新たに有効カテゴリーが生じる場合
-    （＝ `cancel_date` が空/未設定の保存）にのみ、`CategoryLineageLinker::isValidActiveSet()`
-    を呼び出す
-- `cancel_date` を設定するだけの保存（既存カテゴリーの終了処理）は `checkLineagePair` の対象外
-  とする（cancelは集合を縮小するのみで不整合を生まないため。Requirement 3.1の「新しいカテゴリーが
-  付与されようとし」に該当しない）
-- **元ME1特例ゲートの適用範囲（2026-07-20 実装フェーズでの確認・改訂）**: `checkLineagePair`が
-  `isValidActiveSet()`を通過した後、保存後の集合が`{C1, CM1}`になる場合にのみ追加で
-  `CategoryLineageLinker::isFormerElite1()`を確認する。この確認は、保存対象行の`reason_id`が
-  `app/Cyclox/Const/CategoryReason`上で`CategoryChangeFlag::$LANKUP`（昇格）に分類される理由
-  （2026-07-20時点の実装では`RESULT_UP`・`SEASON_UP`・`OTHER_UP`の3つ。判定はこの一覧を
-  ハードコードせず`CategoryReason::reasonAt($id)->flag()`を動的参照して行う。将来
-  `CategoryReason`側に理由が追加・変更されても本ロジックの追随修正が不要になるようにするため）の
-  場合はスキップする。
-  レース結果・シーズン成績等による正当な昇格（Requirement 5 AC2の「選手がエリート系統でME2から
-  ME1へ昇格する場合」を含む）は、それ自体が正当な実力証明であり元ME1歴の有無を問わず常に許可される
-  べきであるため。`$LANKUP`以外の理由（`change_em`の`REQUEST_CHANGE`、選手統合、その他手動付与等、
-  Requirement 6.4が対象とする「マスターズ側駆動」の付与）には本ゲートを厳格に適用する。
-  （経緯: 当初、本ゲートを`reason_id`に関わらず一律適用する実装を行ったところ、独立レビューにより
-  Requirement 5 AC2（正当な昇格は成功する前提）と矛盾すると指摘され、人間の確認のうえ本方針に改訂。
-  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」参照）
-- バリデーションエラー時は主催者・システム管理者が理由を理解できるメッセージを返す
-  （Requirement 3.3）。CakePHPの標準エラーメッセージ機構（`$validate`の`message`）を用いる
+
+**【第2版の核心的変更】** 第1版で `$validate` に追加した `checkLineagePair` /
+`checkNoDuplicateCategory` の2ルールは**撤去する**。`$validate` は初版以前の状態
+（`racer_code`/`category_code`/`apply_date`/`reason_id` の必須・形式チェックのみ）へ戻す。
+不整合の検知は `afterSave()` コールバックで行う。
+
+- **なぜ `afterSave()` か**:
+  - CakePHP 2.x では `afterSave()` の戻り値は無視され、例外を投げない限り保存に影響しない。
+    つまり「検知が保存を壊さない」ことが**構造的に保証**される（Requirement 3.3, 10.1）。
+    実装者が誤って保存を止めてしまう余地を設計段階で排除できる
+  - `save()` / `saveAll()` / `saveMany()` のいずれからも必ず1行ごとに呼ばれるため、
+    第1版の `$validate` と同じく**全保存経路に自動適用**される（Requirement 3.4）。
+    経路ごとに検査を書く方式（呼び出し漏れが起きうる）より優れる
+  - 保存**後**に走るため、DBの現在の実状態をそのまま読めばよい。第1版のように
+    「保存対象行自身を除外して現在集合を取得し、保存予定の値を足してプロスペクティブ集合を
+    構築する」という複雑な手続きが不要になり、判定ロジックが単純化する
+- `afterSave()` での検知手順:
+  1. `$skipsLineageInspection` が `true` なら何もせず戻る
+  2. この保存が `cancel_date` を設定するだけのもの（終了処理）なら何もせず戻る
+     （集合を縮小するのみで不整合を生まないため）
+  3. 対象選手の現在の有効カテゴリー（`cancel_date IS NULL`）をDBから取得する
+  4. 同一 `category_code` を複数行で有効保有していれば「重複付与」警告を蓄積する
+     （対応表対象外カテゴリーを含む全カテゴリー共通。Requirement 3.2, 9.2）
+  5. 集合から ME1〜ME4・MM1〜MM3 のみを抽出し `CategoryLineageLinker::isValidActiveSet()` に
+     渡す。不正なら種別（対応外ペア／同系統内複数保有）に応じた警告を蓄積する
+     （Requirement 3.1, 3.6, 9.1）
+  6. 抽出結果がちょうど `{C1, CM1}` の場合のみ、後述のME1特例ゲートを追加適用する
+  7. 蓄積したそれぞれの警告を `$this->log(..., LOG_WARNING)` でサーバログにも記録する
+     （選手コード・カテゴリーコード・検知種別を含め、事後に特定できる形式。Requirement 3.10）
+- **元ME1特例ゲート**（第1版 2026-07-20 改訂の判定内容をそのまま踏襲。結果が「拒否」から
+  「警告」に変わるのみ）: 保存対象行の `reason_id` が `CategoryReason::reasonAt($id)->flag()` で
+  `CategoryChangeFlag::$LANKUP`（昇格）に分類される場合は**警告を出さない**。
+  レース結果・シーズン成績等による正当な昇格はそれ自体が実力証明であるため（Requirement 5 AC2）。
+  `$LANKUP` 以外の理由（`change_em` の `REQUEST_CHANGE`、選手統合、その他手動付与等）で
+  元ME1でない選手に `{C1, CM1}` が成立した場合にのみ警告を蓄積する（Requirement 5.4, 6.4）。
+  判定は理由IDをハードコードせず `CategoryReason` を動的参照する（将来の理由追加に追随不要）
+- **警告の蓄積と取得**: インスタンスプロパティに警告を配列で蓄積し、
+  `getLineageWarnings()` / `resetLineageWarnings()` で公開する。
+  **既存の `getUpdatedIdList()` / `resetUpdatedIdList()`（`ApiController::upload_category_racers()`
+  が実際に使用している）と同一のパターン**であり、新しい機構の導入にはあたらない
+- **検知スキップフラグ**: `public $skipsLineageInspection = false;` を設ける。
+  catracer-cleanup-2026-27 の是正バッチのように、不整合を解消する過程で一時的に不整合状態を
+  経由する大量一括処理が、大量の警告とログを生まないようにするため（性能対策も兼ねる）
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（判定, P0）
@@ -482,24 +560,79 @@ interface CategoryLineageLinker {
 ##### State Management
 - State model: `category_racers`の各行は「選手×カテゴリー×有効期間」を表す。有効状態は
   `cancel_date IS NULL`。本設計はこの既存モデルを変更しない
-- Persistence & consistency: 保存（INSERT/UPDATE）ごとに`$validate`が実行される（CakePHP標準）。
-  一括保存（`saveAll`/`saveMany`）は行ごとに検証されるため、複数行にまたがる整合性は呼び出し側
-  （`OrgUtilController::uniteRacer()`）が`validateActiveSet()`で別途保証する（Requirement 8.1）
+- Persistence & consistency: **【第2版で改訂】** 検知は保存の成否に影響しないため、
+  複数行にまたがる一括保存（`saveAll`/`saveMany`）でも部分失敗は発生しない（Requirement 10.2）。
+  一括保存では行ごとに `afterSave()` が呼ばれるため、最終行の検知結果が最終状態を反映する。
+  同一選手・同一種別の警告は蓄積時に重複排除する
 - Concurrency strategy: 既存の`TransactionManager`によるトランザクション境界をそのまま利用する。
   本設計はロック戦略を追加しない（同一選手への同時更新は既存踏襲のリスクとして許容する）
 
+##### 警告データ構造
+
+蓄積される警告1件は次の情報を持つ（Requirement 3.7〜3.10 の3経路すべてで同じ構造を使う）:
+
+| 項目 | 内容 |
+|---|---|
+| `racer_code` | 対象選手コード |
+| `type` | 検知種別（`duplicate_category` / `invalid_pair` / `multiple_in_lineage` / `me1_exception`） |
+| `category_codes` | 検知の根拠となったカテゴリーコードの配列 |
+| `message` | 操作者向けの日本語メッセージ（画面 Flash・API 応答でそのまま使える文言） |
+
 **Implementation Notes**
-- Integration: 13/14の既存保存経路（Controller/Component/Console）はコード変更なしに本ルールの
-  適用を受ける（research.md参照）
-- Validation: `checkLineagePair`は「保存後に有効となるME/MMカテゴリー集合」を`CategoryLineageLinker`
-  に渡すために、保存対象レコード自身のID（更新時）を除外した「現在の有効カテゴリー一覧」をDBから
-  取得したうえで、保存しようとしているcategory_codeを加えた集合を構築する
-- Validation: 元ME1特例ゲート（上記Responsibilities & Constraints参照）は`reason_id`から
-  `CategoryReason::reasonAt($id)->flag()`（またはそれに相当する参照）で`CategoryChangeFlag`を
-  取得し、`$LANKUP`かどうかで分岐する
-- Risks: 大量一括処理（既存の是正バッチ等、将来のcatracer-cleanup-2026-27）で本バリデーションが
-  性能上のボトルネックになる可能性。本specでは通常運用の保存頻度を前提とし、性能要件は非対象
-  （catracer-cleanup-2026-27側の設計で個別に検討する）
+- Integration: 既存の全保存経路（Controller/Component/Console/API）はコード変更なしに検知の
+  適用を受ける。警告を**利用する**側（Flash 表示・API 応答）のみ改修が必要
+- Migration: 第1版の実装（`CategoryRacer.php` の `checkNoDuplicateCategory` /
+  `checkLineagePair` / `__isLankUpReason()` / `__isTerminationOnlySave()` /
+  `__submittedOrPersistedRacerCode()`）のうち、**判定の中身は `afterSave()` へ流用できる**。
+  撤去するのは `$validate` への登録と、プロスペクティブ集合を構築するための
+  「自身のIDを除外して現在集合を取得し保存予定値を加える」手続き（保存後は不要）
+- Risks: 全保存につき `find` が発生するため、大量一括処理では性能影響がありうる。
+  `$skipsLineageInspection` で回避できるようにし、既定は検知ONとする
+  （運用上の安全側は「検知される」こと。性能が問題になる経路のみ明示的にOFFにする）
+
+#### ApiController（拡張・第2版で新規）
+
+| Field | Detail |
+|-------|--------|
+| Intent | cyclox2app からの一括アップロード・リザルト取込に対し、検知した不整合を後方互換な形で応答に載せる |
+| Requirements | 3.8, 3.9, 10.1, 10.2, 10.5 |
+
+**Responsibilities & Constraints**
+- `upload_category_racers()`: `saveMany()` の前に `CategoryRacer::resetLineageWarnings()` を呼び、
+  成功時の応答 `$this->success(array('id_list' => $idList))` に
+  `'warnings' => $this->CategoryRacer->getLineageWarnings()` を加える
+- `execAddResult()`（`add_result()` の実処理）: 同様に、リザルト取込に伴う昇格処理で
+  蓄積された警告を成功応答に加える
+- **既存の成功／失敗の判定条件・HTTP ステータス・既存フィールド（`id_list` 等）は一切変更しない**
+  （Requirement 10.5）。`warnings` は成功応答への**追加**フィールドであり、
+  現行 cyclox2app は未知のフィールドを無視するため従来どおり動作する（Requirement 3.9）
+- 警告が0件の場合も `warnings` キーは空配列として含める（クライアント側の分岐を単純にするため）
+- **`saveMany()` のオプションは変更しない**。第2版では `afterSave` 方式により
+  バリデーション由来の失敗自体が発生しなくなるため、`atomic=true` のままで
+  Requirement 10.1/10.2 を満たす（`atomic=false` への変更は既存のトランザクション保証を
+  弱めるため行わない）
+
+**Dependencies**
+- Outbound: CategoryRacer model（警告の取得, P0）
+
+**Contracts**: Service [ ] / API [x] / Event [ ] / Batch [ ] / State [ ]
+
+##### API Contract
+
+| Aspect | Detail |
+|---|---|
+| Endpoint | 既存の `POST /api/upload_category_racers`、`POST /api/add_result/{meetCode}/{ecatName}` |
+| Request | **変更なし** |
+| Response (成功) | 既存フィールドに `warnings: [{racer_code, type, category_codes, message}, ...]` を追加 |
+| Response (失敗) | **変更なし**（不整合検知は失敗の要因にならない） |
+| 後方互換性 | 追加のみ。既存フィールドの削除・意味変更・型変更は行わない |
+
+**Implementation Notes**
+- Validation: 「導入前後で cyclox2app の成功／失敗判定が変わらないこと」（Requirement 10.5）を
+  結合試験で明示的に確認する。特に、不整合を含む選手データを一括アップロードして
+  **HTTP 200 かつ全行保存**されることをテストする
+- Risks: 応答サイズの増加。1リクエストで大量の不整合が検知されると `warnings` が肥大化しうるため、
+  上限件数（例: 100件）を設けて超過分は件数のみを示すサマリに畳む
 
 ### Component層
 
@@ -507,14 +640,27 @@ interface CategoryLineageLinker {
 
 | Field | Detail |
 |-------|--------|
-| Intent | レース結果によるリアルタイム昇格発生時に、対応する相手系統カテゴリーへの連動更新を実行する |
-| Requirements | 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.2, 5.3 |
+| Intent | レース結果によるリアルタイム昇格発生時に、対応する相手系統カテゴリーへの連動更新を実行する（失敗しても取込を止めない） |
+| Requirements | 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.2, 5.3, 10.3, 10.4, 10.6 |
 
 **Responsibilities & Constraints**
 - 既存の分岐・HoldPoint付与ロジックは変更しない（Simplification: 新規責務は追加箇所を最小化した
   フック呼び出しに限定する）。**ただし例外として**、下記「保存順序の是正」のみ行う
-- 連動保存が失敗した場合、昇格処理全体の戻り値ステータスを`Constant::RET_FAILED`とし、呼び出し元の
-  トランザクション制御に委ねる（既存の他の部分的失敗パターンと同じ扱い）
+- **【第2版で改訂】連動失敗時の扱い**: 連動保存が失敗した場合、`Constant::RET_FAILED` を
+  **返さない**。`LOG_ERR` でログを出力し警告として蓄積したうえで、昇格処理は継続する。
+  第1版では `RET_FAILED` を返しており、これが呼び出し元の `return false` を誘発して
+  `reCalcResults()` を中断させ、**同一レースカテゴリーの以降の選手の昇格が無言で不適用になる**
+  問題があった（Requirement 10.3, 10.4）。
+  第2版では連動先の保存もバリデーションで拒否されなくなるため、そもそも失敗要因は
+  DBエラー等の真のシステム障害に限られる。その場合でもリザルト取込全体を巻き添えにしない
+- **【第2版で撤回】** 第1版の「問題3（マスターズ側呼び出し元の戻り値未捕捉）」の是正
+  ——`__applyRankUp2CM()` の呼び出し元2箇所で戻り値を受けて `RET_FAILED` 時に `return false`
+  する変更——は**撤回し、従来どおり戻り値を捕捉しない**。この変更は第1版の
+  「不整合は必ず拒否する」前提の下では整合していたが、第2版では
+  「1名の失敗が後続全選手の昇格を止める」という Requirement 10.3 違反そのものになるため。
+  中途半端な状態（旧カテゴリーがcancelされたのに新カテゴリーが付かない）のリスクは残るが、
+  それは検知・警告の対象であり、シーズン運営を止める理由にはしない
+  （＝レビュー指摘「多少間違っていてもリザルトがスムーズに上がる方が健全」に従う）
 - **保存順序の是正・連動フック呼び出し位置（2026-07-20 実装フェーズでの確認・改訂、確定版）**:
   当初「新カテゴリー行の保存とHoldPoint付与が両方成功した直後に`propagateLinkedPromotion()`を呼ぶ」
   という設計だったが、タスク4.1の実装・独立レビューで2段階の問題が判明し、以下の順序に改訂した。
@@ -529,7 +675,9 @@ interface CategoryLineageLinker {
      `__execApplyRankUp()`へ到達する全呼び出し経路で、cancelをcreateより先に行う順序へ統一する
      （最終的なDB状態は変更前と同一。呼び出し順序のみの是正であり、分岐・判定ロジック自体は
      変更しない）。
-  2. **問題2（連動フックの呼び出し位置）**: 問題1を是正しても、両系統保有選手（例: C3+CM2保有）が
+  2. **問題2（連動フックの呼び出し位置）** ※以下は第1版当時の記述。第2版では
+     `checkLineagePair` による拒否自体が無くなるため本問題は発生しないが、**確定した呼び出し順序は
+     第2版でも維持する**（前掲「Key Decisions」参照）: 問題1を是正しても、両系統保有選手（例: C3+CM2保有）が
      エリート側で昇格（例: C3→C2）すると、**新エリートカテゴリーのcreate自体**がタスク3の
      `checkLineagePair`に拒否される。create時点ではマスターズ側がまだ更新前の値（例: CM2）のままで、
      `checkLineagePair`が見る保存後集合`{CM2, C2}`が対応表上の正当なペアにならないため
@@ -547,19 +695,17 @@ interface CategoryLineageLinker {
   （エリート側のみ、Requirement 4.5）。`__applyRankUp2CM()`（マスターズ側、タスク4.2）も同様の
   順序（cancel旧マスターズ→propagateLinkedPromotion（エリート側解決・更新）→create新マスターズ→
   HoldPoint）とする。
-  3. **問題3（マスターズ側呼び出し元の戻り値未捕捉、2026-07-21 タスク8の結合試験で確認・是正）**:
-     `__applyRankUp2CM()`の呼び出し元（`CM1+2+3`分岐、`rank==1`でCM1・`rank>1`でCM2を付与する
-     2箇所）が戻り値を一切受け取っていなかった（エリート側`__execApplyRankUp()`の呼び出し元
-     `__applyRankUp()`・行864は正しく戻り値を見て`RET_FAILED`時に`return false`する一方、
-     マスターズ側だけこの処理が欠落）。このため`__applyRankUp2CM()`内部で連動保存や新カテゴリー
-     createが失敗しても`__reCalcResults()`は成功したまま処理を継続し、トランザクションが
-     コミットされてしまい、旧カテゴリーがcancelされたのに新カテゴリーが付与されない、
-     または連動更新が中途半端な状態のまま確定するおそれがあった（Requirement 4.6違反）。
-     タスク4.2レビューで低優先度懸念として指摘・タスク8での検討を申し送り済みだったが、
-     タスク8の結合試験実施時に実際に到達可能な不具合と判明したため是正する。**是正**:
-     呼び出し元2箇所で戻り値を受け取り、エリート側と同じパターン（`RET_FAILED`/`RET_ERROR`なら
-     `return false`）を適用する。
-  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」（その1・その2・その4）参照
+  3. ~~**問題3（マスターズ側呼び出し元の戻り値未捕捉）**~~ **【第2版で撤回】**
+     第1版では `__applyRankUp2CM()` の呼び出し元2箇所が戻り値を捕捉しておらず、
+     連動保存や新カテゴリー create の失敗が握り潰される点を「Requirement 4.6 違反」として
+     是正した（呼び出し元で `RET_FAILED` を見て `return false` する）。
+     **第2版ではこの是正を撤回し、元の「戻り値を捕捉しない」実装に戻す。**
+     理由: 当該変更は「1名の昇格失敗が同一レースカテゴリーの後続全選手の昇格を止める」
+     という挙動を生み、Requirement 10.3（他選手の昇格処理を中断させない）に正面から違反する。
+     第2版の Requirement 4.6 は「正常でない結果は警告として記録するが処理は完了させる」へ
+     改訂されているため、握り潰しではなく**警告として記録したうえで継続する**のが正しい扱いとなる。
+  詳細はagreement-log.md「実装フェーズでの前提崩れ検出」（その1・その2・その4）および
+  「有識者レビューによる方針転換」参照
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（連動判定・実行, P0）
@@ -578,12 +724,15 @@ interface CategoryLineageLinker {
 **Implementation Notes**
 - Integration: `App::uses('CategoryLineageLinker', 'Cyclox/Util')` を追加し、
   `__setupParams()`（既存の依存初期化箇所）でインスタンス化する
-- Validation: 連動保存も`CategoryRacer`モデルの一元バリデーションを通るため、連動先が不正になる
-  ケース（理論上、対応表とMEI特例ロジックが正しければ発生しないはずだが、既存不整合データが
-  残っている選手に対して昇格が起きた場合は起こりうる）はログ出力のうえ`RET_FAILED`とする
-- Risks: 既存不整合データ（catracer-cleanup-2026-27で是正予定）を保有する選手に対して本フックが
-  最初に動作した際、連動保存がバリデーションエラーになる可能性がある。ログに詳細を残し、
-  主催者が手動確認できるようにする（自動修復はしない、Requirement 3.5と整合）
+- Validation: **【第2版で改訂】** 連動保存はバリデーションで拒否されなくなったため、
+  既存不整合データを保有する選手への昇格でも連動処理は完走する。結果が正常な状態にならない
+  場合は `CategoryRacer::afterSave()` の検知が警告を上げる（Requirement 4.6）
+- Validation: **昇格ループの非中断を明示的にテストする**。同一レースカテゴリーに
+  不整合データを持つ選手と正常な選手を混在させ、前者の処理後も後者の昇格が適用されること
+  （Requirement 10.3）を結合試験で確認する
+- Risks: **【第2版で改訂】** 既存不整合データ（catracer-cleanup-2026-27で是正予定）を保有する
+  選手が多いうちは警告が多発しうる。警告はリザルト取込を妨げないため運用は止まらないが、
+  ノイズが多いと本当に見るべき警告が埋もれる。是正バッチの定期実行で母数を減らす運用を前提とする
 
 ### Controller層
 
@@ -601,9 +750,12 @@ interface CategoryLineageLinker {
   全部」から「切替先カテゴリーとの対応表上のペアに**ならない**反対系統の有効カテゴリーのみ」に
   限定する。既に対応表上の正しいペアになっている反対系統カテゴリーは`keep_cats`として保持し
   cancelしない
-- `exec_change_em()`: 保存処理の判定ロジック自体は変更しない（`CategoryRacer`モデルの一元
-  バリデーションがRequirement 6.1/6.4の拒否を担う）。**ただし例外として**、下記「既存バグの是正」
-  のみ行う
+- `exec_change_em()`: 保存処理の判定ロジック自体は変更しない。**【第2版で改訂】**
+  Requirement 6.1/6.4 は「拒否」ではなく「警告を提示したうえで操作を完了させる」に変わったため、
+  保存成功後に `CategoryRacer::getLineageWarnings()` を参照し、警告があれば
+  **成功メッセージと併記する形で** Flash に載せる（保存失敗時のエラー表示とは別扱い。
+  操作は成功しているため、失敗と誤解されない文言にする）。
+  保存前に `resetLineageWarnings()` を呼ぶ。**ただし例外として**、下記「既存バグの是正」も行う
 - **既存バグの是正（2026-07-20 実装フェーズでの確認・改訂）**: `exec_change_em()`は
   `$this->request->data['sub']['end_ids_json']`の空判定を`!empty(...)`（JSON文字列自体の
   PHP空判定）で行っているため、cancel対象が0件のとき送信される空配列のJSON文字列`"[]"`が
@@ -618,7 +770,7 @@ interface CategoryLineageLinker {
 
 **Dependencies**
 - Outbound: CategoryLineageMap（対応表参照, P0）
-- Outbound: CategoryRacer model（一元バリデーション経由の拒否, P0）
+- Outbound: CategoryRacer model（一元検知による警告の取得, P0）
 
 **Contracts**: Service [x] / API [ ] / Event [ ] / Batch [ ] / State [ ]
 
@@ -629,9 +781,9 @@ interface CategoryLineageLinker {
 **Implementation Notes**
 - Integration: View（`change_em.ctp`, `check_change_em.ctp`）の説明文言を「系統切替」から
   「対応ペア補完・特例対応」に更新する（挙動変更ではなく利用者への説明の正確化）
-- Validation: ME1特例に該当しない`C1`への切替試行は、`CategoryRacer`モデルの
-  `checkLineagePair`ルールが`CategoryLineageLinker::isFormerElite1()`を通じて拒否する
-  （Requirement 6.4はモデル層の拒否をControllerが正しく利用者に伝えることで満たす）
+- Validation: **【第2版で改訂】** ME1特例に該当しない`C1`への切替は、`CategoryRacer::afterSave()`が
+  `CategoryLineageLinker::isFormerElite1()`を通じて検知し警告を蓄積する。切替操作自体は成功する
+  （Requirement 6.4はモデル層の検知結果をControllerが正しく利用者に伝えることで満たす）
 - Risks: 既存の`change_em`利用者（主催者）が「系統を完全に切り替える」という旧来の操作感を期待して
   いる可能性があるため、View文言の変更と合わせて運用周知が必要（実装外のフォロー事項として
   tasks.mdまたは運用ドキュメントに記録する）
@@ -640,25 +792,31 @@ interface CategoryLineageLinker {
 
 | Field | Detail |
 |-------|--------|
-| Intent | 選手統合処理が統合後に対応外ペア・重複を残さないことを保証する |
+| Intent | 選手統合処理が統合後に生んだ対応外ペア・重複を検知し、統合は完了させたうえで管理者に伝える |
 | Requirements | 8.1, 8.2, 9.2 |
 
 **Responsibilities & Constraints**
 - 既存の `CategoryRacer->saveAll($param)`（統合元の`category_racers`行の`racer_code`書換え）の
-  成功後、同一トランザクション内・`TransactionManager->commit()`前に
-  `CategoryLineageLinker::validateActiveSet($uniteTo)` を呼び出す
-- 検証が失敗した場合、`uniteRacer()`は`false`を返し、呼び出し元`do_unite_racer()`の既存の
-  ロールバック処理（`TransactionManager->rollback($transaction)`）がそのまま機能する
+  成功後、`CategoryLineageLinker::validateActiveSet($uniteTo)` を呼び出す
+- **【第2版で改訂】** 検査が失敗しても `uniteRacer()` は `false` を返さず、
+  **統合処理は完了させる**（ロールバックしない。Requirement 8.1）。
+  検知内容は既存の `$uniteRacerFailureMessage` と同じ経路（コントローラのプロパティ）で
+  `do_unite_racer()` へ伝達し、統合成功のメッセージと併記して表示する。
+  第1版ではここで `false` を返して統合全体をロールバックしていた
 - 統合元・統合先が同一カテゴリーを共に有効保有していた場合の重複は、`saveAll()`によって
   同一`racer_code`・同一`category_code`の行が複数存在する状態になるため、`validateActiveSet()`の
   重複検知（Requirement 3.2相当のロジックをUtil層で再利用）で検出する
-- **対応表対象外カテゴリーの重複防止（2026-07-20 実装フェーズでの確認・改訂）**: `validateActiveSet()`
-  はME1-4/CM1-3のみをDBから取得して検証するため、統合元・統合先が同一の対応表対象外カテゴリー
+- **対応表対象外カテゴリーの重複検知（2026-07-20 改訂・第2版でも維持）**: `validateActiveSet()`
+  はME1-4/CM1-3のみをDBから取得して検査するため、統合元・統合先が同一の対応表対象外カテゴリー
   （例: WM）を共に有効保有していた場合の重複はこの呼び出しだけでは検出できない
-  （タスク2.5レビューで判明、Requirement 8.2・9.2の文言はカテゴリー種別を問わず重複拒否を
-  求めている）。`validateActiveSet($uniteTo)`と同じ呼び出し位置で、追加で
-  `CategoryLineageLinker::validateNoDuplicateAnyCategory($uniteTo)`（新設）も呼び出し、
-  いずれかが失敗した場合に`uniteRacer()`は`false`を返す
+  （Requirement 8.2・9.2はカテゴリー種別を問わず重複の検知を求めている）。
+  `validateActiveSet($uniteTo)`と同じ呼び出し位置で、追加で
+  `CategoryLineageLinker::validateNoDuplicateAnyCategory($uniteTo)`（新設）も呼び出す。
+  **【第2版で改訂】** いずれが失敗しても統合は完了させ、警告として伝達する
+- **【第2版の注記】** `CategoryRacer::afterSave()` による検知も `saveAll()` 経由で自動的に働くが、
+  統合処理では「統合先選手の統合後集合」という明確な検査対象があるため、
+  ここでは意図を明示するために `validateActiveSet()` の明示呼び出しを維持する
+  （両者の重複警告は蓄積時に重複排除される）
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（統合後集合の検証, P0）
@@ -667,14 +825,14 @@ interface CategoryLineageLinker {
 
 ##### Service Interface
 - 既存の `public function uniteRacer($united, $uniteTo, $userNote = ''): bool` のシグネチャは
-  変更しない。内部で検証呼び出しを追加し、失敗時は既存の「`false`を返す」規約に従う
+  変更しない。**【第2版で改訂】** 不整合の検知は戻り値に反映しない（真の保存失敗のみが `false`）。
+  検知内容はコントローラのプロパティ経由で `do_unite_racer()` へ伝える
 
 **Implementation Notes**
-- Integration: 検証失敗時のログメッセージ（`$this->log(...)`）を既存の他の失敗ケースと同じ形式で
-  追加する
-- Risks: 統合前から双方の選手が個別には正当（対応表準拠）でも、統合後の合算集合が3カテゴリー以上に
-  なるケース（例: 統合元が`C3`+`CM2`保有、統合先が`C2`+`CM1`保有）を確実に拒否できるよう、
-  `OrgUtilControllerTest`でこのシナリオを明示的にカバーする
+- Integration: 検知時のログメッセージ（`$this->log(...)`）を既存の他のケースと同じ形式で追加する
+- Risks: **【第2版で改訂】** 統合前から双方の選手が個別には正当（対応表準拠）でも、統合後の
+  合算集合が3カテゴリー以上になるケース（例: 統合元が`C3`+`CM2`保有、統合先が`C2`+`CM1`保有）が
+  確実に**検知され、かつ統合自体は成功する**ことを `OrgUtilControllerTest` で明示的にカバーする
 
 ### Console層
 
@@ -743,36 +901,59 @@ interface CategoryLineageLinker {
 ## Error Handling
 
 ### Error Strategy
-- 保存時バリデーションエラー（CakePHPの`$validate`機構）を一次防御とし、失敗時は既存の
-  Controller層の「保存失敗時のFlashメッセージ＋ロールバック」パターンをそのまま利用する
-  （新しいエラーハンドリング機構は導入しない）
 
-### Error Categories and Responses
-- **業務ルール違反（対応外ペア／重複付与）**: `CategoryRacer::$validate`が拒否し、CakePHPの
-  標準エラーメッセージとして「対応関係にないカテゴリーの組み合わせです」「既に保有している
-  カテゴリーです」等、原因が分かるメッセージを返す（Requirement 3.3）
-- **ME1特例違反**: 同じく`$validate`経由で拒否。メッセージで「元ME1でない選手にはME1を
-  付与できません」等を明示する
-- **連動保存の失敗（システムエラー相当）**: `ResultParamCalcComponent`内でログ出力
-  （`LOG_ERR`）のうえ`Constant::RET_FAILED`を返し、既存のトランザクション制御に委ねる
-- **統合後不整合**: `OrgUtilController::uniteRacer()`が`false`を返し、既存の
-  ロールバック＋Flashメッセージパターンに委ねる
-- **操作者向けメッセージの具体化（2026-07-21 結合検証で確認・改訂）**: `/kiro-validate-impl`の
-  結合検証で、`change_em`（`exec_change_em()`）・選手統合（`do_unite_racer()`）の2画面において、
-  拒否理由（対応外ペア・重複・ME1特例等）を保持する`CategoryRacer::$validationErrors`／
-  `CategoryLineageValidationError::getMessage()`が、実際に画面へ表示されるFlashメッセージには
-  汎用文言（「新規カテゴリー所属の設定に失敗しました。」「選手データの統合に失敗しました」）
-  のみが渡っており、具体的な拒否理由が操作者に届いていないことが判明した（Requirement 3.3
-  未充足）。是正: `exec_change_em()`は保存失敗時に`$this->CategoryRacer->validationErrors`の
-  内容をエラーメッセージへ含める。`uniteRacer()`は既存の公開シグネチャ（`bool`を返す）を
-  変更せず、代わりに検証失敗時の具体的理由をコントローラのプロパティに保持し、
-  `do_unite_racer()`がFlashメッセージ組み立て時にこれを参照する。判定ロジック自体・保存処理の
-  分岐は変更しない（メッセージの経路のみの是正）。詳細はagreement-log.md参照。
+**【第2版で全面改訂】** カテゴリーの不整合は「エラー」ではなく「警告」として扱う。
+エラー（処理を止める事象）と警告（処理は続くが人に知らせる事象）を明確に分離する:
+
+| 区分 | 対象 | 挙動 |
+|---|---|---|
+| **エラー** | DBエラー、必須項目欠落、日付形式不正など既存の `$validate` が扱う入力不備 | 従来どおり保存失敗。既存の Flash ＋ロールバックパターン |
+| **警告** | 対応外ペア、同一カテゴリー重複、同系統内複数保有、ME1特例に非該当 | **保存は成功**。警告を蓄積し、画面／API応答／ログの3経路で伝達 |
+
+不整合を警告に降格させた理由は、cyclox2 が「厳密な運用よりシーズン運営がスムーズに進むこと」を
+優先する設計思想を持ち、外部クライアント cyclox2app が厳密チェックを行わないため
+（agreement-log.md「有識者レビューによる方針転換」参照）。
+
+### Warning Categories and Responses
+
+すべて `CategoryRacer::afterSave()` が検知し、共通の警告データ構造（Model層参照）で蓄積する。
+
+| 種別 (`type`) | 検知内容 | メッセージ例 |
+|---|---|---|
+| `duplicate_category` | 同一カテゴリーコードを複数行で有効保有 | 「同じカテゴリー（C3）を重複して保有しています」 |
+| `invalid_pair` | ME/MM 2件の組合せが対応表上のペアでない | 「対応関係にないカテゴリーの組み合わせです（C4 と CM1）」 |
+| `multiple_in_lineage` | ME/MM が3件以上（同系統内複数保有） | 「同一系統内で複数のカテゴリーを保有しています（C2, C3, CM1）」 |
+| `me1_exception` | 元ME1でない選手に `{C1, CM1}` が成立（LANKUP以外の理由） | 「元ME1でない選手にME1（C1）が付与されています」 |
+
+**伝達経路**（Requirement 3.7〜3.10）:
+- **画面（Flash）**: `exec_change_em()` / `do_unite_racer()` が成功メッセージと併記して表示する。
+  操作は成功しているため、失敗と誤解されない文言にする（例: 「登録しました。ただし次の点にご注意
+  ください: ...」）
+- **API応答**: `ApiController` が成功応答に `warnings` フィールドとして付与する。
+  既存クライアントは無視するため後方互換
+- **サーバログ**: `afterSave()` が `LOG_WARNING` で記録する。選手コード・カテゴリーコード・
+  検知種別を含め事後に特定できる形式とする
+- **管理者向け一覧**: 本specでは提供しない。catracer-cleanup-2026-27 Requirement 1 の
+  検出レポート（dry-run）が担当する
+
+### Error Categories and Responses（エラー＝処理を止める事象）
+- **連動保存の失敗（システムエラー相当）**: **【第2版で改訂】** `ResultParamCalcComponent` 内で
+  `LOG_ERR` を出力し警告として蓄積するが、`Constant::RET_FAILED` は**返さない**。
+  昇格処理・リザルト取込は継続する（Requirement 10.3, 10.4）
+- **保存そのものの失敗（DBエラー等）**: 従来どおり。既存のトランザクション制御・
+  ロールバック・Flash パターンに委ねる
+- **操作者向けメッセージの具体化（2026-07-21 の改訂を第2版で継承・拡張）**: `exec_change_em()` /
+  `do_unite_racer()` に対する「具体的な理由が操作者に届いていない」問題への是正
+  （`validationErrors` のフラット化、`$uniteRacerFailureMessage` プロパティ経由の伝達）は
+  第2版でも有効。**ただし伝える内容が「拒否理由」から「成功したが検知された警告」へ変わる**ため、
+  メッセージの組み立て箇所と文言を第2版に合わせて改める
 
 ### Monitoring
 - 既存の`$this->log(...)`（CakePHPログ機構）による記録パターンを踏襲する。新規の監視基盤は
   導入しない。連動更新（`propagateLinkedPromotion`）の実行結果は`LOG_DEBUG`で記録し、
   是正バッチ（catracer-cleanup-2026-27）が参照できるログ形式に揃える
+- **【第2版で追加】** 不整合の検知は `LOG_WARNING` で記録する。警告の発生頻度は
+  既存不整合データの残存量に比例するため、是正バッチの実行判断の材料になる
 
 ## Testing Strategy
 
@@ -782,20 +963,38 @@ interface CategoryLineageLinker {
 - `CategoryLineageLinkerTest`: (1) 空集合・単独保有・正当ペア・対応外ペア・同系統内重複の
   各パターンでの`isValidActiveSet()`判定、(2) 元ME1履歴あり/なしでの`isFormerElite1()`、
   (3) `C1⇔CM1`特例を含む`resolveLinkedTarget()`の分岐（Requirement 5.2/5.3）
-- `CategoryRacerTest`: `save()`呼び出しが対応外ペア・重複を拒否すること、cancel専用の保存
-  （`category_code`を伴わない）はバリデーション対象外であること
+- `CategoryRacerTest`: **【第2版で改訂】** (1) 対応外ペア・重複・同系統内複数保有・ME1特例
+  非該当の各ケースで**保存が成功し**、かつ対応する種別の警告が蓄積されること、
+  (2) cancel専用の保存は検知対象外であること、(3) `$skipsLineageInspection = true` のとき
+  検知が走らないこと、(4) 正常なペア・単独保有では警告が出ないこと、
+  (5) `reason_id` が LANKUP の場合に ME1特例の警告が出ないこと
 
 ### Integration Tests
 - `ResultParamCalcComponentTest`: エリート側昇格→マスターズ側連動、マスターズ側昇格→エリート側
   連動、単独保有選手の昇格で相手系統に新規付与されないこと、HoldPointが昇格元系統にのみ1回
   付与されること（Requirement 4全AC）
-- `CategoryRacersControllerTest`: `change_em`が対応ペア補完としてのみ機能し、既に正しいペアを
-  破壊しないこと、ME1特例に反する切替がエラーになること
-- `OrgUtilControllerTest`: 統合後に対応外ペア・重複が生じるケースで統合全体がロールバックされること
+- `ResultParamCalcComponentTest`（**第2版で追加**）: 同一レースカテゴリーに不整合データを持つ
+  選手と正常な選手を混在させ、**前者の処理後も後者の昇格が適用される**こと（Requirement 10.3）
+- `CategoryRacersControllerTest`: **【第2版で改訂】** `change_em`が対応ペア補完として機能し、
+  既に正しいペアを破壊しないこと、ME1特例に反する切替が**成功したうえで警告が表示される**こと
+- `OrgUtilControllerTest`: **【第2版で改訂】** 統合後に対応外ペア・重複が生じるケースで
+  **統合は完了し**、警告が管理者に伝達されること（ロールバックされないこと）
+- `ApiControllerTest`（**第2版で新規**）: (1) 不整合を含む選手データを
+  `upload_category_racers()` へ一括アップロードして **HTTP 200 かつ全行保存**されること
+  （Requirement 10.1, 10.2）、(2) 応答に `warnings` が含まれること（Requirement 3.8）、
+  (3) 警告0件でも既存フィールドの構造が変わらないこと（Requirement 10.5）
 
 ### Batch Tests
 - `CatLimitShellTest`: 同一シーズン内でElite/Masters双方への出走がある選手に`b`が記録され、
   片方のみの選手は既存通り`e`/`m`が記録されること
+
+### 第2版での既存テストの扱い
+
+第1版で作成した約2,900行のテスト資産のうち、**「拒否されること」を主張しているアサーションは
+「成功し、かつ警告が蓄積されること」へ書き換える**必要がある。対象は主に
+`CategoryRacerTest`・`CategoryRacersControllerTest`・`OrgUtilControllerTest`・
+`MeMmLinkageIntegrationTest`。`CategoryLineageMapTest`・`CategoryLineageLinkerTest`・
+`CatLimitShellTest` は判定ロジック自体が不変のため**そのまま流用できる**。
 
 ## 技術要件・制約チェック（SDD overlay / 初回実装時）
 

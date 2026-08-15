@@ -1,24 +1,32 @@
 {
   "feature_name": "me-mm-linkage-2026-27",
   "created_at": "2026-07-14T00:00:00Z",
-  "updated_at": "2026-07-21T00:00:00Z",
+  "updated_at": "2026-08-15T00:00:00Z",
   "language": "ja",
-  "phase": "validated-go",
+  "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": true
+      "approved": true,
+      "revision_note": "第2版（2026-08-15 承認済み）。有識者レビュー（cyclox2web PR #13）を受け、Requirement 3 の根幹方針を「バリデーションエラーで拒否」から「検知して警告するが保存操作は完了させる」へ変更。Requirement 10（外部連携アプリからの処理継続性の保証）を新設。理由: cyclox2app からの選手データ/リザルトアップロードが停止する運用リスク。詳細は agreement-log.md「有識者レビューによる方針転換と requirements 差し戻し（2026-08-15）」参照。",
+      "approved_at": "2026-08-15T00:00:00Z",
+      "revision": 2
     },
     "design": {
       "generated": true,
       "approved": true,
       "amended_at": "2026-07-21T00:00:00Z",
-      "amendment_note": "実装フェーズ(タスク3・4.1・5・7・8)で判明した設計前提の食い違い/スコープ拡張5件(保存順序/ME1ゲート適用範囲/連動フック呼び出し位置/change_em既存バグ/uniteRacer非管理カテゴリー重複/マスターズ側戻り値未捕捉)を修正し、人間の承認を得て再承認。詳細はagreement-log.md参照。"
+      "amendment_note": "実装フェーズ(タスク3・4.1・5・7・8)で判明した設計前提の食い違い/スコープ拡張5件(保存順序/ME1ゲート適用範囲/連動フック呼び出し位置/change_em既存バグ/uniteRacer非管理カテゴリー重複/マスターズ側戻り値未捕捉)を修正し、人間の承認を得て再承認。詳細はagreement-log.md参照。",
+      "approved_at": "2026-08-15T00:00:00Z",
+      "revision": 2,
+      "revision_note": "第2版（2026-08-15 承認済み）。不整合の検知を CategoryRacer::$validate （保存前・保存を失敗させる）から CategoryRacer::afterSave()（保存後・保存に影響しない）へ移設。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動（RET_FAILED / __applyRankUp2CM() 戻り値チェック）を撤回。CategoryLineageMap / CategoryLineageLinker は無変更で流用。"
     },
     "tasks": {
       "generated": true,
-      "approved": true
+      "approved": false,
+      "revision": 2,
+      "revision_note": "第2版（2026-08-15 生成）。第1版の全8タスクは実装完了済みのため、本改訂は差分修正タスク R1〜R7 として構成。人間の確認待ち（実装着手前に停止する方針）。"
     }
   },
-  "ready_for_implementation": true
+  "ready_for_implementation": false
 }
