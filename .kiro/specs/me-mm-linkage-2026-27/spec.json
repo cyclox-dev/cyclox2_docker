@@ -3,7 +3,7 @@
   "created_at": "2026-07-14T00:00:00Z",
   "updated_at": "2026-08-15T00:00:00Z",
   "language": "ja",
-  "phase": "tasks-generated",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -23,10 +23,11 @@
     },
     "tasks": {
       "generated": true,
-      "approved": false,
+      "approved": true,
       "revision": 2,
-      "revision_note": "第2版（2026-08-15 生成）。第1版の全8タスクは実装完了済みのため、本改訂は差分修正タスク R1〜R7 として構成。人間の確認待ち（実装着手前に停止する方針）。"
+      "revision_note": "第2版（2026-08-15 承認済み）。第1版の全8タスクは実装完了済みのため、本改訂は差分修正タスク R1〜R7 として構成。実装は submodule の既存ブランチ feat/me-mm-linkage-2026-27 を流用・更新する（人間指示 2026-08-15）。",
+      "approved_at": "2026-08-15T00:00:00Z"
     }
   },
-  "ready_for_implementation": false
+  "ready_for_implementation": true
 }
