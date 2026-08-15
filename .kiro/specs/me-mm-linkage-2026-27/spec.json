@@ -3,7 +3,7 @@
   "created_at": "2026-07-14T00:00:00Z",
   "updated_at": "2026-08-15T00:00:00Z",
   "language": "ja",
-  "phase": "requirements-approved",
+  "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -14,14 +14,18 @@
     },
     "design": {
       "generated": true,
-      "approved": false,
+      "approved": true,
       "amended_at": "2026-07-21T00:00:00Z",
       "amendment_note": "実装フェーズ(タスク3・4.1・5・7・8)で判明した設計前提の食い違い/スコープ拡張5件(保存順序/ME1ゲート適用範囲/連動フック呼び出し位置/change_em既存バグ/uniteRacer非管理カテゴリー重複/マスターズ側戻り値未捕捉)を修正し、人間の承認を得て再承認。詳細はagreement-log.md参照。",
-      "revision_required_note": "第2版 requirements に追随する改訂が必要。CategoryRacer の $validate 組み込み撤回、ResultParamCalcComponent の __applyRankUp2CM() 戻り値チェック撤回、警告伝達経路（Flash / API レスポンス / ログ）の設計追加が中心。"
+      "approved_at": "2026-08-15T00:00:00Z",
+      "revision": 2,
+      "revision_note": "第2版（2026-08-15 承認済み）。不整合の検知を CategoryRacer::$validate （保存前・保存を失敗させる）から CategoryRacer::afterSave()（保存後・保存に影響しない）へ移設。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動（RET_FAILED / __applyRankUp2CM() 戻り値チェック）を撤回。CategoryLineageMap / CategoryLineageLinker は無変更で流用。"
     },
     "tasks": {
       "generated": true,
-      "approved": false
+      "approved": false,
+      "revision": 2,
+      "revision_note": "第2版（2026-08-15 生成）。第1版の全8タスクは実装完了済みのため、本改訂は差分修正タスク R1〜R7 として構成。人間の確認待ち（実装着手前に停止する方針）。"
     }
   },
   "ready_for_implementation": false

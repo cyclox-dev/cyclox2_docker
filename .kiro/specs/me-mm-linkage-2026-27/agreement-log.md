@@ -424,6 +424,51 @@ requirements 第2版の承認を受けて design.md を改訂した。**設計�
 | `ApiController.php` | `warnings` 付与を新規追加 |
 | `CategoryRacerTest` / `CategoryRacersControllerTest` / `OrgUtilControllerTest` / `MeMmLinkageIntegrationTest` | 「拒否される」アサーションを「成功し警告が出る」へ書き換え |
 
+## tasks.md 第2版の構成（2026-08-15・実装着手前で停止中）
+
+design 第2版の承認（2026-08-15）を受けて tasks.md を改訂した。
+
+**第1版の全8タスク（15実行タスク）は 2026-07-21 に実装完了・`/kiro-validate-impl` GO 判定済み**
+であり、submodule 側 PR #13 として発行済み（マージ保留中）。したがって第2版のタスクは
+**ゼロからの作り直しではなく、既存実装への差分修正**として構成した。
+
+### 第1版タスクの流用・修正の別
+
+| 区分 | 対象 |
+|---|---|
+| **そのまま流用**（10タスク相当） | 1.1 テストデータ基盤 / 1.2 対応表 / 2.1 ペア・重複判定 / 2.2 元ME1判定 / 2.3 連動先解決 / 2.4 連動保存実行 / 2.5 統合後集合検証 / 4.3 単独保有・実績重複防止 / 6 CatLimitShell 両系統対応 |
+| **修正が必要** | 3 保存時バリデーション（→ R1）/ 4.1・4.2 連動統合の失敗ハンドリング（→ R2）/ 5 change_em のメッセージ経路（→ R4）/ 7 選手統合のロールバック（→ R5）/ 8 結合シナリオ（→ R6） |
+| **新規** | API 応答への警告付与（→ R3）/ 他 spec の前提記述追随（→ R7） |
+
+### 第2版タスク一覧
+
+| # | 内容 | Boundary | Depends |
+|---|---|---|---|
+| R1 | 検知を `$validate` から `afterSave()` へ移設（警告蓄積API・スキップフラグ含む） | CategoryRacer model | なし |
+| R2 | 昇格処理が不整合を理由に中断しないようにする（`RET_FAILED` 撤回・`__applyRankUp2CM()` 戻り値チェック撤回） | ResultParamCalcComponent | R1 |
+| R3 | (P) 外部連携APIの応答に警告を付与する | ApiController | R1 |
+| R4 | (P) 系統切替の警告表示を「拒否理由」→「成功＋注意喚起」へ | CategoryRacersController | R1 |
+| R5 | (P) 選手統合の不整合検知をロールバックから警告へ | OrgUtilController | R1 |
+| R6 | 第2版の結合シナリオ検証（期待値の反転） | 全体 | R1〜R5 |
+| R7 | 他 spec（catracer-cleanup / jcx-lineage-lock）の前提記述追随 | spec 文書 | なし（並行可） |
+
+### 実装時に特に注意する点（tasks.md Implementation Notes に記載）
+
+- **`afterSave()` で例外を漏らさないこと**。戻り値は無視されるが例外を投げれば保存が巻き戻り、
+  本改訂の目的（保存を絶対に妨げない）が壊れる
+- **`saveMany()` のオプションを変更しないこと**。`atomic=false` は既存のトランザクション保証を
+  弱める。第2版ではバリデーション由来の失敗自体が起きなくなるため `atomic=true` のままでよい
+- **API の既存フィールドを変更しないこと**（Requirement 10.5）
+- **一括保存では `afterSave()` が行ごとに呼ばれる**ため、警告は蓄積時に重複排除する
+- `propagateLinkedPromotion()` はメソッド内でトランザクションを張っていない。第2版では連動失敗で
+  ロールバックしなくなるため、create 失敗時に相手系統が無保有のまま取り残されるケースが実際に
+  起こりうる。この状態は R1 の検知で警告として捕捉される（**意図的な許容**）
+
+### 現在の状態
+
+**人間の指示により実装着手前で停止中。** `spec.json` は `approvals.tasks.approved: false` /
+`ready_for_implementation: false`。tasks の確認・承認後に R1 から着手する。
+
 ## 変更履歴
 
 | 日付 | 変更内容 | 変更者 |
@@ -434,3 +479,4 @@ requirements 第2版の承認を受けて design.md を改訂した。**設計�
 | 2026-08-15 | 有識者レビュー（PR #13）を受け Requirement 3 の根幹方針を「エラーで拒否」→「検知して警告・保存は完了」へ転換。requirements.md を第2版へ改訂（Req 10 新設）、spec.json の全 approvals を false に差し戻し、roadmap.md の合意事項を更新 | Claude |
 | 2026-08-15 | 改訂版 requirements.md（第2版）を人間が承認。spec.json の `approvals.requirements.approved` を true・`revision: 2` に更新。design/tasks は false のまま（第2版への追随改訂が必要） | Claude |
 | 2026-08-15 | design.md を第2版へ改訂（`$validate` による拒否 → `afterSave()` による検知・警告蓄積。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動を撤回）。**design 承認待ち** | Claude |
+| 2026-08-15 | design 第2版を人間が承認（approvals.design = true, revision 2）。tasks.md を第2版へ改訂（差分修正タスク R1〜R7）。人間の指示により実装着手前で停止 | Claude |
