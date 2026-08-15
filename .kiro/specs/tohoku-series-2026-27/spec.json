@@ -1,0 +1,28 @@
+{
+  "feature_name": "tohoku-series-2026-27",
+  "created_at": "2026-08-15T14:39:19Z",
+  "updated_at": "2026-08-16T00:00:00Z",
+  "language": "ja",
+  "phase": "tasks-approved",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true,
+      "amended_at": "2026-08-16T00:00:00Z",
+      "amendment_note": "独立レビュー(reviewer)の指摘を受け第2版へ改訂。Req 3.2を「範囲外はcalc()がnullを返す」に修正し、Req 3.4/5.5-5.9/6.1・6.4-6.6を追加。詳細はagreement-log.md参照。"
+    },
+    "design": {
+      "generated": true,
+      "approved": true,
+      "amended_at": "2026-08-16T00:00:00Z",
+      "amendment_note": "同上。Error Handlingを戻り値2段階の表に改訂、System Flowsを付与/集計の2図に分割、起点ブランチ注意・submoduleポインタ・ロールバック危険の各節を追加。"
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true,
+      "amended_at": "2026-08-16T00:00:00Z",
+      "amendment_note": "同上。1.1/2.1-2.3/3.1/4.1を改訂、5.3(結合試験実施)を新設。"
+    }
+  },
+  "ready_for_implementation": true
+}
