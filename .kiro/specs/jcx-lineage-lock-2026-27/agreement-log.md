@@ -86,3 +86,102 @@ JCXシリーズ戦は系統固定が維持される。me-mm-linkage-2026-27（�
 |---|---|---|
 | 2026-07-15 | 初版作成（spec自動生成パイプラインによる） | Claude Code |
 | 2026-07-15 | 決定点#1を人間承認により確定（案B採用・警告と回避誘導は強め）。requirements.md Requirement 5 に受入基準7を追加。#2/#3 は#1の方針に基づき推奨案で確定。spec.json ready_for_implementation を true に更新 | kyamady / Claude Code |
+
+## 2026-08-15 追記: me-mm-linkage 第2版の方針転換に伴う要再確認事項
+
+me-mm-linkage-2026-27 が有識者レビューを受けて「外部アプリからのアップロードを不整合を理由に
+止めない」方針へ第2版改訂された（roadmap.md「Requirement 3 方針転換」参照）。
+
+本 spec の `add_entry`（API）は、既定の `mode=warn` であっても `jcx_lock_override` が無ければ
+登録全体を拒否する設計になっている。cyclox2app が当該フラグを送らない限りエントリー登録が
+失敗するため、同種の運用リスク（シーズン中に外部アプリからの登録が止まる）に該当しうる。
+
+ただし本 spec が扱うのはエントリー時の業務ルール制御であり、カテゴリー認定データの整合性検知とは
+レイヤが異なる。JCX の系統固定は「登録させない」こと自体に意味がある可能性があるため、
+機械的に警告方式へ倒すべきとは限らない。
+
+**実装着手前に `mode=warn` での API 経路の扱い（拒否か、警告付き受理か）を人間に再確認すること。**
+記録のみで設計変更は行っていない（me-mm-linkage-2026-27 第2版のスコープ外のため）。
+
+## 2026-08-15 決定: API経路（add_entry）の mode=warn 時挙動を警告付き受理へ変更
+
+上記「要再確認事項」について人間の判断を仰いだ結果、**me-mm-linkage-2026-27 第2版と同方針
+（警告付きで受理する）を採用**することが決定した。
+
+### 決定内容
+
+- `add_entry`（API、外部連携による一括エントリー登録）が mode=warn のとき、系統違反を検知しても
+  **登録を拒否せず完了させる**。違反明細は成功応答の `jcx_lineage_violations` に含める
+- `jcx_lock_override` の値は登録の成否には影響しなくなるが、ログ記録上は「意図的な強行操作
+  （override=true）」と「自動受理（override=false、cyclox2app 等からの通常の登録）」を
+  区別する情報として引き続き使う
+- **mode=block の挙動は変更しない**（override 指定があっても拒否）
+- **管理画面経路（Requirement 3）は対象外**。人間が操作する画面では、案B（2026-07-15承認）の
+  確認UI付き警告フローをそのまま維持する。「登録させない」ことに業務的意味を持たせる場面は
+  画面側で確保する
+
+### 決定理由
+
+cyclox2app は `jcx_lock_override` 相当のパラメータを送信しない。初版仕様（override 無しなら
+mode=warn でも拒否）のままでは、JCX 大会へのエントリー登録が API 経由では常に失敗する構造に
+なっており、me-mm-linkage 初版が抱えていた問題と同じ構図だった。
+
+### 反映箇所
+
+- `requirements.md`: Requirement 4.1・5.5・5.6 を改訂（AC5.5 を「拒否」から「完了させ違反一覧を
+  返す」へ反転。AC5.6 はログ区別の意味へ縮小）
+- `design.md`: 「API Contract」節を改訂。mode=warn/block で挙動が分岐することを明記し、
+  「要再確認」callout を「2026-08-15 決定」callout へ置き換え
+- `tasks.md`: タスク5.1（外部API一括エントリーのプリチェックと応答）の実装方針・テスト観点を
+  改訂
+
+### 手続き上の記録
+
+本改訂は CLAUDE.md 開発ルール10（絶対軸）に基づき、実装着手前に人間へ確認したうえで行った。
+spec.json の該当 approvals は本改訂を反映して更新する。
+
+## 実装完了（2026-08-15）
+
+全7タスク（1〜7、サブタスク含む）を実装完了。submodule側コミット:
+
+| コミット | 内容 |
+|---|---|
+| （ブランチ `feat/jcx-lineage-lock-2026-27`、起点 `feat/me-mm-linkage-2026-27`） | タスク1-3: 設定・判定エンジン・モデル強制点 |
+| | タスク4: 管理画面の警告・確認UX |
+| | タスク5.1: 外部API一括登録の系統固定チェック |
+| | タスク6.1: 違反検出シェル |
+| | タスク7.2/7.3: checkBulk()のクエリ性能改善 |
+
+**テスト結果: 全17スイート198テスト787アサーション 全GREEN**（jcx-lineage-lock分59件＋
+既存me-mm-linkage-2026-27/ajocc-point-267-prod分139件への回帰なし確認済み）。
+詳細は `test-results.md` 参照。
+
+### ブランチ選定に関する記録
+
+`release/2026-27-season-rules` からブランチを切ったところ、`CategoryLineageMap` が
+存在しないことが判明した（me-mm-linkage-2026-27のPR #13がまだ `release` へマージされて
+いなかったため）。本specは me-mm-linkage-2026-27 の `CategoryLineageMap` に依存するため、
+ブランチの起点を `feat/me-mm-linkage-2026-27`（PR #13の実装ブランチ、`release`+
+`ajocc-point-267-prod` マージ済み）へ変更した。将来 PR #13 が `release` へマージされた際、
+本specのブランチも `release` の最新へ追随（マージ）する必要がある。
+
+### 実装フェーズで発見・解消した設計外の課題
+
+1. **`JcxLineageLockTest`（タスク2）とEntryRacerのbeforeSaveフック（タスク3）の相互作用**:
+   タスク2のテストデータ投入が通常の `Model::save()` を使っていたため、タスク3導入後に
+   意図的な「逆順」データ投入がフック自身に本物の違反として拒否される汚染が発生。
+   `skipsJcxLineageCheck` フラグで解消（詳細はtasks.md「Implementation Notes」参照）。
+2. **`execAddEntry()` の成功応答がリスト形状だった（design.mdの想定外）**: me-mm-linkageの
+   `execAddResult` と同じ構造的制約。成功応答への `jcx_lineage_violations` 追加を見送り、
+   ログのみに変更（design.md訂正済み）。
+3. **`checkBulk()` の性能未達成**: 初版はcheck()を選手ごとに呼ぶだけで、design.mdが意図した
+   「IN句1クエリへの集約」が未実装だった。タスク7の性能検証で気づき修正。
+
+### 人間への申し送り事項（未実装・要判断）
+
+- **`entry_racers`（本番相当554,130行）を含むJOINクエリでインデックス不足による
+  フルテーブルスキャンを確認**。提案するインデックス一覧は `test-results.md`「性能検証」節。
+  DBスキーマ変更を伴うため本specでは実装せず、要否の判断を仰ぐ。
+- `integration-test-checklist.md` に人間による手動確認項目（全26件）を用意した。特に
+  外部連携確認（cyclox2app実機での `add_entry` 挙動確認）・運用モード切替（warn⇄block）の
+  実地確認が推奨される。

@@ -3,7 +3,7 @@
   "created_at": "2026-07-15T00:00:00Z",
   "updated_at": "2026-07-15T12:00:00Z",
   "language": "ja",
-  "phase": "tasks-generated",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -19,5 +19,5 @@
     }
   },
   "ready_for_implementation": true,
-  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。"
+  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。"
 }

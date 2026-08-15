@@ -302,8 +302,8 @@ flowchart TD
 | 5.2 | warn時の画面オーバーライド | EntryRacersController, EntryCategoriesController | 確認付き再送信 + `$jcxLockOverride` | 確認フロー |
 | 5.3 | オーバーライドの記録 | CakeLog scope jcx_lineage_lock | 実行者・選手・大会・違反内容・日時 | 確認フロー |
 | 5.4 | block時はオーバーライド不可 | JcxLineageLock, 各Controller | mode=block で override 無効+UI非表示 | 決定フロー |
-| 5.5 | API未指定オーバーライドは拒否 | ApiController | override パラメータ必須 | - |
-| 5.6 | API明示オーバーライドは実行+記録 | ApiController, CakeLog | override パラメータ + ログ | - |
+| 5.5 | 【2026-08-15改訂】API違反はoverride有無によらず受理し完了 | ApiController | 違反時も登録を完了、`jcx_lineage_violations` を応答に含める | - |
+| 5.6 | オーバーライド指定はログ区別として記録 | ApiController, CakeLog | override パラメータ + ログ（強行/自動受理の区別） | - |
 | 6.1 | 違反一覧の取得手段 | JcxLineageCheckShell | `detect` サブコマンド（season指定） | - |
 | 6.2 | 一覧の出力項目 | JcxLineageCheckShell, JcxLineageCheckResult | 選手・大会・開催日・系統 | - |
 | 7.1 | 非JCXの非影響 | EntryRacer hook | is_jcx 判定を最初に行い即 return | 決定フロー |
@@ -504,15 +504,41 @@ class JcxLineageLock {
 ##### API Contract
 | Method | Endpoint | Request | Response | Errors |
 |--------|----------|---------|----------|--------|
-| POST | /api/add_entry（既存） | 既存ペイロード + 任意 `jcx_lock_override`（boolean、省略時 false） | 既存成功応答（変更なし） | 違反時: 既存のエラー応答形式に `jcx_lineage_violations`: [{racer_code, attempted_lineage, fixed_lineage, basis_meet_code, basis_meet_name, basis_at_date}] を追加して登録全体を拒否 |
+| POST | /api/add_entry（既存） | 既存ペイロード + 任意 `jcx_lock_override`（boolean、省略時 false。**2026-08-15改訂: warnモードでは実質未使用**、下記参照） | 既存成功応答（変更なし。**2026-08-15実装時訂正: `jcx_lineage_violations` は成功応答へ追加しない**、下記参照） | mode=block のときのみ、既存のエラー応答形式に `jcx_lineage_violations` を追加して登録全体を拒否 |
 
 - `execAddEntry()` 内で、旧 EntryGroup 削除**前**に `checkBulk(items, meetCode,
   ['meetCode' => 対象大会])` を実行する（自大会の旧エントリーを根拠から除外。Requirement 4.2）。
-  違反あり+override 無しなら**削除も行わず**拒否する（プリチェック失敗時に既存データを
-  破壊しない）
-- `jcx_lock_override=true` かつ mode=warn なら実行し、API利用者識別子とともに記録
-  （Requirement 5.6）。mode=block なら override 指定があっても拒否（5.4 と整合）
-- 既存の応答形式・成功時挙動は変更しない（外部ツールの後方互換）
+- **【2026-08-15 改訂・人間承認済み】mode=warn では、違反の有無・`jcx_lock_override` の値に
+  かかわらず登録を完了させる。** `jcx_lock_override` が `true` の場合は「意図的な確認済み
+  強行」、`false`（既定）の場合は「自動受理（cyclox2app 等、override を送らないクライアント
+  からの登録）」として、ログ上の記録内容（下記）で区別する（Requirement 5.5, 5.6）。
+- **【2026-08-15 実装時に発覚・訂正】`execAddEntry()` の成功応答は `array('ok')` という
+  **リスト形状**（me-mm-linkage-2026-27 の `execAddResult` と同じ構造）であり、
+  `upload_category_racers()` のような連想配列ではない。ここへ文字列キー
+  `jcx_lineage_violations` を追加すると、応答の当該フィールドが JSON 配列 `["ok"]` から
+  オブジェクト `{"0":"ok","jcx_lineage_violations":[...]}` へ変わり、既存クライアントの型を
+  破壊する。**したがって成功応答への追加は行わない**。warn モードで検知した違反は
+  サーバログ（scope `jcx_lineage_lock`）にのみ記録する。管理者向けの可視化は
+  `JcxLineageCheckShell`（Requirement 6）が担う
+- mode=block のときは従来どおり、override 指定の有無にかかわらず違反時は登録全体を拒否する
+  （旧 EntryGroup の削除も行わない。5.4 と整合。この経路は変更していない）。エラー応答は
+  `$this->error()` が組み立てる連想配列（`$this->result['error']`）のサブキーへの追加であり、
+  型を破壊しないため `jcx_lineage_violations` を安全に含められる
+  （`EntryRacersController::__errorWithJcxLockDetail()` と同じ技法）
+- 既存の成功応答の構造・型は変更しない（Requirement 7.1 の非影響方針）
+
+> **【2026-08-15 決定】me-mm-linkage-2026-27 第2版の方針との整合**
+>
+> me-mm-linkage-2026-27 が有識者レビューを受けて「cyclox2app からのアップロードを不整合を
+> 理由に止めない」方針へ第2版改訂されたことを受け、本 spec の `add_entry`（API）についても
+> **同じ方針を採用する**と人間が判断した（2026-08-15）。理由: cyclox2app は
+> `jcx_lock_override` を送信しないため、初版の「override 無しなら拒否」のままでは
+> JCX 大会へのエントリー登録が API 経由では常に失敗する構造になっていた。
+>
+> **この決定は API 経路（`add_entry`, リザルト取込）に限る。** 管理画面経路
+> （Requirement 3、`exec_change_em`相当の確認UIを持つ操作）は対象外であり、
+> mode=warn でも違反検出時にその場で確認を求める設計（案B、2026-07-15承認）を維持する。
+> JCX の系統固定が「登録させない」意味を持つべき場面は、人間が操作する画面側で確保する。
 
 ### Console層
 
@@ -597,9 +623,10 @@ class JcxLineageLock {
 ### Integration Tests
 1. `EntryRacersControllerTest` — 登録→警告表示→確認付き再送信→保存成功+オーバーライドログ
    （warn）/ 拒否のみ（block）（3.1, 3.4, 5.2, 5.3, 5.4）
-2. `ApiControllerTest::add_entry` — 違反選手を含む一括登録が旧データ削除なしで拒否され
-   `jcx_lineage_violations` を返す / override 指定で登録+記録 / 同一大会再アップロードが
-   自己の旧エントリーと衝突しない（4.1, 4.2, 5.5, 5.6）
+2. `ApiControllerTest::add_entry` — **【2026-08-15改訂】** warn モードでは違反選手を含む
+   一括登録も完了し `jcx_lineage_violations` を返す（override有無いずれでも） / block モード
+   では override 指定があっても引き続き拒否 / 同一大会再アップロードが自己の旧エントリーと
+   衝突しない（4.1, 4.2, 5.5, 5.6）
 3. `EntryCategoriesControllerTest::write_results` — 違反を含むリザルト取込が完了し、警告が
    ログと結果画面に残る（4.3, 4.4）
 4. `JcxLineageCheckShellTest` — 両系統エントリーを持つ選手のみが一覧され、出力項目が
