@@ -480,3 +480,41 @@ design 第2版の承認（2026-08-15）を受けて tasks.md を改訂した。
 | 2026-08-15 | 改訂版 requirements.md（第2版）を人間が承認。spec.json の `approvals.requirements.approved` を true・`revision: 2` に更新。design/tasks は false のまま（第2版への追随改訂が必要） | Claude |
 | 2026-08-15 | design.md を第2版へ改訂（`$validate` による拒否 → `afterSave()` による検知・警告蓄積。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動を撤回）。**design 承認待ち** | Claude |
 | 2026-08-15 | design 第2版を人間が承認（approvals.design = true, revision 2）。tasks.md を第2版へ改訂（差分修正タスク R1〜R7）。人間の指示により実装着手前で停止 | Claude |
+
+## 第2版の実装完了（2026-08-15）
+
+tasks 第2版（R1〜R7）を実装。submodule 側コミット `9ed063b`、
+`feat/me-mm-linkage-2026-27` へ push 済み（PR #13 が第2版の内容へ更新された）。
+
+**テスト結果: 10スイート 125テスト 550アサーション 全GREEN。**
+
+### 実装フェーズでの確認・判断（design のスコープ内、再承認不要）
+
+| # | 内容 | 判断 |
+|---|---|---|
+| 1 | **元ME1判定のタイミング（R1 実装時に発覚）**: `afterSave()` で `isFormerElite1()` を呼ぶと、**今まさに挿入した C1 の行自体**を過去の保有歴として拾ってしまい、元ME1でない選手が常に元ME1と判定される（同メソッドは `cancel_date`・`deleted` を問わず `category_code='C1'` の行の存在有無で判定するため）。第1版は保存前の `$validate` で判定していたためこの問題は生じなかった。**`afterSave()` 方式へ移す際に固有に発生する落とし穴** | `beforeSave()` で保存前の元ME1状態を捕捉し `afterSave()` ではその値を使う。`CategoryLineageLinker` の公開APIは design どおり無変更 |
+| 2 | **`add_result` への warnings 付与は見送り（R3）**: design では両エンドポイントに warnings を付与する想定だったが、`add_result` の成功応答は `array('ok')` という**リスト形状**であり、文字列キーを足すと JSON が配列 `["ok"]` からオブジェクト `{"0":"ok",...}` へ変わる。これは Requirement 3.9（既存の成功応答の互換性を損なわない追加情報であること）に違反し、Requirement 10.5 の趣旨にも反する | `upload_category_racers()`（元から連想配列＝JSONオブジェクト）のみに付与。`add_result` は応答形状を変更せずサーバログのみとした。**design の記述より Requirement 3.9/10.5 を優先した判断であり、design.md の該当記述は次回改訂時に本判断へ合わせる必要がある** |
+| 3 | `CategoryLineageValidationError` は `CategoryLineageLinker.php` に併記されたクラスで、`App::uses()` の登録名は `CategoryLineageLinker` のみ。定数を先に参照すると `Class not found` になる | 参照前に `class_exists('CategoryLineageLinker')` でオートローダを起動 |
+| 4 | 第2版では統合後整合性チェックの結果が「失敗理由」ではなく「成功したうえでの警告」になるため、`uniteRacerFailureMessage` に載せると `do_unite_racer()` の失敗分岐と混線する | 専用プロパティ `uniteRacerLineageWarningMessage` を新設し成功分岐で参照。失敗用は真の失敗専用に用途を縮小 |
+
+### 回帰防止の要となるテスト
+
+- `ApiControllerTest::testInconsistentRowDoesNotFailTheWholeBatch` —
+  有識者レビューで最も懸念された「不整合1件で一括アップロードが全滅する」構造の解消を、
+  実際の API メソッド呼び出しで固定
+- `ResultParamCalcComponentTest::testInconsistentRacerDoesNotStopPromotionOfOtherRacers` —
+  「先行する選手の不整合が後続選手の昇格を止めない」ことを固定
+
+### R7（他 spec の追随）の結果
+
+- **catracer-cleanup-2026-27**: requirements/design の前提記述を改訂。是正完了が
+  me-mm-linkage 適用の前提条件でなくなったこと、位置づけを「一度きりの移行処理」から
+  「シーズン中も繰り返す継続運用ツール」へ変えること、バッチ実行中は
+  `CategoryRacer::$skipsLineageInspection` で検知を抑止することを明記
+- **jcx-lineage-lock-2026-27**: **要人間再確認事項を1件記録**（設計変更は行っていない）。
+  同 spec の `add_entry`（API）は既定の `mode=warn` でも `jcx_lock_override` が無ければ
+  登録全体を拒否する設計であり、cyclox2app が当該フラグを送らない限りエントリー登録が
+  失敗する。me-mm-linkage 第2版と同種の運用リスクに該当しうるが、扱うレイヤが異なる
+  （エントリー時の業務ルール制御 vs カテゴリー認定データの整合性検知）ため機械的に
+  警告方式へ倒すべきとは限らない。同 spec の実装着手前に人間へ確認すること
+| 2026-08-15 | tasks 第2版（R1〜R7）を実装。submodule 9ed063b を push（PR #13 が第2版へ更新）。10スイート125テスト550アサーション全GREEN。実装時の判断4件と jcx-lineage-lock の要再確認事項1件を記録 | Claude |
