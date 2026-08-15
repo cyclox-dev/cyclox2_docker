@@ -33,7 +33,7 @@
 
 ## 第2版 改訂タスク
 
-- [ ] R1. カテゴリー不整合の検知を `$validate` から `afterSave()` へ移設する
+- [x] R1. カテゴリー不整合の検知を `$validate` から `afterSave()` へ移設する
   - `CategoryRacer` の `$validate` から `checkNoDuplicateCategory` / `checkLineagePair` の
     2ルールの**登録を撤去**し、`category_code` のバリデーションを必須チェックのみに戻す
   - 同等の判定を `afterSave()` で行い、検知結果を保存の成否に影響させずに警告として蓄積する
@@ -57,7 +57,7 @@
   - _Boundary: CategoryRacer model_
   - _Depends: なし（第1版 2.1 / 2.2 の成果を流用）_
 
-- [ ] R2. 昇格処理が不整合を理由に中断しないようにする
+- [x] R2. 昇格処理が不整合を理由に中断しないようにする
   - 系統間連動の保存が失敗した場合に、昇格処理全体を失敗ステータスにするのをやめ、
     ログ出力と警告蓄積に留めて処理を継続するように変更する
   - マスターズ側昇格の呼び出し元2箇所に第1版で追加した戻り値チェック（失敗時に処理を打ち切る）
@@ -72,7 +72,7 @@
   - _Boundary: ResultParamCalcComponent_
   - _Depends: R1_
 
-- [ ] R3. (P) 外部連携APIの応答に警告を付与する
+- [x] R3. (P) 外部連携APIの応答に警告を付与する
   - 選手カテゴリー情報の一括アップロード処理とリザルト取込処理について、処理前に警告を
     リセットし、成功応答に蓄積された警告を追加フィールドとして含めるように変更する
   - **既存の成功／失敗の判定条件・HTTPステータス・既存の応答フィールドは一切変更しない**。
@@ -89,7 +89,7 @@
   - _Boundary: ApiController_
   - _Depends: R1_
 
-- [ ] R4. (P) 系統切替操作の警告表示を「拒否理由」から「成功＋注意喚起」へ変更する
+- [x] R4. (P) 系統切替操作の警告表示を「拒否理由」から「成功＋注意喚起」へ変更する
   - 保存前に警告をリセットし、保存成功後に蓄積された警告を取得して、成功メッセージと併記する
     形で画面に表示するように変更する
   - 操作は成功しているため、失敗と誤解されない文言にする
@@ -102,7 +102,7 @@
   - _Boundary: CategoryRacersController change_em_
   - _Depends: R1_
 
-- [ ] R5. (P) 選手統合の不整合検知をロールバックから警告へ変更する
+- [x] R5. (P) 選手統合の不整合検知をロールバックから警告へ変更する
   - 統合後のカテゴリー集合の検査が失敗しても統合処理を失敗させず、**統合を完了させる**ように
     変更する
   - 検知内容は既存の失敗理由伝達経路（コントローラのプロパティ）を流用して呼び出し元へ渡し、
@@ -115,7 +115,7 @@
   - _Boundary: OrgUtilController uniteRacer_
   - _Depends: R1_
 
-- [ ] R6. 第2版の結合シナリオを検証する
+- [x] R6. 第2版の結合シナリオを検証する
   - 第1版の結合シナリオテストのうち「対応外ペア・重複が発生しうる操作は必ずエラーで止まる」を
     主張している箇所を、「**操作は完了し、警告が記録される**」へ反転させる
   - 既存不整合データを模した選手（対応外ペアを既に保有）に対して、連動昇格・系統切替・選手統合を
@@ -127,7 +127,7 @@
   - _Requirements: 3.1, 3.2, 3.7, 3.8, 4.6, 8.1, 8.2, 10.1, 10.2, 10.3, 10.4, 10.5_
   - _Depends: R1, R2, R3, R4, R5_
 
-- [ ] R7. 他 spec の前提記述を第2版に追随させる
+- [x] R7. 他 spec の前提記述を第2版に追随させる
   - catracer-cleanup-2026-27: 「是正後データが me-mm-linkage のバリデーションを通ること」という
     前提記述を、保存が拒否されなくなった事実に合わせて修正する。あわせて本機能の位置づけを
     「一度きりの移行処理」から「シーズン中も繰り返し実行する継続運用ツール」へ改める
@@ -138,6 +138,15 @@
   - _Depends: なし（R1〜R6 と並行可能）_
 
 ## Implementation Notes
+
+### 実装フェーズでの確認・判断（2026-08-15）
+
+| # | 内容 | 判断 |
+|---|---|---|
+| 1 | **元ME1判定のタイミング（R1 実装時に発覚）**: `afterSave()` で `CategoryLineageLinker::isFormerElite1()` を呼ぶと、**今まさに挿入した C1 の行自体**を過去の保有歴として拾ってしまい、元ME1でない選手が常に元ME1と判定される（同メソッドは `cancel_date`・`deleted` を問わず `category_code='C1'` の行の存在有無で判定するため）。第1版は保存前の `$validate` で判定していたためこの問題は生じなかった | `beforeSave()` で保存前の元ME1状態を捕捉し `afterSave()` ではその値を使う。`CategoryLineageLinker` の公開APIは design どおり無変更。判定が必要なのはこの保存自体がC1を付与する場合のみのため、それ以外では捕捉せず無駄なクエリを避ける |
+| 2 | **`add_result` への warnings 付与は見送り（R3）**: design では `upload_category_racers()` と `execAddResult()` の両方に warnings を付与する想定だったが、`add_result` の成功応答は `array('ok')` という**リスト形状**であり、ここに文字列キーを足すと JSON が配列 `["ok"]` からオブジェクト `{"0":"ok","warnings":[]}` へ変わる。これは Requirement 3.9（既存の成功応答の互換性を損なわない追加情報であること）に違反する | `upload_category_racers()`（元から連想配列＝JSONオブジェクト）のみに付与し、`add_result` は応答形状を変更せずサーバログのみとした。リザルト取込に伴う昇格の警告は運用者・管理者向けであり、ログと catracer-cleanup の検出レポートで足りると判断 |
+| 3 | **`CategoryLineageValidationError` のオートロード**: 同クラスは `CategoryLineageLinker.php` 内に併記されており、`App::uses()` が登録するオートロード対象名は `CategoryLineageLinker` のみ。`CategoryLineageLinker::` を呼ぶより先に `CategoryLineageValidationError::DUPLICATE_CATEGORY` を参照すると `Class not found` になる | 参照前に `class_exists('CategoryLineageLinker')` で明示的にオートローダを起動する（本番コード・テスト双方） |
+| 4 | **`uniteRacerFailureMessage` の用途分離（R5）**: 第2版では統合後整合性チェックの結果が「失敗理由」ではなく「成功したうえでの警告」になるため、失敗用プロパティに載せると `do_unite_racer()` の失敗分岐と混線する | 専用プロパティ `uniteRacerLineageWarningMessage` を新設し、`do_unite_racer()` の**成功分岐**で参照する。`uniteRacerFailureMessage` は真の失敗専用に用途を縮小 |
 
 ### 第2版で特に注意すること
 
@@ -185,3 +194,28 @@
 - 既存の `feat/me-mm-linkage-2026-27`（PR #13）を直接修正して push する形でもよい。
   その場合 PR #13 がそのまま第2版の内容に更新される
 - outer repo（`cyclox2_docker`）側の spec 文書は統合ブランチを経由せず main へ直接PR（2層構造）
+
+## 実装結果（2026-08-15）
+
+全10スイート **125テスト・550アサーション GREEN**。
+
+| スイート | 結果 | 第2版での扱い |
+|---|---|---|
+| `CategoryLineageMapTest` | OK (11/58) | 無変更で流用 |
+| `CategoryLineageLinkerTest` | OK (45/101) | 無変更で流用 |
+| `CategoryRacerTest` | OK (15/75) | 全面書き換え（拒否→成功＋警告） |
+| `CategoryRacerFixtureDataTest` | OK (8/19) | 無変更で流用 |
+| `ApiControllerTest` | OK (4/20) | **新規** |
+| `CategoryRacersControllerTest` | OK (11/51) | 2件を書き換え |
+| `OrgUtilControllerTest` | OK (6/41) | 5件を書き換え |
+| `ResultParamCalcComponentTest` | OK (13/84) | 1件書き換え・1件新規 |
+| `CatLimitShellTest` | OK (5/35) | 無変更で流用 |
+| `MeMmLinkageIntegrationTest` | OK (7/66) | 4件を書き換え |
+
+**回帰防止の要**: `ApiControllerTest::testInconsistentRowDoesNotFailTheWholeBatch` が、
+有識者レビューで最も懸念された「不整合1件で一括アップロードが全滅する」構造の解消を、
+実際の API メソッド呼び出しで固定している。あわせて
+`ResultParamCalcComponentTest::testInconsistentRacerDoesNotStopPromotionOfOtherRacers` が
+「先行する選手の不整合が後続選手の昇格を止めない」ことを固定している。
+
+submodule 側コミット: `9ed063b`（`feat/me-mm-linkage-2026-27` へ push 済み。PR #13 が第2版の内容へ更新された）

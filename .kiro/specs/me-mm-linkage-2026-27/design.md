@@ -601,8 +601,13 @@ interface CategoryLineageLinker {
 - `upload_category_racers()`: `saveMany()` の前に `CategoryRacer::resetLineageWarnings()` を呼び、
   成功時の応答 `$this->success(array('id_list' => $idList))` に
   `'warnings' => $this->CategoryRacer->getLineageWarnings()` を加える
-- `execAddResult()`（`add_result()` の実処理）: 同様に、リザルト取込に伴う昇格処理で
-  蓄積された警告を成功応答に加える
+- `execAddResult()`（`add_result()` の実処理）: **【2026-08-15 実装時に訂正】応答への警告付与は
+  行わない。** 同メソッドの成功応答は `array('ok')` という**リスト形状**であり、ここに文字列キーを
+  足すと JSON が配列 `["ok"]` からオブジェクト `{"0":"ok","warnings":...}` へ変わる。
+  これは Requirement 3.9（既存の成功応答の互換性を損なわない追加情報であること）に違反し、
+  Requirement 10.5 の趣旨にも反するため、応答形状を変更せず**サーバログのみ**とする。
+  リザルト取込に伴う昇格の警告は運用者・管理者向けであり、ログと
+  catracer-cleanup-2026-27 の検出レポートで足りる
 - **既存の成功／失敗の判定条件・HTTP ステータス・既存フィールド（`id_list` 等）は一切変更しない**
   （Requirement 10.5）。`warnings` は成功応答への**追加**フィールドであり、
   現行 cyclox2app は未知のフィールドを無視するため従来どおり動作する（Requirement 3.9）
@@ -621,13 +626,15 @@ interface CategoryLineageLinker {
 
 | Aspect | Detail |
 |---|---|
-| Endpoint | 既存の `POST /api/upload_category_racers`、`POST /api/add_result/{meetCode}/{ecatName}` |
+| Endpoint | `POST /api/upload_category_racers` のみ（`add_result` は上記の理由で対象外） |
 | Request | **変更なし** |
 | Response (成功) | 既存フィールドに `warnings: [{racer_code, type, category_codes, message}, ...]` を追加 |
 | Response (失敗) | **変更なし**（不整合検知は失敗の要因にならない） |
 | 後方互換性 | 追加のみ。既存フィールドの削除・意味変更・型変更は行わない |
 
 **Implementation Notes**
+- **応答へ警告を載せてよいのは、元から連想配列（JSONオブジェクト）を返すエンドポイントに限る。**
+  リスト形状の応答にキーを足すと JSON の型が変わり後方互換を壊す（上記 `execAddResult` の判断）
 - Validation: 「導入前後で cyclox2app の成功／失敗判定が変わらないこと」（Requirement 10.5）を
   結合試験で明示的に確認する。特に、不整合を含む選手データを一括アップロードして
   **HTTP 200 かつ全行保存**されることをテストする

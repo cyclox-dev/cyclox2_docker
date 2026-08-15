@@ -12,8 +12,16 @@ me-mm-linkage-2026-27 が定義する `CategoryLineageMap` / `CategoryLineageLin
 
 **Impact**: 既存テーブル構造・既存コードは変更しない（新規ファイル追加のみ）。是正は
 `category_racers` への UPDATE（cancel_date 設定）と INSERT（対応カテゴリー付与）のみで、
-物理削除は行わない。是正の保存はすべて `CategoryRacer` モデル経由で行い、me-mm-linkage-2026-27
-が導入する一元バリデーションを通過させる。
+物理削除は行わない。是正の保存はすべて `CategoryRacer` モデル経由で行う。
+
+> **【2026-08-15 改訂】** me-mm-linkage-2026-27 第2版では、一元的な整合性チェックは
+> `$validate`（保存を拒否する）ではなく `afterSave()`（検知して警告する）で行われる。
+> したがって本バッチの保存が同 spec のチェックに拒否されることはない。
+> 一方で、是正の過程で一時的に不整合状態を経由する保存が大量の警告とログを生むため、
+> **バッチ実行中は `CategoryRacer::$skipsLineageInspection` を `true` にして検知を抑止する**
+> （同 spec がこのフラグを本バッチのために用意している）。
+> あわせて、本機能は一度きりの移行処理ではなく**シーズン中も繰り返し実行する継続運用ツール**
+> として位置づけ直す（不整合の新規発生は仕組みでは防止されないため）。
 
 ### Goals
 - 違法な有効保有の組合せを持つ選手の全件検出と、種別分類・判定根拠つきレポート出力（読み取り専用）
@@ -24,7 +32,8 @@ me-mm-linkage-2026-27 が定義する `CategoryLineageMap` / `CategoryLineageLin
 
 ### Non-Goals
 - ME⇔MM 対応表・合法状態・元ME1特例の定義（me-mm-linkage-2026-27 が所有）
-- 不整合の再発防止（同 spec の保存時バリデーションが所有）
+- 不整合の再発防止（me-mm-linkage-2026-27 が所有。ただし第2版では「防止」ではなく
+  「検知・警告」であり、新規発生自体は止まらない）
 - 完全重複レコードの是正（既存 `OneTimeShell::setupDuplicatedCatRacerDeleted()` の守備範囲。
   本バッチは検出・報告のみ）
 - シーズン末降格判定の変更（season-rules-2026-27）
@@ -44,7 +53,7 @@ me-mm-linkage-2026-27 が定義する `CategoryLineageMap` / `CategoryLineageLin
 ### Out of Boundary
 - 対応表（ペア定義）・合法集合判定・元ME1判定のロジック（me-mm-linkage-2026-27 の
   `CategoryLineageMap` / `CategoryLineageLinker` が所有。本 spec は呼び出すのみ）
-- `CategoryRacer` モデルの保存時バリデーション（同上）
+- `CategoryRacer` モデルの保存後検知（`afterSave()`）と警告蓄積API（同上）
 - 完全重複レコードの整理（既存 OneTimeShell）
 - res-sys（成績閲覧アプリ）側の変更
 - 本番適用のオペレーション（runbook として手順を残すが、実行判断・実行は人間）
