@@ -137,38 +137,42 @@
 
 ---
 
-## 補足: ロールバック時の注意（重要）
+## 補足: ロールバック時の注意
+
+> **前提（2026-08-16 更新）**: ロールバック安全化の2件が**本番へ先行リリース済み**である。
+> - cyclox2web PR #17: `PointSeries/view.ctp` / `PointSeriesGroups/view.ctp` の null 安全化。
+>   未登録 `calc_rule` は「(不明 #N)」と表示され、fatal にならない。あわせて
+>   `EntryCategoriesController` の Notice（論理削除シリーズ参照時）も解消
+> - cyclox2web PR #18: `__resetSeriesPoints()` の `if (empty($calc)) return;` を
+>   `continue`（＋ERRORログ＋`RET_FAILED`）へ変更。未登録の配点ルールは**当該シリーズのみ
+>   スキップ**され、他シリーズのポイントは再作成される
+>
+> これにより、以前このセクションに記載していた「画面の fatal」と「他シリーズのポイント消失」は
+> **いずれも解消済み**である。
 
 `calc_rule=14` の `point_series` 行が存在する状態でアプリを `TCX_267` 未反映の版へ
-ロールバックすると、**2種類の障害**が発生する。
+ロールバックした場合、残る影響は次の1点のみ。
 
-### 障害1: 画面の fatal error
+### 残る影響: 当該シリーズ自身のポイントが再作成されない
 
-シリーズ詳細画面（`PointSeries/view.ctp`）およびグループ詳細画面
-（`PointSeriesGroups/view.ctp`）が `PointCalculator::getCalculator($calc_rule)->name()` を
-null チェックなしで呼ぶため fatal error になる。
+リザルト再計算（`reCalcResults` → `__resetSeriesPoints()`）は、冒頭で対象リザルトの
+全シリーズポイントを `deleteAll()` してから各シリーズを再計算する。`TCX_267` 未反映の版では
+`getCalculator(14)` が `null` を返すため、**`calc_rule=14` のシリーズのポイントだけは
+削除されたまま再作成されない**（他シリーズは PR #18 により正常に再作成される）。
 
-### 障害2: 他シリーズのポイント消失（こちらがより重い）
+このとき `error.log` に次の形式で記録されるため、事後の検知は可能。
 
-リザルト再計算（`reCalcResults` → `__resetSeriesPoints()`）が走ると、次の順で処理される。
-
-1. `$this->PointSeriesRacer->deleteAll(array('racer_result_id' => $result['id']))` で
-   **そのリザルトに紐づく全シリーズのポイント行を削除**する
-2. 大会に紐づくシリーズを順に処理し、`$calc = PointCalculator::getCalculator($calc_rule);`
-   で計算器を取得する
-3. `if (empty($calc)) return;` — **計算器が見つからないとメソッドごと抜ける**
-
-`TCX_267` 未反映の版では `getCalculator(14)` が `null` を返すため、手順1で削除済みのまま
-手順3で中断し、**同じリザルトに紐づく他シリーズ（`TCX_245` 等）のポイントまで失われたまま
-再作成されない。**
+```
+Error: 選手<racer_code>(racer_result_id:<id>) のポイントシリーズ<シリーズ名>の配点ルール(14)が
+コード上に未登録です。このシリーズの既存ポイントは削除されたまま再作成されません。
+```
 
 ### ロールバック手順
 
-- [ ] **`calc_rule=14` の `point_series` を物理削除する**（または、少なくとも当該シリーズの
-      `meet_point_series` の紐付けを削除して再計算経路から外す）
-- [ ] **`deleted=1`（論理削除）では不十分**。`__resetSeriesPoints()` は `MeetPointSeries` を
-      主モデルとして `PointSeries` を belongsTo で JOIN 取得するため、SoftDelete の
-      `beforeFind` が効かず、論理削除済みの行も計算対象に入る。画面の fatal は防げるが
-      障害2は防げない
-- [ ] ロールバック作業中は、**当該大会のリザルト再計算を実行しない**
+- [ ] **`calc_rule=14` の `point_series` を削除する**（物理削除、または `meet_point_series` の
+      紐付け削除で再計算経路から外す）
+- [ ] ロールバック後に当該大会のリザルト再計算を行った場合は、`error.log` に上記のエラーが
+      出ていないか確認する
+- [ ] 再リリース時は、`calc_rule=14` のシリーズを再登録し、対象カテゴリーのリザルト再計算を
+      実行してポイントを復元する
 - [ ] 上記を関係者へ周知してからアプリを戻す
