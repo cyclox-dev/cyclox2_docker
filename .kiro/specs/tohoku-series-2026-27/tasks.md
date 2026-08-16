@@ -8,9 +8,9 @@
 
 ---
 
-- [ ] 1. 準備: ブランチ作成と前提確認
+- [x] 1. 準備: ブランチ作成と前提確認
 
-- [ ] 1.1 実装ブランチを作成し、前提の採番・数値を確認する
+- [x] 1.1 実装ブランチを作成し、前提の採番・数値を確認する
   - submodule `cyclox2_svr/cyclox2` で `git fetch origin` を実行し、
     **`origin/release/2026-27-season-rules`（`0635466`）** から `feat/tohoku-series-2026-27` を
     作成する。ローカルの同名ブランチ（`2c3fd3a` = `origin/main` 相当）は古いので使用しない
@@ -26,9 +26,9 @@
   - 完了条件: ブランチが作成され、採番と8区分の数値が design.md の記載どおりであることを確認できている
   - _Requirements: 4.3, 6.1_
 
-- [ ] 2. RED: `TCX_267` の単体テストを先行実装する
+- [x] 2. RED: `TCX_267` の単体テストを先行実装する
 
-- [ ] 2.1 `PointCalculatorTest` に `TCX_267` の基本テストを追加する
+- [x] 2.1 `PointCalculatorTest` に `TCX_267` の基本テストを追加する
   - 各テストの冒頭で `$calc = PointCalculator::getCalculator(14); $this->assertNotNull($calc, ...);`
     を行う（既存 `testAjocc267Rank1ReturnsMaxPoint` と同じパターン）。未実装時に
     `getCalculator(14)` は `null` を返すため、これを省くと `Call to a member function name() on null`
@@ -44,7 +44,7 @@
     中断ではなく assertion failure として失敗していることを確認する
   - _Requirements: 1.1, 1.2, 1.4, 1.5, 2.5, 2.6, 3.1_
 
-- [ ] 2.2 区分境界・順位境界のテストを追加する
+- [x] 2.2 区分境界・順位境界のテストを追加する
   - 出走人数境界: 4/5、9/10、19/20、39/40、59/60、79/80、99/100 で適用区分が切り替わること
   - 順位境界: 各区分の1位・最終要素の順位（値は `1`）・その次の順位
   - **範囲外の期待値は `calc()` が `null` を返すこと**（`array('point' => 0)` ではない）。
@@ -53,7 +53,7 @@
   - 完了条件: 追加したテストが RED であることを実行して確認する
   - _Requirements: 2.1, 2.3, 3.2, 3.3, 3.4_
 
-- [ ] 2.3 `ResultParamCalcComponent` との等価性テストを追加する
+- [x] 2.3 `ResultParamCalcComponent` との等価性テストを追加する
   - 出走人数 1, 4, 5, 9, 10, 19, 20, 39, 40, 59, 60, 79, 80, 99, 100, 150 × 順位 1〜125 を総当たり
   - 期待値は `ResultParamCalcComponent::calcAjoccPt($rank, $startedCount, '2026-09-01', false)`
     から取得し、`TCX_267` の `point` と一致することを検証する
@@ -74,9 +74,9 @@
   - 完了条件: 追加したテストが RED であることを実行して確認する
   - _Requirements: 2.2, 2.4, 4.4_
 
-- [ ] 3. GREEN: `TCX_267` を実装する
+- [x] 3. GREEN: `TCX_267` を実装する
 
-- [ ] 3.1 `PointCalculator` に `TCX_267` を追加する
+- [x] 3.1 `PointCalculator` に `TCX_267` を追加する
   - `public static $TCX_267;` と `private static $TABLE_TCX267;` を宣言する
   - `init()` 内に8区分の `$TABLE_TCX267` を定義する（`__KEY_STARTED_OVER` = 99/79/59/39/19/9/4/0）。
     配点値は `ResultParamCalcComponent` の該当分岐から機械的に転記する
@@ -92,9 +92,9 @@
   - _Requirements: 1.1, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.2, 3.3_
   - _Depends: 2.1, 2.2, 2.3_
 
-- [ ] 4. 回帰確認と全体テスト
+- [x] 4. 回帰確認と全体テスト
 
-- [ ] 4.1 既存計算器の非回帰を確認し、不足分のテストを追加してスイート全体を実行する
+- [x] 4.1 既存計算器の非回帰を確認し、不足分のテストを追加してスイート全体を実行する
   - **既存テストと重複させない**。起点ブランチの `PointCalculatorTest` には既に
     `testAjocc267Rank1ReturnsMaxPoint` / `testAjocc267Rank109ReturnsMinPoint` /
     `testAjocc267Rank110ReturnsNull` / `testAjocc267IsGradeIndependent` /
@@ -111,18 +111,20 @@
   - _Requirements: 4.1, 4.2, 4.3, 4.5_
   - _Depends: 3.1_
 
-- [ ] 4.2 管理画面での表示を確認する
-  - `PointSeries/add`・`PointSeries/edit` の配点ルール選択肢に `TCX_267` が表示されることを
-    ローカル環境（Docker）で確認する
-  - 選択肢の生成が `PointCalculator::calculators()` 由来であり、ビュー側の変更が不要であることを
-    確認する
-  - 完了条件: 選択肢に `TCX_267` が出ることを画面で確認し、結果を記録している
+- [x] 4.2 管理画面の選択肢生成経路をコード上で確認する
+  - 選択肢の生成が `PointCalculator::calculators()` 由来（`PointSeriesController::add()/edit()` が
+    `$pointCalculators` を渡し、`add.ctp`/`edit.ctp` が `$calc->val() => $calc->name()` で
+    ループ）であり、ビュー側の変更が不要であることを確認する
+  - レジストリ検証テストが `val()`/`name()` の対応をビューと同一ロジックで担保していることを確認する
+  - 完了条件: ビュー変更が不要であることをコードで確認し、test-results.md に記録している
+  - **ブラウザ上での目視確認は本タスクに含めない**（管理画面へのログインを要するため、
+    `integration-test-checklist.md` の人手項目としてタスク5.3で実施する）
   - _Requirements: 1.6_
   - _Depends: 3.1_
 
 - [ ] 5. ドキュメントとリリース準備
 
-- [ ] 5.1 シリーズ登録 runbook を作成する (P)
+- [x] 5.1 シリーズ登録 runbook を作成する (P)
   - `.kiro/specs/tohoku-series-2026-27/runbook.md` を新規作成する
   - `point_series` の設定値（`calc_rule=14` / `sum_up_rule=2` / `point_term_rule=1` /
     `point_to=1` / `season_id=17` / `point_series_group_id=2`）を明記する
@@ -147,7 +149,7 @@
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9_
   - _Boundary: docs only_
 
-- [ ] 5.2 結合試験チェックリストを作成する (P)
+- [x] 5.2 結合試験チェックリストを作成する (P)
   - `.kiro/specs/tohoku-series-2026-27/integration-test-checklist.md` を新規作成する
   - `TCX_267` を選択したシリーズでの集計完走・ランキング妥当性、シリーズランキングCSV出力、
     res-sys 側のシリーズランキング表示の各確認項目を記載する
@@ -156,7 +158,7 @@
   - _Requirements: 6.3_
   - _Boundary: docs only_
 
-- [ ] 5.3 結合試験を実施し、結果を記録する
+- [x] 5.3 結合試験を実施し、結果を記録する
   - 親リポジトリの submodule を **リリース対象コミット**（`origin/release/2026-27-season-rules`
     + 本仕様のマージ結果）へチェックアウトしてから実施する。親リポジトリ `main` の submodule
     ポインタは `feat/jcx-lineage-lock-2026-27` の未マージコミット（`2479bcd`）を指しているため、
@@ -165,6 +167,10 @@
   - `ajocc-point-267-prod` の `integration-test-checklist.md` の未消化17項目を実施する
   - 両チェックリストにチェックと確認者・確認日を記入し、本仕様の `test-results.md` に総括を追記する
   - 完了条件: 両チェックリストが全項目チェック済みで、確認者・確認日が埋まっている
+  - **実施結果（2026-08-16）**: 本仕様の全項目と `ajocc-point-267-prod` の全項目を合同で実施し
+    チェック済み。2026-27の大会が0件のため、境界日付の確認は既存大会 `TKI-256-007` の
+    `at_date` / `is_jcx` を一時変更する方式で実施し、確認後に原状復帰（`ajocc_pt` が
+    ベースラインと完全一致することを確認）。実施前に `cyclox2` 全体を `mysqldump` で保全。
   - _Requirements: 6.3, 6.4_
   - _Depends: 4.1, 4.2, 5.2_
 
@@ -173,8 +179,11 @@
   - 親リポジトリ側で spec 一式をコミットし PR を作成する
   - 先行リリース（`release/2026-27-season-rules` → `main`）は **`--no-ff`** で行うこと、
     実施は結合試験完了後に人間が判断することを PR 本文に明記する
-  - ロールバック時の注意（`calc_rule=14` の `point_series` 行が残ったまま `main` へ戻すと
-    シリーズ詳細画面が Fatal error になるため、先に該当行を削除する）を PR 本文に明記する
+  - ロールバック時の注意を PR 本文に明記する（`calc_rule=14` の行が残ったまま `main` へ戻すと、
+    (1) シリーズ詳細画面が Fatal error になる、(2) リザルト再計算が走ると
+    `__resetSeriesPoints()` が全シリーズ点を削除した直後に `if (empty($calc)) return;` で
+    中断し、**同一リザルトの他シリーズのポイントまで失われる**。論理削除では防げないため
+    物理削除または `meet_point_series` の紐付け削除が必要。詳細は runbook.md 参照）
   - 親リポジトリの submodule ポインタを先行リリースに合わせるかは人間判断である旨を申し送る
   - 完了条件: 両リポジトリの PR が作成され、リリース条件・マージ方式・ロールバック手順が
     明記されている
