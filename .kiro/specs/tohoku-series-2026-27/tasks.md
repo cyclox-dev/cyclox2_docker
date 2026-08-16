@@ -122,7 +122,7 @@
   - _Requirements: 1.6_
   - _Depends: 3.1_
 
-- [ ] 5. ドキュメントとリリース準備
+- [x] 5. ドキュメントとリリース準備
 
 - [x] 5.1 シリーズ登録 runbook を作成する (P)
   - `.kiro/specs/tohoku-series-2026-27/runbook.md` を新規作成する
@@ -174,7 +174,7 @@
   - _Requirements: 6.3, 6.4_
   - _Depends: 4.1, 4.2, 5.2_
 
-- [ ] 5.4 PR を作成しリリース手順を申し送る
+- [x] 5.4 PR を作成しリリース手順を申し送る
   - submodule 側で `feat/tohoku-series-2026-27` → `release/2026-27-season-rules` の PR を作成する
   - 親リポジトリ側で spec 一式をコミットし PR を作成する
   - 先行リリース（`release/2026-27-season-rules` → `main`）は **`--no-ff`** で行うこと、
@@ -187,6 +187,10 @@
   - 親リポジトリの submodule ポインタを先行リリースに合わせるかは人間判断である旨を申し送る
   - 完了条件: 両リポジトリの PR が作成され、リリース条件・マージ方式・ロールバック手順が
     明記されている
+  - **実施結果（2026-08-16）**: アプリ側 cyclox2web PR #16
+    （`feat/tohoku-series-2026-27` → `release/2026-27-season-rules`）、
+    親リポジトリ cyclox2_docker PR #50（spec 更新、`main` 宛）。
+    いずれも `--no-ff` 指定・ロールバック手順・submodule ポインタの扱いを本文に明記済み。
   - _Requirements: 6.1, 6.2, 6.5, 6.6_
   - _Depends: 5.3_
 
