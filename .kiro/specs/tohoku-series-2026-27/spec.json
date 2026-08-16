@@ -9,7 +9,7 @@
       "generated": true,
       "approved": true,
       "amended_at": "2026-08-16T00:00:00Z",
-      "amendment_note": "独立レビュー(reviewer)の指摘を受け第2版へ改訂。Req 3.2を「範囲外はcalc()がnullを返す」に修正し、Req 3.4/5.5-5.9/6.1・6.4-6.6を追加。詳細はagreement-log.md参照。"
+      "amendment_note": "第2版: 独立レビュー(reviewer)の指摘を受けRes 3.2を「範囲外はcalc()がnullを返す」に修正し、Req 3.4/5.5-5.9/6.1・6.4-6.6を追加。第3版: Req 1.5のtext書式を実態(KNT_178書式=区分末尾で改行補正)へ合わせて改訂。第3版はユーザー判断により承認ゲートをクリア扱いとし approved を維持。詳細はagreement-log.md参照。"
     },
     "design": {
       "generated": true,
