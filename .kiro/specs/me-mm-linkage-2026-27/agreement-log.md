@@ -518,3 +518,64 @@ tasks 第2版（R1〜R7）を実装。submodule 側コミット `9ed063b`、
   （エントリー時の業務ルール制御 vs カテゴリー認定データの整合性検知）ため機械的に
   警告方式へ倒すべきとは限らない。同 spec の実装着手前に人間へ確認すること
 | 2026-08-15 | tasks 第2版（R1〜R7）を実装。submodule 9ed063b を push（PR #13 が第2版へ更新）。10スイート125テスト550アサーション全GREEN。実装時の判断4件と jcx-lineage-lock の要再確認事項1件を記録 | Claude |
+| 2026-08-22 | cyclox2web PR #13 に対する有識者レビュー（saki-tsurumuraさん、全11件のインラインコメント）を裏取りし、人間の判断を得たうえで以下6件を実装完了（詳細は下記「2026-08-22 有識者レビュー対応」参照）: (A-1) `isFormerElite1()`の論理削除行除外、(A-2) `CategoryRacersController.php`のdocblock誤配置修正、(B-1) `propagateLinkedPromotion()`系の基準日ベース判定への変更、(B-2) Requirement 4.4を「単独保有選手にも自動付与」へ改訂、(D-1) 連動作成時のreason_noteへmeet_code/result_id付記、(D-2) 連動付与専用の`CategoryReason::$LINEAGE_LINK`定数新設。requirements.md（Req 4.4改訂・4.7新設・5.1補記）・design.md（Service Interface・シーケンス図・Modified Files改訂）を合わせて更新。関連する11スイート全て（`CategoryLineageLinkerTest`他）GREEN確認済み | Claude |
+
+## 2026-08-22 有識者レビュー対応
+
+cyclox2web PR #13（me-mm-linkage-2026-27 第2版）に対し、saki-tsurumuraさんから11件のインライン
+レビューコメントが付いた。各コメントを実コード・テスト・design.mdと突き合わせて裏取りしたうえで、
+人間（kyamady）に対応要否を1件ずつ確認し、以下の方針で合意した。
+
+| 分類 | コメント要旨 | 対応方針 |
+|---|---|---|
+| A-1 | `isFormerElite1()`が論理削除済み（deleted=1）のC1行も元ME1の根拠に含めてしまう（reviewer評価「致命的」） | 対応する。論理削除行を判定対象から除外する |
+| A-2 | `CategoryRacersController.php`のdocblockが誤った関数の上に配置されている | 対応する |
+| B-1 | レース結果が前後してアップロードされた場合、`propagateLinkedPromotion()`系が時系列を考慮せず誤判定しうる | 対応する。運用上実際に起こりうることを人間が確認済み |
+| B-2 | 相手系統未保有の選手にも連動先を自動付与すべきでは（オーガナイザーの手動付け忘れ対策） | 対応する。自動付与する方針を人間が承認 |
+| D-1 | 連動作成時のreason_noteにmeet_code/result_idがあるとなお良い | 対応する |
+| D-2 | 連動付与の理由IDに`REQUEST_CHANGE`（申請による変更）を転用しているのは不正確 | 対応する。専用定数を新設（説明文言「カテゴリ連動による自動付与」は人間指定） |
+| （他5件） | 情報提供・自己解決済み・対応不能（構造的制約）等 | 対応不要と判断（詳細は会話記録参照） |
+
+### 実装内容
+
+- `CategoryLineageLinker::isFormerElite1($racerCode, $atDate = null)`: `unload('Utils.SoftDelete')`
+  を廃止（論理削除行を自動的に除外）。`$atDate`指定時は`apply_date <= $atDate`で絞り込む。
+- `CategoryLineageLinker::resolveLinkedTarget($racerCode, $appliedCategoryCode, $atDate)`:
+  `__holdsAnyActiveCategoryOnSide()`によるゲート（相手系統未保有なら null）を撤廃。常に解決した
+  連動先を返す（対応表管理対象外の場合のみ null）。
+- `CategoryLineageLinker::propagateLinkedPromotion()`: 相手系統の現在保有ではなく`$atDate`時点の
+  保有状況を`__findActiveCategoryRacerOnSide()`（apply_date/cancel_dateによる基準日判定を追加）
+  で取得。相手系統に既存行が無い場合はcancelを行わずcreateのみ実行するよう変更（B-2）。
+  reason_noteにmeet_code/result_idを付記（D-1）。reason_idを新設の`CategoryReason::$LINEAGE_LINK`
+  へ変更（D-2）。
+- `CategoryLineagePropagationResult::NO_PROPAGATION_OPPOSITE_UNHELD`を`NO_PROPAGATION_NOT_MANAGED`
+  へ改名（B-2により「相手系統未保有」状態自体が発生しなくなったため）。
+- `CategoryReason`に`$LINEAGE_LINK`（ID:12、説明「カテゴリ連動による自動付与」）を新設。
+- `ResultParamCalcComponent`の2箇所の`propagateLinkedPromotion()`呼び出しに`meet_code`を渡すよう変更。
+- `CategoryRacersController.php`のdocblock順序を修正（`__flattenValidationErrors()`と
+  `__buildLineageWarningMessage()`の対応関係を正す）。
+
+### 反転したテスト（B-2の挙動変更に伴う）
+
+`CategoryLineageLinkerTest`・`ResultParamCalcComponentTest`・`MeMmLinkageIntegrationTest`のうち、
+「相手系統未保有なら何もしない」ことを検証していたテストを「連動先が自動付与される」ことを
+検証するテストへ反転修正した。特に`MeMmLinkageIntegrationTest::testChainPromotionThenChangeEmPairCompletion`
+は、Step1（RPC昇格）の時点で既に自動連動によりペアが完成するようになったため、Step2
+（change_em経由の手動ペア補完）が「既に保有済みのカテゴリーへの重複付与」という別の意味を持つ
+シナリオに変わった。テストの目的をその実態に合わせて書き換えた（元の「2ステップでペアを完成
+させる」という筋書きは、B-2改訂によりStep1単独で完結するようになったため）。
+
+### 検証結果
+
+以下11スイート全てGREEN（154テスト、既存分＋反転修正分含む）:
+`Console/Command/CatLimitShellTest`, `Controller/ApiControllerTest`,
+`Controller/CategoryRacersControllerTest`, `Controller/Component/ResultParamCalcComponentTest`,
+`Controller/OrgUtilControllerTest`, `Cyclox/Const/CategoryLineageMapTest`,
+`Cyclox/Util/CategoryLineageLinkerTest`, `Cyclox/Util/PointCalculatorTest`,
+`Integration/MeMmLinkageIntegrationTest`, `Model/CategoryRacerTest`,
+`Model/CategoryRacerFixtureDataTest`。
+
+### 次のステップ
+
+本対応内容を反映したうえで、PR #13の全11件のレビューコメントへ返信する（対応要否と対応内容を
+1件ずつ明示）。
