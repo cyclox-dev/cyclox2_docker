@@ -194,6 +194,12 @@ app/
 ```
 
 ### Modified Files
+- `app/Cyclox/Util/CategoryLineageLinker.php` — **【2026-08-22 有識者レビュー指摘により改訂】**
+  `isFormerElite1()`の論理削除行除外・基準日引数追加、`resolveLinkedTarget()`/
+  `propagateLinkedPromotion()`の単独保有選手への自動付与化・基準日ベースの相手系統判定への変更。
+- `app/Cyclox/Const/CategoryReason.php` — **【2026-08-22改訂・D-2】** 連動付与専用の定数
+  `$LINEAGE_LINK`（ID:12、「カテゴリ連動による自動付与」）を新設。旧実装が転用していた
+  `$REQUEST_CHANGE`（申請によるカテゴリー変更）は連動付与の実態と一致しないため置き換えた。
 - `app/Model/CategoryRacer.php` — **【第2版で改訂】** `$validate` へのカスタムルール追加は行わない。
   代わりに `afterSave()` コールバックで不整合を検知し、インスタンスプロパティへ警告を蓄積する。
   警告の取得・リセット用に `getLineageWarnings()` / `resetLineageWarnings()` を追加する
@@ -243,15 +249,17 @@ sequenceDiagram
     Note over RPC,Linker: 新カテゴリー行はまだcreateしない（2026-07-20改訂）
     RPC->>Linker: propagateLinkedPromotion 呼び出し 未保存の新カテゴリーコードを渡す
     Linker->>Map: 昇格先カテゴリーに対応する相手系統カテゴリーを取得
-    Linker->>CR: 選手の相手系統の現在有効カテゴリーを取得
-    alt 相手系統を保有していない
-        Linker-->>RPC: 何もしない 単独保有のまま
-    else 相手系統が既に対応ペア
+    Linker->>Linker: 元ME1判定（対象レース日基準・対応先がC1の場合のみ）
+    Linker->>CR: 選手の相手系統の対象レース日時点の有効カテゴリーを取得
+    alt 相手系統が既に対応ペア
         Linker-->>RPC: 何もしない 既に整合
-    else 相手系統の更新が必要
-        Linker->>Linker: 元ME1判定 対応先がC1の場合のみ
+    else 相手系統に既存の有効カテゴリーがある（更新が必要）
         Linker->>CR: 相手系統の旧カテゴリーをcancel
         Linker->>CR: 相手系統の新カテゴリーを作成保存
+        CR-->>Linker: 保存結果
+        Linker-->>RPC: 連動結果を返す
+    else 相手系統を保有していない（2026-08-22改訂）
+        Linker->>CR: 相手系統の新カテゴリーを作成保存（cancelなし）
         CR-->>Linker: 保存結果
         Linker-->>RPC: 連動結果を返す
     end
@@ -268,7 +276,15 @@ sequenceDiagram
 - **【第2版で改訂】** 連動更新後の状態が正常でない場合も、Requirement 3 の検知・警告に委ねる
   （Requirement 4.6）。第1版のような「バリデーションによる構造的な排除」は行わない。
 - HoldPointは昇格元系統にのみ1回付与する（research.md Decision参照、Requirement 4.5）。
-- 相手系統を保有していない選手には新規にカテゴリーを付与しない（Requirement 4.4）。
+- **【2026-08-22 有識者レビュー指摘により改訂・Requirement 4.4】** 相手系統を保有していない
+  選手にも、対応表に基づき連動先カテゴリーを新規に付与する（cancelは行わずcreateのみ）。
+  オーガナイザーの手動付け忘れによる不整合を防ぐための方針転換であり、旧方針
+  （単独保有選手には付与しない）は撤回した。
+- **【2026-08-22改訂・B-1】** 相手系統の判定は「現在の」有効カテゴリーではなく、昇格の対象
+  レース日（`$atDate`）時点で有効だったカテゴリーを基準にする。レース結果が前後してアップロード
+  された場合に、対象レースより後の日付で処理された別レースの結果を誤って参照しないため。
+  元ME1判定（`isFormerElite1()`）についても同様に、`$atDate`以前の`apply_date`を持つ履歴のみを
+  判定材料にする。
 - 保存順序（cancel→create）および連動フックの呼び出し位置（create の前）は第1版の確定版を
   維持する。第2版では保存拒否が無くなるため順序は必須ではなくなるが、論理的に自然であり
   既に実装・テスト済みで最終DB状態も同一のため、変更しない方がリスクが低いと判断した。
@@ -406,8 +422,12 @@ flowchart TD
 - `CategoryRacer` モデルの保存後検知（`afterSave`）、`ResultParamCalcComponent` の連動フック、
   `CategoryRacersController` の`change_em`系処理、`OrgUtilController::uniteRacer()`、
   `CatLimitShell` のいずれからも同一のロジックを呼び出す単一の判定エンジンとする
-- 元ME1判定はSoftDelete適用済みの論理削除を含む全履歴（`deleted=0`のもの。cancel_date の有無は
-  問わず、過去に一度でも`C1`を有効保有していた記録があれば元ME1とする）を参照する
+- **【2026-08-22 有識者レビュー指摘により改訂】** 元ME1判定はSoftDelete適用済み（`deleted=0`の
+  行のみ）の履歴を参照する。`cancel_date` の有無は問わず、過去に一度でも`C1`を有効保有していた
+  記録があれば元ME1とするが、論理削除済み（`deleted=1`）の行は判定対象から除外する
+  （論理削除は「所属が正常終了した」ことではなく「誤りとして削除された」ことを意味するため）。
+  また、対象レース日（`$atDate`）を指定した場合は`apply_date <= $atDate`の行のみを判定対象とし、
+  レース結果の前後アップロードで対象レースより後の日付のC1行を誤って参照しない
 - 本クラス自身はDB保存を行わない（`isValidActiveSet`等は判定のみ）。ただし
   `propagateLinkedPromotion()`のみ、連動更新の実行（`CategoryRacer->save()`呼び出し）まで担う
   例外とする（呼び出し元でのcancel→create手順の重複実装を避けるため）
@@ -430,19 +450,24 @@ interface CategoryLineageLinker {
     public function isValidActiveSet(string $racerCode, array $prospectiveActiveCodes);
 
     /**
-     * 選手が過去に C1（ME1）を有効保有していたことがあるか。
+     * 選手が過去に C1（ME1）を有効保有していたことがあるか。論理削除済み（deleted=1）の行は
+     * 判定対象から除外する（2026-08-22改訂）。$atDate を指定した場合、apply_date <= $atDate の
+     * 行のみを対象とする（2026-08-22改訂・B-1、レース結果の前後アップロード対策）。
      */
-    public function isFormerElite1(string $racerCode): bool;
+    public function isFormerElite1(string $racerCode, ?string $atDate = null): bool;
 
     /**
      * 起点カテゴリーへの新規適用に対し、相手系統の連動先カテゴリーを解決する。
-     * 相手系統を保有していない場合は null（新規付与しない）。
+     * 【2026-08-22改訂・Requirement 4.4】相手系統を保有していない場合でも null は返さず、
+     * 常に解決した連動先カテゴリーコードを返す（単独保有選手にも自動付与する）。
+     * $appliedCategoryCode が対応表管理対象外の場合のみ null を返す。
      */
-    public function resolveLinkedTarget(string $racerCode, string $appliedCategoryCode): ?string;
+    public function resolveLinkedTarget(string $racerCode, string $appliedCategoryCode, string $atDate): ?string;
 
     /**
      * リアルタイム昇格に伴う相手系統への連動保存を実行する。
-     * 内部で resolveLinkedTarget を用い、必要な場合のみ cancel+create を CategoryRacer 経由で行う。
+     * 内部で resolveLinkedTarget を用い、相手系統に既存の有効カテゴリーがあればcancel+create、
+     * 無ければcreateのみをCategoryRacer経由で行う（2026-08-22改訂）。
      * @return CategoryLineagePropagationResult 実行結果（連動の有無、作成/失敗したCategoryRacer情報）
      */
     public function propagateLinkedPromotion(
@@ -481,18 +506,22 @@ interface CategoryLineageLinker {
   （Requirement 9.1, 9.2）。
 
 **Implementation Notes**
-- **【第2版の要点】本クラスは無変更で流用できる。** 公開メソッドのシグネチャ・判定ロジック・
-  戻り値契約はいずれも第1版のまま。変わるのは**呼び出し元が判定結果をどう使うか**（保存の拒否
-  →警告の蓄積）だけである。第1版で作成した `CategoryLineageMapTest` /
-  `CategoryLineageLinkerTest`（計725行）もそのまま有効
+- 【第2版の要点】`isValidActiveSet`/`validateActiveSet`/`validateNoDuplicateAnyCategory`は
+  第1版から無変更で流用している。変わるのは**呼び出し元が判定結果をどう使うか**（保存の拒否
+  →警告の蓄積）だけである。
+- **【2026-08-22 有識者レビュー指摘により改訂】** `isFormerElite1()`・`resolveLinkedTarget()`・
+  `propagateLinkedPromotion()`は本改訂でシグネチャ・判定ロジックを変更した（論理削除行の除外・
+  基準日による絞り込み・単独保有選手への自動付与。詳細は本節および上記Service Interface参照）。
+  既存の`CategoryLineageLinkerTest`は本改訂に合わせて該当ケースを反転修正済み。
 - Integration: **【第2版で改訂】** `CategoryRacer::afterSave()` から `isValidActiveSet()` を
   呼び出す（第1版では `$validate` のカスタムルールから呼んでいた）。
   `ResultParamCalcComponent` からは `propagateLinkedPromotion()` を呼び出す。
   `CategoryRacersController` は `resolveLinkedTarget()` 相当のロジックで `__check_category_to()`
   のマップを置換する。`OrgUtilController::uniteRacer()` は `saveAll()` 実行後に
   `validateActiveSet()` を呼び出す（コミット前という制約は不要になった。ロールバックしないため）
-- Validation: 元ME1判定はSoftDeleteを無視した全履歴検索で行う（既存コードの
-  `Behaviors->unload('Utils.SoftDelete')` パターンを踏襲）。
+- Validation: **【2026-08-22改訂】** 元ME1判定はSoftDelete有効のまま（論理削除済み行を除外して）
+  行う。旧実装が行っていた`Behaviors->unload('Utils.SoftDelete')`は廃止した
+  （有識者レビュー指摘。詳細は上記Implementation Notesの改訂欄参照）。
 - **【第2版で解消】** 第1版の Risk「`isValidActiveSet` に渡す集合の算出方法が呼び出し元ごとに
   異なると判定がずれる」は、`afterSave()` 方式では**渡す集合が常に「保存後のDBの実状態」に
   一本化される**ため構造的に解消する。プロスペクティブ集合を組み立てる必要がなくなり、
