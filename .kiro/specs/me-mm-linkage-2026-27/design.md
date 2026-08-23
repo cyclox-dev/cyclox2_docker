@@ -194,9 +194,11 @@ app/
 ```
 
 ### Modified Files
-- `app/Cyclox/Util/CategoryLineageLinker.php` — **【2026-08-22 有識者レビュー指摘により改訂】**
+- `app/Cyclox/Util/CategoryLineageLinker.php` — **【2026-08-22/23 有識者レビュー指摘により改訂】**
   `isFormerElite1()`の論理削除行除外・基準日引数追加、`resolveLinkedTarget()`/
   `propagateLinkedPromotion()`の単独保有選手への自動付与化・基準日ベースの相手系統判定への変更。
+  `propagateLinkedPromotion()`はさらに、新規apply_dateをcancel_dateの1日後に是正し、
+  `meet_code`/`racer_result_id`を実カラムへ保存するよう変更（2026-08-23改訂）。
 - `app/Cyclox/Const/CategoryReason.php` — **【2026-08-22改訂・D-2】** 連動付与専用の定数
   `$LINEAGE_LINK`（ID:12、「カテゴリ連動による自動付与」）を新設。旧実装が転用していた
   `$REQUEST_CHANGE`（申請によるカテゴリー変更）は連動付与の実態と一致しないため置き換えた。
@@ -205,6 +207,9 @@ app/
   警告の取得・リセット用に `getLineageWarnings()` / `resetLineageWarnings()` を追加する
   （既存の `getUpdatedIdList()` / `resetUpdatedIdList()` と同一のパターン）。
   検知をスキップするフラグ `$skipsLineageInspection` も設ける（大量一括処理向け）。
+  **【2026-08-23改訂・有識者レビュー指摘】** 整合性検知の基準日プロパティ
+  `$lineageInspectionAtDate`（既定null）を追加。設定時は`__activeCategoryCodes()`がその日付
+  時点で有効だったカテゴリーのみを対象とする。未設定時は従来どおり`cancel_date`未設定のみで判定。
 - `app/Controller/ApiController.php` — **【第2版で新規】** `upload_category_racers()` と
   `execAddResult()` が、蓄積された警告を成功応答の `warnings` フィールドとして返す。
   既存の成功／失敗判定・レスポンス構造は変更しない（クライアントが解釈しなくても従来どおり動作）。
@@ -288,6 +293,23 @@ sequenceDiagram
 - 保存順序（cancel→create）および連動フックの呼び出し位置（create の前）は第1版の確定版を
   維持する。第2版では保存拒否が無くなるため順序は必須ではなくなるが、論理的に自然であり
   既に実装・テスト済みで最終DB状態も同一のため、変更しない方がリスクが低いと判断した。
+- **【2026-08-23改訂・有識者レビュー指摘】新規apply_dateはcancel_dateの1日後とする。**
+  例: 12/10のレースでC3→C2に昇格した場合、C3のcancel_dateは12/10、C2のapply_dateは12/11。
+  同日を両方に使うと、過去のある日を基準にした範囲検索（`apply_date <= X <= cancel_date`相当）で
+  新旧両方の行が該当してしまう。昇格元系統側（`ResultParamCalcComponent`）は元々この規約
+  （`$applyDate = $atDate + 1日`）で実装されていたが、連動先系統側（`propagateLinkedPromotion()`）
+  はこの規約に従わず、cancel_dateとapply_dateの両方に同一の日付を使っていたため、連動先だけ
+  1日ずれ・同日重複が生じていた。本改訂で連動先側もこの規約に統一した
+  （`ResultParamCalcComponent`は生のレース日をそのまま`propagateLinkedPromotion()`へ渡すよう変更し、
+  1日後への変換は`propagateLinkedPromotion()`内部で行う）。
+- **【2026-08-23改訂・有識者レビュー指摘】** `CategoryRacer::afterSave()`の整合性検知
+  （`__activeCategoryCodes()`）が「保存した実処理時刻」ではなく「対象レース日」を基準に判定
+  できるよう、`CategoryRacer::$lineageInspectionAtDate`（基準日、既定null）を新設した。
+  `ResultParamCalcComponent`は昇格処理の前にこれへ新カテゴリーのapply_date（レース日+1日）を
+  設定し、処理完了後にnullへ戻す。**未設定時（null）は従来どおり`cancel_date`未設定のみで
+  判定する**（本日日付をデフォルトにすると、来シーズンの先行付与のようなapply_dateが未来の
+  正当な保存を誤って除外してしまうため、reviewer提案「未設定なら本日基準」から実装判断として
+  変更した）。
 
 ### 対応外ペア・重複の検知フロー（第2版で全面改訂）
 
@@ -468,6 +490,11 @@ interface CategoryLineageLinker {
      * リアルタイム昇格に伴う相手系統への連動保存を実行する。
      * 内部で resolveLinkedTarget を用い、相手系統に既存の有効カテゴリーがあればcancel+create、
      * 無ければcreateのみをCategoryRacer経由で行う（2026-08-22改訂）。
+     * 【2026-08-23改訂・有識者レビュー指摘】$atDateは加工前の生のレース日を渡す。cancel_dateには
+     * $atDateをそのまま使い、新規apply_dateには本メソッド内部で$atDateの1日後を算出して使う
+     * （昇格元系統側の「cancel_date=レース当日、apply_date=レース当日+1日」という既存規約への統一）。
+     * $sourceResultに'meet_code'・'id'キーがあれば、連動作成する行のmeet_code・racer_result_id列へ
+     * そのまま保存する（reason_noteへの文字列埋め込みではなく実カラムとして保存）。
      * @return CategoryLineagePropagationResult 実行結果（連動の有無、作成/失敗したCategoryRacer情報）
      */
     public function propagateLinkedPromotion(
