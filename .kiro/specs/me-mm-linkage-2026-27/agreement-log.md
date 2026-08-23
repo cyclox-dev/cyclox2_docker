@@ -610,3 +610,78 @@ cyclox2web PR #13（me-mm-linkage-2026-27 第2版）に対し、saki-tsurumura�
 ### 次のステップ
 
 本対応内容を反映したうえで、PR #13の新規コメントへ返信する。
+
+## 2026-08-23 追加調査: `$lineageInspectionAtDate`が連動先側に伝わっていなかった不具合
+
+上記対応の完了報告後、人間から「呼び出し元で`$lineageInspectionAtDate`を設定してから判定する
+箇所はあったか、無ければチェックせよ」という指摘を受け、機械的な呼び出し元洗い出しではなく、
+実際にコードを動かして検証した結果、**追加の不具合を発見・修正した**。
+
+### 発見した不具合
+
+`CategoryLineageLinker::propagateLinkedPromotion()`は連動先カテゴリーの保存を
+`ClassRegistry::init('CategoryRacer')`経由で行う。一方`ResultParamCalcComponent`は
+自身の`$this->CategoryRacer`を`__setupParams()`内で`new CategoryRacer()`により生成する
+（本コンポーネントの既存の設計で、CategoryRacer以外の11モデルも同じパターン）。
+
+CakePHPの`Model::__construct()`は自身を`ClassRegistry`へ自己登録するが、**既に同名で
+登録済みの場合は上書きしない**（`ClassRegistry::addObject()`の仕様）。本コンポーネントの
+実際の呼び出し元（`ApiController`・`EntryCategoriesController`）はいずれも`CategoryRacer`を
+`$uses`に含んでおり、コントローラ構築時に先に`ClassRegistry`へ登録されるため、実運用では
+`$this->CategoryRacer`（`new`由来）と`ClassRegistry::init('CategoryRacer')`
+（`propagateLinkedPromotion()`が使う方）は**別インスタンスになる**ことを、実際に
+テストコード（オブジェクト同一性の直接比較）で確認した。
+
+このため、`$this->CategoryRacer->lineageInspectionAtDate = ...`という設定は、本人が昇格する
+系統（主系統）側の保存には効くが、`propagateLinkedPromotion()`が保存する連動先系統側には
+伝わっておらず、意図した「レース結果前後アップロード対策」が連動先側では機能していなかった。
+退行（regression）ではない（従来の無条件判定のまま）が、今回の改善が意図した範囲の半分にしか
+効いていなかった。
+
+### 原因の切り分け
+
+- 「`new`と`ClassRegistry::init()`が混在し、インスタンスが分かれうる」という設計自体は
+  本コンポーネントに元から存在していた（バグではなく既存の設計上の特徴）
+- ただし今まではインスタンスが分かれていても双方とも同じ無状態な処理しかしなかったため
+  実害が無く、顕在化していなかった
+- 今回`$lineageInspectionAtDate`という「インスタンスごとの個別設定」を持ち込んだことで、
+  この既存の特徴が初めて実害として顕在化した
+
+### 対応方針（人間承認済み）
+
+「`new CategoryRacer()`を`ClassRegistry::init('CategoryRacer')`に置き換える」という根本修正も
+検討したが、影響範囲調査の結果、以下の理由により**今回のPRでは見送り、技術的負債として記録する**
+方針とした:
+- 同じコンポーネント内でCategoryRacer以外の11モデルも同じ`new`パターンを使っており、
+  1モデルだけ直すと一貫性を欠く一方、11モデル全てを見直すのは今回の指摘の範囲を大きく超える
+- `new`を`ClassRegistry::init()`に変えると、保存対象インスタンスがコントローラ側の
+  `CategoryRacer`と共有されることになり、他のアクション（`upload_category_racers()`等）での
+  Behavior切替（SoftDeleteのload/unload）や保存状態との予期しない干渉が起きないか、
+  本コンポーネント（2000行超）と関連コントローラの全経路を検証する必要があり、
+  今回のレビュー対応のスコープに対して不釣り合いに大きい調査・テストコストがかかる
+
+代わりに、影響範囲を`$lineageInspectionAtDate`プロパティ1つに限定した対症療法を実装した:
+`$this->CategoryRacer`と`ClassRegistry::init('CategoryRacer')`の**両方**に同じ値を設定する
+（両者が同一インスタンスの場合は同じ値を2回設定するだけで副作用が無いため、どちらのケースでも
+安全に動作する）。
+
+### 実装内容
+
+- `ResultParamCalcComponent`に private helper `__setLineageInspectionAtDate($atDate)`を新設し、
+  8箇所の個別設定・リセット呼び出しを置き換え。両方のインスタンスへ同時に設定する
+- 回帰テストを追加（`ResultParamCalcComponentTest::testSetLineageInspectionAtDatePropagatesToBothCategoryRacerInstances`）:
+  `new CategoryRacer()`由来の独立インスタンスをコンポーネントへ注入し、実運用と同じ
+  「別インスタンス」状況を再現したうえで、両方に値が伝わることを確認する
+
+### 技術的負債として申し送り
+
+`ResultParamCalcComponent`が`ClassRegistry`を使わず`new`でモデルを生成する設計（CategoryRacerを
+含む12モデル全て）は、今回のような「インスタンスごとの状態を持つ機能」を追加するたびに
+同種の見落としを誘発しうる。将来的に`ClassRegistry::init()`へ統一する場合は、本コンポーネントと
+呼び出し元コントローラ（`ApiController`/`EntryCategoriesController`/`ResultReadComponent`）の
+全保存経路を対象にした専用の調査・改修spec（影響範囲: Behavior切替の干渉有無、モデルの
+`id`/`data`状態の意図しない引き継ぎ有無）が必要。
+
+### 検証結果
+
+全11スイート172テストGREEN（新規回帰テスト1件追加）。
