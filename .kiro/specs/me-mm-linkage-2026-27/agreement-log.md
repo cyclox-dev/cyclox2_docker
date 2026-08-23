@@ -579,3 +579,34 @@ cyclox2web PR #13（me-mm-linkage-2026-27 第2版）に対し、saki-tsurumura�
 
 本対応内容を反映したうえで、PR #13の全11件のレビューコメントへ返信する（対応要否と対応内容を
 1件ずつ明示）。
+
+## 2026-08-23 有識者レビュー第2ラウンド対応
+
+上記対応後、saki-tsurumuraさんから再度3件の指摘（既存スレッドへの追加コメント含む）が付いた。
+裏取りのうえ、以下3件すべてを人間の承認を得て実装した。
+
+| 分類 | コメント要旨 | 対応方針 |
+|---|---|---|
+| 1 | `meet_code`/`racer_result_id`は`category_racers`の実カラムなので、reason_noteへの文字列埋め込みではなく単一パラメタとして保存すべき | 対応する |
+| 2 | `Model/CategoryRacer.php`のfind()時点判定について、呼び出し元（レース日を持つ）が基準日を渡せばよい。未設定時は本日日付をデフォルトにすればよい | 対応する（ただしデフォルト動作は実装判断で変更、後述） |
+| 3 | 新規apply_dateはcancel_dateの1日後とすべき（連動先カテゴリーも同様）。同日だと重複チェックで誤検知しうる | 対応する |
+
+### 実装内容
+
+- `propagateLinkedPromotion()`: `$createData`に`meet_code`・`racer_result_id`を実カラムとして設定。reason_noteへの文字列埋め込みは削除
+- `propagateLinkedPromotion()`の契約変更: `$atDate`は加工前の生のレース日を渡す仕様に変更。内部で新規apply_date（`$atDate`の1日後）を算出し、cancel_dateには生の`$atDate`をそのまま使う。呼び出し元（`ResultParamCalcComponent`の2箇所）を、既に+1日していた`$applyDate`ではなく生の`$this->__atDate`を渡すよう変更
+- `CategoryRacer`に`$lineageInspectionAtDate`（基準日、既定null）を新設。`__activeCategoryCodes()`は設定時のみ基準日で絞り込み、未設定時は従来どおり`cancel_date`未設定のみで判定する（**reviewer提案「未設定なら本日日付」から変更**: 本日をデフォルトにすると来シーズンの先行付与等、apply_dateが未来の正当な保存を誤って除外する副作用がテストで判明したため）
+- `ResultParamCalcComponent`の2箇所（`__applyRankUp2CM()`/`__execApplyRankUp()`）で、新カテゴリーのapply_date算出直後に`$lineageInspectionAtDate`を設定し、全ての return パスの直前でnullへ戻す
+
+### 実装中に発見・修正した副作用
+
+- 当初`lineageInspectionAtDate`に生のレース日をそのまま設定したところ、新規apply_date（レース日+1日）を持つ「作成した本人の新カテゴリー行」自身が基準日より後の日付になり判定対象から除外されてしまう不具合を作り込んだ。基準日には新カテゴリーのapply_date（+1日後の値）を使うよう修正して解消
+- `lineageInspectionAtDate`をリセットせずに関数を抜けると、同一リクエスト内の後続の別処理（例: `MeMmLinkageIntegrationTest`のStep2、`CategoryRacersController::exec_change_em()`）に基準日が漏れて誤判定を引き起こすことをテストで検出。全returnパスの直前でnullへ戻すよう修正
+
+### 検証結果
+
+以下11スイート全てGREEN（171テスト）: 前回と同一の11スイート。反転・追加が必要だった既存テスト（`CategoryLineageLinkerTest`の(c)(d)、`CategoryRacerTest`に新規追加）を修正・追加済み。
+
+### 次のステップ
+
+本対応内容を反映したうえで、PR #13の新規コメントへ返信する。
