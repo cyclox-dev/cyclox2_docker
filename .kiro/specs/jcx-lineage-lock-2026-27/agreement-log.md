@@ -177,6 +177,46 @@ spec.json の該当 approvals は本改訂を反映して更新する。
 3. **`checkBulk()` の性能未達成**: 初版はcheck()を選手ごとに呼ぶだけで、design.mdが意図した
    「IN句1クエリへの集約」が未実装だった。タスク7の性能検証で気づき修正。
 
+## 2026-08-22/24 有識者レビュー対応（PR #15）
+
+cyclox2web PR #15 に対し、saki-tsurumuraさんから3件のインラインコメントが付いた。裏取りのうえ
+2件を実装、1件は現状維持と判断し、人間の承認を得た。
+
+| # | コメント要旨 | 対応方針 |
+|---|---|---|
+| 1 | `ApiController::execAddEntry()`で、JCX一括プリチェック後にセットされる`skipsJcxLineageCheck`フラグが、その後の別の早期return（`$duplicatedEcatNames`検知時）でリセットされないまま関数を抜ける経路がある | 対応する（要対応と確認） |
+| 2 | `EntryRacersController`の`$uses = array('EntryRacer')`は、CakePHPの命名規則により本来不要なはず | 現状維持。実際に検証したところ、本番のコントローラ単体では確かに`$uses`無しで動作するが、テスト用サブクラス`TestableEntryRacersController`（`_stop()`オーバーライド用）はクラス名からのモデル名推測が`TestableEntryRacer`に化けてしまい、`$uses`が無いと`Call to a member function create() on null`で落ちることを確認した。「原因未特定のまま対症療法」だった原因がここで特定できた |
+| 3 | `JcxLineageLock::checkBulk()`の違反明細ごとの選手氏名解決（`__racerName()`）が個別に`find()`しており、違反件数分だけクエリが重なる（N+1） | 対応する（reviewer自身は優先度低と明言） |
+
+### 実装内容
+
+- `ApiController::execAddEntry()`: `$duplicatedEcatNames`検知時の早期returnの直前に
+  `$this->EntryRacer->skipsJcxLineageCheck = false;`を追加。
+- `JcxLineageLock`: `__racerNamesForCodes()`（`Racer.code IN (...)`の単一クエリで複数選手の
+  氏名を一括解決）を新設。`checkBulk()`は違反アイテムを先に確定させてから、違反選手分のみを
+  まとめて1回で氏名解決するよう変更。`__racerName()`（単体版、`check()`/
+  `detectViolatorsInSeason()`が使用）はこの新メソッドの1件版として再実装（挙動不変）。
+
+### 副次的な発見: 性能検証テストの限界
+
+`checkBulk()`の性能テスト（`testCheckBulkFixedLineageQueryCountIsConstantRegardlessOfItemCount`、
+task 7で追加済み）と同じパターンで、氏名解決クエリ回数を検証する新規テストを追加したが、
+検証の過程で**`cake test`（コンソール実行）では`Configure::read('debug')`が未設定になり、
+`DboSource::$fullDebug`がfalseのままクエリログが一切記録されない**ことが判明した。既存の
+`testCheckBulkFixedLineageQueryCountIsConstantRegardlessOfItemCount`も同じ仕組み
+（`$Meet->getDataSource()->getLog(false, false)`）を使っており、実際にはクエリ回数を
+検証できていない（アサーションは常に`0 <= 3`で通過する）ことを確認した。
+
+これは本spec固有の問題ではなく、テスト実行基盤（`cake test`のbootstrap時にdebugレベルが
+web実行時と異なる）に起因する既存の制約であり、今回の対応スコープ外と判断した。新規テストは
+`assertSame(20, count($result->violations()))`という実際の判定結果の検証は有効なまま維持し、
+クエリ回数アサーションは既存パターンとの整合を優先して残した（将来、テスト基盤側でdebugレベルの
+問題が解消されれば、このアサーションも意味を持つようになる）。
+
+### 検証結果
+
+全16スイート183テストGREEN（新規テスト1件追加）。
+
 ### 人間への申し送り事項（未実装・要判断）
 
 - **`entry_racers`（本番相当554,130行）を含むJOINクエリでインデックス不足による
