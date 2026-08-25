@@ -225,3 +225,33 @@ web実行時と異なる）に起因する既存の制約であり、今回の�
 - `integration-test-checklist.md` に人間による手動確認項目（全26件）を用意した。特に
   外部連携確認（cyclox2app実機での `add_entry` 挙動確認）・運用モード切替（warn⇄block）の
   実地確認が推奨される。
+
+## 2026-08-25 手動結合試験（integration-test-checklist.md）で発見した不具合2件
+
+人間による`integration-test-checklist.md`の手動確認（個別エントリー登録・編集、Requirement 5.2:
+確認チェックボックスによる再送信）の実施中に、**自動テストでは検知できない2件の不具合**が
+見つかり、いずれも修正した（cyclox2web PR #21 `fix/jcx-lock-warning-form-placement`、
+base: `release/2026-27-season-rules2`）。
+
+1. **確認チェックボックスが`<form>`タグの外側に出力される不具合**: `EntryRacers/add.ctp`・
+   `edit.ctp`、`EntryCategories/edit.ctp`の3ファイルで`jcx_lock_warning`要素が
+   `Form->create()`より前にレンダリングされており、チェックボックスのHTMLが`<form>`の
+   外側に出力されていた。ブラウザは`<form>`外の入力を送信しないため、チェックを入れて
+   再送信してもオーバーライドが機能しなかった。要素を`Form->create()`の後へ移動して修正。
+2. **SecurityComponent使用画面でトークンエラーになる不具合**: 上記1の修正で
+   チェックボックスが`<form>`内に入った結果、生の`<input type="checkbox">`が
+   `SecurityComponent`（`EntryCategoriesController`が使用）に「未登録の不明なフィールド」
+   として検知され、black-hole（トークンエラー・認証エラー）が発動することが手動確認で
+   判明。`$this->Form->checkbox('JcxLock.confirm', ...)`（CakePHP標準ヘルパー）に置き換え、
+   他のフィールドと同様にトークン検証の対象へ登録されるようにして解消。
+
+両不具合とも、既存の自動テストがコントローラのアクションをDispatcher非経由（
+`startupProcess()`を呼ばない）で直接呼び出す方式のため、実際のHTMLレンダリング構造・
+SecurityComponentのトークン検証のいずれも経由せず、構造的に検知できなかった。
+再発防止として、`.ctp`ソース上の記述順序を静的に検証する軽量な回帰テスト
+（`JcxLockWarningElementPlacementTest`）を追加した（フルHTMLレンダリング・
+SecurityComponentの実動作を伴うテスト基盤はこのコードベースに無く、新設は今回の
+修正規模に対して過剰と判断したため）。
+
+修正後、人間が再度ブラウザで確認し、警告表示・チェック・再送信・登録完了までの
+一連の流れが正常に動作することを確認済み。
