@@ -205,9 +205,14 @@ cyclox2_svr/cyclox2/app/
 > CL1〜CL3・WMのみを収録しており、年齢別マスターズ（`MM35`〜`MM100`）のレコードを欠く
 > （2026-08-29改訂で判明）。本specの実装時に `CategoryFixture` へ `MM35`・`MM40`・`MM100`
 > 等、代表的な年齢別マスターズ数件のレコード追加が必要（`category_group_id=2`,
-> `is_aged_category=1`）。`CategoryRacesCategoryFixture` にもこれらへの races_category_code
-> 紐付け（1:1、実データ`tmp/20260613_dump.sql`の`category_races_categories`と同一パターン）を
-> 追加する。
+> `is_aged_category=1`。`categories`テーブルの静的フィクスチャ拡張は第1版でも採用済みの
+> 方式）。ただし `category_races_categories`（種目→カテゴリー紐付け）は
+> `CategoryRacesCategoryFixture`への静的追加を行わない — 第1版実装時に
+> Season/Meet/EntryGroup/EntryCategory/EntryRacer/RacesCategory/CategoryRacesCategory への
+> 静的レコード追加が他スイートとのクロススイート回帰リスクを生むと判明し、各テストメソッド内で
+> `Model::save()` を直接呼ぶ動的投入方式へ切り替えた経緯があるため（tasks.md
+> 「Implementation Notes」参照）。年齢別マスターズ種目の紐付けも同じ方式（テストメソッド内で
+> `CategoryRacesCategory::save()` により動的投入）を踏襲する。
 
 ### Modified Files
 - `app/Model/EntryRacer.php` — `beforeSave` を新設し、`JcxLineageLock::check()` へ委譲。

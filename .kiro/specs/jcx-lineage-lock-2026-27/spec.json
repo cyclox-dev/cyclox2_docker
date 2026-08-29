@@ -3,7 +3,7 @@
   "created_at": "2026-07-15T00:00:00Z",
   "updated_at": "2026-08-29T00:00:00Z",
   "language": "ja",
-  "phase": "design-generated",
+  "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -21,10 +21,12 @@
     },
     "tasks": {
       "generated": true,
-      "approved": false,
-      "revision_note": "要件・設計の差し戻しに伴い再承認が必要。"
+      "approved": true,
+      "approved_at": "2026-08-29T00:00:00Z",
+      "revision_note": "【2026-08-29改訂・第2版・人間承認済み】差分修正タスクR1〜R4を追加（R1: CategoryFixtureへ年齢別マスターズのレコード追加、R2: lineageOfRacesCategory()の判定基準変更、R3: 年齢別マスターズ・女子エリートを用いた結合シナリオ追加、R4: 全体回帰試験と記録更新）。フレッシュサブエージェントによる独立サニティレビューでR1のフィクスチャ方針（CategoryRacesCategoryFixtureへの静的追加）が第1版の教訓と矛盾するNEEDS_FIXES指摘を受け、動的Model::save()投入方式へ修正済み。再レビューで依存順序・design.mdとの整合・Requirement 2.1/2.5/2.7-2.9カバレッジに問題無しと確認。",
+      "revision": 2
     }
   },
-  "ready_for_implementation": false,
+  "ready_for_implementation": true,
   "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。 【2026-08-29追記】系統判定基準が実データ（年齢別マスターズ・女子エリート）と不整合であることが判明し、要件定義まで差し戻し。詳細はagreement-log.md参照。既にmainへマージ・本番運用中のため、対応は別途設計・承認を経て実施する。"
 }

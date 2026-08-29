@@ -5,6 +5,99 @@
 > 全タスクTDD（テスト先行）。制御強度等の決定点は全件確定済み（agreement-log.md「決定点の確定状況」参照。
 > デフォルト=案B 'warn'、警告と回避誘導は強め=Requirement 5 AC7）。
 
+> **第2版（2026-08-29）**: 系統判定基準の実データ不整合（JCXの実運用マスターズ種目は年齢別
+> `MM35`〜`MM100`・`WM`であり実力別`CM1`〜`CM3`ではない、女子エリート`CL1`〜`CL3`が判定対象外
+> だった）が判明したことに伴う改訂。requirements.md/design.mdは第2版へ改訂・人間承認済み
+> （agreement-log.md 2026-08-29参照）。第1版の全7タスクは実装完了・mainマージ・本番運用中で、
+> **本改訂はゼロからの作り直しではなく既存実装への差分修正**である。下記「第1版タスクの
+> 第2版における扱い」で流用・修正の別を明示し、「第2版 改訂タスク」に実際に着手すべき作業を
+> 列挙する。
+
+## 第1版タスクの第2版における扱い
+
+| 第1版タスク | 成果物 | 第2版での扱い |
+|---|---|---|
+| 1.1 テストフィクスチャ | Season/Meet/EntryGroup/EntryCategory/EntryRacer/RacesCategory/CategoryRacesCategory 等 | **そのまま流用**（R1で年齢別マスターズのレコードのみ追加） |
+| 1.2 設定・ログ | bootstrap設定・CakeLog scope | **そのまま流用**（無変更） |
+| 2.1 種目→系統解決 | `JcxLineageLock::lineageOfRacesCategory()` | **R2 で判定基準を`CategoryLineageMap`依存から`categories.category_group_id`/`is_aged_category`直接参照へ変更**（メソッドシグネチャ・戻り値契約は不変） |
+| 2.2 固定系統算出 | `fixedLineage()` / `isCheckTarget()` | **そのまま流用**（判定ロジックは不変） |
+| 2.3 違反判定 | `check()` / `checkBulk()` / `JcxLineageCheckResult` | **そのまま流用**（2.1の修正結果を透過的に使うのみ） |
+| 3.1/3.2 モデル層フック | `EntryRacer`/`EntryCategory` beforeSave | **そのまま流用**（無変更） |
+| 4.1/4.2 管理画面UX | 各Controller・jcx_lock_warning.ctp | **そのまま流用**（無変更） |
+| 5.1/5.2 一括登録経路 | ApiController・リザルト取込 | **そのまま流用**（無変更） |
+| 6.1 検出シェル | `JcxLineageCheckShell` | **そのまま流用**（2.1の修正結果を透過的に使うのみ） |
+| 7.1 結合検証 | test-results.md・integration-test-checklist.md | **R4 で本改訂分の検証結果を追記**（作り直さない） |
+
+---
+
+## 第2版 改訂タスク
+
+- [ ] R1. テストフィクスチャへ年齢別マスターズのレコードを追加する
+  - `CategoryFixture`に年齢別マスターズの代表レコード数件（例: `MM35`, `MM40`, `MM100`。
+    `category_group_id=2`, `is_aged_category=1`）を静的 `$records` へ追加する。`categories`
+    テーブルの静的フィクスチャ拡張は第1版でも採用済みの方式であり（`C1`〜`C4`・`CM1`〜`CM3`・
+    `CL1`〜`CL3`・`WM`が既に静的登録されている）、cross-suite回帰リスクの記録対象外。
+    `CL1`〜`CL3`・`CM1`〜`CM3`は既存フィクスチャに存在するため追加不要（存在確認のみ行う）
+  - 【重要・第1版の教訓を踏襲】`category_races_categories`（種目→カテゴリー紐付け）は
+    `CategoryRacesCategoryFixture`への**静的追加は行わない**。第1版の実装時、
+    Season/Meet/EntryGroup/EntryCategory/EntryRacer/RacesCategory/CategoryRacesCategory
+    への静的レコード追加は、他の既存スイート（`CategoryRacerTest`・
+    `ResultParamCalcComponentTest`・`MeMmLinkageIntegrationTest`等）で共有されるフィクスチャに
+    同じレコードが展開されクロススイートの回帰リスクを生むことが判明し、各テストメソッド内で
+    `Model::save()` を直接呼ぶ動的投入方式へ切り替えた経緯がある（本ファイル
+    「Implementation Notes（2026-08-15実装完了時点）」参照）。年齢別マスターズ種目
+    （例: `MM40`→`MM40`の1:1紐付け）も同じ`CategoryRacesCategoryFixture`が対象のため、
+    R2のテストメソッド内で`CategoryRacesCategory::save()`により動的に投入する
+  - 完了条件: `CategoryFixture`への追加分を読み込むスモークテストがグリーン
+  - _Requirements: 2.7, 2.8, 2.9_
+  - _Boundary: CategoryFixture_
+  - _Depends: なし_
+
+- [ ] R2. `lineageOfRacesCategory()`の系統判定基準を`categories.category_group_id`/
+      `is_aged_category`の直接参照へ変更する
+  - テスト先行: 既存の`JcxLineageLockTest::lineageOfRacesCategory`のうち「対象外種目（例:
+    女子等）」という誤った前提のケースを削除し、以下8ケースの期待値を先に書き換える:
+    男子実力別エリート種目（C1〜C4）→elite / 女子実力別エリート種目（CL1〜CL3）→elite /
+    年齢別男子マスターズ種目（MM35〜MM100）→masters / 年齢別女子マスターズ種目（WM）→masters /
+    実力別マスターズ種目（CM1〜CM4）→null（対象外）/ ジュニア・キッズ等の年齢区分種目→null /
+    両系統混在種目→null / カテゴリー紐づけ無し種目→null。年齢別マスターズ種目の
+    `category_races_categories`行はR1の方針どおり`CategoryRacesCategory::save()`で
+    テストメソッド内に動的投入する（既存の他ケースと同じ方式）
+  - `CategoryRacesCategory`の`find()`を`Category`へのbelongsTo joinを含む形（recursive既定の
+    join、または明示`fields`指定）に変更し、`category_group_id`・`is_aged_category`を取得する。
+    `category_group_id`が1または3→エリート、2かつ`is_aged_category`が1→マスターズ、それ以外
+    →いずれにも該当しない、で判定する
+  - `CategoryLineageMap`への`App::uses()`・呼び出しをすべて削除する（依存解消）
+  - 完了条件: 上記8ケースのユニットテストがグリーンで、`CategoryLineageMap`への参照が
+    `JcxLineageLock.php`から完全に除去されている（grepで無ヒット）
+  - _Requirements: 2.1, 2.5, 2.7, 2.8, 2.9_
+  - _Boundary: JcxLineageLock_
+  - _Depends: R1_
+
+- [ ] R3. 年齢別マスターズ・女子エリートを用いた結合シナリオを追加する
+  - テスト先行: `EntryRacersControllerTest`に、旧実装では検知できなかった具体的な回帰シナリオを
+    追加する — (a) 男子実力別エリート種目でシーズン固定後、年齢別マスターズ種目（例: `MM40`）で
+    同シーズンJCXエントリーを試み、系統違反として検知される（warnモードで警告表示、確認付き
+    再送信で完了しログ記録される）。(b) 年齢別マスターズ種目でシーズン固定後、女子実力別
+    エリート種目（`CL1`等）でエントリーを試み、系統違反として検知される
+  - 完了条件: 上記(a)(b)のコントローラテストがグリーンで、既存の統合テストスイート
+    （`ApiControllerTest`, `JcxLineageCheckShellTest`等）に回帰がない
+  - _Requirements: 2.7, 2.8, 3.1, 3.2, 3.4_
+  - _Boundary: EntryRacersControllerTest_
+  - _Depends: R2_
+
+- [ ] R4. 全体回帰試験を実行し記録を更新する
+  - 全ユニット・統合テストスイートを一括実行しグリーンであることを確認する
+  - `test-results.md`に本改訂（第2版）の実行結果を追記する（改訂理由・変更ファイル一覧・
+    新規/変更テストケース数・全件グリーンの確認・既存139テストへの回帰なし確認）
+  - `integration-test-checklist.md`に、年齢別マスターズ・女子エリートを用いた手動確認項目を
+    既存項目へ追記する形で追加する（作り直さない）
+  - 完了条件: `test-results.md`・`integration-test-checklist.md`が本改訂の内容で更新され、
+    全テストグリーンの記録が残る
+  - _Requirements: 2.1, 2.5, 2.7, 2.8, 2.9, 7.1_
+  - _Boundary: test-results.md, integration-test-checklist.md_
+  - _Depends: R3_
+
 - [x] 1. 基盤: 設定とテストフィクスチャの整備
 - [x] 1.1 エントリー・大会・シーズン系のテストフィクスチャを整備する
   - Season（2025-26 / 2026-27 の2シーズン、start_date/end_date 付き）、Meet（is_jcx=0/1・

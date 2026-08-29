@@ -334,3 +334,21 @@ Structure Planに記録。
 
 2026-08-29、人間が設計内容を承認。`spec.json`の`approvals.design.approved`を`true`へ更新。
 次は`/kiro-spec-tasks`でタスク分解へ進む。
+
+## 2026-08-29（続き）tasks.md 第2版を作成・独立レビューで指摘を修正
+
+`/kiro-spec-tasks` でtasks.mdへ「第2版 改訂タスク」（R1〜R4）を追加した。フレッシュな
+サブエージェントによる独立サニティレビューを実施したところ、R1の当初案（`CategoryFixture`と
+`CategoryRacesCategoryFixture`の両方へ年齢別マスターズのレコードを静的追加）が、本ファイル
+「Implementation Notes（2026-08-15実装完了時点）」に既に記録されている第1版の教訓
+（`CategoryRacesCategoryFixture`を含む複数フィクスチャへの静的レコード追加は他スイートとの
+クロススイート回帰リスクを生むため、動的`Model::save()`投入方式へ切り替えた）と矛盾する
+NEEDS_FIXES指摘を受けた。
+
+`categories`テーブル自体（`CategoryFixture`）への静的追加は第1版でも採用済みの方式のため維持し、
+`category_races_categories`（`CategoryRacesCategoryFixture`）への静的追加のみ撤回して、R2の
+テストメソッド内で`CategoryRacesCategory::save()`により動的投入する方式へ修正した。design.mdの
+File Structure Plan該当箇所も同様に修正済み。
+
+再レビュー後、R1〜R4の依存順序・design.mdの分類基準との整合・Requirement 2.1/2.5/2.7/2.8/2.9の
+カバレッジに問題無しと確認した。
