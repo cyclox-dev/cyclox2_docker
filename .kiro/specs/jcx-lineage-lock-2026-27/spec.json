@@ -1,23 +1,27 @@
 {
   "feature_name": "jcx-lineage-lock-2026-27",
   "created_at": "2026-07-15T00:00:00Z",
-  "updated_at": "2026-07-15T12:00:00Z",
+  "updated_at": "2026-08-29T00:00:00Z",
   "language": "ja",
-  "phase": "implementation-complete",
+  "phase": "requirements-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": true
+      "approved": false,
+      "revision_note": "【2026-08-29再調査で判明・要件改訂済み・人間承認待ち】JcxLineageLock::lineageOfRacesCategory()はCategoryLineageMap::isEliteCategory/isMastersCategory（C1〜C4/CM1〜CM3のみ）に依存していたが、実DBダンプ(tmp/20260613_dump.sql)で確認したところJCXのマスターズ種目は年齢別カテゴリー（MM35〜MM100、WM、is_aged_category=1）で運用されており、女子エリートはCL1〜CL3（category_group_id=3、JCX表示名WE）である。CategoryLineageMapのスコープはこれらを一切含まないため、JCX系統固定の判定基準（旧Requirement 2 AC1）が実データの系統区分と一致していなかった。requirements.mdを第2版へ改訂し、Requirement 2にAC7〜AC9（エリート系統=C1〜4+CL1〜3、マスターズ系統=MM35〜100+WM、CM1〜4は現状対象外）を追加、AC1・AC5・Adjacent expectationsを修正済み。人間の承認待ち。",
+      "revision": 2
     },
     "design": {
       "generated": true,
-      "approved": true
+      "approved": false,
+      "revision_note": "要件差し戻しに伴い設計も再承認が必要（判定基準を再定義するため設計への影響が見込まれる）。"
     },
     "tasks": {
       "generated": true,
-      "approved": true
+      "approved": false,
+      "revision_note": "要件・設計の差し戻しに伴い再承認が必要。"
     }
   },
-  "ready_for_implementation": true,
-  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。"
+  "ready_for_implementation": false,
+  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。 【2026-08-29追記】系統判定基準が実データ（年齢別マスターズ・女子エリート）と不整合であることが判明し、要件定義まで差し戻し。詳細はagreement-log.md参照。既にmainへマージ・本番運用中のため、対応は別途設計・承認を経て実施する。"
 }

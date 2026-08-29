@@ -255,3 +255,69 @@ SecurityComponentの実動作を伴うテスト基盤はこのコードベース
 
 修正後、人間が再度ブラウザで確認し、警告表示・チェック・再送信・登録完了までの
 一連の流れが正常に動作することを確認済み。
+
+## 2026-08-29 系統判定基準が実データと不整合であることが判明し、要件定義まで差し戻し
+
+別セッションで作成した「2026-27シーズン改修まとめ」文書のレビュー中、人間から「JCX戦では
+実力別マスターズ（MM1〜3相当）はレースカテゴリーとして設定されず、代わりに年齢別マスターズ
+（MM35〜MM100、WM）が設定される。JCXの系統固定はエリート系と年齢別マスターズが対象となるのが
+正しい仕様のはずだが、現在の実装はそれを満たしているか」という確認依頼があった。
+
+**調査結果（実DBダンプ `tmp/20260613_dump.sql` で裏取り済み）**:
+- `categories`テーブルの実データ: `C1〜C4`（category_group_id=1, is_aged_category=0, 男子
+  実力別エリート）、`CM1〜CM4`（category_group_id=2, is_aged_category=0, 男子実力別マスターズ。
+  CM4はCategoryLineageMap未定義）、`MM35〜MM100`（category_group_id=2,
+  **is_aged_category=1**, 男子年齢別マスターズ、25-26シーズンから5歳刻みで追加）、`WM`
+  （category_group_id=2, is_aged_category=1, 女子年齢別マスターズ）、`CL1〜CL3`
+  （category_group_id=3, is_aged_category=0, 女子実力別エリート。JCX表示名は「WE」）。
+- `category_races_categories`の実データ: races_category_code `MM40`等は category_code
+  `MM40`等に**1対1でのみ**紐づいており、CM系への紐付けは一切ない（WM・MM35〜100すべて同様）。
+- `JcxLineageLock::lineageOfRacesCategory()`は`CategoryLineageMap::isEliteCategory()` /
+  `isMastersCategory()`（管理対象はC1〜C4・CM1〜CM3のみ）に直接依存している。
+
+**結論**: JCXの実際のマスターズ種目（年齢別MM35〜100・WM）も女子エリート種目（CL1〜3）も
+`CategoryLineageMap`の管理対象外であるため、`lineageOfRacesCategory()`は必ずnull
+（系統判定不能）を返し、決定フロー上「対象外・通過」となる。結果として、本機能の系統固定判定は
+**男子実力別エリート（C1〜C4）同士のケースにしか実質的に機能せず**、年齢別マスターズ・女子
+エリートが絡む系統違反（本来この機能が主眼とすべきパターンを含む）を検知できていない。
+
+**根本原因**: `research.md`「レースカテゴリー→系統の解決規則」において、当初案
+（`category_races_categories`→`categories.category_group_id`でjoin、CatLimitShellの先行
+パターン）であればMasters系（group_id=2、年齢別含む）を自然にカバーできたが、「対応表を
+単一の正とする」ルールを優先して`CategoryLineageMap`のAPIのみに限定する設計判断がされた際、
+**JCXの実際のマスターズ運用が年齢別カテゴリーである点の裏取りが行われないまま**、
+「2026-27規則の対象がME/MM系統である前提と整合」という誤った前提でスコープを確定していた。
+
+**対応方針（2026-08-29人間承認）**: 要件定義まで差し戻して再承認プロセスを開始する。
+`spec.json`のapprovals（requirements/design/tasks）をfalseへ戻した。本specは既に
+implementation-complete・mainマージ済み・本番運用中（`warn`モード）のため、対応（判定基準の
+再定義・設計修正・実装・再テスト）は改めて `/kiro-spec-requirements` から人間承認を得た上で
+進める。今回のセッションではこの記録・spec.json更新のみを行い、要件文面の具体的な書き換え・
+実装には着手していない。
+
+## 2026-08-29（続き）requirements.md 第2版を作成し人間承認待ちへ
+
+上記の差し戻しを受け、`/kiro-spec-requirements` で requirements.md を第2版へ改訂した。
+
+**変更内容**:
+- 冒頭に「改訂履歴」節を追加し、変更理由・影響範囲・人間承認事項を明記
+- Boundary Context「Adjacent expectations」: me-mm-linkage-2026-27 の対応表（CategoryLineageMap）
+  への無条件委譲を撤回し、本機能が独自にJCX運用カテゴリーへ基づいた判定基準を持つことを明記
+- Requirement 2 AC1: 判定基準を「対応表と同一」から「JCXで実際に運用される全カテゴリーを対象と
+  する独自基準（AC7〜AC9）」へ修正
+- Requirement 2 AC5: 対象外カテゴリーの例示から「女子」を削除（女子エリートCL1〜3は今回から
+  エリート系統に含まれるため誤りだった）し、ジュニア・キッズ等の年齢区分カテゴリーとCM1〜4に修正
+- Requirement 2 に AC7（エリート系統=C1〜C4・CL1〜C3）、AC8（マスターズ系統=MM35〜MM100・WM）、
+  AC9（実力別マスターズCM1〜4は現状JCXで未使用のため対象外。将来運用時は要件再見直し）を追加
+
+**判断根拠**: マスターズ系統にCM1〜4を含めるか否かは人間へ確認（AskUserQuestion）した。
+「現在JCXでCMカテゴリーは一切使用されていないため、実際に使用されているもの（MM35〜100・WM）
+のみを対象とする」との回答を得た（2026-08-29）。将来CMがJCXで運用される場合は本要件を
+再度見直す前提とした。
+
+判定フロー・チェック経路（Requirement 1, 3〜7）自体への変更は無く、判定対象カテゴリーの範囲
+（Requirement 2, Boundary Context）のみの改訂である。
+
+`spec.json`の`phase`を`requirements-generated`、`approvals.requirements.generated`を`true`
+（`approved`は引き続き`false`、人間承認待ち）に更新した。設計・実装への着手はこの承認を得て
+から行う。
