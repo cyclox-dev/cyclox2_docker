@@ -3,7 +3,7 @@
   "created_at": "2026-07-14T00:00:00Z",
   "updated_at": "2026-08-29T00:00:00Z",
   "language": "ja",
-  "phase": "implementation-partial",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -19,5 +19,5 @@
     }
   },
   "ready_for_implementation": true,
-  "notes": "【2026-08-29実装状況】タスク1（リアルタイム昇格枠MM2→MM1上限3名化）のみ実装完了・mainへ反映済み。既存の`__rule0123`（40人以上→3名）と数値が一致したため新規配列は作らず再利用。AJOCC公式ルールページと照合し確定値をagreement-log.mdに記録済み。既存17スイート222テスト全GREEN（回帰なし）。タスク2〜4（シーズン末残留ライン新値・系統横断残留判定・runbook改訂）は人間の判断により今回実装せず、`.kiro/specs/rider-demotion-2025-26/runbook.md`「次年度の更新点」に新基準値（ME2/ME3=240位、WE1=80位）を申し送り済み。次シーズン末（2027年3月）の降格作業着手時にタスク2〜4の実装要否を判断すること。"
+  "notes": "【2026-08-29実装完了・独立レビュー2巡目対応済み】タスク1〜4すべて実装完了。タスク1（リアルタイム昇格枠MM2→MM1上限3名化）はcyclox2webアプリ本体へ実装・mainへ反映済み（独立レビュー実施、既存18スイート226テスト全GREEN）。タスク2〜4（シーズン末判定SQL資産・runbook・ローカルダンプ検証）は`.kiro/specs/season-rules-2026-27/sql/`・`runbook.md`として新規作成（アプリ本体には触れない周辺SQL/手順書）。ローカルダンプでの新判定ロジックのシミュレーション検証（開発DBの2025-26デモーション適用済み状態を実適用SQLの機械的反転で一時復元し、単一TRANSACTION+ROLLBACKで本番影響ゼロのまま実施）で、survive_flags生成のNULL処理バグを発見・修正した（詳細test-results.md）。修正後、旧実績583件→新基準634件（+51件）のうちC2/C3/CL1分（+48件）はME2/ME3ライン厳格化・WE1順位基準新設で論理的に説明可能。C1/CM1分（+3件）は開発DBのベースライン汚染由来と判定し実効果の証跡から除外（独立レビューで検出、test-results.md「既知の限界」参照）。SQL資産一式への2巡目独立レビューで9件の指摘（開発DB汚染・シーズンパラメータ残置・apply_date上限フィルタ欠落・WE1出走ゲート未実装・verify.sql重複クエリ等）を受け全て対応済み（詳細agreement-log.md）。次シーズン末（2027年3月）の降格作業は`season-rules-2026-27/runbook.md`を参照する（`rider-demotion-2025-26/runbook.md`から申し送り済み）。"
 }
