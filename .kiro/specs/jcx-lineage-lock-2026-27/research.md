@@ -167,8 +167,9 @@
 - **Follow-up**: 実データで両系統混在の種目が存在しないか実装時に確認しログで可視化
 
 ## Risks & Mitigations
-- **上流依存**: `CategoryLineageMap` が未実装の期間は本specを実装開始できない —
-  Wave 1（me-mm-linkage）完了後に着手する実装順序で吸収（roadmap どおり）
+- **上流依存**: 【2026-08-29解消】系統判定を`CategoryLineageMap`から`categories.
+  category_group_id`/`is_aged_category`の直接参照へ変更したため、上流spec（me-mm-linkage-
+  2026-27）の実装完了への依存は無くなった
 - **性能**: `entry_racers.racer_code` 起点の検索にインデックスが無い場合、繁忙期の一括登録で
   遅延 — 一括判定（IN句1クエリ）+リクエスト内メモ化で緩和し、EXPLAIN確認の上で必要なら
   インデックス追加を提案
@@ -187,3 +188,46 @@
   CategoryLineageLinker の公開API定義と依存ルール
 - AJOCC 2026-27規則改正告知: https://www.cyclocross.jp/news/2026/07/20262027amendment.html
 - 調査対象コード: `cyclox2_svr/cyclox2/app/`（本文中の各ファイル:行 参照）
+
+## 2026-08-29 追記調査: 系統判定基準の実データ検証（第2版設計の根拠）
+
+- **Context**: 人間から「JCXのマスターズ種目は実力別（CM1〜3相当）ではなく年齢別（MM30〜70等・
+  WM）で運用されているはずだが、現在の実装（`CategoryLineageMap`依存）はそれを満たしているか」
+  という確認依頼を受け、実DBデータで裏取りした。
+- **Sources Consulted**: `tmp/20260613_dump.sql`（本番相当ダンプ）の`categories`・
+  `category_races_categories`テーブルINSERT文、`app/Cyclox/Const/CategoryLineageMap.php`、
+  `app/Controller/Component/AgedCategoryComponent.php`、`app/Cyclox/Util/JcxLineageLock.php`
+  （現行実装）。
+- **Findings**:
+  - `categories`実データ: `C1〜C4`（category_group_id=1, is_aged_category=0, 男子実力別
+    エリート）、`CM1〜CM4`（category_group_id=2, is_aged_category=0, 男子実力別マスターズ）、
+    `MM35`〜`MM100`（category_group_id=2, **is_aged_category=1**, 男子年齢別マスターズ、
+    25-26シーズンから5歳刻みで追加）、`WM`（category_group_id=2, is_aged_category=1, 女子
+    年齢別マスターズ）、`CL1〜CL3`（category_group_id=3, is_aged_category=0, 女子実力別
+    エリート。JCX上の表示名は「WE」）。
+  - `category_races_categories`実データ: races_category_code `MM40`等は category_code
+    `MM40`等に**1対1でのみ**紐づく（CM系への紐付けなし）。`WM`・`MM35`〜`MM100`すべて同様。
+  - 現行の`JcxLineageLock::lineageOfRacesCategory()`は`CategoryLineageMap::isEliteCategory/
+    isMastersCategory`（管理対象C1〜C4・CM1〜CM3のみ）に依存しており、上記の年齢別マスターズ
+    ・女子エリートはいずれも対応表対象外のため必ずnull（系統判定不能）を返す。
+- **Implications**: 現行実装はJCXの実運用と一致しておらず不具合。判定基準を`categories`テーブル
+  の`category_group_id`/`is_aged_category`直接参照へ変更する必要がある。
+
+### Architecture Pattern Evaluation（系統判定基準の再設計）
+
+| Option | Description | Strengths | Risks / Limitations | Notes |
+|--------|-------------|-----------|---------------------|-------|
+| A: category_group_id + is_aged_category直接参照（採用） | `Category`へのbelongsTo joinで両列を取得し、group_id∈{1,3}→Elite、group_id=2かつis_aged=1→Masters | 将来の年齢区分追加（例: MM105）もコード変更なしで自動対応。実データの構造をそのまま反映 | `category_group_id`の意味（1/2/3の割当）が変更されると追随が必要（Revalidation Triggerに明記） | 人間承認（2026-08-29）: CM1〜4は将来拡張に備えず、実際に使用されているもの（age-based）のみを対象とする方針を確認済み |
+| B: 系統管理カテゴリーコードのホワイトリスト直書き | `{C1,C2,C3,C4,CL1,CL2,CL3}` / `{MM35...MM100,WM}` をJcxLineageLock内に列挙 | 判定ロジックがDBスキーマの意味に依存しない | 新しい年齢区分カテゴリーが追加されるたびにコード変更が必要（過去にMM35→MM100が5歳刻みで新設された実績があり、再発が見込まれる） | 却下 |
+| C: CategoryLineageMapを拡張し年齢別マスターズ・CL系も対応表に含める | 上流spec（me-mm-linkage-2026-27）側でスコープ拡張 | 系統判定ソースを一本化できる | CategoryLineageMapはME⇔MM連動ペア管理が目的で、JCXの「エリート/マスターズの大分類」とは概念が異なる（対応ペアと大分類は別軸）。上流specへの越境変更は本specのBoundaryを超える | 却下 |
+
+- **Selected Approach**: Option A。`category_races_categories`の取得クエリに`Category`への
+  belongsTo joinを追加し、`category_group_id`/`is_aged_category`で分類する。
+- **Rationale**: 実データ構造をそのまま反映でき、将来の年齢区分追加にコード変更なしで追随できる。
+  CM1〜4を対象に含めるかは人間へ確認し、「現状JCXで未使用のため対象外」の回答を得た
+  （2026-08-29、AskUserQuestion）。
+- **Trade-offs**: `category_group_id`の値の意味が変わった場合は追随が必要（Revalidation
+  Triggerに記録済み）。
+- **Follow-up**: 実装時に`CategoryFixture`へ年齢別マスターズ（`MM35`等）のテストレコードを
+  追加する必要がある（既存フィクスチャはC1〜4・CM1〜3・CL1〜3・WMのみで年齢別マスターズを
+  欠く）。

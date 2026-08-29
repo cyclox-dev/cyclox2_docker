@@ -321,3 +321,16 @@ implementation-complete・mainマージ済み・本番運用中（`warn`モー�
 `spec.json`の`phase`を`requirements-generated`、`approvals.requirements.generated`を`true`
 （`approved`は引き続き`false`、人間承認待ち）に更新した。設計・実装への着手はこの承認を得て
 から行う。
+
+## 2026-08-29（続き）design.md 第2版を作成・人間承認
+
+`/kiro-spec-design` で design.md を第2版へ改訂した。要旨：系統判定の実装方針を
+`CategoryLineageMap` 依存から `categories.category_group_id` / `is_aged_category` の
+直接参照へ変更（Elite = group_id∈{1,3}、Masters = group_id=2 かつ is_aged_category=1、
+CM1〜4は対象外）。ホワイトリスト直書き案・CategoryLineageMap拡張案は却下（research.md
+Architecture Pattern Evaluation参照）。判定フロー・強制点・UX・シェル等の他コンポーネントは
+無変更。既存`CategoryFixture`に年齢別マスターズのテストレコードが不足している点をFile
+Structure Planに記録。
+
+2026-08-29、人間が設計内容を承認。`spec.json`の`approvals.design.approved`を`true`へ更新。
+次は`/kiro-spec-tasks`でタスク分解へ進む。

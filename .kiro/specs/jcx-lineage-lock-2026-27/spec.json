@@ -3,18 +3,21 @@
   "created_at": "2026-07-15T00:00:00Z",
   "updated_at": "2026-08-29T00:00:00Z",
   "language": "ja",
-  "phase": "requirements-generated",
+  "phase": "design-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": false,
-      "revision_note": "【2026-08-29再調査で判明・要件改訂済み・人間承認待ち】JcxLineageLock::lineageOfRacesCategory()はCategoryLineageMap::isEliteCategory/isMastersCategory（C1〜C4/CM1〜CM3のみ）に依存していたが、実DBダンプ(tmp/20260613_dump.sql)で確認したところJCXのマスターズ種目は年齢別カテゴリー（MM35〜MM100、WM、is_aged_category=1）で運用されており、女子エリートはCL1〜CL3（category_group_id=3、JCX表示名WE）である。CategoryLineageMapのスコープはこれらを一切含まないため、JCX系統固定の判定基準（旧Requirement 2 AC1）が実データの系統区分と一致していなかった。requirements.mdを第2版へ改訂し、Requirement 2にAC7〜AC9（エリート系統=C1〜4+CL1〜3、マスターズ系統=MM35〜100+WM、CM1〜4は現状対象外）を追加、AC1・AC5・Adjacent expectationsを修正済み。人間の承認待ち。",
+      "approved": true,
+      "approved_at": "2026-08-29T00:00:00Z",
+      "revision_note": "【2026-08-29再調査で判明・第2版・人間承認済み】JcxLineageLock::lineageOfRacesCategory()はCategoryLineageMap::isEliteCategory/isMastersCategory（C1〜C4/CM1〜CM3のみ）に依存していたが、実DBダンプ(tmp/20260613_dump.sql)で確認したところJCXのマスターズ種目は年齢別カテゴリー（MM35〜MM100、WM、is_aged_category=1）で運用されており、女子エリートはCL1〜CL3（category_group_id=3、JCX表示名WE）である。CategoryLineageMapのスコープはこれらを一切含まないため、JCX系統固定の判定基準（旧Requirement 2 AC1）が実データの系統区分と一致していなかった。requirements.mdを第2版へ改訂し、Requirement 2にAC7〜AC9（エリート系統=C1〜4+CL1〜3、マスターズ系統=MM35〜100+WM、CM1〜4は現状対象外）を追加、AC1・AC5・Adjacent expectationsを修正済み。2026-08-29人間承認・PR #58。",
       "revision": 2
     },
     "design": {
       "generated": true,
-      "approved": false,
-      "revision_note": "要件差し戻しに伴い設計も再承認が必要（判定基準を再定義するため設計への影響が見込まれる）。"
+      "approved": true,
+      "approved_at": "2026-08-29T00:00:00Z",
+      "revision_note": "【2026-08-29改訂・第2版・人間承認済み】系統判定を CategoryLineageMap 依存から切り離し、categories.category_group_id / is_aged_category を直接参照する方式へ変更（Elite=group_id 1or3、Masters=group_id 2 かつ is_aged_category=1、CM1〜4は対象外）。Overview/Boundary Commitments/Architecture図/Requirement Coverage(2.7〜2.9追加)/Util層責務/Data Models/Testing Strategyを整合。判定フロー・強制点・UX・シェル等の他コンポーネントは無変更。",
+      "revision": 2
     },
     "tasks": {
       "generated": true,
