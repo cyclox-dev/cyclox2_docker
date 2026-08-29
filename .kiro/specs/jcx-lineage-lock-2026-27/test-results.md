@@ -3,13 +3,68 @@
 | 項目 | 内容 |
 |---|---|
 | タスクID | `jcx-lineage-lock-2026-27` |
-| 実行日 | 2026-08-15 |
+| 実行日 | 2026-08-15（第1版）／2026-08-29（第2版 R1〜R4） |
 | 実行者 | Claude |
 | テストフレームワーク | PHPUnit 3.7.38（CakePHP 2.10.24 組込みテストランナー経由） |
 | 実行コマンド | `docker compose exec cyclox2_svr bash -c "cd /var/www/html/app && ./Console/cake test app <対象パス>"` |
 | 実行環境 | Docker（`cyclox2_svr` コンテナ、`cyclox2_mysql` 接続） |
 
 ---
+
+## 第2版（2026-08-29）: 系統判定基準の修正（R1〜R4）
+
+**変更内容**: `JcxLineageLock::lineageOfRacesCategory()`の系統判定基準を`CategoryLineageMap`
+依存（C1〜C4/CM1〜CM3のみ）から`categories.category_group_id`/`is_aged_category`の直接参照へ
+変更した。JCXの実際のマスターズ種目は年齢別カテゴリー（`MM35`〜`MM100`・`WM`）で運用されており、
+女子エリート（`CL1`〜`CL3`）も判定対象外だった不具合の修正（詳細はagreement-log.md参照）。
+
+**変更ファイル**:
+- `app/Cyclox/Util/JcxLineageLock.php`（判定ロジック本体。`CategoryLineageMap`依存を完全除去、
+  `CategoryRacesCategory.deleted = 0`条件を追加）
+- `app/Test/Fixture/CategoryFixture.php`（年齢別マスターズ`MM35`/`MM40`/`MM100`、ジュニア`CJ`を
+  追加）
+- `app/Test/Case/Cyclox/Util/JcxLineageLockTest.php`（系統解決テストを5→8ケースへ拡張）
+- `app/Test/Case/Controller/EntryRacersControllerTest.php`（年齢別マスターズ→女子エリートの
+  新規回帰シナリオを追加。5テストへ拡張）
+- `app/Test/Case/Console/Command/JcxLineageCheckShellTest.php`・
+  `app/Test/Case/Controller/EntryCategoriesControllerTest.php`・
+  `app/Test/Case/Controller/ApiControllerTest.php`・`app/Test/Case/Model/EntryRacerTest.php`・
+  `app/Test/Case/Model/EntryCategoryTest.php`（旧実装で「マスターズ」の代役に使っていた
+  `CM2`/`CM3`をすべて`MM40`へ置換。CMは本改訂でマスターズ系統扱いされなくなったため）
+
+**独立レビューでの指摘と対応**: フレッシュな独立レビュアーによる検証で5件の指摘を受け、
+うち4件対応した（詳細はagreement-log.md参照）。特に、手動結合試験用の一時シードシェル
+（`JcxVerifySeedShell.php`、未追跡）が開発DBに残していた検証データ（シーズン17）が本改訂後
+「無検知」状態のまま放置されるリスクを発見し、`cake jcx_verify_seed cleanup`で除去・
+`cake jcx_lineage_check detect --season 17`で違反0件（クリーン）を確認したうえでシェル
+ファイル自体を削除した。
+
+**全体回帰実行結果（2026-08-29最終実行）**:
+
+| スイート | テスト数 | アサーション数 | 結果 |
+|---|---|---|---|
+| `Cyclox/Util/JcxLineageLockTest` | 31 | 61 | ✅ |
+| `Model/EntryRacerTest` | 7 | 12 | ✅ |
+| `Model/EntryCategoryTest` | 4 | 8 | ✅ |
+| `Controller/EntryRacersControllerTest` | 5 | 24 | ✅ |
+| `Controller/EntryCategoriesControllerTest` | 5 | 15 | ✅ |
+| `Controller/ApiControllerTest` | 7 | 25 | ✅ |
+| `Console/Command/JcxLineageCheckShellTest` | 5 | 14 | ✅ |
+| `Cyclox/Const/CategoryLineageMapTest`（既存・回帰） | 11 | 58 | ✅ |
+| `Cyclox/Util/CategoryLineageLinkerTest`（既存・回帰） | 48 | 111 | ✅ |
+| `Cyclox/Util/PointCalculatorTest`（既存・回帰） | 18 | 2182 | ✅ |
+| `Controller/Component/ResultParamCalcComponentTest`（既存・回帰） | 26 | 147 | ✅ |
+| `Controller/CategoryRacersControllerTest`（既存・回帰） | 11 | 51 | ✅ |
+| `Controller/OrgUtilControllerTest`（既存・回帰） | 6 | 41 | ✅ |
+| `Console/Command/CatLimitShellTest`（既存・回帰） | 5 | 35 | ✅ |
+| `Integration/MeMmLinkageIntegrationTest`（既存・回帰） | 7 | 66 | ✅ |
+| `Model/CategoryRacerTest`（既存・回帰） | 16 | 77 | ✅ |
+| `Model/CategoryRacerFixtureDataTest`（既存・回帰） | 8 | 19 | ✅ |
+| `View/JcxLockWarningElementPlacementTest`（既存・回帰） | 1 | 12 | ✅ |
+| **アプリ全体合計** | **221テスト** | **2958アサーション** | **全GREEN** |
+
+第1版時点（198テスト）からの増分は、本改訂の新規/変更テスト（+13）と、他spec
+（tohoku-series-2026-27等）が同期間に追加した既存テストの増分を含む。全件回帰なしを確認した。
 
 ## テスト項目一覧（タスク別）
 

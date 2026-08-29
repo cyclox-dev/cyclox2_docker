@@ -3,7 +3,7 @@
   "created_at": "2026-07-15T00:00:00Z",
   "updated_at": "2026-08-29T00:00:00Z",
   "language": "ja",
-  "phase": "tasks-generated",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -28,5 +28,5 @@
     }
   },
   "ready_for_implementation": true,
-  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。 【2026-08-29追記】系統判定基準が実データ（年齢別マスターズ・女子エリート）と不整合であることが判明し、要件定義まで差し戻し。詳細はagreement-log.md参照。既にmainへマージ・本番運用中のため、対応は別途設計・承認を経て実施する。"
+  "notes": "制御強度デフォルトは案B(警告+管理者確認)で人間承認済み(2026-07-15)。警告と回避誘導は強め(Requirement 5 AC7)。 【2026-08-15追記】API経路(add_entry)のmode=warn時挙動を警告付き受理へ人間承認済み変更（管理画面経路は案B確認UIのまま変更なし）。 【2026-08-15実装完了】全7タスク(1-7)実装完了。198テスト/787アサーション全GREEN（アプリ全体・既存139テストへの回帰なし確認済み）。checkBulk()のクエリ性能をIN句1クエリへリファクタリング済み。entry_racersテーブルのインデックス不足をtest-results.mdに人間への提案として記録（未実装）。test-results.md・integration-test-checklist.md作成済み。 【2026-08-29追記】系統判定基準が実データ（年齢別マスターズ・女子エリート）と不整合であることが判明し、要件定義まで差し戻し。詳細はagreement-log.md参照。既にmainへマージ・本番運用中のため、対応は別途設計・承認を経て実施する。 【2026-08-29第2版実装完了】差分修正タスクR1〜R4を実装完了（submodule branch `fix/jcx-lineage-lock-category-scope`、origin/main起点）。CategoryLineageMap依存を除去しcategories.category_group_id/is_aged_category直接参照へ変更。独立レビュー（reviewer subagent、実DBダンプ・開発DB・CakePHPコア裏取り込み）で5件指摘、4件対応（うち1件は開発DBに残置していた検証用シードデータの汚染リスク・重大）。アプリ全体221テスト/2958アサーション全GREEN（既存220テストへの回帰なし）。integration-test-checklist.mdに年齢別マスターズ・女子エリート用の手動確認項目4件を追加（未実施）。人間による結合試験実施後、submodule側でPR作成予定。"
 }

@@ -352,3 +352,56 @@ File Structure Plan該当箇所も同様に修正済み。
 
 再レビュー後、R1〜R4の依存順序・design.mdの分類基準との整合・Requirement 2.1/2.5/2.7/2.8/2.9の
 カバレッジに問題無しと確認した。
+
+## 2026-08-29（続き）R1〜R3実装完了・独立レビューで5件指摘、4件対応
+
+`/kiro-impl jcx-lineage-lock-2026-27 R1,R2,R3,R4` によりR1〜R3を実装した（submodule
+ブランチ `fix/jcx-lineage-lock-category-scope`、origin/main起点）。TDD（RED→GREEN）で
+`JcxLineageLockTest`を5→31テストへ拡張、`CategoryFixture`に年齢別マスターズ（MM35/MM40/MM100）・
+ジュニア（CJ）を追加、`lineageOfRacesCategory()`を`categories.category_group_id`/
+`is_aged_category`直接参照へ変更し`CategoryLineageMap`依存を完全除去、`EntryRacersControllerTest`に
+新規回帰シナリオ（年齢別マスターズ→女子エリートの違反検知）を追加した。既存17スイート全220テスト
+（後述の指摘対応後は221テスト）に回帰なし。
+
+実装完了後、フレッシュな独立レビュアー（reviewer subagent）による検証を実施し、実DBダンプ・
+開発DB・CakePHPコアの`DboSource`実装まで裏取りした精査で以下5件の指摘を受けた。
+
+1. **【重大・対応済み】** 手動結合試験用シードシェル（`app/Console/Command/JcxVerifySeedShell.php`、
+   未追跡）が投入したデータ（開発DBシーズン17、`JCXVRFYM2`大会の種目`CM2`）がR2適用後は
+   `null`（対象外）扱いになり、違反検知が効かない状態のまま開発DBに残置されていた。放置すると
+   「警告が出ない＝正常」という誤判定を招き、本改訂の主眼（マスターズ側の検知）がend-to-endで
+   未検証のまま埋もれるリスクがあった。`cake jcx_verify_seed cleanup`を実行し残置データを削除、
+   `cake jcx_lineage_check detect --season 17`で違反0件（クリーン）を確認した。
+2. **【中・対応済み】** 同シェルファイル自体が「コミットしない・作業完了後に削除する」という
+   自己申告どおりに削除されていなかった（`Meet`/`Racer`/`EntryRacer`への`deleteAll()`を含む
+   未追跡ファイルが残存）。cleanup実行後にファイルを削除した。
+3. **【中・未対応（受容済みリスクの観測手段が無い点の指摘）】** Requirement 2.9「実力別マスターズ
+   CM1〜4はJCX戦で運用されていない」という前提は現時点の実データで成立するが、将来CM系種目が
+   1件でも設定されると`lineageOfRacesCategory()`は無言でnullを返し系統固定ロックが静かに
+   無効化される。観測点（検出シェルでの「系統解決不能な種目一覧」出力等）が現状ゼロ。
+   人間承認済みの受容リスクに対する追加提案であり、本改訂のスコープ外として次回検討課題とする。
+4. **【低・対応済み】** `lineageOfRacesCategory()`のクエリに`CategoryRacesCategory.deleted = 0`
+   条件が無く、論理削除済みの紐付け行が判定に混入し得た（旧実装から引き継いだ既存の潜在課題で
+   あり今回のリグレッションではない）。判定基準を書き換えたこのタイミングで条件を追加した。
+5. **【低・対応不要】** `recursive => 0`が`RacesCategory`へのJOINも同時に発行する点を指摘された
+   が、SELECT列には影響せず正しさへの影響なし。現行スイートは全て`app.races_category`
+   フィクスチャを読み込むため実害なし（将来的な設計選択肢としてのみ記録）。
+
+指摘1・2はR4完了前に必須対応と判断し着手前に実施した。指摘4は同一ファイル・同一クエリの
+安全な引き締めのため新規承認ゲート無しでその場修正した。指摘3は次回のjcx-lineage-lock関連
+改修時の検討課題として記録するのみに留める。
+
+## 2026-08-29（続き）人間による結合試験完了（年齢別マスターズ・女子エリート）
+
+integration-test-checklist.md「年齢別マスターズ・女子エリートに関する追加確認（第2版 R4）」の
+4項目のうち3項目を人間が実機（管理画面）で確認しOK（`[/]`）。残り1項目（実力別マスターズ
+CM1〜4関連）はJCXでの運用実績が無いため「対象データ無し」として`[-]`（スキップ）で記録。
+
+確認用サンプルデータは開発DB（シーズン17）に4大会・4選手（男子エリートC3⇔年齢別マスターズ
+MM40、女子エリートCL1⇔女子年齢別マスターズWM の両パターン）を投入して用いた。投入用の
+一時シェル（`JcxVerifySeed2Shell.php`、未追跡）は確認完了後に`cleanup`実行→
+`cake jcx_lineage_check detect --season 17`で違反0件（クリーン）を確認したうえで削除した。
+（シェル自体のバグでデータが一時的に壊れる事故があったが、投入し直して解消。アプリ本体
+`JcxLineageLock.php`には無関係・影響なし。）
+
+人間の承認を得たため、submodule・outer repo双方の変更をコミット・pushする。

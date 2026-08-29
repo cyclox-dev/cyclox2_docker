@@ -32,7 +32,7 @@
 
 ## 第2版 改訂タスク
 
-- [ ] R1. テストフィクスチャへ年齢別マスターズのレコードを追加する
+- [x] R1. テストフィクスチャへ年齢別マスターズのレコードを追加する
   - `CategoryFixture`に年齢別マスターズの代表レコード数件（例: `MM35`, `MM40`, `MM100`。
     `category_group_id=2`, `is_aged_category=1`）を静的 `$records` へ追加する。`categories`
     テーブルの静的フィクスチャ拡張は第1版でも採用済みの方式であり（`C1`〜`C4`・`CM1`〜`CM3`・
@@ -53,7 +53,7 @@
   - _Boundary: CategoryFixture_
   - _Depends: なし_
 
-- [ ] R2. `lineageOfRacesCategory()`の系統判定基準を`categories.category_group_id`/
+- [x] R2. `lineageOfRacesCategory()`の系統判定基準を`categories.category_group_id`/
       `is_aged_category`の直接参照へ変更する
   - テスト先行: 既存の`JcxLineageLockTest::lineageOfRacesCategory`のうち「対象外種目（例:
     女子等）」という誤った前提のケースを削除し、以下8ケースの期待値を先に書き換える:
@@ -74,7 +74,7 @@
   - _Boundary: JcxLineageLock_
   - _Depends: R1_
 
-- [ ] R3. 年齢別マスターズ・女子エリートを用いた結合シナリオを追加する
+- [x] R3. 年齢別マスターズ・女子エリートを用いた結合シナリオを追加する
   - テスト先行: `EntryRacersControllerTest`に、旧実装では検知できなかった具体的な回帰シナリオを
     追加する — (a) 男子実力別エリート種目でシーズン固定後、年齢別マスターズ種目（例: `MM40`）で
     同シーズンJCXエントリーを試み、系統違反として検知される（warnモードで警告表示、確認付き
@@ -86,7 +86,7 @@
   - _Boundary: EntryRacersControllerTest_
   - _Depends: R2_
 
-- [ ] R4. 全体回帰試験を実行し記録を更新する
+- [x] R4. 全体回帰試験を実行し記録を更新する
   - 全ユニット・統合テストスイートを一括実行しグリーンであることを確認する
   - `test-results.md`に本改訂（第2版）の実行結果を追記する（改訂理由・変更ファイル一覧・
     新規/変更テストケース数・全件グリーンの確認・既存139テストへの回帰なし確認）
@@ -274,3 +274,26 @@
   JOINクエリでフルテーブルスキャンが発生することを `EXPLAIN` で確認した。詳細と提案する
   インデックス一覧は `test-results.md`「性能検証」節を参照。DBスキーマ変更を伴うため本spec
   では実装せず、人間の判断を仰ぐ。
+
+## Implementation Notes（第2版 R1〜R4、2026-08-29実装完了時点）
+
+- **downstream fixtureの連鎖修正**: R2で系統判定基準を変更した結果、`JcxLineageLockTest`以外にも
+  「マスターズ」のプレースホルダーとして`CM2`/`CM3`を使っていた既存テスト（
+  `JcxLineageCheckShellTest`・`EntryRacersControllerTest`・`EntryCategoriesControllerTest`・
+  `ApiControllerTest`のJCX関連部分・`EntryRacerTest`・`EntryCategoryTest`）が軒並み失敗した。
+  すべて`MM40`（年齢別マスターズ）へ置換して解消した。`ApiControllerTest`には無関係な
+  （me-mm-linkage-2026-27のカテゴリー整合性検証用）`CM3`使用箇所が別にあり、そちらは
+  据え置いた（独立レビューで区別の妥当性を確認済み）。
+- **独立レビューで発見: 開発DBの汚染リスク**: 手動結合試験用の一時シードシェル
+  （`JcxVerifySeedShell.php`、未追跡）が投入したデータ（シーズン17、種目`CM2`）が、R2適用後は
+  「無検知」状態のまま開発DBに残置されていた。放置すると「警告が出ない＝正常」という誤判定を
+  招くリスクがあったため、`cake jcx_verify_seed cleanup`で除去し、シェルファイル自体も
+  （自己申告どおり）削除した。今後同様の一時検証シェルを作る際は、作業完了時に必ず
+  cleanup実行→ファイル削除まで一連で行うこと。
+- **`CategoryRacesCategory.deleted = 0`条件の追加**: 独立レビューで、判定クエリに論理削除
+  フィルタが無く将来的な種目紐付け変更（旧行の論理削除）で判定が静かに無効化され得る点を
+  指摘され、同一クエリへの安全な引き締めとしてその場で対応した（新規承認ゲート無し、
+  既存クエリの修正範囲内）。
+- **未対応として記録した指摘**: 「実力別マスターズ(CM1〜4)がJCXで運用され始めても検知の
+  観測点が無い」という指摘は、Requirement 2.9で人間承認済みの受容リスクに対する追加の
+  観測性提案であり、本改訂のスコープ外として次回のjcx-lineage-lock関連改修の検討課題とした。
