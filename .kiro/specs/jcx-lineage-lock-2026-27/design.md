@@ -1,5 +1,17 @@
 # Design Document: jcx-lineage-lock-2026-27
 
+## 改訂履歴
+
+### 2026-08-29 改訂（第2版・系統判定基準の修正）
+
+requirements.md 第2版（2026-08-29改訂）を受け、系統判定ロジックの設計を修正した。旧版は
+`CategoryLineageMap`（me-mm-linkage-2026-27所有、管理対象はC1〜C4・CM1〜CM3のみ）を系統判定の
+単一の正として参照する設計だったが、実DBダンプ調査でJCXの実際のマスターズ種目は年齢別カテゴリー
+（`MM35`〜`MM100`・`WM`）、女子エリートは`CL1`〜`CL3`であり、いずれも`CategoryLineageMap`の
+管理対象外であることが判明した。本改訂では、系統判定を`CategoryLineageMap`への依存から切り離し、
+`categories`テーブルの`category_group_id`・`is_aged_category`列を直接参照する方式へ変更する。
+判定フロー・強制点・UX・シェル等、他コンポーネントの設計は無変更。
+
 ## Overview
 
 本機能は、cyclox2web（CakePHP 2.x / PHP 7.3 / MySQL 5.7、`cyclox2_svr/cyclox2/`）のエントリー
@@ -13,8 +25,10 @@
 
 **Impact**: エントリー関連テーブルのスキーマは変更しない。`EntryRacer`/`EntryCategory` モデルの
 保存フローに一元的な検査フックを追加し、各コントローラには警告表示・オーバーライドのUXのみを
-追加する。非JCX大会のエントリー処理は挙動を一切変更しない。系統判定は上流spec
-（me-mm-linkage-2026-27）の `CategoryLineageMap` を単一の正として参照する。
+追加する。非JCX大会のエントリー処理は挙動を一切変更しない。系統判定は本specが独自に持ち、
+`categories` テーブルの `category_group_id` / `is_aged_category` を直接参照する
+（2026-08-29改訂。旧版は上流spec me-mm-linkage-2026-27 の `CategoryLineageMap` を単一の正として
+参照していたが、その管理対象がJCXの実運用カテゴリーと一致しないことが判明したため独立させた）。
 
 ### Goals
 - JCX戦へのエントリー登録・変更の全経路で、同一の判定基準による系統固定チェックを行う
@@ -44,27 +58,36 @@
 - 違反検出シェル（`JcxLineageCheckShell`）
 
 ### Out of Boundary
-- 系統（エリート/マスターズ）そのものの定義・対応表（me-mm-linkage-2026-27 の
-  `CategoryLineageMap` が所掌。本specは公開APIを参照するのみで再定義しない）
+- カテゴリー連動（Elite⇔Masters対応ペアの連動更新）の対応表そのもの（me-mm-linkage-2026-27 の
+  `CategoryLineageMap` が所掌。本specはこれを利用しない。本specが持つのは「JCX戦における
+  エリート系統/マスターズ系統」の分類のみで、両specの分類は目的・対象範囲が異なる
+  ——2026-08-29改訂）
+- `categories.category_group_id` / `is_aged_category` の値そのものの定義・付与（既存の
+  `categories` マスタ管理・`AgedCategoryComponent` が所掌。本specは読み取りのみ）
 - `meets.is_jcx` の設定UI・意味（既存の大会登録機能のまま）
 - 通常戦エントリーの挙動、エントリー画面の既存フロー自体の再設計
 - `category_racers` への保存・バリデーション（me-mm-linkage-2026-27）
 - res-sys、およびJCXポイント計算（point-sim / calc_rule 系）
 
 ### Allowed Dependencies
-- 上流: me-mm-linkage-2026-27 の `CategoryLineageMap` **公開APIのみ**
-  （`isEliteCategory` / `isMastersCategory` / `eliteCategories` / `mastersCategories` /
-  `isLineageManagedCategory`。内部実装・privateメンバーへの依存は不可）
 - 既存テーブル（読み取りのみ）: `meets`（is_jcx, season_id, at_date）、`seasons`（start_date）、
   `entry_groups` / `entry_categories` / `entry_racers`、`races_categories`、
-  `category_races_categories`、`categories`
+  `category_races_categories`、`categories`（**`category_group_id` / `is_aged_category` を
+  系統判定に使用。2026-08-29改訂**）
+- 【2026-08-29改訂・依存を解消】`CategoryLineageMap` への依存は廃止した。JCXの実運用カテゴリー
+  （年齢別マスターズ`MM35`〜`MM100`・`WM`、女子エリート`CL1`〜`CL3`）が同クラスの管理対象外
+  であり、公開APIのみへの依存では判定基準が実データと一致しないため（agreement-log.md
+  2026-08-29参照）
 - 既存の `app/Cyclox/Const/*` enum風パターン、`App::uses()` レイヤー読込規約、SoftDelete
   （deleted=0 での有効判定）、`CakeLog`
 - スキーマ変更なし（インデックス追加のみ、性能実測で必要と判明した場合に限り人間承認の上で許容）
 
 ### Revalidation Triggers
-- `CategoryLineageMap` の対応ペア定義・公開APIシグネチャが変更された場合（上流specの
-  Revalidation Trigger と対）
+- `categories` テーブルの `category_group_id` の割当（1=男子エリート系, 2=マスターズ系,
+  3=女子エリート系）または `is_aged_category` の意味・値が変更された場合
+- JCX戦で新たな種別のカテゴリー（例: 実力別マスターズCM系の採用、新設のエリート系区分）が
+  運用され始めた場合（現時点でCM1〜CM4はJCXで未使用のため判定対象外。requirements.md
+  Requirement 2 AC9参照）
 - `meets.is_jcx` の意味・設定方法が変更された場合
 - エントリーの新しい書込経路（新コントローラ・新API）が追加され、`EntryRacer`/`EntryCategory`
   モデルの save 系を経由しない場合
@@ -91,7 +114,7 @@
 
 ```mermaid
 graph TB
-    Map[CategoryLineageMap 上流spec所有]
+    Cat[categories category_group_id is_aged_category]
     Lock[JcxLineageLock utilClass]
     Config[app Config bootstrap 運用モード設定]
     ERModel[EntryRacer model beforeSave hook]
@@ -103,7 +126,7 @@ graph TB
     Log[CakeLog jcx_lineage_lock scope]
     DB[(entry tables meets seasons categories)]
 
-    Map --> Lock
+    Cat --> Lock
     Config --> Lock
     Lock --> ERModel
     Lock --> ECModel
@@ -177,8 +200,19 @@ cyclox2_svr/cyclox2/app/
         ├── RacesCategoryFixture.php      # 新規
         └── CategoryRacesCategoryFixture.php # 新規（種目→カテゴリー対応）
 ```
-> `CategoryFixture` / `RacerFixture` は me-mm-linkage-2026-27 が新設予定のものを再利用する
-> （存在しない場合のみ本specで作成する。フィクスチャの重複定義はしない）。
+> `CategoryFixture` / `RacerFixture` は me-mm-linkage-2026-27 が新設したものを再利用する
+> （フィクスチャの重複定義はしない）。ただし既存の `CategoryFixture` はC1〜C4・CM1〜CM3・
+> CL1〜CL3・WMのみを収録しており、年齢別マスターズ（`MM35`〜`MM100`）のレコードを欠く
+> （2026-08-29改訂で判明）。本specの実装時に `CategoryFixture` へ `MM35`・`MM40`・`MM100`
+> 等、代表的な年齢別マスターズ数件のレコード追加が必要（`category_group_id=2`,
+> `is_aged_category=1`。`categories`テーブルの静的フィクスチャ拡張は第1版でも採用済みの
+> 方式）。ただし `category_races_categories`（種目→カテゴリー紐付け）は
+> `CategoryRacesCategoryFixture`への静的追加を行わない — 第1版実装時に
+> Season/Meet/EntryGroup/EntryCategory/EntryRacer/RacesCategory/CategoryRacesCategory への
+> 静的レコード追加が他スイートとのクロススイート回帰リスクを生むと判明し、各テストメソッド内で
+> `Model::save()` を直接呼ぶ動的投入方式へ切り替えた経緯があるため（tasks.md
+> 「Implementation Notes」参照）。年齢別マスターズ種目の紐付けも同じ方式（テストメソッド内で
+> `CategoryRacesCategory::save()` により動的投入）を踏襲する。
 
 ### Modified Files
 - `app/Model/EntryRacer.php` — `beforeSave` を新設し、`JcxLineageLock::check()` へ委譲。
@@ -213,7 +247,7 @@ sequenceDiagram
     participant C as EntryRacersController
     participant M as EntryRacer model
     participant L as JcxLineageLock
-    participant Map as CategoryLineageMap
+    participant Cat as categories テーブル
     participant Log as CakeLog
 
     Admin->>C: エントリー登録または編集を送信
@@ -224,7 +258,7 @@ sequenceDiagram
         L-->>M: 対象外 OK
         M-->>C: 保存成功
     else JCX対象
-        L->>Map: 種目の系統を解決
+        L->>Cat: 種目の系統を解決 category_group_id is_aged_category
         L->>L: シーズン固定系統を算出
         alt 固定系統なし または 系統一致 または 種目が判定不能
             L-->>M: OK
@@ -283,12 +317,15 @@ flowchart TD
 | 1.2 | 非JCXは従来どおり | JcxLineageLock, EntryRacer hook | `isCheckTarget()` が false で即通過 | 決定フロー |
 | 1.3 | 適用開始前シーズンは対象外 | JcxLineageLock, Config | `isCheckTarget()`（seasons.start_date と effectiveFrom 比較） | 決定フロー |
 | 1.4 | 適用開始基準の設定化 | Config（bootstrap） | `Configure JcxLineageLock.effectiveFrom` | - |
-| 2.1 | 系統判定の単一ソース共有 | JcxLineageLock → CategoryLineageMap | `lineageOfRacesCategory()` | - |
+| 2.1 | 系統判定の独自基準（AC7〜AC9） | JcxLineageLock → categories.category_group_id/is_aged_category | `lineageOfRacesCategory()` | - |
 | 2.2 | 初回JCXエントリーで固定 | JcxLineageLock | `fixedLineage()` | 決定フロー |
 | 2.3 | エントリー無しは未確定 | JcxLineageLock | `fixedLineage()` が null | 決定フロー |
 | 2.4 | 取消時の再判定 | JcxLineageLock | 都度算出（deleted=0 のみ参照） | - |
 | 2.5 | 系統判定不能種目は対象外 | JcxLineageLock | `lineageOfRacesCategory()` が null で通過 | 決定フロー |
 | 2.6 | 出走有無を問わない | JcxLineageLock | `fixedLineage()`（entry_racers のみ参照） | - |
+| 2.7 | エリート系統の判定対象（C1〜C4・CL1〜C3） | JcxLineageLock | `category_group_id IN (1,3)` | - |
+| 2.8 | マスターズ系統の判定対象（年齢別MM35〜100・WM） | JcxLineageLock | `category_group_id = 2 AND is_aged_category = 1` | - |
+| 2.9 | 実力別マスターズ（CM1〜4）は対象外 | JcxLineageLock | `category_group_id = 2 AND is_aged_category = 0` は不一致のためnull | - |
 | 3.1 | 画面新規登録の検出 | EntryRacer hook, EntryRacersController | `beforeSave` → `check()` | 確認フロー |
 | 3.2 | 画面編集（所属変更）の検出 | EntryRacer hook, EntryRacersController | 同上（編集時は既存行とマージして判定） | 確認フロー |
 | 3.3 | 種目変更の一括検出 | EntryCategory hook | `beforeSave` → `checkBulk()` | - |
@@ -316,7 +353,7 @@ flowchart TD
 
 | Component | Domain/Layer | Intent | Req Coverage | Key Dependencies (P0/P1) | Contracts |
 |-----------|--------------|--------|---------------|---------------------------|-----------|
-| JcxLineageLock | Util | JCX系統固定の判定エンジン（読み取り専用） | 1, 2, 5.1, 7 | CategoryLineageMap (P0), entry系/meets/seasons テーブル (P0), Configure (P1) | Service |
+| JcxLineageLock | Util | JCX系統固定の判定エンジン（読み取り専用） | 1, 2, 5.1, 7 | categories テーブル（category_group_id/is_aged_category）(P0), entry系/meets/seasons テーブル (P0), Configure (P1) | Service |
 | JcxLineageCheckResult | Util（値オブジェクト） | 判定結果・違反明細の受け渡し | 3.4, 4.1, 6.2 | なし | State |
 | EntryRacer hook | Model | 選手エントリー保存の強制点 | 3.1, 3.2, 3.5, 7.1 | JcxLineageLock (P0) | Service |
 | EntryCategory hook | Model | 種目変更保存の強制点 | 3.3 | JcxLineageLock (P0) | Service |
@@ -337,10 +374,19 @@ flowchart TD
 
 **Responsibilities & Constraints**
 - 判定は読み取り専用（SELECTのみ）。DB書込・状態永続化は行わない（Requirement 7.5）
-- 系統の定義は `CategoryLineageMap` 公開APIのみを参照する（`category_group_id` の直書き禁止）
-- 種目→系統の解決規則: `category_races_categories` で紐づくカテゴリーコード群を取得し、
-  `CategoryLineageMap` でエリート/マスターズへ写像。片系統のみに解決される場合のみ系統確定、
-  それ以外（対象外のみ・両系統混在・紐づけ無し）は null（チェック対象外）
+- 【2026-08-29改訂】系統の定義は `categories` テーブルの `category_group_id` /
+  `is_aged_category` を直接参照する（`CategoryLineageMap` への依存は廃止。同クラスは
+  ME⇔MM連動ペアの管理が目的でJCXの実運用カテゴリー（年齢別マスターズ・女子エリート）を
+  対象外としており、JCXの系統判定基準として使えないため）
+- 種目→系統の解決規則: `category_races_categories` で紐づくカテゴリーコード群を、`Category`
+  への belongsTo join（`category_group_id`, `is_aged_category`）付きで取得し、以下で写像する
+  （Requirement 2 AC7〜AC9）:
+  - `category_group_id` が 1（男子実力別エリート）または 3（女子実力別エリート）→ エリート系統
+  - `category_group_id` が 2 かつ `is_aged_category` が 1（年齢別マスターズ）→ マスターズ系統
+  - `category_group_id` が 2 かつ `is_aged_category` が 0（実力別マスターズ CM1〜CM4。
+    本改訂時点でJCXでは未使用）→ いずれの系統にも該当しない
+  片系統のみに解決される場合のみ系統確定、それ以外（対象外のみ・両系統混在・紐づけ無し）は
+  null（チェック対象外）
 - 固定系統の算出: 同一 `season_id`・`is_jcx=1`・`deleted=0` の entry_racers を
   `meets.at_date` 昇順→`entry_racers.id` 昇順で走査した先頭の系統。除外条件
   （entry_racer ID群 または meet_code）を指定可能（削除→再作成経路・編集時の自己除外用）
@@ -350,9 +396,10 @@ flowchart TD
   「対象外（通過）」を返す（fail-open、Requirement 7.4）
 
 **Dependencies**
-- Outbound: CategoryLineageMap — 系統定義の単一ソース（P0）
 - Outbound: Meet / Season / EntryRacer / EntryCategory / EntryGroup / RacesCategory /
-  CategoryRacesCategory 各モデル — 判定用読み取り（P0）
+  CategoryRacesCategory / Category 各モデル — 判定用読み取り（P0）。系統判定は
+  `CategoryRacesCategory belongsTo Category` の関連を通じて `category_group_id` /
+  `is_aged_category` を取得する
 - Outbound: Configure — mode / effectiveFrom（P1、未設定時は安全なデフォルトへフォールバック）
 
 **Contracts**: Service [x] / API [ ] / Event [ ] / Batch [ ] / State [ ]
@@ -595,8 +642,9 @@ class JcxLineageLock {
 - 判定join: `entry_racers`（racer_code, entry_category_id, deleted）→ `entry_categories`
   （races_category_code, deleted）→ `entry_groups`（meet_code, deleted）→ `meets`
   （is_jcx, season_id, at_date）→ `seasons`（start_date）
-- 系統解決: `races_categories.code` → `category_races_categories` → `categories.code` →
-  `CategoryLineageMap`（コード内対応表）
+- 系統解決: `races_categories.code` → `category_races_categories` → `categories.code`
+  （`Category` へのbelongsTo joinで `category_group_id` / `is_aged_category` を取得し、
+  コード内の分類基準（Requirement 2 AC7〜AC9）で系統へ写像。2026-08-29改訂）
 - 固定系統は導出値であり、どのテーブルにも保存しない（取消・再作成への追随は Requirement 2.4 /
   4.2 のとおり導出で実現）
 - オーバーライド記録はアプリログ（scope `jcx_lineage_lock`）に構造化1行
@@ -624,8 +672,10 @@ class JcxLineageLock {
 ## Testing Strategy
 
 ### Unit Tests（TDD・実装とセット）
-1. `JcxLineageLockTest::lineageOfRacesCategory` — 種目→系統解決: エリート種目/マスターズ種目/
-   対象外種目（女子等）/ 両系統混在種目 / 紐づけ無し種目の5系（2.1, 2.5）
+1. `JcxLineageLockTest::lineageOfRacesCategory` — 種目→系統解決: 男子実力別エリート種目
+   （C1〜C4）/ 女子実力別エリート種目（CL1〜CL3）/ 年齢別男子マスターズ種目（MM35〜MM100）/
+   年齢別女子マスターズ種目（WM）/ 実力別マスターズ種目（CM1〜CM4、対象外となることを確認）/
+   ジュニア・キッズ等の対象外種目 / 両系統混在種目 / 紐づけ無し種目の8系（2.1, 2.5, 2.7, 2.8, 2.9）
 2. `JcxLineageLockTest::fixedLineage` — 固定系統算出: 未エントリー=null / 単一系統 / 開催日
    昇順の先頭選択 / 取消済（deleted）除外 / exclude指定（meetCode・entryRacerIds）/
    非JCX大会・他シーズン・適用開始前シーズンの不算入（1.3, 2.2, 2.3, 2.4, 2.6, 4.2）
@@ -676,7 +726,7 @@ class JcxLineageLock {
 | 言語ランタイムのバージョン制約 | PHP 7.3（EOL）。7.4+の構文（typed property・arrow fn 等）は使用不可。nullable型ヒントは可 |
 | データストアのバージョン制約 | MySQL 5.7。ウィンドウ関数なし（8.0機能不使用）。判定クエリは ORDER BY + LIMIT で先頭選択 |
 | Docker / 実行環境での考慮事項 | テストは cyclox2_svr コンテナ内の CakePHP テストランナーで実行（`app/Test/`）。DB接続は既存 database.php のテスト設定に従う |
-| その他 | 上流 me-mm-linkage-2026-27（CategoryLineageMap）の実装完了が前提（Wave 1 → Wave 2）。アプリ本体の変更は submodule cyclox-dev/cyclox2web 側ブランチで行う。`meets.is_jcx` はERマスタ未反映のためフィクスチャで実在を担保 |
+| その他 | 【2026-08-29改訂】系統判定は `categories.category_group_id` / `is_aged_category` に直接依存するため、上流spec（me-mm-linkage-2026-27）の実装完了は前提としない（依存を解消）。アプリ本体の変更は submodule cyclox-dev/cyclox2web 側ブランチで行う。`meets.is_jcx` はERマスタ未反映のためフィクスチャで実在を担保 |
 
 ### 初回実装前の確認
 - [x] 上記スタック・テスト方針・既存結合・環境制約を確認した（research.md 参照）

@@ -255,3 +255,153 @@ SecurityComponentの実動作を伴うテスト基盤はこのコードベース
 
 修正後、人間が再度ブラウザで確認し、警告表示・チェック・再送信・登録完了までの
 一連の流れが正常に動作することを確認済み。
+
+## 2026-08-29 系統判定基準が実データと不整合であることが判明し、要件定義まで差し戻し
+
+別セッションで作成した「2026-27シーズン改修まとめ」文書のレビュー中、人間から「JCX戦では
+実力別マスターズ（MM1〜3相当）はレースカテゴリーとして設定されず、代わりに年齢別マスターズ
+（MM35〜MM100、WM）が設定される。JCXの系統固定はエリート系と年齢別マスターズが対象となるのが
+正しい仕様のはずだが、現在の実装はそれを満たしているか」という確認依頼があった。
+
+**調査結果（実DBダンプ `tmp/20260613_dump.sql` で裏取り済み）**:
+- `categories`テーブルの実データ: `C1〜C4`（category_group_id=1, is_aged_category=0, 男子
+  実力別エリート）、`CM1〜CM4`（category_group_id=2, is_aged_category=0, 男子実力別マスターズ。
+  CM4はCategoryLineageMap未定義）、`MM35〜MM100`（category_group_id=2,
+  **is_aged_category=1**, 男子年齢別マスターズ、25-26シーズンから5歳刻みで追加）、`WM`
+  （category_group_id=2, is_aged_category=1, 女子年齢別マスターズ）、`CL1〜CL3`
+  （category_group_id=3, is_aged_category=0, 女子実力別エリート。JCX表示名は「WE」）。
+- `category_races_categories`の実データ: races_category_code `MM40`等は category_code
+  `MM40`等に**1対1でのみ**紐づいており、CM系への紐付けは一切ない（WM・MM35〜100すべて同様）。
+- `JcxLineageLock::lineageOfRacesCategory()`は`CategoryLineageMap::isEliteCategory()` /
+  `isMastersCategory()`（管理対象はC1〜C4・CM1〜CM3のみ）に直接依存している。
+
+**結論**: JCXの実際のマスターズ種目（年齢別MM35〜100・WM）も女子エリート種目（CL1〜3）も
+`CategoryLineageMap`の管理対象外であるため、`lineageOfRacesCategory()`は必ずnull
+（系統判定不能）を返し、決定フロー上「対象外・通過」となる。結果として、本機能の系統固定判定は
+**男子実力別エリート（C1〜C4）同士のケースにしか実質的に機能せず**、年齢別マスターズ・女子
+エリートが絡む系統違反（本来この機能が主眼とすべきパターンを含む）を検知できていない。
+
+**根本原因**: `research.md`「レースカテゴリー→系統の解決規則」において、当初案
+（`category_races_categories`→`categories.category_group_id`でjoin、CatLimitShellの先行
+パターン）であればMasters系（group_id=2、年齢別含む）を自然にカバーできたが、「対応表を
+単一の正とする」ルールを優先して`CategoryLineageMap`のAPIのみに限定する設計判断がされた際、
+**JCXの実際のマスターズ運用が年齢別カテゴリーである点の裏取りが行われないまま**、
+「2026-27規則の対象がME/MM系統である前提と整合」という誤った前提でスコープを確定していた。
+
+**対応方針（2026-08-29人間承認）**: 要件定義まで差し戻して再承認プロセスを開始する。
+`spec.json`のapprovals（requirements/design/tasks）をfalseへ戻した。本specは既に
+implementation-complete・mainマージ済み・本番運用中（`warn`モード）のため、対応（判定基準の
+再定義・設計修正・実装・再テスト）は改めて `/kiro-spec-requirements` から人間承認を得た上で
+進める。今回のセッションではこの記録・spec.json更新のみを行い、要件文面の具体的な書き換え・
+実装には着手していない。
+
+## 2026-08-29（続き）requirements.md 第2版を作成し人間承認待ちへ
+
+上記の差し戻しを受け、`/kiro-spec-requirements` で requirements.md を第2版へ改訂した。
+
+**変更内容**:
+- 冒頭に「改訂履歴」節を追加し、変更理由・影響範囲・人間承認事項を明記
+- Boundary Context「Adjacent expectations」: me-mm-linkage-2026-27 の対応表（CategoryLineageMap）
+  への無条件委譲を撤回し、本機能が独自にJCX運用カテゴリーへ基づいた判定基準を持つことを明記
+- Requirement 2 AC1: 判定基準を「対応表と同一」から「JCXで実際に運用される全カテゴリーを対象と
+  する独自基準（AC7〜AC9）」へ修正
+- Requirement 2 AC5: 対象外カテゴリーの例示から「女子」を削除（女子エリートCL1〜3は今回から
+  エリート系統に含まれるため誤りだった）し、ジュニア・キッズ等の年齢区分カテゴリーとCM1〜4に修正
+- Requirement 2 に AC7（エリート系統=C1〜C4・CL1〜C3）、AC8（マスターズ系統=MM35〜MM100・WM）、
+  AC9（実力別マスターズCM1〜4は現状JCXで未使用のため対象外。将来運用時は要件再見直し）を追加
+
+**判断根拠**: マスターズ系統にCM1〜4を含めるか否かは人間へ確認（AskUserQuestion）した。
+「現在JCXでCMカテゴリーは一切使用されていないため、実際に使用されているもの（MM35〜100・WM）
+のみを対象とする」との回答を得た（2026-08-29）。将来CMがJCXで運用される場合は本要件を
+再度見直す前提とした。
+
+判定フロー・チェック経路（Requirement 1, 3〜7）自体への変更は無く、判定対象カテゴリーの範囲
+（Requirement 2, Boundary Context）のみの改訂である。
+
+`spec.json`の`phase`を`requirements-generated`、`approvals.requirements.generated`を`true`
+（`approved`は引き続き`false`、人間承認待ち）に更新した。設計・実装への着手はこの承認を得て
+から行う。
+
+## 2026-08-29（続き）design.md 第2版を作成・人間承認
+
+`/kiro-spec-design` で design.md を第2版へ改訂した。要旨：系統判定の実装方針を
+`CategoryLineageMap` 依存から `categories.category_group_id` / `is_aged_category` の
+直接参照へ変更（Elite = group_id∈{1,3}、Masters = group_id=2 かつ is_aged_category=1、
+CM1〜4は対象外）。ホワイトリスト直書き案・CategoryLineageMap拡張案は却下（research.md
+Architecture Pattern Evaluation参照）。判定フロー・強制点・UX・シェル等の他コンポーネントは
+無変更。既存`CategoryFixture`に年齢別マスターズのテストレコードが不足している点をFile
+Structure Planに記録。
+
+2026-08-29、人間が設計内容を承認。`spec.json`の`approvals.design.approved`を`true`へ更新。
+次は`/kiro-spec-tasks`でタスク分解へ進む。
+
+## 2026-08-29（続き）tasks.md 第2版を作成・独立レビューで指摘を修正
+
+`/kiro-spec-tasks` でtasks.mdへ「第2版 改訂タスク」（R1〜R4）を追加した。フレッシュな
+サブエージェントによる独立サニティレビューを実施したところ、R1の当初案（`CategoryFixture`と
+`CategoryRacesCategoryFixture`の両方へ年齢別マスターズのレコードを静的追加）が、本ファイル
+「Implementation Notes（2026-08-15実装完了時点）」に既に記録されている第1版の教訓
+（`CategoryRacesCategoryFixture`を含む複数フィクスチャへの静的レコード追加は他スイートとの
+クロススイート回帰リスクを生むため、動的`Model::save()`投入方式へ切り替えた）と矛盾する
+NEEDS_FIXES指摘を受けた。
+
+`categories`テーブル自体（`CategoryFixture`）への静的追加は第1版でも採用済みの方式のため維持し、
+`category_races_categories`（`CategoryRacesCategoryFixture`）への静的追加のみ撤回して、R2の
+テストメソッド内で`CategoryRacesCategory::save()`により動的投入する方式へ修正した。design.mdの
+File Structure Plan該当箇所も同様に修正済み。
+
+再レビュー後、R1〜R4の依存順序・design.mdの分類基準との整合・Requirement 2.1/2.5/2.7/2.8/2.9の
+カバレッジに問題無しと確認した。
+
+## 2026-08-29（続き）R1〜R3実装完了・独立レビューで5件指摘、4件対応
+
+`/kiro-impl jcx-lineage-lock-2026-27 R1,R2,R3,R4` によりR1〜R3を実装した（submodule
+ブランチ `fix/jcx-lineage-lock-category-scope`、origin/main起点）。TDD（RED→GREEN）で
+`JcxLineageLockTest`を5→31テストへ拡張、`CategoryFixture`に年齢別マスターズ（MM35/MM40/MM100）・
+ジュニア（CJ）を追加、`lineageOfRacesCategory()`を`categories.category_group_id`/
+`is_aged_category`直接参照へ変更し`CategoryLineageMap`依存を完全除去、`EntryRacersControllerTest`に
+新規回帰シナリオ（年齢別マスターズ→女子エリートの違反検知）を追加した。既存17スイート全220テスト
+（後述の指摘対応後は221テスト）に回帰なし。
+
+実装完了後、フレッシュな独立レビュアー（reviewer subagent）による検証を実施し、実DBダンプ・
+開発DB・CakePHPコアの`DboSource`実装まで裏取りした精査で以下5件の指摘を受けた。
+
+1. **【重大・対応済み】** 手動結合試験用シードシェル（`app/Console/Command/JcxVerifySeedShell.php`、
+   未追跡）が投入したデータ（開発DBシーズン17、`JCXVRFYM2`大会の種目`CM2`）がR2適用後は
+   `null`（対象外）扱いになり、違反検知が効かない状態のまま開発DBに残置されていた。放置すると
+   「警告が出ない＝正常」という誤判定を招き、本改訂の主眼（マスターズ側の検知）がend-to-endで
+   未検証のまま埋もれるリスクがあった。`cake jcx_verify_seed cleanup`を実行し残置データを削除、
+   `cake jcx_lineage_check detect --season 17`で違反0件（クリーン）を確認した。
+2. **【中・対応済み】** 同シェルファイル自体が「コミットしない・作業完了後に削除する」という
+   自己申告どおりに削除されていなかった（`Meet`/`Racer`/`EntryRacer`への`deleteAll()`を含む
+   未追跡ファイルが残存）。cleanup実行後にファイルを削除した。
+3. **【中・未対応（受容済みリスクの観測手段が無い点の指摘）】** Requirement 2.9「実力別マスターズ
+   CM1〜4はJCX戦で運用されていない」という前提は現時点の実データで成立するが、将来CM系種目が
+   1件でも設定されると`lineageOfRacesCategory()`は無言でnullを返し系統固定ロックが静かに
+   無効化される。観測点（検出シェルでの「系統解決不能な種目一覧」出力等）が現状ゼロ。
+   人間承認済みの受容リスクに対する追加提案であり、本改訂のスコープ外として次回検討課題とする。
+4. **【低・対応済み】** `lineageOfRacesCategory()`のクエリに`CategoryRacesCategory.deleted = 0`
+   条件が無く、論理削除済みの紐付け行が判定に混入し得た（旧実装から引き継いだ既存の潜在課題で
+   あり今回のリグレッションではない）。判定基準を書き換えたこのタイミングで条件を追加した。
+5. **【低・対応不要】** `recursive => 0`が`RacesCategory`へのJOINも同時に発行する点を指摘された
+   が、SELECT列には影響せず正しさへの影響なし。現行スイートは全て`app.races_category`
+   フィクスチャを読み込むため実害なし（将来的な設計選択肢としてのみ記録）。
+
+指摘1・2はR4完了前に必須対応と判断し着手前に実施した。指摘4は同一ファイル・同一クエリの
+安全な引き締めのため新規承認ゲート無しでその場修正した。指摘3は次回のjcx-lineage-lock関連
+改修時の検討課題として記録するのみに留める。
+
+## 2026-08-29（続き）人間による結合試験完了（年齢別マスターズ・女子エリート）
+
+integration-test-checklist.md「年齢別マスターズ・女子エリートに関する追加確認（第2版 R4）」の
+4項目のうち3項目を人間が実機（管理画面）で確認しOK（`[/]`）。残り1項目（実力別マスターズ
+CM1〜4関連）はJCXでの運用実績が無いため「対象データ無し」として`[-]`（スキップ）で記録。
+
+確認用サンプルデータは開発DB（シーズン17）に4大会・4選手（男子エリートC3⇔年齢別マスターズ
+MM40、女子エリートCL1⇔女子年齢別マスターズWM の両パターン）を投入して用いた。投入用の
+一時シェル（`JcxVerifySeed2Shell.php`、未追跡）は確認完了後に`cleanup`実行→
+`cake jcx_lineage_check detect --season 17`で違反0件（クリーン）を確認したうえで削除した。
+（シェル自体のバグでデータが一時的に壊れる事故があったが、投入し直して解消。アプリ本体
+`JcxLineageLock.php`には無関係・影響なし。）
+
+人間の承認を得たため、submodule・outer repo双方の変更をコミット・pushする。
