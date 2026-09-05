@@ -187,3 +187,42 @@ $activeHoldings, array())`という空の出走履歴での呼び出しでも、
 正しい分類、読み取り専用性（実行前後のDB行数・ハッシュ一致）を実データで確認。テスト29/29・
 122 assertions green。文言上の軽微な不正確さ1件（「verifyがoffset/limitを構造的に拒否する」
 という記述が実際は「宣言・参照しないため無視される」が正確な表現だった）を発見・修正した。
+
+## 2026-09 タスク4.1（直近出走実態の取得処理）実装完了・独立レビュー2巡でAPPROVED（Tier 2継続）
+
+【運用】task 4.xは人間の指示によりTier 2（実装者→独立レビュアー、Opusモデル）を継続。
+
+`CatRacerCleanupShell::__recentLineageRaces()`を新設。racer_results→entry_racers→
+entry_categories→entry_groups→meets（すべてdeleted=0）を辿り、DNS除外・系統判定可能な出走が
+見つかるまでの遡り取得（チャンクサイズ既定20）・category_races_categoriesの1回限りキャッシュを
+実装。detect/verifyへの配線はtask 4.2のスコープのため本タスクでは行わない。
+
+round-1 REJECTED（1件blocking＋3件must-fix）: (1) `ORDER BY at_date DESC, meet_code DESC`が
+全順序ではなく、開発DBで実際に440〜604の`(racer_code, meet_code)`グループが同点・
+2,769〜3,170選手がチャンクサイズ超過という規模で確認され、チャンク境界をまたぐページネーション
+で系統判定可能なレースが静かに入れ替わる可能性があった（本番書き込みの誤判定に直結しうる）。
+(2)(3)(4) entry_categories/entry_groupsのソフトデリート除外・複数ラウンド遡り・キャッシュ
+再利用のテストカバレッジ不足。
+
+round-2で全て修正・APPROVED。レビュアーは`RacerResult.id`が全結合がPRIMARY KEY上であることから
+真の全順序を保証することをスキーマから証明し、各修正を自らサボタージュ→復元する手法で
+独立検証した。
+
+**副次的発見（本specの範囲外、参考記録）**: 修正過程で、このリポジトリの`app/Config/app.php`
+（git管理下）が`debug=false`を強制しており、`Configure::read('debug') > 1`に依存する
+`DboSource::fullDebug`が常にfalseになることが判明した。これにより`getDataSource()->getLog()`
+に基づくクエリ回数アサーションは、対策なしでは常に「0件」を検知するだけの空振りテストになる
+（本タスクでは`_forceQueryLoggingOn()`による一時的な強制ONで対策済み）。既存の
+`app/Test/Case/Cyclox/Util/JcxLineageLockTest.php`の558行目・598行目
+（`testCheckBulk…QueryCountIsConstant…`）が実際にこの空振りに該当することをレビュアーが確認した
+（`assertLessThanOrEqual(3, 0)`が常に成立するのみで、N+1回帰への保護になっていない）。
+別spec（jcx-lineage-lock-2026-27）のテストであり本specの対応範囲外のため修正はしていないが、
+リポジトリ全体でこのパターンを使う他のテストにも同様の空振りリスクがある可能性があるため、
+別途フォローアップとして人間に申し送る。
+
+非ブロッキングの申し送り事項をtasks.mdへ記録した:
+1. task 4.2へ「ShellのifelseベースClassifiable判定とJudgeの系統判定ルールが現在は一致して
+   いるが機械的に連動していない」結合リスク（MODERATE-2）と、ソート回帰テストがフルスイート
+   実行では検知しない件（MINOR-A）
+2. task 5.2へ「racer_resultsのフルスキャン・entry_racers.racer_codeへのインデックス欠如」の
+   性能実測値（MINOR-4）

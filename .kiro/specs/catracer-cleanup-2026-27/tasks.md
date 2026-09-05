@@ -104,7 +104,7 @@
   - _Boundary: CatRacerCleanupShell_
 
 - [ ] 4. 是正実行機能
-- [ ] 4.1 直近出走実態の取得処理（TDD）
+- [x] 4.1 直近出走実態の取得処理（TDD）
   - 【2026-09 task 2.3独立レビュー FINDING-1/2/6申し送り】`CatRacerCleanupJudge::judge()`へ
     渡す`$recentRaces`について: (a) 空配列は「出走実績が0件」を意味する契約になったため、
     遡り取得の途中結果など部分的な空チャンクを渡してはならない（取得しきった上での0件のみ）。
@@ -130,6 +130,24 @@
     永久にスキップされうる）。design.mdの冪等性注記（「再実行すれば残件のみ処理される」）を
     踏まえ、チャンク運用は毎回`offset=0`から掃引する（`offset`をずらして分割しない）方針を
     本タスクで確定し、runbook.md（task 5.2）にも明記すること
+  - 【2026-09 task 4.1独立レビューround-2 MODERATE-2申し送り】`CatRacerCleanupShell::
+    __isRaceLineageClassifiable()`（遡り取得を打ち切るか判定）は`CatRacerCleanupJudge`の
+    系統判定ルール（as_category優先→linked_category_codesフォールバック）を再実装したもので、
+    現時点では両者は完全に一致しているが、機械的に連動してはいない。**Shellは「いつ取得を
+    打ち切るか」を決め、Judgeは「その結果何と判定するか」を決める**という役割分担のため、
+    将来Judge側の分類ルールがShell側より「広く」なった場合（例: Judgeがある出走を判定可能と
+    みなすようになったが、Shellはまだ判定不能と見なして遡り取得を打ち切ってしまう場合）、
+    Shellが必要な過去レースを取得しないまま渡し、Judgeがより古い（本来使うべきでない）
+    レースに基づいて誤った正系統を判定し、それが本番の`category_racers`へ書き込まれる
+    という復旧困難な失敗モードになりうる（逆に「狭く」なる分には取得件数が増えるだけで
+    安全側）。本タスクで両者のロジックを一本化する（共通メソッドへの抽出、または
+    両者が一致し続けることを固定するテストの追加）ことを検討すること
+  - 【2026-09 task 4.1独立レビューround-2 MINOR-A申し送り】task 4.1で追加した
+    `RacerResult.id DESC`ソート同点解消の回帰テストは、単体実行では検知するが**フルスイート
+    実行では検知しない**（先行テストがDB/InnoDB状態を暖めることで、tiebreaker無しでも
+    たまたま正しい順序になってしまうため）ことが判明している。本タスクで是正判定ロジックに
+    手を入れる際、生成されたSQLに`RacerResult.id`のtiebreakerが含まれることを直接assertする
+    形に強化することを検討すること
   - FIX 決定に従い、反対系統の違法な有効保有すべてへ終了日（実行日の前日）を UPDATE で設定し
     （元の付与理由フィールドは変更しない・物理削除しない）、続けて対応カテゴリーを適用日=実行日・
     理由区分=ルール変更に伴う付与・定型理由メモ（正系統と判定根拠を含む）で INSERT する
@@ -162,6 +180,13 @@
   - _Boundary: CatRacerCleanupShell, CatRacerCleanupJudge_
 
 - [ ] 5.2 ローカルダンプでの実行検証と適用手順の整備
+  - 【2026-09 task 4.1独立レビューround-2 MINOR-4申し送り】`__recentLineageRaces()`の
+    `racer_results`取得クエリは開発DB実測で`type=ALL`（フルスキャン、344,885行）・
+    `Using temporary; Using filesort`、1回あたり約0.19秒。原因は`entry_racers.racer_code`に
+    インデックスが無いこと（`racer_results.index_entry_racer_id`はあるが辿れない）。
+    選手1人あたり最低2回（`__fetchRaceRows()`＋`__mergeFullDate()`）、かつ開発DBで
+    3,170選手が20件のチャンクサイズを超え複数ラウンドの遡りが必要。本番規模での所要時間を
+    実測し、必要なら`entry_racers.racer_code`へのインデックス追加を検討すること
   - ローカル環境へ本番ダンプを復元し、detect → cleanup logonly → cleanup → verify を通しで
     実行して、検出件数・是正件数・手動確認件数・所要時間・verify 結果（違法ゼロ）を
     `.kiro/specs/catracer-cleanup-2026-27/test-results.md` に記録する
