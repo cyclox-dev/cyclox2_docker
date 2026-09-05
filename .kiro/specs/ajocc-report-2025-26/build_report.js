@@ -24,6 +24,9 @@ const pptxgen = require("pptxgenjs");
 const SPEC_DIR = __dirname;
 const DATA_PATH = path.join(SPEC_DIR, "dataset_2526.json");
 const OUT_PATH = path.join(SPEC_DIR, "outputs", "25-26_AJOCC_report.pptx");
+// 正式版ロゴ（AJOCC_logo2026.ai/.pdfより、ワードマーク部分を切り出したPNG。assets/README.md参照）
+const LOGO_PATH = path.join(SPEC_DIR, "assets", "ajocc_logo.png");
+const LOGO_ASPECT = 1665 / 621; // 幅/高さ
 
 // ---- 数値の唯一の正: JSONを読む ----
 const D = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
@@ -80,15 +83,16 @@ function footer(s) {
   s.addText("ＡＪＯＣＣ　一般社団法人日本シクロクロス競技主催者協会",
     { x: 0, y: H - 0.36, w: W, h: 0.36, align: "center", valign: "middle", fontFace: BF, fontSize: 11, color: "FFFFFF", bold: true });
 }
-function logo(s, x, y, sz) {
-  s.addText([{ text: "A", options: { color: INK } }, { text: "J", options: { color: RED } }, { text: "OCC", options: { color: INK } }],
-    { x: x, y: y, w: 1.8, h: 0.5, fontFace: HF, fontSize: sz, bold: true, align: "right" });
+// 正式版ロゴ画像を右端xで右揃え・高さhで配置（x=画像右端の座標）
+function logo(s, x, y, h) {
+  const w = h * LOGO_ASPECT;
+  s.addImage({ path: LOGO_PATH, x: x - w, y: y, w: w, h: h });
 }
 function header(s, txt) {
   s.addShape(p.shapes.RECTANGLE, { x: 0, y: 0, w: W, h: 0.06, fill: { color: RED } });
   s.addText(txt, { x: 0.35, y: 0.16, w: 10.8, h: 0.5, fontFace: HF, fontSize: 20, bold: true, color: INK });
   s.addShape(p.shapes.LINE, { x: 0.35, y: 0.70, w: 4.6, h: 0, line: { color: RED, width: 3 } });
-  logo(s, 11.3, 0.13, 22);
+  logo(s, 13.0, 0.15, 0.42);
 }
 function pageNum(s, n) {
   s.addText("P." + n, { x: W - 1.0, y: H - 0.75, w: 0.8, h: 0.35, align: "right", fontFace: BF, fontSize: 10, color: MUTE });
@@ -127,8 +131,8 @@ function lcell(text, color, extra) {
 {
   const s = p.addSlide();
   s.background = { color: BG };
-  s.addText([{ text: "A", options: { color: INK } }, { text: "J", options: { color: RED } }, { text: "OCC", options: { color: INK } }],
-    { x: 0, y: 1.0, w: W, h: 1.6, align: "center", fontFace: HF, fontSize: 64, bold: true });
+  const coverLogoH = 1.4, coverLogoW = coverLogoH * LOGO_ASPECT;
+  s.addImage({ path: LOGO_PATH, x: (W - coverLogoW) / 2, y: 1.0, w: coverLogoW, h: coverLogoH });
   s.addShape(p.shapes.LINE, { x: 4.15, y: 2.85, w: 5.0, h: 0, line: { color: RED, width: 3 } });
   s.addText(D.meta.title_cover, { x: 0, y: 3.1, w: W, h: 1.0, align: "center", fontFace: HF, fontSize: 34, bold: true, color: INK });
   s.addText(D.meta.created_month_label, { x: 0, y: 5.3, w: W, h: 0.5, align: "center", fontFace: BF, fontSize: 16, color: MUTE });
