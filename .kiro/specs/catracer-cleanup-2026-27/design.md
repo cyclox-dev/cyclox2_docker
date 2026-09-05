@@ -322,7 +322,15 @@ class CatRacerCleanupJudge
 }
 ```
 - Preconditions: `$activeHoldings` は「実行日時点で有効かつ対応表管理対象」の行のみを含む。
-  `$recentRaces` は `meets.at_date` 降順で渡される
+  `$recentRaces` は `meets.at_date` 降順で渡される。
+  【2026-09 task 2.3独立レビュー指摘・task 4.1への事前条件】(a) 空配列は「DNS・削除を除いた
+  出走実績が0件であること」を意味する（呼び出し側が遡り取得の途中結果など部分的な空チャンクを
+  渡してはならない。Requirement 3.1判定の前提となる）。(b) 各要素は`at_date`を必ず持ち、
+  全要素で書式が統一されていること（同日判定・降順ソートに文字列比較を用いるため）。
+  (c) 判定結果（keep/cancel/grant/系統）は入力配列の順序に依存しないが、同日内に複数の
+  系統判定可能な出走がある場合、判定根拠（Requirement 6.2の`race`）に採用されるのは入力配列内で
+  先に現れた方であり、これは順序に依存する。同日内の判定根拠を安定させたい場合、SQL側で
+  `at_date`に加え`meet_code`等の第二ソートキーを与えること
 - Postconditions: 戻り値は必ず OK / FIX / MANUAL / DUP_ONLY のいずれかの status を持つ。
   FIX の場合、`(維持カテゴリー + 付与カテゴリー)` の集合は `isValidActiveSet()` を満たす。
   本メソッドは副作用を持たない（同一入力に対して常に同一出力）
