@@ -31,7 +31,7 @@
   - _Requirements: 2.1, 2.3, 2.4, 4.1, 4.2, 4.3, 4.4_
   - _Boundary: CatRacerCleanupJudge, CatRacerCleanupDecision_
 
-- [ ] 2.2 系統判定フォールバックと違法種別の分類（TDD）
+- [x] 2.2 系統判定フォールバックと違法種別の分類（TDD）
   - 成績対象カテゴリーが未設定の出走について、レースカテゴリー区分に紐づく対応カテゴリーコード群
     から系統を判定するフォールバックを実装する
   - 違法状態を種別（対応外ペア／同一系統内複数保有／同一カテゴリー重複保有／3件以上）に分類して
@@ -43,6 +43,12 @@
   - _Boundary: CatRacerCleanupJudge_
 
 - [ ] 2.3 エッジケースの手動確認判定（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-4申し送り】`judge()`には本タスクが追加する
+    4種のMANUAL理由（Requirement 3.1-3.4）に加え、task 2.2で追加した5つ目のMANUAL理由
+    `MANUAL_REASON_DUPLICATE_HOLDING_UNSAFE_FIX`（同一カテゴリーの重複保有時、FIXが安全か
+    どうかを事後検証する安全ガード。設計時点のrequirements.md/design.mdには存在しない、
+    製品オーナー承認済みの追加）が既に存在する。本タスクで`judge()`の分岐を再構成する際、
+    このガード（FIXを返す直前の`__fixResultIsSafe()`呼び出し）を誤って取りこぼさないこと
   - 出走実績なし／系統判定可能な出走なし／直近判定日に両系統併存／正系統の有効保有が0件または複数、
     の各ケースを理由コード付き MANUAL 判定として返す
   - MANUAL 判定はデータ変更の指示（終了・付与）を一切含まず、レポート出力用の理由説明を持つ
@@ -53,6 +59,12 @@
 
 - [ ] 3. 検出・検証機能
 - [ ] 3.1 違法保有選手の抽出と detect サブコマンド（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-3申し送り】detect レポートの違法種別ラベルは
+    `CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること。
+    `CategoryLineageLinker::isValidActiveSet()`が返す理由をそのままラベルにすると、Requirement 1.4の
+    「3件以上」が`same_lineage_multiple`に潰れてしまう（`CatRacerCleanupJudge`側で3件以上を
+    分離する独自ラベル`VIOLATION_TYPE_THREE_OR_MORE_HOLDINGS`を追加済み。`CategoryLineageLinker`
+    自体は変更していない・本specの所有物ではないため）
   - 実行日時点で有効（未終了・未削除・適用日が実行日以前）な対応表管理対象カテゴリーを2件以上
     保有する選手を抽出し、各選手の有効集合を上流の判定 API で検査して違法保有選手を確定する
   - 管理対象カテゴリーの一覧は対応表 API から取得し、シェル内にコード一覧を持たない

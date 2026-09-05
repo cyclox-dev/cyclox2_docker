@@ -63,3 +63,58 @@ AJOCC 2026-27 規則改正対応プロジェクト（roadmap.md）の spec 2。�
 | 日付 | 変更内容 | 変更者 |
 |---|---|---|
 | 2026-07-15 | 初版作成（spec 一括生成時） | Claude Code |
+
+## 2026-09 タスク2.2（系統判定フォールバックと違法種別の分類）実装・独立レビュー反映
+
+**DUP_ONLY は「完全重複起因の重複」以外の違法状態が併存していても、選手全体を DUP_ONLY として
+報告する（設計判断、design.md記述との差異を記録）**: `CatRacerCleanupJudge::judge()` は
+完全重複レコード起因の重複（同一 category_code + 同一 apply_date）を検出した場合、他に対応外
+ペア等の違法状態が併存していても（例: `{CM1,C4,C2,C2}` の CM1/C4 対応外ペア）、選手全体を
+DUP_ONLY として報告し、併存する他の違法種別は報告しない。design.md「是正判定フロー」は
+`Dup{完全重複レコード起因の重複か}` を FIX 判定より手前に置く形で暗にこの優先順位を示しているが、
+design.md本文の文言「完全重複起因**のみ**」は文字通り読むと「重複だけが原因の場合に限る」とも
+読め、本実装の「重複が1件でもあれば他の併存する違法状態を問わずDUP_ONLYを優先する」という
+挙動と字面上ずれがある。この優先順位は task 2.1 独立レビュー（round-2 MAJOR-2, round-3訂正）が
+発見した「重複が対応外ペアと併存すると no-op FIX や是正後も違法が残る FIX になる」問題を回避
+するための意図的な設計判断であり、設計変更ではなく記述の精緻化として記録する（再承認は不要）。
+
+**完全重複（同一 apply_date）ではない、同一カテゴリーの重複保有（apply_date違い）への対応**:
+独立レビュー（2026-09、実DBデータで確認: 重複保有グループの21%が該当）により、
+`__hasExactDuplicateRecord()`（apply_date一致のみを完全重複とみなす）が捕捉できない
+「同一カテゴリーだが apply_date が異なる重複保有」が、反対系統の保有と併存すると
+破壊的FIX（重複行を2件ともまとめて終了し、終了対象に C1 が含まれると Requirement 4.5により
+再付与不能）や no-op FIX（是正後も重複が残ったまま「是正済み」と誤報告、Requirement 7.1違反）
+になる欠陥が発見された。製品オーナー確認済みの是正方針として、「より広い DUP_ONLY 分類」では
+なく「FIX を返す直前の汎用安全ガード」（`__fixResultIsSafe()`: (1) 同一カテゴリーを2件以上
+まとめて終了対象にしない、(2) 適用後の実際の有効集合が `isValidActiveSet()` で合法である
+ことを検証）を採用した。理由は汎用性（重複起因に限らず、将来同種の構造的欠落が別経路で
+生じても機械的に検知できる）。ガードに抵触した場合は専用の理由コード
+`DUPLICATE_HOLDING_UNSAFE_FIX`（他の MANUAL 理由 `NO_LINEAGE_DETERMINABLE` /
+`KEEP_LINEAGE_HOLDING_COUNT_INVALID` と区別可能）を持つ MANUAL 決定を返す。
+
+**Requirement 1.4「3件以上の同時保有」の分離**: `CategoryLineageLinker::isValidActiveSet()`
+（me-mm-linkage-2026-27 が単一所有、本specの変更対象外）は「同一系統内でちょうど2件」と
+「管理対象カテゴリーが3件以上」を区別せず両方 `SAME_LINEAGE_MULTIPLE` として返す。design.md・
+Requirement 1.4 が求める独立した「3件以上」分類を、Linker を変更せずに `CatRacerCleanupJudge`
+層で事後的に分離するラベル `CatRacerCleanupJudge::VIOLATION_TYPE_THREE_OR_MORE_HOLDINGS` を
+新設して対応した（Linker の判定結果そのものは変更しない）。
+
+## 2026-09 タスク2.2 独立レビューround-2でAPPROVED・MINOR4件の是正
+
+round-1 REJECTED（上記「完全重複ではない同一カテゴリー重複保有への対応」参照）を受け、
+製品オーナー確認済みの事後安全ガード方式で修正した round-2 で APPROVED。round-2レビューは
+round-1の4つの再現形状を自作ハーネスで独立再現・修正確認したほか、管理対象カテゴリー多重集合
+329種×出走系統2種×管理対象外有無の全列挙に対しDecisionフィールドから適用後状態を独立再計算し、
+不変条件違反0件（FIX決定124件）であることを確認した。
+
+非ブロッキングのMINOR4件を承認と同時に是正した:
+1. `testNonExactDuplicateWithoutOppositeLineageHoldingFallsToManualNotDupOnly`に、このケースが
+   安全ガードを経由せず既存の`KEEP_LINEAGE_HOLDING_COUNT_INVALID`経路のみでMANUALに落ちる
+   ことを固定するアサーションを追加（docblockの主張が将来の分岐順変更で密かに嘘になることを防ぐ）
+2. MANUAL理由コード3種（`NO_LINEAGE_DETERMINABLE`/`KEEP_LINEAGE_HOLDING_COUNT_INVALID`/
+   `DUPLICATE_HOLDING_UNSAFE_FIX`）を文字列リテラルから`CatRacerCleanupJudge`のクラス定数へ
+   （task 6.xのレポート実装が参照する契約値のため）
+3. tasks.md task 3.1に「detectの違法種別ラベルはDecision.violationTypeから採ること
+   （isValidActiveSet()の理由を直接ラベルにしない）」を申し送り
+4. tasks.md task 2.3に「既存のDUPLICATE_HOLDING_UNSAFE_FIXガードを取りこぼさないこと」を
+   申し送り、design.md「4種のMANUAL理由」の記述を実態（5種）に合わせて訂正

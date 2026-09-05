@@ -332,8 +332,13 @@ class CatRacerCleanupJudge
 - Integration: `App::uses('CatRacerCleanupJudge', 'Cyclox/Util')`。Linker はコンストラクタで
   受け取り、テスト時は実インスタンスをフィクスチャ DB とともに使用（isFormerElite1 等の DB 参照は
   Linker 内部の責務）
-- Validation: 全分岐（OK / 4種の MANUAL 理由 / DUP_ONLY / 付与あり FIX / 付与なし FIX /
-  同日両系統タイ）を `CatRacerCleanupJudgeTest` で網羅する
+- Validation: 全分岐（OK / 5種の MANUAL 理由 / DUP_ONLY / 付与あり FIX / 付与なし FIX /
+  同日両系統タイ）を `CatRacerCleanupJudgeTest` で網羅する。
+  【2026-09 task 2.2独立レビューround-2 MINOR-4で訂正】Requirement 3.1-3.4 の4種に加え、
+  task 2.2で追加した安全ガード由来のMANUAL理由（`MANUAL_REASON_DUPLICATE_HOLDING_UNSAFE_FIX`。
+  同一カテゴリーの重複保有時にFIXが安全かを事後検証する。requirements.mdには対応する受入条件が
+  ないが、実データで確認された破壊的FIX/no-op FIXのリスクに対する製品オーナー承認済みの追加）
+  を合わせて5種となる
 - Risks: Linker の `isValidActiveSet()` が「prospective set を呼び出し元が算出して渡す」契約
   であるため、Judge が渡す集合の構築規則をテストで契約化する（me-mm-linkage design の Risks と同旨）
 
