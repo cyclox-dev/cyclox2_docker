@@ -76,7 +76,7 @@
   - _Requirements: 1.1, 1.2, 5.1_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 3.2 検出レポートと verify サブコマンド（TDD）
+- [x] 3.2 検出レポートと verify サブコマンド（TDD）
   - 【2026-09 task 2.2独立レビューround-2 MINOR-3・task 3.1独立レビューround-1 FINDING 6より
     再申し送り（3.1完了によりこの注記の可視性が失われるため複製）】detectレポートの違法種別
     ラベルは`CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること

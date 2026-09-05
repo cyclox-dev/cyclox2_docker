@@ -169,3 +169,21 @@ exit 1になることをそれぞれ独立に確認した。
 3. task 4.2へ「detectのoffset/limitは検証済み違法選手リストに適用されるため、cleanupで
    リストが縮小する運用ではチャンクをずらして掃引すると選手を取りこぼす。毎回offset=0から
    掃引する運用をrunbook.mdに明記すること」を申し送り
+
+## 2026-09 タスク3.2（検出レポートとverifyサブコマンド）実装完了・Tier 1（テスターのみ）で検証
+
+【運用変更】以降、task 4.x（是正実行・DB書き込みを伴う部分）はTier 2（実装者→独立レビュアー、
+Opusモデル）を維持するが、それ以外のタスクはコスト意識（グローバルCLAUDE.md）に基づきTier 1
+（実装者→テスターのみ）へ切り替えることを人間の指示により決定した。
+
+detectのレポート出力（件数・選手明細・violationType・判定根拠・専用ログ出力）とverify
+サブコマンド（全件検査・違法ペアゼロの明示報告）を実装。task 2.2申し送りどおり違法種別ラベルは
+`CatRacerCleanupJudge::judge()`の`Decision.violationType`から取得（`judge($racerCode,
+$activeHoldings, array())`という空の出走履歴での呼び出しでも、violationTypeがrecentRacesに
+依存せず算出されることを利用）。
+
+テスター（Tier 1）による検証: 実CLI・実開発DB（267,917行）でdetect/verifyを実際に実行し、
+406選手・858件の違法保有検出、R0019(three_or_more_holdings)・R0020(mismatched_pair)の
+正しい分類、読み取り専用性（実行前後のDB行数・ハッシュ一致）を実データで確認。テスト29/29・
+122 assertions green。文言上の軽微な不正確さ1件（「verifyがoffset/limitを構造的に拒否する」
+という記述が実際は「宣言・参照しないため無視される」が正確な表現だった）を発見・修正した。
