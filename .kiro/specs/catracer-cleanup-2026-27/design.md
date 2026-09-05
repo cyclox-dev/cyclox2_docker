@@ -398,7 +398,10 @@ class CatRacerCleanupJudge
   対応表管理対象カテゴリー保有を2件以上持つ選手」を SQL で抽出し、各選手の有効集合を
   `CategoryLineageLinker::isValidActiveSet()` 相当の判定（Linker 呼び出し）に掛ける。
   管理対象カテゴリーの一覧は `CategoryLineageMap::eliteCategories()/mastersCategories()` から
-  取得する（ハードコードしない）
+  取得する（ハードコードしない）。
+  【2026-09 task 3.1独立レビュー FINDING 3で記録】上記の候補抽出は選手（`racers`）テーブルとの
+  結合時に `Racer.deleted=0` でも絞り込む（削除済み選手の保有は判定材料に含めない、
+  Requirement 2.5）。開発DBではこの絞り込みにより52選手が候補から除外される
 - 出走実績の取得（`__recentLineageRaces()`）: `racer_results`（`status <> DNS` かつ
   `deleted=0`）→ `entry_racers` → `entry_categories` → `entry_groups` → `meets`
   （すべて `deleted=0`）を `meets.at_date` 降順で取得し、`races_category_code` ごとの対応

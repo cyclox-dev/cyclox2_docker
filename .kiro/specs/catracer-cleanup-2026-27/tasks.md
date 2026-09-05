@@ -58,7 +58,7 @@
   - _Boundary: CatRacerCleanupJudge_
 
 - [ ] 3. 検出・検証機能
-- [ ] 3.1 違法保有選手の抽出と detect サブコマンド（TDD）
+- [x] 3.1 違法保有選手の抽出と detect サブコマンド（TDD）
   - 【2026-09 task 2.2独立レビューround-2 MINOR-3申し送り】detect レポートの違法種別ラベルは
     `CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること。
     `CategoryLineageLinker::isValidActiveSet()`が返す理由をそのままラベルにすると、Requirement 1.4の
@@ -77,6 +77,23 @@
   - _Boundary: CatRacerCleanupShell_
 
 - [ ] 3.2 検出レポートと verify サブコマンド（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-3・task 3.1独立レビューround-1 FINDING 6より
+    再申し送り（3.1完了によりこの注記の可視性が失われるため複製）】detectレポートの違法種別
+    ラベルは`CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること
+    （`isValidActiveSet()`の理由をそのままラベルにすると「3件以上」が`same_lineage_multiple`に
+    潰れる。task 3.1の`detect()`実装は`isValidActiveSet()`を直接呼ぶ抽出専用の実装であり、
+    ラベル付けはこのタスクの責務）
+  - 【2026-09 task 3.1独立レビュー FINDING 3申し送り】task 3.1の`detect()`は`Racer.deleted=0`
+    による除外を実装済み（開発DBで52選手が対象外になる）。これはRequirement 2.5に基づく妥当な
+    挙動だが、design.mdの「違法候補の抽出」記述には明記されていない。verify（Requirement 7.1
+    「違法ペアゼロ」）のレポートでこの除外基準も踏襲すること
+  - 【2026-09 task 3.1独立レビューround-2 MINOR-1/MINOR-2申し送り】(a) `limit=0`を明示指定した
+    場合に実際は違反が存在するのに「0件」と報告される見た目上の偽陰性がある。レポートに適用中の
+    offset/limitを併記するか、`limit=0`自体を不正引数として弾くことを検討する。(b) 「書き込み
+    なし」を保証するテストの監視対象テーブルは現状`category_racers`/`racers`の2表のみ。本タスクで
+    `CatRacerCleanupJudge`連携により出走実績（`racer_results`/`entry_racers`/`entry_categories`/
+    `entry_groups`/`meets`）を読むようになった場合、これらのテーブルへの書き込みがないことも
+    テストで監視すること
   - 検出結果を件数（選手数・違法保有件数）、選手明細（選手コード・氏名・有効保有状況・違法種別・
     判定根拠）付きで標準出力と専用ログ（catracer_cleanup スコープ）へ出力する
   - verify サブコマンドとして、全件検査で違法状態が存在しない場合に「違法ペアゼロ」を明示的に
@@ -105,6 +122,14 @@
   - _Boundary: CatRacerCleanupShell_
 
 - [ ] 4.2 是正適用とトランザクション制御（TDD）
+  - 【2026-09 task 3.1独立レビューround-1 FINDING 4申し送り】`detect`の`offset`/`limit`は
+    「検証済み違法選手リスト」に対して適用される（DB抽出SQLへは適用しない）。`cleanup`が是正を
+    確定すると違法選手リストが縮小するため、`offset=0/50`→`offset=50/50`→…という単純な掃引は
+    2回目以降で異なる選手を指す、または対象を取りこぼす恐れがある（1回目のcleanupで50人是正
+    →リストが356人に減少→offset=50は「新しい356人中51人目」を指し、1回目の51〜406人目は
+    永久にスキップされうる）。design.mdの冪等性注記（「再実行すれば残件のみ処理される」）を
+    踏まえ、チャンク運用は毎回`offset=0`から掃引する（`offset`をずらして分割しない）方針を
+    本タスクで確定し、runbook.md（task 5.2）にも明記すること
   - FIX 決定に従い、反対系統の違法な有効保有すべてへ終了日（実行日の前日）を UPDATE で設定し
     （元の付与理由フィールドは変更しない・物理削除しない）、続けて対応カテゴリーを適用日=実行日・
     理由区分=ルール変更に伴う付与・定型理由メモ（正系統と判定根拠を含む）で INSERT する
