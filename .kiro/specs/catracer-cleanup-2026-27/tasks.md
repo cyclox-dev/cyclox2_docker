@@ -175,7 +175,7 @@
     捕捉できず、その場合レポートも終了コードも出ないままfatal終了しうる（Requirement 5.5）。
     `catch (Throwable $e)`への変更と、その経路のテストを追加すること。
 
-- [ ] 4.3 logonly モード・冪等性・実行レポート（TDD）
+- [x] 4.3 logonly モード・冪等性・実行レポート（TDD）
   - logonly 指定時は是正処理・レポート出力まで本番同等に実行したうえで全変更をロールバックし、
     レポートに未確定（logonly）であることを明示する
   - 実行結果レポート（検出件数・是正選手数・終了/付与件数・手動確認件数・選手ごとの明細と
@@ -185,8 +185,8 @@
   - _Requirements: 5.2, 5.3, 6.1, 6.2, 6.4_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 5. 統合検証と実データ検証
-- [ ] 5.1 一連フローの統合テスト
+- [x] 5. 統合検証と実データ検証
+- [x] 5.1 一連フローの統合テスト
   - 違法種別・エッジケース・合法選手を混在させたフィクスチャに対し detect → cleanup → verify を
     通しで実行し、FIX 対象がすべて是正され・MANUAL/DUP_ONLY が変更されず・verify が違法ゼロ
     （MANUAL 残存時はその明細）を報告する統合テストが通る
@@ -194,7 +194,7 @@
   - _Requirements: 1.1, 3.5, 4.6, 5.2, 7.1_
   - _Boundary: CatRacerCleanupShell, CatRacerCleanupJudge_
 
-- [ ] 5.2 ローカルダンプでの実行検証と適用手順の整備
+- [x] 5.2 ローカルダンプでの実行検証と適用手順の整備
   - 【2026-09 task 4.1独立レビューround-2 MINOR-4申し送り】`__recentLineageRaces()`の
     `racer_results`取得クエリは開発DB実測で`type=ALL`（フルスキャン、344,885行）・
     `Using temporary; Using filesort`、1回あたり約0.19秒。原因は`entry_racers.racer_code`に

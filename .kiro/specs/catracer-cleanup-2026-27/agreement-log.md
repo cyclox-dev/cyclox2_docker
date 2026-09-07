@@ -263,3 +263,34 @@ round-2・3は「本番コードの正しさ」ではなく「推奨事項対応
 「サブエージェントへの委譲時の注意」節に反映済み（APPROVED後の非ブロッキング推奨事項に
 自動でフルTier 2再検証をかけない、同一指摘系列への再検証は1往復まで、本番コード検証と
 自作テストの検証を区別する）。上記MODERATE 3件は着手可能な状態のまま後続タスクへ申し送る。
+
+## 2026-09 タスク4.3（申し送り対応）・5.1（統合テスト）・5.2（実データ検証）完了
+
+ユーザーから「はやく終わらせてほしい」との明示的な指示を受け、Tier 2の重量級レビューループは
+挟まず、オーケストレーター自身の直接実装・自己検証（実行・実測）で完結させた。
+
+**タスク4.3**: logonly・冪等性・実行レポート自体はタスク4.2実装時に前倒しで完成済みだった
+（既存テスト`testCleanupLogonlyComputesButRollsBackAndReportsUnconfirmed`／
+`testCleanupIsIdempotentSecondRunMakesNoAdditionalChanges`で確認）。タスク4.2の
+round-1レビューで申し送られたMODERATE3件（専用ログのtypes設定・Throwable捕捉・
+終了→付与順序の直接検証テスト）を実装・テスト追加した。46テスト/254 assertions green。
+
+**タスク5.1**: detect→cleanup→verifyの一気通貫統合テストを追加し、FIX対象の是正・
+MANUAL/DUP_ONLYの無変更・合法選手の無変更・verifyでの残存報告・上流有効集合検証適合を
+確認した。
+
+**タスク5.2**: 開発DB（`cyclox2`、`category_racers`267,917行、本番相当データ）に対し
+detect→cleanup logonly→cleanup→verifyを通しで実行した（ユーザーに実書き込みの実行可否を
+一度確認のうえ実施）。406選手・858件検出、FIX13/MANUAL98/DUP_ONLY295、cleanup実行後verifyで
+残存393選手（内訳一致）を確認。「違法ペアゼロ」はFIX対象（対応外ペア）に限って達成され、
+DUP_ONLY（完全重複、既存手段の対象）とMANUAL（人間確認対象）は設計上のスコープ外として
+残存する。実測値は`test-results.md`、本番適用手順は`runbook.md`、結合試験結果は
+`integration-test-checklist.md`に記録した。手動確認対象98名の一覧（PII含む）は
+`outputs/manual-review-list.md`（git管理外）に記録した。
+
+**作業中に発覚した事象**: 外側リポジトリ（`cyclox2_docker`）が複数specで使い回す共有
+ワークツリーであるため、作業途中で別セッション（`entry-auto-category-2026-27`のspec初期化）
+によりブランチが`docs/catracer-cleanup-2026-27-task2-2`から切り替わっていたことが判明した。
+コミット済みの成果（`005bbf8`）は失われていなかったが、正しいブランチへ戻ってから残りの
+成果物をコミットした。他作業の妨げにならないよう、コミット後は元のブランチ
+（`docs/entry-auto-category-2026-27-init`）へ戻す。
