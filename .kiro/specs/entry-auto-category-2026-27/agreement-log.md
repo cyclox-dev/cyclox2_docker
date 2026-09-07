@@ -52,7 +52,7 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 | フェーズ | 合意メモ（理由・補足） |
 |---|---|
 | 要件定義（requirements.md） | **2026-09-07 人間承認済み。** 要件本文（Requirements 1〜7）。プール種目除外（決定事項#3）を含む。EARSレビューゲート（網羅性・実装言語混入なし・番号付き見出し）通過済み |
-| 設計（design.md） | 未着手。主要論点: プール種目（C3+4等、全体の1.8%）の扱い（エントリー時見送りか、リザルト取込時as_category解決のフォールバックか）、年齢ガードの具体的基準 |
+| 設計（design.md） | 生成済み・人間承認待ち。`CategoryLineageLinker`への2メソッド追加（`resolveSingleLineageCategory()`・`supplementPairedCategoryOnEntryRegistration()`）、`EntryRacer::afterSave()`新設、既存の警告蓄積・3経路配信パターン（me-mm-linkage-2026-27）を踏襲。年齢ガードは`categories.age_min`列を単一の情報源として採用。レビューゲート（要件トレーサビリティ21件・境界4区分）通過済み |
 | タスク分解・実装前確認（tasks.md） | 未着手 |
 
 ---
@@ -64,3 +64,4 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 | 2026-09-07 | 初版作成（spec初期化。判断ブリーフの内容を反映） | Claude Code |
 | 2026-09-08 | 要件定義フェーズ実施。プール種目を対象外とする決定（#3）を追加し、requirements.mdにRequirement 1〜7を生成 | Claude Code |
 | 2026-09-08 | 要件定義（Requirements 1〜7）を人間承認。spec.json phase=requirements-approved | kyamady |
+| 2026-09-08 | 設計フェーズ実施（light discovery）。research.md・design.mdを生成。spec.json phase=design-generated | Claude Code |
