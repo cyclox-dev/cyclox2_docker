@@ -63,3 +63,234 @@ AJOCC 2026-27 規則改正対応プロジェクト（roadmap.md）の spec 2。�
 | 日付 | 変更内容 | 変更者 |
 |---|---|---|
 | 2026-07-15 | 初版作成（spec 一括生成時） | Claude Code |
+
+## 2026-09 タスク2.2（系統判定フォールバックと違法種別の分類）実装・独立レビュー反映
+
+**DUP_ONLY は「完全重複起因の重複」以外の違法状態が併存していても、選手全体を DUP_ONLY として
+報告する（設計判断、design.md記述との差異を記録）**: `CatRacerCleanupJudge::judge()` は
+完全重複レコード起因の重複（同一 category_code + 同一 apply_date）を検出した場合、他に対応外
+ペア等の違法状態が併存していても（例: `{CM1,C4,C2,C2}` の CM1/C4 対応外ペア）、選手全体を
+DUP_ONLY として報告し、併存する他の違法種別は報告しない。design.md「是正判定フロー」は
+`Dup{完全重複レコード起因の重複か}` を FIX 判定より手前に置く形で暗にこの優先順位を示しているが、
+design.md本文の文言「完全重複起因**のみ**」は文字通り読むと「重複だけが原因の場合に限る」とも
+読め、本実装の「重複が1件でもあれば他の併存する違法状態を問わずDUP_ONLYを優先する」という
+挙動と字面上ずれがある。この優先順位は task 2.1 独立レビュー（round-2 MAJOR-2, round-3訂正）が
+発見した「重複が対応外ペアと併存すると no-op FIX や是正後も違法が残る FIX になる」問題を回避
+するための意図的な設計判断であり、設計変更ではなく記述の精緻化として記録する（再承認は不要）。
+
+**完全重複（同一 apply_date）ではない、同一カテゴリーの重複保有（apply_date違い）への対応**:
+独立レビュー（2026-09、実DBデータで確認: 重複保有グループの21%が該当）により、
+`__hasExactDuplicateRecord()`（apply_date一致のみを完全重複とみなす）が捕捉できない
+「同一カテゴリーだが apply_date が異なる重複保有」が、反対系統の保有と併存すると
+破壊的FIX（重複行を2件ともまとめて終了し、終了対象に C1 が含まれると Requirement 4.5により
+再付与不能）や no-op FIX（是正後も重複が残ったまま「是正済み」と誤報告、Requirement 7.1違反）
+になる欠陥が発見された。製品オーナー確認済みの是正方針として、「より広い DUP_ONLY 分類」では
+なく「FIX を返す直前の汎用安全ガード」（`__fixResultIsSafe()`: (1) 同一カテゴリーを2件以上
+まとめて終了対象にしない、(2) 適用後の実際の有効集合が `isValidActiveSet()` で合法である
+ことを検証）を採用した。理由は汎用性（重複起因に限らず、将来同種の構造的欠落が別経路で
+生じても機械的に検知できる）。ガードに抵触した場合は専用の理由コード
+`DUPLICATE_HOLDING_UNSAFE_FIX`（他の MANUAL 理由 `NO_LINEAGE_DETERMINABLE` /
+`KEEP_LINEAGE_HOLDING_COUNT_INVALID` と区別可能）を持つ MANUAL 決定を返す。
+
+**Requirement 1.4「3件以上の同時保有」の分離**: `CategoryLineageLinker::isValidActiveSet()`
+（me-mm-linkage-2026-27 が単一所有、本specの変更対象外）は「同一系統内でちょうど2件」と
+「管理対象カテゴリーが3件以上」を区別せず両方 `SAME_LINEAGE_MULTIPLE` として返す。design.md・
+Requirement 1.4 が求める独立した「3件以上」分類を、Linker を変更せずに `CatRacerCleanupJudge`
+層で事後的に分離するラベル `CatRacerCleanupJudge::VIOLATION_TYPE_THREE_OR_MORE_HOLDINGS` を
+新設して対応した（Linker の判定結果そのものは変更しない）。
+
+## 2026-09 タスク2.2 独立レビューround-2でAPPROVED・MINOR4件の是正
+
+round-1 REJECTED（上記「完全重複ではない同一カテゴリー重複保有への対応」参照）を受け、
+製品オーナー確認済みの事後安全ガード方式で修正した round-2 で APPROVED。round-2レビューは
+round-1の4つの再現形状を自作ハーネスで独立再現・修正確認したほか、管理対象カテゴリー多重集合
+329種×出走系統2種×管理対象外有無の全列挙に対しDecisionフィールドから適用後状態を独立再計算し、
+不変条件違反0件（FIX決定124件）であることを確認した。
+
+非ブロッキングのMINOR4件を承認と同時に是正した:
+1. `testNonExactDuplicateWithoutOppositeLineageHoldingFallsToManualNotDupOnly`に、このケースが
+   安全ガードを経由せず既存の`KEEP_LINEAGE_HOLDING_COUNT_INVALID`経路のみでMANUALに落ちる
+   ことを固定するアサーションを追加（docblockの主張が将来の分岐順変更で密かに嘘になることを防ぐ）
+2. MANUAL理由コード3種（`NO_LINEAGE_DETERMINABLE`/`KEEP_LINEAGE_HOLDING_COUNT_INVALID`/
+   `DUPLICATE_HOLDING_UNSAFE_FIX`）を文字列リテラルから`CatRacerCleanupJudge`のクラス定数へ
+   （task 6.xのレポート実装が参照する契約値のため）
+3. tasks.md task 3.1に「detectの違法種別ラベルはDecision.violationTypeから採ること
+   （isValidActiveSet()の理由を直接ラベルにしない）」を申し送り
+4. tasks.md task 2.3に「既存のDUPLICATE_HOLDING_UNSAFE_FIXガードを取りこぼさないこと」を
+   申し送り、design.md「4種のMANUAL理由」の記述を実態（5種）に合わせて訂正
+
+## 2026-09 タスク2.3（エッジケースの手動確認判定）実装完了・独立レビュー1巡でAPPROVED
+
+Requirement 3.1〜3.5の4種のMANUAL理由（出走実績ゼロ／系統判定不能／同日両系統タイ／正系統
+保有0件or複数）を実装。`__determineLineage()`を「1件ずつ順に判定」から「開催日でグルーピング
+し、系統判定可能な最も新しい開催日内で系統が一意か」判定する方式に再構成（Requirement 3.3の
+同日タイ検知を新規実装）。
+
+独立レビューは、requirements.md 3.1-3.3からコードを見ずに独立の参照実装を書き起こし、ランダム
+40,000ケースで`judge()`と突合（不一致0件）、旧アルゴリズムとの1,000形状網羅比較でタイでない
+全ケースの系統判定が完全一致（回帰なし）することを確認したうえでAPPROVED。
+
+非ブロッキングの指摘のうち、以下を承認と同時に是正した:
+1. `judge()`の`$recentRaces`に関する新しい暗黙の事前条件（空配列＝出走実績0件を意味する、
+   `at_date`の書式統一が必要、同日内の判定根拠は入力順に依存する）をdocblock・design.md
+   Preconditionsへ明記し、tasks.md task 4.1へ申し送り
+2. 同日内のレース順を入れ替えても判定結果（keep/cancel/grant/系統）が不変であることを固定する
+   テストを追加（`testFixResultIsInvariantToSameDayRaceOrdering`）
+3. `MANUAL_REASON_LINEAGE_TIE`の定数値を他4定数と同じ命名規則（`'LINEAGE_TIE'`）に統一
+
+なお、実装者サブエージェントが権限外である`tasks.md`のタスク2.3チェックボックスを先に
+更新していたことが判明したが（本来はレビュー承認後にオーケストレーターが行う運用）、内容自体
+（チェックボックス以外の申し送り文の改変なし）に誤りは無かったため、そのまま採用した。
+以後の委譲プロンプトでは「spec配下のファイルは編集しない」ことを明記する。
+
+## 2026-09 タスク3.1（違法保有選手の抽出とdetectサブコマンド）実装完了・独立レビュー2巡でAPPROVED
+
+初めて`CatRacerCleanupShell`（Console/Command）を新設。有効（deleted=0/cancel_date IS NULL/
+apply_date<=実行日）な対応表管理対象カテゴリーを2件以上保有する選手を抽出し、
+`CategoryLineageLinker::isValidActiveSet()`で違法性を直接判定するdetectサブコマンドを実装
+（違法種別ラベル付けはtask 3.2の責務と判断——design.mdの「違法候補の抽出」記述がisValidActiveSet()
+のみに言及していることを根拠に確認済み）。
+
+round-1 REJECTED: (1) 「書き込みなし」保証テストが`category_racers`の6カラム射影のみを比較
+しており、`reason_note`列や結合先の`racers`テーブルへの書き込みを検知できなかった（実際の
+本番コードは読み取り専用であることは独立に確認済みで、テストの弱さが問題）。(2)
+offset/limit引数に`abc`等の不正値を渡すと`(int)`キャストにより静かに0件として報告され、
+design.mdが明記する「不正引数は使用方法を表示して終了」に反していた。
+
+round-2で両方修正・APPROVED。レビュアーは「書き込みなし」テストへの7件のミューテーション注入
+（round-1の2件＋新規5件）で全て捕捉されること、不正引数が実CLI・開発DB（実違反406件）で
+exit 1になることをそれぞれ独立に確認した。
+
+非ブロッキングの申し送り事項をtasks.md/design.mdへ記録した:
+1. `Racer.deleted=0`による除外（開発DBで52選手が対象外）をdesign.mdの「違法候補の抽出」に明記
+2. task 3.2へ「detectの違法種別ラベルはDecision.violationTypeから採ること」「limit=0明示指定時の
+   見た目上の偽陰性」「書き込みなしテストの監視対象テーブルを、task 3.2でのJudge連携により
+   出走実績系テーブルを読むようになったタイミングで拡張すること」を申し送り
+3. task 4.2へ「detectのoffset/limitは検証済み違法選手リストに適用されるため、cleanupで
+   リストが縮小する運用ではチャンクをずらして掃引すると選手を取りこぼす。毎回offset=0から
+   掃引する運用をrunbook.mdに明記すること」を申し送り
+
+## 2026-09 タスク3.2（検出レポートとverifyサブコマンド）実装完了・Tier 1（テスターのみ）で検証
+
+【運用変更】以降、task 4.x（是正実行・DB書き込みを伴う部分）はTier 2（実装者→独立レビュアー、
+Opusモデル）を維持するが、それ以外のタスクはコスト意識（グローバルCLAUDE.md）に基づきTier 1
+（実装者→テスターのみ）へ切り替えることを人間の指示により決定した。
+
+detectのレポート出力（件数・選手明細・violationType・判定根拠・専用ログ出力）とverify
+サブコマンド（全件検査・違法ペアゼロの明示報告）を実装。task 2.2申し送りどおり違法種別ラベルは
+`CatRacerCleanupJudge::judge()`の`Decision.violationType`から取得（`judge($racerCode,
+$activeHoldings, array())`という空の出走履歴での呼び出しでも、violationTypeがrecentRacesに
+依存せず算出されることを利用）。
+
+テスター（Tier 1）による検証: 実CLI・実開発DB（267,917行）でdetect/verifyを実際に実行し、
+406選手・858件の違法保有検出、R0019(three_or_more_holdings)・R0020(mismatched_pair)の
+正しい分類、読み取り専用性（実行前後のDB行数・ハッシュ一致）を実データで確認。テスト29/29・
+122 assertions green。文言上の軽微な不正確さ1件（「verifyがoffset/limitを構造的に拒否する」
+という記述が実際は「宣言・参照しないため無視される」が正確な表現だった）を発見・修正した。
+
+## 2026-09 タスク4.1（直近出走実態の取得処理）実装完了・独立レビュー2巡でAPPROVED（Tier 2継続）
+
+【運用】task 4.xは人間の指示によりTier 2（実装者→独立レビュアー、Opusモデル）を継続。
+
+`CatRacerCleanupShell::__recentLineageRaces()`を新設。racer_results→entry_racers→
+entry_categories→entry_groups→meets（すべてdeleted=0）を辿り、DNS除外・系統判定可能な出走が
+見つかるまでの遡り取得（チャンクサイズ既定20）・category_races_categoriesの1回限りキャッシュを
+実装。detect/verifyへの配線はtask 4.2のスコープのため本タスクでは行わない。
+
+round-1 REJECTED（1件blocking＋3件must-fix）: (1) `ORDER BY at_date DESC, meet_code DESC`が
+全順序ではなく、開発DBで実際に440〜604の`(racer_code, meet_code)`グループが同点・
+2,769〜3,170選手がチャンクサイズ超過という規模で確認され、チャンク境界をまたぐページネーション
+で系統判定可能なレースが静かに入れ替わる可能性があった（本番書き込みの誤判定に直結しうる）。
+(2)(3)(4) entry_categories/entry_groupsのソフトデリート除外・複数ラウンド遡り・キャッシュ
+再利用のテストカバレッジ不足。
+
+round-2で全て修正・APPROVED。レビュアーは`RacerResult.id`が全結合がPRIMARY KEY上であることから
+真の全順序を保証することをスキーマから証明し、各修正を自らサボタージュ→復元する手法で
+独立検証した。
+
+**副次的発見（本specの範囲外、参考記録）**: 修正過程で、このリポジトリの`app/Config/app.php`
+（git管理下）が`debug=false`を強制しており、`Configure::read('debug') > 1`に依存する
+`DboSource::fullDebug`が常にfalseになることが判明した。これにより`getDataSource()->getLog()`
+に基づくクエリ回数アサーションは、対策なしでは常に「0件」を検知するだけの空振りテストになる
+（本タスクでは`_forceQueryLoggingOn()`による一時的な強制ONで対策済み）。既存の
+`app/Test/Case/Cyclox/Util/JcxLineageLockTest.php`の558行目・598行目
+（`testCheckBulk…QueryCountIsConstant…`）が実際にこの空振りに該当することをレビュアーが確認した
+（`assertLessThanOrEqual(3, 0)`が常に成立するのみで、N+1回帰への保護になっていない）。
+別spec（jcx-lineage-lock-2026-27）のテストであり本specの対応範囲外のため修正はしていないが、
+リポジトリ全体でこのパターンを使う他のテストにも同様の空振りリスクがある可能性があるため、
+別途フォローアップとして人間に申し送る。
+
+非ブロッキングの申し送り事項をtasks.mdへ記録した:
+1. task 4.2へ「ShellのifelseベースClassifiable判定とJudgeの系統判定ルールが現在は一致して
+   いるが機械的に連動していない」結合リスク（MODERATE-2）と、ソート回帰テストがフルスイート
+   実行では検知しない件（MINOR-A）
+2. task 5.2へ「racer_resultsのフルスキャン・entry_racers.racer_codeへのインデックス欠如」の
+   性能実測値（MINOR-4）
+
+## 2026-09 タスク4.2（是正適用とトランザクション制御）実装完了・独立レビュー1巡でAPPROVED
+
+`cleanup`サブコマンドを実装。FIX決定に従い「反対系統の終了（UPDATE cancel_date）→対応
+カテゴリーの付与（INSERT）」の順で保存し、`TransactionManager`による実行全体のトランザクション
+制御（保存失敗・予期しない例外時の全件ロールバック、logonly常時ロールバック）を実装した。
+
+独立レビューは、FIX以外の書き込みゼロ・cancel/grantの正確なフィールド値・全件ロールバック・
+logonly常時ロールバック・冪等性を実DB・実測（意図的な保存失敗注入、実行前後のDB全行スナップ
+ショット比較）で検証し、いずれもPASSと判定してAPPROVEDとした。あわせて`category_racers`
+テーブルがCakePHPのテストフィクスチャ既定でMEMORYエンジン作成されロールバックが機能しない
+問題（前タスクで判明済み）への対策（`ALTER TABLE ... ENGINE=InnoDB`）が本タスクのロール
+バック検証テストでも正しく機能していることを、対策除去時に該当テストが赤化することで確認した。
+
+ブロッキング指摘はなかったが、以下3件をMODERATE（完了前対応を推奨）として受けた。
+**運用見直し（後述）により、これらは即時のTier 2再検証サイクルには回さず、tasks.md task 4.3
+（または適切な後続タスク）への申し送りとして記録し、task 4.2の完了はこのround-1のAPPROVED
+（推奨事項は現状未対応）をもって確定する**:
+1. 異常終了時のレポートが専用ログ`catracer_cleanup.log`に記録されない
+   （`CakeLog`の`types`に`error`/`warning`が含まれていない。Requirement 6.3）
+2. Requirement 4.6「終了→付与」の順序を守ることを直接検証するテストが存在しない
+   （`CategoryRacer`の整合性検知は警告のみで保存を拒否しないため、順序を誤っても保存は成功する）
+3. `catch (Exception $e)`がPHP7の`Error`系（`Exception`を継承しない）を捕捉できず、
+   その経路ではレポート・終了コードが出ないままfatal終了しうる（Requirement 5.5）
+
+**運用見直しの経緯**: round-1 APPROVED後、上記3件をオーケストレーターが直ちに修正し、その都度
+新規のTier 2 reviewerサブエージェントへ再検証を依頼する運用を3ラウンド（round-2〜4）繰り返した。
+round-2・3は「本番コードの正しさ」ではなく「推奨事項対応のためにオーケストレーターが新規に
+書いた回帰テストが実際に不具合を検知できるか（空振りでないか）」を検証する内容になり、round-4
+で最終的にAPPROVED（新たな非ブロッキング懸念4件を追加指摘）を得たが、reviewerサブエージェント
+4体・合計約87分の実行を要した。人間から「独立レビューの密度・回数が課題の複雑さに対して
+適切か」との指摘を受け、round-1のAPPROVED時点まで実装を巻き戻すことで合意した
+（round-2〜4で追加した修正・テストは破棄。42テスト/212 assertions、round-1レビュー時点と
+同一の差分量に復元済み）。根本原因分析と再発防止策は`~/.claude/CLAUDE.md`
+「サブエージェントへの委譲時の注意」節に反映済み（APPROVED後の非ブロッキング推奨事項に
+自動でフルTier 2再検証をかけない、同一指摘系列への再検証は1往復まで、本番コード検証と
+自作テストの検証を区別する）。上記MODERATE 3件は着手可能な状態のまま後続タスクへ申し送る。
+
+## 2026-09 タスク4.3（申し送り対応）・5.1（統合テスト）・5.2（実データ検証）完了
+
+ユーザーから「はやく終わらせてほしい」との明示的な指示を受け、Tier 2の重量級レビューループは
+挟まず、オーケストレーター自身の直接実装・自己検証（実行・実測）で完結させた。
+
+**タスク4.3**: logonly・冪等性・実行レポート自体はタスク4.2実装時に前倒しで完成済みだった
+（既存テスト`testCleanupLogonlyComputesButRollsBackAndReportsUnconfirmed`／
+`testCleanupIsIdempotentSecondRunMakesNoAdditionalChanges`で確認）。タスク4.2の
+round-1レビューで申し送られたMODERATE3件（専用ログのtypes設定・Throwable捕捉・
+終了→付与順序の直接検証テスト）を実装・テスト追加した。46テスト/254 assertions green。
+
+**タスク5.1**: detect→cleanup→verifyの一気通貫統合テストを追加し、FIX対象の是正・
+MANUAL/DUP_ONLYの無変更・合法選手の無変更・verifyでの残存報告・上流有効集合検証適合を
+確認した。
+
+**タスク5.2**: 開発DB（`cyclox2`、`category_racers`267,917行、本番相当データ）に対し
+detect→cleanup logonly→cleanup→verifyを通しで実行した（ユーザーに実書き込みの実行可否を
+一度確認のうえ実施）。406選手・858件検出、FIX13/MANUAL98/DUP_ONLY295、cleanup実行後verifyで
+残存393選手（内訳一致）を確認。「違法ペアゼロ」はFIX対象（対応外ペア）に限って達成され、
+DUP_ONLY（完全重複、既存手段の対象）とMANUAL（人間確認対象）は設計上のスコープ外として
+残存する。実測値は`test-results.md`、本番適用手順は`runbook.md`、結合試験結果は
+`integration-test-checklist.md`に記録した。手動確認対象98名の一覧（PII含む）は
+`outputs/manual-review-list.md`（git管理外）に記録した。
+
+**作業中に発覚した事象**: 外側リポジトリ（`cyclox2_docker`）が複数specで使い回す共有
+ワークツリーであるため、作業途中で別セッション（`entry-auto-category-2026-27`のspec初期化）
+によりブランチが`docs/catracer-cleanup-2026-27-task2-2`から切り替わっていたことが判明した。
+コミット済みの成果（`005bbf8`）は失われていなかったが、正しいブランチへ戻ってから残りの
+成果物をコミットした。他作業の妨げにならないよう、コミット後は元のブランチ
+（`docs/entry-auto-category-2026-27-init`）へ戻す。

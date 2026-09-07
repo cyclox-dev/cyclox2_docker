@@ -31,7 +31,7 @@
   - _Requirements: 2.1, 2.3, 2.4, 4.1, 4.2, 4.3, 4.4_
   - _Boundary: CatRacerCleanupJudge, CatRacerCleanupDecision_
 
-- [ ] 2.2 系統判定フォールバックと違法種別の分類（TDD）
+- [x] 2.2 系統判定フォールバックと違法種別の分類（TDD）
   - 成績対象カテゴリーが未設定の出走について、レースカテゴリー区分に紐づく対応カテゴリーコード群
     から系統を判定するフォールバックを実装する
   - 違法状態を種別（対応外ペア／同一系統内複数保有／同一カテゴリー重複保有／3件以上）に分類して
@@ -42,7 +42,13 @@
   - _Requirements: 1.4, 1.5, 2.2, 4.5, 4.6_
   - _Boundary: CatRacerCleanupJudge_
 
-- [ ] 2.3 エッジケースの手動確認判定（TDD）
+- [x] 2.3 エッジケースの手動確認判定（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-4申し送り】`judge()`には本タスクが追加する
+    4種のMANUAL理由（Requirement 3.1-3.4）に加え、task 2.2で追加した5つ目のMANUAL理由
+    `MANUAL_REASON_DUPLICATE_HOLDING_UNSAFE_FIX`（同一カテゴリーの重複保有時、FIXが安全か
+    どうかを事後検証する安全ガード。設計時点のrequirements.md/design.mdには存在しない、
+    製品オーナー承認済みの追加）が既に存在する。本タスクで`judge()`の分岐を再構成する際、
+    このガード（FIXを返す直前の`__fixResultIsSafe()`呼び出し）を誤って取りこぼさないこと
   - 出走実績なし／系統判定可能な出走なし／直近判定日に両系統併存／正系統の有効保有が0件または複数、
     の各ケースを理由コード付き MANUAL 判定として返す
   - MANUAL 判定はデータ変更の指示（終了・付与）を一切含まず、レポート出力用の理由説明を持つ
@@ -52,7 +58,13 @@
   - _Boundary: CatRacerCleanupJudge_
 
 - [ ] 3. 検出・検証機能
-- [ ] 3.1 違法保有選手の抽出と detect サブコマンド（TDD）
+- [x] 3.1 違法保有選手の抽出と detect サブコマンド（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-3申し送り】detect レポートの違法種別ラベルは
+    `CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること。
+    `CategoryLineageLinker::isValidActiveSet()`が返す理由をそのままラベルにすると、Requirement 1.4の
+    「3件以上」が`same_lineage_multiple`に潰れてしまう（`CatRacerCleanupJudge`側で3件以上を
+    分離する独自ラベル`VIOLATION_TYPE_THREE_OR_MORE_HOLDINGS`を追加済み。`CategoryLineageLinker`
+    自体は変更していない・本specの所有物ではないため）
   - 実行日時点で有効（未終了・未削除・適用日が実行日以前）な対応表管理対象カテゴリーを2件以上
     保有する選手を抽出し、各選手の有効集合を上流の判定 API で検査して違法保有選手を確定する
   - 管理対象カテゴリーの一覧は対応表 API から取得し、シェル内にコード一覧を持たない
@@ -64,7 +76,24 @@
   - _Requirements: 1.1, 1.2, 5.1_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 3.2 検出レポートと verify サブコマンド（TDD）
+- [x] 3.2 検出レポートと verify サブコマンド（TDD）
+  - 【2026-09 task 2.2独立レビューround-2 MINOR-3・task 3.1独立レビューround-1 FINDING 6より
+    再申し送り（3.1完了によりこの注記の可視性が失われるため複製）】detectレポートの違法種別
+    ラベルは`CatRacerCleanupJudge::judge()`が返す`Decision.violationType`から採ること
+    （`isValidActiveSet()`の理由をそのままラベルにすると「3件以上」が`same_lineage_multiple`に
+    潰れる。task 3.1の`detect()`実装は`isValidActiveSet()`を直接呼ぶ抽出専用の実装であり、
+    ラベル付けはこのタスクの責務）
+  - 【2026-09 task 3.1独立レビュー FINDING 3申し送り】task 3.1の`detect()`は`Racer.deleted=0`
+    による除外を実装済み（開発DBで52選手が対象外になる）。これはRequirement 2.5に基づく妥当な
+    挙動だが、design.mdの「違法候補の抽出」記述には明記されていない。verify（Requirement 7.1
+    「違法ペアゼロ」）のレポートでこの除外基準も踏襲すること
+  - 【2026-09 task 3.1独立レビューround-2 MINOR-1/MINOR-2申し送り】(a) `limit=0`を明示指定した
+    場合に実際は違反が存在するのに「0件」と報告される見た目上の偽陰性がある。レポートに適用中の
+    offset/limitを併記するか、`limit=0`自体を不正引数として弾くことを検討する。(b) 「書き込み
+    なし」を保証するテストの監視対象テーブルは現状`category_racers`/`racers`の2表のみ。本タスクで
+    `CatRacerCleanupJudge`連携により出走実績（`racer_results`/`entry_racers`/`entry_categories`/
+    `entry_groups`/`meets`）を読むようになった場合、これらのテーブルへの書き込みがないことも
+    テストで監視すること
   - 検出結果を件数（選手数・違法保有件数）、選手明細（選手コード・氏名・有効保有状況・違法種別・
     判定根拠）付きで標準出力と専用ログ（catracer_cleanup スコープ）へ出力する
   - verify サブコマンドとして、全件検査で違法状態が存在しない場合に「違法ペアゼロ」を明示的に
@@ -75,7 +104,14 @@
   - _Boundary: CatRacerCleanupShell_
 
 - [ ] 4. 是正実行機能
-- [ ] 4.1 直近出走実態の取得処理（TDD）
+- [x] 4.1 直近出走実態の取得処理（TDD）
+  - 【2026-09 task 2.3独立レビュー FINDING-1/2/6申し送り】`CatRacerCleanupJudge::judge()`へ
+    渡す`$recentRaces`について: (a) 空配列は「出走実績が0件」を意味する契約になったため、
+    遡り取得の途中結果など部分的な空チャンクを渡してはならない（取得しきった上での0件のみ）。
+    (b) 各要素は`at_date`を必ず持ち書式を統一すること（同日判定に文字列比較を用いるため）。
+    (c) 同日内に複数の判定可能な出走がある場合、判定根拠（Requirement 6.2）に採用されるのは
+    SQL/取得処理が返す順序の先頭であり、安定させたい場合は`at_date`に加え`meet_code`等の
+    第二ソートキーを与えること
   - 選手の出走実績（DNS を除く・削除済みデータを除外）を大会開催日の降順で取得し、成績対象
     カテゴリーとレースカテゴリー区分の対応カテゴリーコード群（実行時に1回ロードしてキャッシュ）を
     添えて判定ロジックへ渡せる形に整形する
@@ -85,7 +121,33 @@
   - _Requirements: 2.1, 2.2, 2.5_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 4.2 是正適用とトランザクション制御（TDD）
+- [x] 4.2 是正適用とトランザクション制御（TDD）
+  - 【2026-09 task 3.1独立レビューround-1 FINDING 4申し送り】`detect`の`offset`/`limit`は
+    「検証済み違法選手リスト」に対して適用される（DB抽出SQLへは適用しない）。`cleanup`が是正を
+    確定すると違法選手リストが縮小するため、`offset=0/50`→`offset=50/50`→…という単純な掃引は
+    2回目以降で異なる選手を指す、または対象を取りこぼす恐れがある（1回目のcleanupで50人是正
+    →リストが356人に減少→offset=50は「新しい356人中51人目」を指し、1回目の51〜406人目は
+    永久にスキップされうる）。design.mdの冪等性注記（「再実行すれば残件のみ処理される」）を
+    踏まえ、チャンク運用は毎回`offset=0`から掃引する（`offset`をずらして分割しない）方針を
+    本タスクで確定し、runbook.md（task 5.2）にも明記すること
+  - 【2026-09 task 4.1独立レビューround-2 MODERATE-2申し送り】`CatRacerCleanupShell::
+    __isRaceLineageClassifiable()`（遡り取得を打ち切るか判定）は`CatRacerCleanupJudge`の
+    系統判定ルール（as_category優先→linked_category_codesフォールバック）を再実装したもので、
+    現時点では両者は完全に一致しているが、機械的に連動してはいない。**Shellは「いつ取得を
+    打ち切るか」を決め、Judgeは「その結果何と判定するか」を決める**という役割分担のため、
+    将来Judge側の分類ルールがShell側より「広く」なった場合（例: Judgeがある出走を判定可能と
+    みなすようになったが、Shellはまだ判定不能と見なして遡り取得を打ち切ってしまう場合）、
+    Shellが必要な過去レースを取得しないまま渡し、Judgeがより古い（本来使うべきでない）
+    レースに基づいて誤った正系統を判定し、それが本番の`category_racers`へ書き込まれる
+    という復旧困難な失敗モードになりうる（逆に「狭く」なる分には取得件数が増えるだけで
+    安全側）。本タスクで両者のロジックを一本化する（共通メソッドへの抽出、または
+    両者が一致し続けることを固定するテストの追加）ことを検討すること
+  - 【2026-09 task 4.1独立レビューround-2 MINOR-A申し送り】task 4.1で追加した
+    `RacerResult.id DESC`ソート同点解消の回帰テストは、単体実行では検知するが**フルスイート
+    実行では検知しない**（先行テストがDB/InnoDB状態を暖めることで、tiebreaker無しでも
+    たまたま正しい順序になってしまうため）ことが判明している。本タスクで是正判定ロジックに
+    手を入れる際、生成されたSQLに`RacerResult.id`のtiebreakerが含まれることを直接assertする
+    形に強化することを検討すること
   - FIX 決定に従い、反対系統の違法な有効保有すべてへ終了日（実行日の前日）を UPDATE で設定し
     （元の付与理由フィールドは変更しない・物理削除しない）、続けて対応カテゴリーを適用日=実行日・
     理由区分=ルール変更に伴う付与・定型理由メモ（正系統と判定根拠を含む）で INSERT する
@@ -97,8 +159,23 @@
     ロールバックが先に失敗するテストとして書かれ、実装後に通る
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.6, 4.7, 5.4, 5.5_
   - _Boundary: CatRacerCleanupShell_
+  - 【2026-09独立レビューround-1 MODERATE申し送り（非ブロッキング、後続タスクで対応）】
+    (1) 異常終了時のレポートが専用ログ`app/tmp/logs/catracer_cleanup.log`に記録されない
+    （`__ensureLogConfigured()`の`CakeLog::config()`の`types`に`warning`/`error`が
+    含まれておらず、`LOG_ERR`で書かれる異常終了レポートが採用条件を満たさず欠落する。
+    Requirement 6.3）。task 4.3（実行レポートの永続記録が本来の担当）で`types`へ
+    `warning`/`error`を追加すること。
+    (2) Requirement 4.6「終了→付与」の順序を守ることを直接検証するテストが存在しない
+    （`CategoryRacer`モデルの整合性検知は`afterSave`の警告であり保存を拒否しないため、
+    順序を誤っても保存自体は成功してしまう）。追加する際は`CategoryRacer::
+    getLineageWarnings()`への依存だけでなく、design.mdが示す`skipsLineageInspection`の
+    set-then-restore運用でも空振りしないよう、`DboSource::getLog()`等で実際に発行された
+    SQL（UPDATE cancel→INSERT grant）の順序を直接観測する形を検討すること。
+    (3) `catch (Exception $e)`はPHP7で`Exception`を継承しない`Error`系（`TypeError`等）を
+    捕捉できず、その場合レポートも終了コードも出ないままfatal終了しうる（Requirement 5.5）。
+    `catch (Throwable $e)`への変更と、その経路のテストを追加すること。
 
-- [ ] 4.3 logonly モード・冪等性・実行レポート（TDD）
+- [x] 4.3 logonly モード・冪等性・実行レポート（TDD）
   - logonly 指定時は是正処理・レポート出力まで本番同等に実行したうえで全変更をロールバックし、
     レポートに未確定（logonly）であることを明示する
   - 実行結果レポート（検出件数・是正選手数・終了/付与件数・手動確認件数・選手ごとの明細と
@@ -108,8 +185,8 @@
   - _Requirements: 5.2, 5.3, 6.1, 6.2, 6.4_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 5. 統合検証と実データ検証
-- [ ] 5.1 一連フローの統合テスト
+- [x] 5. 統合検証と実データ検証
+- [x] 5.1 一連フローの統合テスト
   - 違法種別・エッジケース・合法選手を混在させたフィクスチャに対し detect → cleanup → verify を
     通しで実行し、FIX 対象がすべて是正され・MANUAL/DUP_ONLY が変更されず・verify が違法ゼロ
     （MANUAL 残存時はその明細）を報告する統合テストが通る
@@ -117,7 +194,14 @@
   - _Requirements: 1.1, 3.5, 4.6, 5.2, 7.1_
   - _Boundary: CatRacerCleanupShell, CatRacerCleanupJudge_
 
-- [ ] 5.2 ローカルダンプでの実行検証と適用手順の整備
+- [x] 5.2 ローカルダンプでの実行検証と適用手順の整備
+  - 【2026-09 task 4.1独立レビューround-2 MINOR-4申し送り】`__recentLineageRaces()`の
+    `racer_results`取得クエリは開発DB実測で`type=ALL`（フルスキャン、344,885行）・
+    `Using temporary; Using filesort`、1回あたり約0.19秒。原因は`entry_racers.racer_code`に
+    インデックスが無いこと（`racer_results.index_entry_racer_id`はあるが辿れない）。
+    選手1人あたり最低2回（`__fetchRaceRows()`＋`__mergeFullDate()`）、かつ開発DBで
+    3,170選手が20件のチャンクサイズを超え複数ラウンドの遡りが必要。本番規模での所要時間を
+    実測し、必要なら`entry_racers.racer_code`へのインデックス追加を検討すること
   - ローカル環境へ本番ダンプを復元し、detect → cleanup logonly → cleanup → verify を通しで
     実行して、検出件数・是正件数・手動確認件数・所要時間・verify 結果（違法ゼロ）を
     `.kiro/specs/catracer-cleanup-2026-27/test-results.md` に記録する

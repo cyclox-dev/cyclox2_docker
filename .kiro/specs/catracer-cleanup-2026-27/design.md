@@ -322,7 +322,15 @@ class CatRacerCleanupJudge
 }
 ```
 - Preconditions: `$activeHoldings` は「実行日時点で有効かつ対応表管理対象」の行のみを含む。
-  `$recentRaces` は `meets.at_date` 降順で渡される
+  `$recentRaces` は `meets.at_date` 降順で渡される。
+  【2026-09 task 2.3独立レビュー指摘・task 4.1への事前条件】(a) 空配列は「DNS・削除を除いた
+  出走実績が0件であること」を意味する（呼び出し側が遡り取得の途中結果など部分的な空チャンクを
+  渡してはならない。Requirement 3.1判定の前提となる）。(b) 各要素は`at_date`を必ず持ち、
+  全要素で書式が統一されていること（同日判定・降順ソートに文字列比較を用いるため）。
+  (c) 判定結果（keep/cancel/grant/系統）は入力配列の順序に依存しないが、同日内に複数の
+  系統判定可能な出走がある場合、判定根拠（Requirement 6.2の`race`）に採用されるのは入力配列内で
+  先に現れた方であり、これは順序に依存する。同日内の判定根拠を安定させたい場合、SQL側で
+  `at_date`に加え`meet_code`等の第二ソートキーを与えること
 - Postconditions: 戻り値は必ず OK / FIX / MANUAL / DUP_ONLY のいずれかの status を持つ。
   FIX の場合、`(維持カテゴリー + 付与カテゴリー)` の集合は `isValidActiveSet()` を満たす。
   本メソッドは副作用を持たない（同一入力に対して常に同一出力）
@@ -332,8 +340,13 @@ class CatRacerCleanupJudge
 - Integration: `App::uses('CatRacerCleanupJudge', 'Cyclox/Util')`。Linker はコンストラクタで
   受け取り、テスト時は実インスタンスをフィクスチャ DB とともに使用（isFormerElite1 等の DB 参照は
   Linker 内部の責務）
-- Validation: 全分岐（OK / 4種の MANUAL 理由 / DUP_ONLY / 付与あり FIX / 付与なし FIX /
-  同日両系統タイ）を `CatRacerCleanupJudgeTest` で網羅する
+- Validation: 全分岐（OK / 5種の MANUAL 理由 / DUP_ONLY / 付与あり FIX / 付与なし FIX /
+  同日両系統タイ）を `CatRacerCleanupJudgeTest` で網羅する。
+  【2026-09 task 2.2独立レビューround-2 MINOR-4で訂正】Requirement 3.1-3.4 の4種に加え、
+  task 2.2で追加した安全ガード由来のMANUAL理由（`MANUAL_REASON_DUPLICATE_HOLDING_UNSAFE_FIX`。
+  同一カテゴリーの重複保有時にFIXが安全かを事後検証する。requirements.mdには対応する受入条件が
+  ないが、実データで確認された破壊的FIX/no-op FIXのリスクに対する製品オーナー承認済みの追加）
+  を合わせて5種となる
 - Risks: Linker の `isValidActiveSet()` が「prospective set を呼び出し元が算出して渡す」契約
   であるため、Judge が渡す集合の構築規則をテストで契約化する（me-mm-linkage design の Risks と同旨）
 
@@ -385,7 +398,10 @@ class CatRacerCleanupJudge
   対応表管理対象カテゴリー保有を2件以上持つ選手」を SQL で抽出し、各選手の有効集合を
   `CategoryLineageLinker::isValidActiveSet()` 相当の判定（Linker 呼び出し）に掛ける。
   管理対象カテゴリーの一覧は `CategoryLineageMap::eliteCategories()/mastersCategories()` から
-  取得する（ハードコードしない）
+  取得する（ハードコードしない）。
+  【2026-09 task 3.1独立レビュー FINDING 3で記録】上記の候補抽出は選手（`racers`）テーブルとの
+  結合時に `Racer.deleted=0` でも絞り込む（削除済み選手の保有は判定材料に含めない、
+  Requirement 2.5）。開発DBではこの絞り込みにより52選手が候補から除外される
 - 出走実績の取得（`__recentLineageRaces()`）: `racer_results`（`status <> DNS` かつ
   `deleted=0`）→ `entry_racers` → `entry_categories` → `entry_groups` → `meets`
   （すべて `deleted=0`）を `meets.at_date` 降順で取得し、`races_category_code` ごとの対応
