@@ -121,7 +121,7 @@
   - _Requirements: 2.1, 2.2, 2.5_
   - _Boundary: CatRacerCleanupShell_
 
-- [ ] 4.2 是正適用とトランザクション制御（TDD）
+- [x] 4.2 是正適用とトランザクション制御（TDD）
   - 【2026-09 task 3.1独立レビューround-1 FINDING 4申し送り】`detect`の`offset`/`limit`は
     「検証済み違法選手リスト」に対して適用される（DB抽出SQLへは適用しない）。`cleanup`が是正を
     確定すると違法選手リストが縮小するため、`offset=0/50`→`offset=50/50`→…という単純な掃引は
@@ -159,6 +159,21 @@
     ロールバックが先に失敗するテストとして書かれ、実装後に通る
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.6, 4.7, 5.4, 5.5_
   - _Boundary: CatRacerCleanupShell_
+  - 【2026-09独立レビューround-1 MODERATE申し送り（非ブロッキング、後続タスクで対応）】
+    (1) 異常終了時のレポートが専用ログ`app/tmp/logs/catracer_cleanup.log`に記録されない
+    （`__ensureLogConfigured()`の`CakeLog::config()`の`types`に`warning`/`error`が
+    含まれておらず、`LOG_ERR`で書かれる異常終了レポートが採用条件を満たさず欠落する。
+    Requirement 6.3）。task 4.3（実行レポートの永続記録が本来の担当）で`types`へ
+    `warning`/`error`を追加すること。
+    (2) Requirement 4.6「終了→付与」の順序を守ることを直接検証するテストが存在しない
+    （`CategoryRacer`モデルの整合性検知は`afterSave`の警告であり保存を拒否しないため、
+    順序を誤っても保存自体は成功してしまう）。追加する際は`CategoryRacer::
+    getLineageWarnings()`への依存だけでなく、design.mdが示す`skipsLineageInspection`の
+    set-then-restore運用でも空振りしないよう、`DboSource::getLog()`等で実際に発行された
+    SQL（UPDATE cancel→INSERT grant）の順序を直接観測する形を検討すること。
+    (3) `catch (Exception $e)`はPHP7で`Exception`を継承しない`Error`系（`TypeError`等）を
+    捕捉できず、その場合レポートも終了コードも出ないままfatal終了しうる（Requirement 5.5）。
+    `catch (Throwable $e)`への変更と、その経路のテストを追加すること。
 
 - [ ] 4.3 logonly モード・冪等性・実行レポート（TDD）
   - logonly 指定時は是正処理・レポート出力まで本番同等に実行したうえで全変更をロールバックし、
