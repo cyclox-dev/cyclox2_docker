@@ -1,7 +1,7 @@
 # Implementation Plan
 
 - [ ] 1. 基盤整備: 資格年齢判定と種目解決の共通ロジック
-- [ ] 1.1 資格年齢判定ロジックの実装（TDD）
+- [x] 1.1 資格年齢判定ロジックの実装（TDD）
   - 選手が指定カテゴリーの資格年齢要件（`categories.age_min`）を指定日時点で満たすかを判定する
     共通ロジックを実装する。年齢計算は既存の年齢計算ロジック（大会開催日基準）を再利用する
   - 誕生日当日・前日・翌日の境界値テストケースを含む
@@ -10,7 +10,7 @@
   - _Requirements: 3.1, 8.1, 9.1_
   - _Boundary: CategoryLineageLinker_
 
-- [ ] 1.2 種目の単一カテゴリー対応判定の実装（TDD）
+- [x] 1.2 種目の単一カテゴリー対応判定の実装（TDD）
   - エントリー先の種目（`races_category_code`）が対応表管理対象の実力別カテゴリー1つに一意
     対応するかを判定するロジックを実装する。プール種目（複数対応）・対応表対象外カテゴリーは
     非対応として扱う
@@ -121,3 +121,21 @@
     完了条件とする
   - _Requirements: 1.1, 6.4, 8.2, 9.2, 10.1, 10.2, 10.3, 10.4_
   - _Depends: 7.1, 6.1, 5.2_
+
+## Implementation Notes
+
+- **1.1**: `isAgeEligibleForCategory()`は`categories.age_min`カラムを正とする（既存の
+  `ResultParamCalcComponent::__isProperAgeForCat()`の別ハードコード配列は使わない）。生年月日不明・
+  カテゴリー不明はいずれも安全側でfalse。呼び出し元は`CategoryLineageMap`管理対象コード（age_min
+  設定済み）のみを渡す前提のため、`age_min IS NULL`のカテゴリー（CChild1/2, CK1〜3, CL3, CY等）は
+  未検証経路として残る（現状到達不能だが、将来publicメソッドを他用途に流用する場合は要注意）。
+- **1.2**: `resolveSingleLineageCategory()`は「有効行が1件のみ、かつその1件が対応表管理対象」の
+  場合のみcategory_codeを返すcount-first方式を採用（レビュー3ラウンド目で確定。当初の
+  filter-then-count方式はRequirement 4.1の「1つの種目に複数のカテゴリーが束ねられている」という
+  文言に対して非対象化の範囲が狭すぎ、管理対象1件＋対象外1件が束ねられた合同種目で誤って
+  category_codeを返してしまう欠陥があった）。`array_unique`で重複行にもフェイルセーフ。
+  `CM4`種目は`CategoryLineageMap`が未定義のため常にnullを返す（catracer-cleanup-2026-27/
+  jcx-lineage-lock-2026-27と同じ既知の仕様、38件の実エントリーは引き続き手動運用）。
+  フィクスチャ`CategoryRacesCategoryFixture`は自己対応（category_code===races_category_code）
+  だけでなく、実データの非自己対応パターン（UCIME→C1等）も収録しないと検索キーの向きの
+  ミューテーションがテストで検出できない点に注意（レビュー指摘で判明、id=54として追加済み）。
