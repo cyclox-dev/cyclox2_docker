@@ -54,8 +54,8 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 
 | フェーズ | 合意メモ（理由・補足） |
 |---|---|
-| 要件定義（requirements.md） | 第1版（Requirements 1〜7）は2026-09-07人間承認済み。**第2版（Requirement 8〜10を追加）は2026-09-09生成・人間承認待ち。** 第2版はpropagateLinkedPromotion()・catracer-cleanup-2026-27是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは明示的に対象外とした。EARSレビューゲート（実装言語混入なし・番号付き見出し）通過済み |
-| 設計（design.md） | 第1版（Requirement 1〜7対応、PR #69未マージ）を生成済みだが、第2版要件（Requirement 8〜10）を反映していないため要改訂。第2版要件の承認後に着手する |
+| 要件定義（requirements.md） | 第1版（Requirements 1〜7）は2026-09-07人間承認済み。**第2版（Requirement 8〜10を追加）も2026-09-09人間承認済み**（PRレビュー確認のうえ「進んで良い」、PR自体は未マージのままブランチ上で承認）。propagateLinkedPromotion()・catracer-cleanup-2026-27是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは明示的に対象外とした。EARSレビューゲート（実装言語混入なし・番号付き見出し）通過済み |
+| 設計（design.md） | **2026-09-09、PRレビュー確認のうえ「進んで良い」と口頭承認（PR未マージ）。** 第2版へ改訂済み。`propagateLinkedPromotion()`・`CatRacerCleanupShell::__applyFixDecision()`への資格年齢チェック挿入、共通判定関数`isAgeEligibleForCategory()`の新設を反映。レビューゲート（要件トレーサビリティ34件・境界4区分・File Structure Plan整合性）通過済み |
 | タスク分解・実装前確認（tasks.md） | 未着手 |
 
 ---
@@ -69,3 +69,5 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 | 2026-09-08 | 要件定義（Requirements 1〜7）を人間承認。spec.json phase=requirements-approved | kyamady |
 | 2026-09-08 | 設計フェーズ実施（light discovery）。research.md・design.mdを生成。spec.json phase=design-generated | Claude Code |
 | 2026-09-09 | `EntryRacer::afterSave()`まわりの解説アーティファクト作成の過程で、資格年齢ガードの欠落を横断的に発見（実データで3件の違反を確認）。決定事項#4・#5に基づき要件を改訂し、Requirement 8〜10を新設。spec.json phase=requirements-generated（第2版・未承認）に巻き戻し | Claude Code |
+| 2026-09-09 | 要件第2版（Requirement 8〜10）を人間承認（PR #69確認のうえ、未マージのまま「進んで良い」） | kyamady |
+| 2026-09-09 | design.mdを第2版へ改訂。propagateLinkedPromotion()・CatRacerCleanupShellへの資格年齢チェック挿入、isAgeEligibleForCategory()新設を反映。同一PR（#69）に積む形で対応。spec.json phase=design-generated | Claude Code |

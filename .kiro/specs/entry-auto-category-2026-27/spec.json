@@ -1,20 +1,22 @@
 {
   "feature_name": "entry-auto-category-2026-27",
   "created_at": "2026-09-07T14:20:20Z",
-  "updated_at": "2026-09-09T12:57:36Z",
+  "updated_at": "2026-09-09T13:09:18Z",
   "language": "ja",
-  "phase": "requirements-generated",
+  "phase": "design-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": false,
+      "approved": true,
+      "approved_at": "2026-09-09T13:04:57Z",
       "revision": 2,
-      "revision_note": "第2版（2026-09-09未承認）。年齢ガードの適用範囲拡大（Requirement 8, 9, 10を新設）。propagateLinkedPromotion()とcatracer-cleanup-2026-27の是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは対象外と明示。第1版（2026-09-07承認）はエントリー時補完（Requirement 1-7）のみが対象だった。詳細はagreement-log.md参照。"
+      "revision_note": "第2版（2026-09-09承認）。年齢ガードの適用範囲拡大（Requirement 8, 9, 10を新設）。propagateLinkedPromotion()とcatracer-cleanup-2026-27の是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは対象外と明示。第1版（2026-09-07承認）はエントリー時補完（Requirement 1-7）のみが対象だった。詳細はagreement-log.md参照。"
     },
     "design": {
       "generated": true,
       "approved": false,
-      "note": "第1版design.md（PR #69、未マージ）はRequirement 1-7のみを反映しており、第2版の追加要件（Requirement 8-10）を反映していない。要件の再承認後、design.mdの改訂が必要。"
+      "revision": 2,
+      "revision_note": "第2版（2026-09-09未承認）。propagateLinkedPromotion()内部への資格年齢チェック挿入（既存戻り値状態にskippedAgeIneligibleを追加）、CatRacerCleanupShell::__applyFixDecision()への同様の挿入、資格年齢判定の共通関数isAgeEligibleForCategory()を新設。いずれも既存メソッドの呼び出し元インターフェースは維持。レビューゲート（要件トレーサビリティ34件）通過済み。"
     },
     "tasks": {
       "generated": false,
