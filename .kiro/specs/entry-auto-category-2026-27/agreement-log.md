@@ -31,6 +31,8 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 | 1 | 選択肢B（エントリー時オンデマンド付与）を主策として要件定義フェーズに進める | 選択肢Aは年齢資格チェックの欠如・ME1連鎖降格・既存不整合406名との干渉のリスクが大きい一方、選択肢Bは「相手系統の有効保有がゼロ」の選手のみを対象にするため既存不整合に干渉せず、ブラスト半径を常に1エントリー分に抑えられる | 2026-09-07 |
 | 3 | プール種目（C3+4・CM2+3・CM1+2+3、全エントリーの1.8%）は本spec の対象外とする。従来どおり主催者の手動運用に委ねる | エントリー時点では系統が一意に決まらずリザルト取込時のas_category解決を待つ必要があり、対応するとフォールバック処理の新規設計が必要になりスコープが拡大する。カバー率98.2%を優先し、本specは単一カテゴリー種目への対応に絞る | 2026-09-08 |
 | 2 | `me-mm-linkage-2026-27`は再オープンせず、新spec `entry-auto-category-2026-27` として独立させる | jcx-lineage-lock-2026-27・catracer-cleanup-2026-27と同じパターン（クローズ済みspecの`CategoryLineageMap`を単一の正として参照するのみ、対応表の重複定義はしない）を踏襲するため | 2026-09-07 |
+| 4 | 資格年齢ガードを`propagateLinkedPromotion()`（既存・me-mm-linkage-2026-27）とcatracer-cleanup-2026-27の是正バッチにも追加する。適用対象は本specのBoundaryを拡張して取り込む（新spec化はしない） | `EntryRacer::afterSave()`まわりの動きを説明するアーティファクト作成の過程で、Web管理画面の個別CSVアップロード経路が本機能のafterSaveと昇格連動を同一トランザクション内で連続実行することが判明。年齢ガードの欠落箇所を洗い出したところ実データで既に3件の違反（35歳未満のCM1〜4保有）を確認。catracer-cleanup-2026-27は実装完了・マージ済み（PR #24）でバッティング無しと確認できたため対象に含める | 2026-09-09 |
+| 5 | 新規選手CSV登録・系統切替画面（change_em）は資格年齢ガードの対象外とする | 前者は「選手登録とカテゴリー付与が一体の成功/失敗」という既存インターフェースの変更コストが大きい。後者は人間が明示的に行う特例操作を機械的に拒否するデメリットが大きい | 2026-09-09 |
 
 ---
 
@@ -40,6 +42,7 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 |---|---|
 | 選択肢A（単独保有者への一括バッチ付与） | 年齢資格チェックが既存コードにも無くMM資格のない選手にマスターズが付与されるリスク、ME1一括付与によるseason-rules-2026-27連動降格の副作用（年間90名規模が対応外ペアへ落ちる）、既存不整合406名との干渉、休眠選手約8,800名も一律で処理対象になる運用負荷、が理由。本specのスコープには含めない |
 | 直近出走実績者への小規模backfill（選択肢Aの限定版） | 判断ブリーフで検討の余地を残したが、本spec初期化時点では選択肢Bのみをスコープとし、backfillは別途・任意の検討課題として棚上げ | 2026-09-07 |
+| 既に発生している資格年齢要件違反データ（3件確認済み）の遡及是正 | 既存カテゴリーを一存でcancelしない、という全spec共通の設計哲学に反する。是正するなら年齢違反専用の一時対応が別途必要（catracer-cleanup-2026-27とはスコープが異なる）。本specのスコープには含めない | 2026-09-09 |
 
 ---
 
@@ -51,9 +54,9 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 
 | フェーズ | 合意メモ（理由・補足） |
 |---|---|
-| 要件定義（requirements.md） | **2026-09-07 人間承認済み。** 要件本文（Requirements 1〜7）。プール種目除外（決定事項#3）を含む。EARSレビューゲート（網羅性・実装言語混入なし・番号付き見出し）通過済み |
-| 設計（design.md） | 未着手。主要論点: プール種目（C3+4等、全体の1.8%）の扱い（エントリー時見送りか、リザルト取込時as_category解決のフォールバックか）、年齢ガードの具体的基準 |
-| タスク分解・実装前確認（tasks.md） | 未着手 |
+| 要件定義（requirements.md） | 第1版（Requirements 1〜7）は2026-09-07人間承認済み。**第2版（Requirement 8〜10を追加）も2026-09-09人間承認済み**（PRレビュー確認のうえ「進んで良い」、PR自体は未マージのままブランチ上で承認）。propagateLinkedPromotion()・catracer-cleanup-2026-27是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは明示的に対象外とした。EARSレビューゲート（実装言語混入なし・番号付き見出し）通過済み |
+| 設計（design.md） | **2026-09-09、PRレビュー確認のうえ「進んで良い」と口頭承認（PR未マージ）。** 第2版へ改訂済み。`propagateLinkedPromotion()`・`CatRacerCleanupShell::__applyFixDecision()`への資格年齢チェック挿入、共通判定関数`isAgeEligibleForCategory()`の新設を反映。レビューゲート（要件トレーサビリティ34件・境界4区分・File Structure Plan整合性）通過済み |
+| タスク分解・実装前確認（tasks.md） | 生成済み・人間承認待ち。7大タスク・11サブタスクに分解。基盤整備（資格年齢判定・種目解決）→エントリー時補完のCore実装→保存フック統合→警告配信のIntegration→昇格連動・是正バッチへのガード適用→ログ記録統合→統合/E2E検証、の順。要件34件全件・自然言語記述・境界整合性のレビューゲート通過済み |
 
 ---
 
@@ -64,3 +67,8 @@ me-mm-linkage-2026-27（クローズ済み）で「ME⇔MM対応ペア両保有�
 | 2026-09-07 | 初版作成（spec初期化。判断ブリーフの内容を反映） | Claude Code |
 | 2026-09-08 | 要件定義フェーズ実施。プール種目を対象外とする決定（#3）を追加し、requirements.mdにRequirement 1〜7を生成 | Claude Code |
 | 2026-09-08 | 要件定義（Requirements 1〜7）を人間承認。spec.json phase=requirements-approved | kyamady |
+| 2026-09-08 | 設計フェーズ実施（light discovery）。research.md・design.mdを生成。spec.json phase=design-generated | Claude Code |
+| 2026-09-09 | `EntryRacer::afterSave()`まわりの解説アーティファクト作成の過程で、資格年齢ガードの欠落を横断的に発見（実データで3件の違反を確認）。決定事項#4・#5に基づき要件を改訂し、Requirement 8〜10を新設。spec.json phase=requirements-generated（第2版・未承認）に巻き戻し | Claude Code |
+| 2026-09-09 | 要件第2版（Requirement 8〜10）を人間承認（PR #69確認のうえ、未マージのまま「進んで良い」） | kyamady |
+| 2026-09-09 | design.mdを第2版へ改訂。propagateLinkedPromotion()・CatRacerCleanupShellへの資格年齢チェック挿入、isAgeEligibleForCategory()新設を反映。同一PR（#69）に積む形で対応。spec.json phase=design-generated | Claude Code |
+| 2026-09-09 | tasks.mdを生成（7大タスク・11サブタスク）。requirements.approved・design.approvedをtrueに設定。spec.json phase=tasks-generated | Claude Code |
