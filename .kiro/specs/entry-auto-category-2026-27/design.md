@@ -1,5 +1,67 @@
 # Design Document: entry-auto-category-2026-27
 
+## 改訂履歴（第5版・2026-09-10）
+
+タスク2.1第4版実装のレビュー（round 3）で、エントリー側保有確認が`apply_date`による絞り込みを
+行わない（第4版で意図的に採用した仕様）ため、**まだ発効していない（将来の`apply_date`を
+持つ）カテゴリー**まで「現在の保有」とみなしてしまい、正常なカテゴリー切替の途中（不整合
+データではない）で本機能自身が新たな対応外ペアを生成することを独立レビュアーが実際にコードを
+実行して実証した（例: マスターズ側でCM3→CM2へ正常に切替予定の選手が、切替前の大会日で
+CM3種目へエントリーすると、C4が新規付与され`{C4, CM2}`という対応外ペアが生成される）。
+
+根本原因は、相手系統の保有確認（Requirement 1、重複付与の予防が目的で`apply_date`の下限を
+設けないのが正しい）とエントリー側の保有確認（Requirement 11、「$atDate時点で選手が実際に
+どのカテゴリーを名乗っていたか」の確認が目的）が、目的の異なる判定であるにもかかわらず
+同一のヘルパー（`__findCurrentlyActiveCategoryCodesOnSide()`）を共用していたことにある。
+
+Requirement 11.4を改訂し、エントリー側の保有確認には`apply_date <= $atDate`を絞り込む
+専用のヘルパー`__findCategoryCodesEffectiveAsOfDateOnSide()`を新設する。相手系統の保有確認
+（`__findCurrentlyActiveCategoryRacerOnSide()`、`apply_date`の下限なし）は無変更。
+
+## 改訂履歴（第4版・2026-09-10）
+
+タスク2.1第3版実装のレビュー（round 2）で、`SKIPPED_ENTRY_SIDE_MISMATCH`判定が
+`find('first')`で1行しか見ていないため、選手が同じ系統側に複数の有効行（重複保有・カテゴリー
+切替の過渡期等）を持つ場合に**物理行順で結果が非決定的になる**ことを独立レビュアーが実際に
+コードを実行して実証した（例: マスターズ側でCM3→CM2へ切替済みの選手に対し、切替後より
+前の大会日で本機能を呼ぶと、DB上の行順次第で見送られたり新規付与されたりする）。
+
+この指摘を受けた人間判断（2026-09-10、entry-auto-category-2026-27 agreement-log.md 決定事項#7）
+により、判定方式を「保有集合ちょうど1件が対応先と一致するか」（完全一致判定）から「保有集合に
+対応先カテゴリーが1つでも含まれるか」（存在判定）へ変更する。他の（対応先とは異なる）
+カテゴリーが同じ系統側に同時に有効保有されていても（重複保有・同系統内複数保有等の既存
+不整合と同席していても）、対応先が保有集合に含まれる限り新規付与判定を継続する。既存の
+不整合行そのものへの変更（cancel等）は一切行わない。
+
+この判断は本specに限らずCyclox全体の既定方針として
+`.kiro/steering/existing-data-inconsistency-policy.md`に明文化した:
+「既存の不整合データへの不介入」は不整合行そのものを変更しないことを意味し、不整合の存在を
+理由に無関係な新規処理まで一律に見送ることを意味しない（適用条件: 新規処理が既存データを
+変更しない／誤って実行されても実害が小さく事後是正可能、の両方を満たす場合）。
+
+実装上は、エントリー側の保有確認を`find('first')`（存在確認のみ）から`find('all')`
+（保有カテゴリーコードの集合を取得）に変更することで、上記の存在判定を実現しつつ、
+物理行順への依存も同時に解消する。
+
+## 改訂履歴（第3版・2026-09-10）
+
+要件第3版（Requirement 11）を反映した。タスク2.1実装レビューで、独立レビュアーが
+「`supplementPairedCategoryOnEntryRegistration()`はエントリー先種目からのみ相手系統の連動先を
+決定し、選手がエントリー先と同じ系統側に現在保有しているカテゴリーを一切参照しない」ため、
+選手の実際の保有とエントリー先種目が食い違う場合（例: マスターズ側CM2保有選手がCM1種目へ
+エントリー）に本機能自身が新たな対応外ペアを作り出すことを実証した。この前提崩れを受け、
+連動先解決の前に「エントリー先と同じ系統側の現在保有」を確認し、種目の対応カテゴリーと
+一致しない場合は新規付与を見送るチェックを追加する（新状態
+`SKIPPED_ENTRY_SIDE_MISMATCH`）。
+
+同じレビューで発見された実装バグ（`__findActiveCategoryRacerOnSide()`の`apply_date`範囲判定が
+`propagateLinkedPromotion()`向けの「過去のレース日」前提のままエントリー補完に転用されており、
+エントリーが大会日の降順で登録される場合に既存の有効カテゴリーを見落として重複行を生成しうる）
+は要件・設計を変更しない実装修正であるため、下記「Implementation Notes」にのみ記録する
+（新規のprivateヘルパー`__findCurrentlyActiveCategoryRacerOnSide()`を追加し、
+`supplementPairedCategoryOnEntryRegistration()`はこちらを使う。既存の
+`propagateLinkedPromotion()`が使う`__findActiveCategoryRacerOnSide()`自体は無変更）。
+
 ## 改訂履歴（第2版・2026-09-09）
 
 要件第2版（Requirement 8〜10）を反映し、資格年齢ガードの適用範囲を拡大した。第1版は
@@ -249,17 +311,22 @@ sequenceDiagram
     alt 単一の実力別カテゴリーに対応しない (プール or 対象外)
         Linker-->>ER: SKIPPED_NOT_SINGLE_CATEGORY
     else 単一カテゴリーに対応する
-        Linker->>Linker: resolveLinkedTarget() で相手系統の対応カテゴリーを解決
-        Linker->>CR: 相手系統に有効保有があるか確認
-        alt 相手系統に何か有効保有している
-            Linker-->>ER: SKIPPED_ALREADY_OCCUPIED
-        else 相手系統が完全に空
-            Linker->>Linker: 対応カテゴリーの資格年齢要件を確認
-            alt 資格年齢未達
-                Linker-->>ER: SKIPPED_AGE_INELIGIBLE
-            else 資格年齢を満たす
-                Linker->>CR: 対応カテゴリーを新規付与 (reason=LINEAGE_LINK)
-                Linker-->>ER: GRANTED
+        Linker->>CR: エントリー先と同じ系統側の$atDate時点で発効していた保有カテゴリー集合を取得【第5版】
+        alt 保有集合が非空 かつ 種目の対応カテゴリーを1つも含まない
+            Linker-->>ER: SKIPPED_ENTRY_SIDE_MISMATCH【第3版・新規、第4版で判定方式を集合の存在判定へ変更】
+        else 保有集合が空、または種目の対応カテゴリーを含む（他の不整合な保有が同席していても可）
+            Linker->>Linker: resolveLinkedTarget() で相手系統の対応カテゴリーを解決
+            Linker->>CR: 相手系統に有効保有があるか確認
+            alt 相手系統に何か有効保有している
+                Linker-->>ER: SKIPPED_ALREADY_OCCUPIED
+            else 相手系統が完全に空
+                Linker->>Linker: 対応カテゴリーの資格年齢要件を確認
+                alt 資格年齢未達
+                    Linker-->>ER: SKIPPED_AGE_INELIGIBLE
+                else 資格年齢を満たす
+                    Linker->>CR: 対応カテゴリーを新規付与 (reason=LINEAGE_LINK)
+                    Linker-->>ER: GRANTED
+                end
             end
         end
     end
@@ -272,6 +339,26 @@ sequenceDiagram
 - `SKIPPED_ALREADY_OCCUPIED`は「対応表上の正しいペア」「対応外ペア」「重複保有」のいずれの
   既存状態も区別せず一律にスキップする。これによりRequirement 7（既存不整合への不介入）を
   構造的に満たす。
+- **【第3版】** `SKIPPED_ENTRY_SIDE_MISMATCH`チェックは相手系統チェックより前に行う。
+  エントリー先と同じ系統側の保有状態を先に確定させることで、「そもそも今回のエントリーが
+  対応表上どのカテゴリーへの言及として妥当か」を相手系統の判定に先立って確認する。保有なし
+  （新規種目への初参戦等）は不一致とみなさない（Requirement 11.2）。
+  **【第5版】** エントリー側保有の判定基準日・有効性ルールは、Requirement 1（相手系統保有
+  確認）とは意図的に分離する（Requirement 11.4）。理由は下記の第5版改訂内容参照。
+- **【第4版】** エントリー側保有の判定は「保有カテゴリー集合に対応先が1つでも含まれるか」
+  （存在判定）で行い、「保有集合が対応先ちょうど1件のみか」（完全一致判定）では行わない。
+  重複保有・同系統内複数保有等の既存不整合が対応先と同席していても、対応先が含まれる限り
+  新規付与判定を継続する（既存不整合行そのものへの変更は一切行わない。
+  `.kiro/steering/existing-data-inconsistency-policy.md`のプロジェクト全体方針、
+  Requirement 11.2）。この方式は`find('all')`による集合取得のため、`find('first')`が
+  同じ系統側の複数有効行のうちどれを返すかという物理行順への依存も構造的に排除する
+  （round 2レビュー指摘の非決定性はこの依存が原因だった）。
+- **【第5版】** エントリー側保有の集合取得には、`apply_date <= $atDate`を絞り込む専用
+  ヘルパー`__findCategoryCodesEffectiveAsOfDateOnSide()`を新設して用いる（相手系統の保有
+  確認が使う`apply_date`の下限を設けない`__findCurrentlyActiveCategoryRacerOnSide()`とは
+  別ヘルパー）。`apply_date`を絞り込まないと、まだ発効していない（将来の`apply_date`を
+  持つ）切替予定カテゴリーまで「現在の保有」とみなしてしまい、正常なカテゴリー切替の途中で
+  本機能自身が新たな対応外ペアを生成する（round 3レビューで実証済み）。
 
 ### 【第2版】昇格連動・是正バッチへの資格年齢ガード挿入フロー
 
@@ -339,12 +426,13 @@ sequenceDiagram
 | 8.1–8.4 | 昇格連動への資格年齢ガード適用 | CategoryLineageLinker, ResultParamCalcComponent | `propagateLinkedPromotion()`（拡張）, `isAgeEligibleForCategory()` | 【第2版】昇格連動シーケンス図 |
 | 9.1–9.4 | 是正バッチへの資格年齢ガード適用 | CategoryLineageLinker, CatRacerCleanupShell | `__applyFixDecision()`（拡張）, `isAgeEligibleForCategory()` | 【第2版】是正バッチシーケンス図 |
 | 10.1–10.4 | 資格年齢ガードの適用対象範囲の明示 | CategoryLineageLinker | `isAgeEligibleForCategory()`の呼び出し元を3箇所に限定（設計上の境界。新規選手CSV登録・change_emからは呼び出さない） | — |
+| 11.1–11.4 | 【第3版】エントリー側保有カテゴリーとの整合性確認 | CategoryLineageLinker | `supplementPairedCategoryOnEntryRegistration()`の`SKIPPED_ENTRY_SIDE_MISMATCH`分岐 | 上記シーケンス図の「エントリー先と同じ系統側の現在の有効保有を確認」ステップ |
 
 ## Components and Interfaces
 
 | Component | Domain/Layer | Intent | Req Coverage | Key Dependencies (P0/P1) | Contracts |
 |-----------|--------------|--------|---------------|---------------------------|-----------|
-| CategoryLineageLinker（拡張） | Util | エントリー時の対応ペア補完判定・実行、資格年齢ガードの共通判定ロジック | 1, 2, 3, 4, 7, 8, 9, 10 | CategoryLineageMap (P0), CategoryRacesCategory (P0), CategoryRacer (P0), Racer (P0) | Service |
+| CategoryLineageLinker（拡張） | Util | エントリー時の対応ペア補完判定・実行、資格年齢ガードの共通判定ロジック | 1, 2, 3, 4, 7, 8, 9, 10, 11 | CategoryLineageMap (P0), CategoryRacesCategory (P0), CategoryRacer (P0), Racer (P0) | Service |
 | EntryRacer（拡張） | Model | 保存フックからの補完呼び出しと警告蓄積 | 5, 6 | CategoryLineageLinker (P0) | State |
 | EntryRacersController（拡張） | Controller | 個別登録・編集経路での警告配信 | 6.4, 6.5 | EntryRacer (P0) | API |
 | ApiController（拡張） | Controller | 一括登録経路での警告配信 | 6.5, 6.6 | EntryRacer (P0) | API |
@@ -359,7 +447,7 @@ sequenceDiagram
 |-------|--------|
 | Intent | エントリー登録・変更をトリガーとした対応ペアの補完付与を判定・実行する。資格年齢ガードの
   共通判定ロジックを提供する |
-| Requirements | 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.2, 7.1, 8.1, 8.4, 9.1, 9.4, 10.1, 10.2, 10.3 |
+| Requirements | 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.2, 7.1, 8.1, 8.4, 9.1, 9.4, 10.1, 10.2, 10.3, 11.1, 11.2, 11.3, 11.4 |
 
 **Responsibilities & Constraints**
 - 本機能で追加する新規メソッドは、既存の`isValidActiveSet()`・`resolveLinkedTarget()`等の契約を
@@ -367,10 +455,25 @@ sequenceDiagram
   cancel/create実行直前の分岐追加という形で内部ロジックを拡張する（呼び出し元シグネチャ・
   既存の戻り値状態は維持）。
 - 相手系統の判定は「対応表上の正しいペアであるか」を問わず、「何か有効保有しているか」のみで
-  行う（既存の`__findActiveCategoryRacerOnSide()`をそのまま再利用）。これによりRequirement 7
-  （既存不整合への不介入）を追加ロジックなしに満たす。
+  行う（存在確認のみでよいため`find('first')`ベースの`__findCurrentlyActiveCategoryRacerOnSide()`
+  を用いる。下記「Implementation Notes」の`apply_date`範囲判定バグの修正を参照）。これにより
+  Requirement 7（既存不整合への不介入）を追加ロジックなしに満たす。
 - 資格年齢の判定基準日はエントリー先の大会開催日（`$atDate`）とする（レース結果連動と同じ
   基準日の扱い方に揃える）。
+- **【第3版】** `supplementPairedCategoryOnEntryRegistration()`は、相手系統の判定に入る前に、
+  エントリー先と同じ系統側の保有を確認する（Requirement 11）。
+  **【第4版】** この確認は「保有カテゴリー集合に対応先が含まれるか」という存在判定のため、
+  `find('first')`ではなく`find('all')`で保有カテゴリーコードの集合を取得する（`find('first')`
+  だと複数の有効行がある場合にどちらが返るかが物理行順に依存し非決定的になるため、round 2
+  レビューで指摘された）。
+  **【第5版】** この集合取得には、`apply_date <= $atDate`を絞り込む専用ヘルパー
+  `__findCategoryCodesEffectiveAsOfDateOnSide()`を新設して用いる（相手系統の判定（存在確認
+  のみでよい）が使う`__findCurrentlyActiveCategoryRacerOnSide()`（`find('first')`、
+  `apply_date`の下限なし）とは別ヘルパー。`apply_date`を絞り込まないと、まだ発効していない
+  切替予定カテゴリーまで「現在の保有」とみなしてしまい本機能自身が新たな対応外ペアを生成する
+  ため、round 3レビューで指摘された）。いずれも`propagateLinkedPromotion()`が使う既存の
+  `__findActiveCategoryRacerOnSide()`（`apply_date <= $atDate`、`find('first')`）自体は
+  無変更。
 - **【第2版】** `isAgeEligibleForCategory()`は`supplementPairedCategoryOnEntryRegistration()`・
   `propagateLinkedPromotion()`・`CatRacerCleanupShell`の3箇所からのみ呼び出される想定とし
   （Requirement 10.1）、新規選手CSV登録・change_emからは呼び出さない（設計上、これらの経路に
@@ -396,6 +499,17 @@ interface CategoryLineageLinkerEntrySupplement {
 
     /**
      * エントリー登録・変更をトリガーに、対応ペアの補完付与を判定・実行する。
+     * 【第3版】エントリー先と同じ系統側に、大会開催日（$atDate）時点で発効していた保有
+     * カテゴリーの集合に、種目の対応カテゴリーが1つも含まれない場合は付与を行わない
+     * （Requirement 11）。
+     * 【第4版】保有集合に対応カテゴリーが含まれてさえいれば、他の（対応先とは異なる）
+     * カテゴリーが同じ系統側に同時に発効していても付与判定は継続する（既存不整合行
+     * そのものへの変更は一切行わない）。
+     * 【第5版】上記の保有集合は`apply_date <= $atDate`で絞り込む（相手系統の保有確認とは
+     * 異なる基準、Requirement 11.4）。ただし「$atDate時点では対応先が発効中だが、
+     * $atDateより後に対応先ではない別カテゴリーへ切り替わることが既に登録済み」という
+     * ケースまでは救済しない（既知の残存リスクとして受容済み。requirements.md
+     * Requirement 11の「既知の残存リスク」注記参照）。
      * 相手系統に何らかの有効保有が既にある場合（正しいペアか不整合かを問わない）、または
      * 資格年齢要件を満たさない場合は付与を行わない。既存カテゴリーのcancelは一切行わない。
      * @param string $racerCode
@@ -436,6 +550,32 @@ interface CategoryLineageLinkerEntrySupplement {
 - Validation: 資格年齢は`Util::uciCXAgeAt()`で計算した年齢と`categories.age_min`を比較する。
 - Risks: 大量エントリー時（一括API）のクエリ回数増加は、既存の`asCategory()`等と同等の負荷で
   あり許容範囲（research.md参照）。
+- **【第3版・実装バグ修正】** 新設する`__findCurrentlyActiveCategoryRacerOnSide()`（相手系統の
+  存在確認用、`find('first')`）は、既存の`__findActiveCategoryRacerOnSide()`
+  （`propagateLinkedPromotion()`専用、`$atDate`が過去のレース日である前提で
+  `apply_date <= $atDate`により絞り込む）とは異なり、`apply_date`による絞り込みを行わない。
+  「`cancel_date`が未設定、または`cancel_date >= $atDate`（＝$atDate時点でまだ取消されて
+  いない）」の行を「現在有効」とみなして返す。エントリー補完の`$atDate`は未来の大会開催日で
+  あり、エントリーが大会日の降順で登録されるケース（シリーズ後半戦を先に登録してから前半戦を
+  登録する、リザルト取込による過去大会のエントリー再作成等、Requirement 5.1が明示的に対象と
+  する経路）では、`apply_date <= $atDate`による絞り込みだと未来日で付与済みの既存カテゴリーを
+  見落とし、重複行や新たな対応外ペアを生成しうる（レビューで実証済み）。
+  `__findActiveCategoryRacerOnSide()`自体は`propagateLinkedPromotion()`専用のまま無変更で残す。
+- **【第4版】** エントリー側系統の保有確認には、上記`__findCurrentlyActiveCategoryRacerOnSide()`
+  （`find('first')`、存在確認専用）ではなく`find('all')`により保有カテゴリーコードの集合を
+  取得するヘルパーを新設して用いる。`find('first')`だと、選手が同じ系統側に複数の有効行
+  （重複保有・カテゴリー切替の過渡期等）を持つ場合にどちらが返るかが物理行順に依存し
+  非決定的になるため（round 2レビューで実証済み）、判定は必ず集合全体に対する存在判定
+  （`in_array()`等）で行う。
+- **【第5版】** 上記の集合取得ヘルパーは、`__findCurrentlyActiveCategoryRacerOnSide()`と同じ
+  `apply_date`絞り込みなしの条件ではなく、`apply_date <= $atDate`を絞り込む
+  `__findCategoryCodesEffectiveAsOfDateOnSide()`として新設する。`apply_date`を絞り込まないと、
+  まだ発効していない（将来の`apply_date`を持つ）切替予定カテゴリーまで「現在の保有」と
+  みなしてしまい、正常なカテゴリー切替の途中（既存不整合ではない）で本機能自身が新たな
+  対応外ペアを生成する（round 3レビューで実証済み: マスターズ側でCM3→CM2へ正常に切替予定の
+  選手が、切替前の大会日でCM3種目へエントリーすると、C4が新規付与され`{C4, CM2}`という
+  対応外ペアが生成される）。相手系統の保有確認（重複付与の予防が目的で`apply_date`の下限を
+  設けないのが正しい）とは目的が異なるため、意図的に別ヘルパーとする（Requirement 11.4）。
 
 ### Model層
 
@@ -587,7 +727,9 @@ interface CategoryLineageLinkerEntrySupplement {
 「付与見送り」として扱い、Requirement 6の通知経路で伝達する。**【第2版】** 昇格連動・是正
 バッチでの資格年齢未達も同様に「付与見送り」として扱うが、通知経路は各呼び出し元の既存パターン
 に従う（昇格連動＝ログのみ、是正バッチ＝レポート明細）。いずれも昇格処理・是正バッチの実行
-そのものを失敗させない（Requirement 8.2, 9.3）。
+そのものを失敗させない（Requirement 8.2, 9.3）。**【第3版】** エントリー側保有カテゴリーとの
+不一致（`SKIPPED_ENTRY_SIDE_MISMATCH`）も同様に「付与見送り」として扱い、Requirement 6の
+通知経路で伝達する（Requirement 11.3）。
 
 ### Monitoring
 既存の`CakeLog`スコープ運用（jcx-lineage-lock-2026-27の`jcx_lineage_lock`スコープ相当）に
@@ -601,7 +743,15 @@ interface CategoryLineageLinkerEntrySupplement {
   対象外カテゴリーの3パターン
 - `CategoryLineageLinker::supplementPairedCategoryOnEntryRegistration()`: 正常付与、相手系統
   既保有（正しいペア/対応外ペア/重複の3パターン）でのスキップ、資格年齢未達でのスキップ、
-  元ME1特例経由でのC1付与
+  元ME1特例経由でのC1付与。**【第3版】** エントリー側保有カテゴリーとの不一致でのスキップ
+  （Requirement 11.1）、エントリー側が無保有または種目の対応カテゴリーと一致する場合は
+  通常どおり判定が継続すること（Requirement 11.2）。**【第4版】** エントリー側に対応先を
+  含む複数カテゴリー（重複保有・不一致カテゴリーとの同席）が存在する場合、挿入順によらず
+  決定的に判定が継続すること（round 2レビュー指摘の回帰確認）。**【第5版】** エントリー側の
+  保有確認が`apply_date <= $atDate`を境界とすること: `apply_date`が$atDateより後（未発効）の
+  カテゴリーは保有集合から除外されること、`apply_date`が$atDate以前かつ`cancel_date`が
+  $atDate以降または未設定のカテゴリーは含まれること（Requirement 11.4、round 3レビュー
+  指摘の回帰確認）
 - **【第2版】** `CategoryLineageLinker::isAgeEligibleForCategory()`: 資格年齢ちょうど・1日前・
   1日後の境界値、CM1〜CM4（35歳）・C1〜C4（19/17/15/13歳）それぞれでの判定
 - **【第2版】** `CategoryLineageLinker::propagateLinkedPromotion()`（拡張分）: 相手系統が空かつ

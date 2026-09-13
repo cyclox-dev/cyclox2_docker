@@ -1,23 +1,23 @@
 {
   "feature_name": "entry-auto-category-2026-27",
   "created_at": "2026-09-07T14:20:20Z",
-  "updated_at": "2026-09-09T13:50:34Z",
+  "updated_at": "2026-09-13T00:00:00Z",
   "language": "ja",
   "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
       "approved": true,
-      "approved_at": "2026-09-09T13:04:57Z",
-      "revision": 2,
-      "revision_note": "第2版（2026-09-09承認）。年齢ガードの適用範囲拡大（Requirement 8, 9, 10を新設）。propagateLinkedPromotion()とcatracer-cleanup-2026-27の是正バッチへの資格年齢ガード追加を対象に含め、新規選手CSV登録・change_emは対象外と明示。第1版（2026-09-07承認）はエントリー時補完（Requirement 1-7）のみが対象だった。詳細はagreement-log.md参照。"
+      "approved_at": "2026-09-10T00:30:00Z",
+      "revision": 5,
+      "revision_note": "第5版（2026-09-10承認）。タスク2.1 round 3レビューでの実証指摘（apply_date未発効の切替予定カテゴリーまで「現在の保有」とみなされ、正常なカテゴリー切替の途中で本機能自身が新たな対応外ペアを生成する）を受け、Requirement 11.4を改訂。エントリー側の保有確認基準を「Requirement 1と同一」から「apply_date <= $atDateで絞り込む独自基準」へ分離。第4版（2026-09-10承認）は存在判定への変更とCyclox全体方針の明文化が対象だった。2026-09-13、round 4で見つかった残存シナリオを人間が調査のうえ受容リスクとして注記追加（Acceptance Criteria文言は無変更のため版数据え置き、再承認ゲートは不要。決定事項#9）。"
     },
     "design": {
       "generated": true,
       "approved": true,
-      "approved_at": "2026-09-09T13:09:18Z",
-      "revision": 2,
-      "revision_note": "第2版（2026-09-09承認、PR#69確認のうえ未マージのまま承認）。propagateLinkedPromotion()内部への資格年齢チェック挿入（既存戻り値状態にskippedAgeIneligibleを追加）、CatRacerCleanupShell::__applyFixDecision()への同様の挿入、資格年齢判定の共通関数isAgeEligibleForCategory()を新設。いずれも既存メソッドの呼び出し元インターフェースは維持。レビューゲート（要件トレーサビリティ34件）通過済み。"
+      "approved_at": "2026-09-10T00:30:00Z",
+      "revision": 5,
+      "revision_note": "第5版（2026-09-10承認）。エントリー側保有確認専用のapply_date絞り込み付きヘルパー__findCategoryCodesEffectiveAsOfDateOnSide()を新設。相手系統確認が使う既存のapply_date下限なしヘルパーとは分離。round 3レビューで実証された対応外ペア生成バグを解消。第4版（2026-09-10承認）はfind('all')ベースの存在判定への変更が対象だった。"
     },
     "tasks": {
       "generated": true,
