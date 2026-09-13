@@ -55,9 +55,14 @@ docker exec cyclox2_svr bash -lc \
   "cd /var/www/html/app && ../lib/Cake/Console/cake cat_racer_cleanup cleanup '' '' logonly"
 ```
 
-集計行（`検出選手数 FIX MANUAL DUP_ONLY OK 終了件数 付与件数`）を記録する。
+集計行（`検出選手数 FIX MANUAL DUP_ONLY OK 終了件数 付与件数 資格年齢未達見送り件数`。
+最後の「資格年齢未達見送り件数」はentry-auto-category-2026-27 spec タスク5.2で追加された、
+新規付与（相手系統への自動付与）が資格年齢未達により見送られた選手の件数）を記録する。
 **MANUAL判定の選手一覧を専用ログから抽出し、人間が個別に確認する**
 （出走実績なし・系統判定不能・同日両系統タイ等、自動是正しない理由が明細に付く）。
+**資格年齢未達見送り（明細行に「【資格年齢未達のため付与見送り】」が付く）は自動是正の対象外**
+（正系統維持・違法カテゴリーの終了は通常どおり実行されるが、新規付与のみ見送られる。
+FIX判定のまま完了しているため再実行しても状態は変わらない）。
 
 **DUP_ONLY（完全重複起因）判定の選手は本バッチの対象外。** 既存の
 `OneTimeShell::setupDuplicatedCatRacerDeleted()` 等、重複是正の既存手段で別途対応する

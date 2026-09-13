@@ -317,7 +317,9 @@ sequenceDiagram
         else 保有集合が空、または種目の対応カテゴリーを含む（他の不整合な保有が同席していても可）
             Linker->>Linker: resolveLinkedTarget() で相手系統の対応カテゴリーを解決
             Linker->>CR: 相手系統に有効保有があるか確認
-            alt 相手系統に何か有効保有している
+            alt 相手系統の保有が連動先と一致（正しいペアが既に成立）【2026-09-13決定事項#13】
+                Linker-->>ER: NO_SUPPLEMENT_ALREADY_VALID
+            else 相手系統の保有が連動先と不一致（対応外ペア）
                 Linker-->>ER: SKIPPED_ALREADY_OCCUPIED
             else 相手系統が完全に空
                 Linker->>Linker: 対応カテゴリーの資格年齢要件を確認
@@ -583,16 +585,37 @@ interface CategoryLineageLinkerEntrySupplement {
 
 | Field | Detail |
 |-------|--------|
-| Intent | 保存成功後に対応ペア補完をトリガーし、見送り結果を警告として蓄積する |
-| Requirements | 5.1, 5.2, 5.3, 6.1, 6.2, 6.3 |
+| Intent | 保存成功後に対応ペア補完をトリガーし、見送り結果のうち画面/API配信対象のものを警告として蓄積する |
+| Requirements | 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3 |
 
 **Responsibilities & Constraints**
 - `afterSave()`は新規登録、および`entry_category_id`の変更を伴う更新の場合にのみ補完処理を
-  トリガーする（既存の`beforeSave()`の`__isCategoryLineageRelevantSave()`相当の判定条件を
-  流用）。
+  トリガーする。**【2026-09-13訂正】** 当初「既存の`beforeSave()`の
+  `__isCategoryLineageRelevantSave()`相当の判定条件を流用」としていたが、そのメソッドは
+  保存**前**の`empty($this->id)`で新規作成を判別する実装であり、保存**後**に呼ばれる
+  `afterSave()`では新規作成でも`$this->id`が確定済みのため同じ判定式が使えない。CakePHPが
+  渡す`$created`引数を用いる別実装（`__isCategorySupplementRelevantSave($created)`）とする。
+- **【2026-09-13追記・レビュー指摘、round 2レビューでの訂正含む】** `EntryRacer`は
+  `Utils.SoftDelete`ビヘイビアを使用しており、ソフト削除は`beforeDelete()`内部で`save()`を
+  呼ぶ形で実装されている。したがって`afterSave($created=false)`は削除操作でも発火する。
+  トリガー条件判定は、送信データの`deleted`が**真値**（削除操作の保存であることを示す）の
+  場合を明示的に除外し、削除自体が新規付与のトリガーにならないようにする（Requirement 5.3）。
+  【判定方式についての注意】`deleted`**キーの存在**では判定できない: CakePHPは通常の保存でも
+  保存後に`$this->data`へ`deleted => '0'`（スキーマ既定値）を反映するため、キー存在だけを
+  見ると通常の保存まで誤って除外してしまう（実測で確認済み）。値の真偽（`!empty()`）で
+  判定する必要がある。
+- **【2026-09-13追記・決定事項#11】** 出走ステータスが「オープン」（`RacerEntryStatus::$OPEN`）
+  のエントリーは補完判定の対象外とする（Requirement 5.4）。既存の`ResultParamCalcComponent`が
+  昇格・ポイント集計からオープン参加を一貫して除外している扱いに合わせる。
 - 補完処理の例外は`try/catch`で握りつぶし、ログに記録したうえで保存結果に影響させない
   （`CategoryRacer::afterSave()`と同じ方針）。
 - エントリーの取消・削除では、既に付与された対応カテゴリーを取り消さない（Requirement 5.3）。
+- **【2026-09-13追記・決定事項#10・#12・#13】** `SKIPPED_NOT_SINGLE_CATEGORY`（プール種目）・
+  `SKIPPED_AGE_INELIGIBLE`（資格年齢未達）・`NO_SUPPLEMENT_ALREADY_VALID`（相手系統に既に
+  正しい連動先を保有＝補完不要）の3つの見送り（または補完不要）理由は、警告蓄積（
+  `__categorySupplementWarnings`）の対象外とする。「Error Categories and Responses」節の
+  区分が正であり、いずれもサーバログ（`entry_auto_category`スコープ）にのみ記録し、
+  `__recordCategorySupplementOutcome()`内で早期returnする（Requirement 6.4, 6.5）。
 
 **Dependencies**
 - Outbound: CategoryLineageLinker（P0）
@@ -601,7 +624,10 @@ interface CategoryLineageLinkerEntrySupplement {
 
 ##### State Management
 - State model: 警告蓄積は`CategoryRacer::getLineageWarnings()`と同型の一時プロパティ
-  （リクエスト内のみ・永続化しない）
+  （リクエスト内のみ・永続化しない）。**【2026-09-13追記・レビュー指摘】**
+  `CategoryRacer::__addLineageWarning()`と同様、`racer_code|status|category_code`を
+  キーにした重複排除を行う（一括保存で同一警告が複数回検知され、画面Flash・API応答に
+  重複表示されることを防ぐ）。
 - Persistence & consistency: 補完付与自体は`category_racers`テーブルへの新規行追加のみ
 - Concurrency strategy: 既存の`CategoryRacer`保存と同じ整合性モデルに従う（追加の排他制御なし）
 
@@ -724,17 +750,57 @@ interface CategoryLineageLinkerEntrySupplement {
 **System Errors**: 補完判定・付与処理中の予期しない例外 → ログ記録のうえ処理継続（保存済みの
 エントリーはそのまま有効）。
 **Business Logic Errors**: 資格年齢未達・相手系統既保有・プール種目 → いずれもエラーではなく
-「付与見送り」として扱い、Requirement 6の通知経路で伝達する。**【第2版】** 昇格連動・是正
-バッチでの資格年齢未達も同様に「付与見送り」として扱うが、通知経路は各呼び出し元の既存パターン
-に従う（昇格連動＝ログのみ、是正バッチ＝レポート明細）。いずれも昇格処理・是正バッチの実行
-そのものを失敗させない（Requirement 8.2, 9.3）。**【第3版】** エントリー側保有カテゴリーとの
-不一致（`SKIPPED_ENTRY_SIDE_MISMATCH`）も同様に「付与見送り」として扱い、Requirement 6の
-通知経路で伝達する（Requirement 11.3）。
+「付与見送り」として扱う。**【2026-09-13追記・タスク3.1実装時の明確化、round 2レビューで
+FAILUREを追記、決定事項#12で資格年齢未達を除外、決定事項#13で相手系統に正しいペアを既に保有
+している場合を除外】** Requirement 6の画面Flash・API応答への警告配信対象とするのは、相手系統に
+**対応外ペアを**既保有（`SKIPPED_ALREADY_OCCUPIED`）・エントリー側保有カテゴリーとの不一致
+（`SKIPPED_ENTRY_SIDE_MISMATCH`）と、新規作成の保存自体が失敗した場合（`FAILURE`、
+Requirement 6.2の「失敗内容を記録」に対応）に限る。
+
+**画面/API配信対象外（ログのみ記録）とする3つの見送り（または補完不要）理由**:
+- プール種目・対応表対象外種目（`SKIPPED_NOT_SINGLE_CATEGORY`）: 本機能の対象外というだけで
+  あり（Requirement 4.2: 既存の主催者手動運用に影響を与えない）、全エントリーの1.8%を占める
+  ため画面/API応答への警告として出すと運営者にとってノイズになる。
+- **【決定事項#12・2026-09-13】** 資格年齢未達（`SKIPPED_AGE_INELIGIBLE`）: 実データ測定で
+  エリート系種目エントリーの約28%（プール種目除外の15倍の規模）で発生することが判明した。
+  資格年齢未達での見送りは「本機能が資格のない選手への誤付与を正しく防いだ結果」であり、
+  運営者の対応を要する異常事態ではないため、`SKIPPED_NOT_SINGLE_CATEGORY`と同様にログのみの
+  記録に留める（Requirement 3.2改訂）。
+- **【決定事項#13・2026-09-13】** 相手系統に既に対応表上の正しい連動先を保有＝補完不要
+  （`NO_SUPPLEMENT_ALREADY_VALID`）: タスク4.1/4.2のround 4レビューで、`SKIPPED_ALREADY_OCCUPIED`
+  が「対応表上の正しいペアを既に保有している」場合と「対応外ペアを保有している」場合を区別
+  していなかったことが指摘された。開発DB実測では、対応ペアが一度成立した後の選手の再エントリー
+  （1人あたり平均5.7件のエントリーのうち複数回目にあたるもの）の大半で恒常的に警告が発生しうる
+  構造だった（実データでは0.7%だが、本機能が意図どおり機能してペアが埋まった後は割合が跳ね
+  上がる）。既に正しいペアが成立している状態は運営者の対応を要しない「既に正常な状態」であり、
+  対応外ペア（要対応）とは区別する必要があるため、`CategoryLineageSupplementResult`に新状態
+  `NO_SUPPLEMENT_ALREADY_VALID`を新設し、判定式は「相手系統の既存保有カテゴリーコード ===
+  連動先カテゴリーコード」とする（一致すれば`NO_SUPPLEMENT_ALREADY_VALID`、不一致であれば
+  従来どおり`SKIPPED_ALREADY_OCCUPIED`）。
+  なお本機能で主に想定される実運用の入力経路は「外部連携クライアント（cyclox2app等）からの
+  エントリーデータアップロードAPI」（`ApiController::execAddEntry()`、タスク4.2）であり、
+  管理画面（タスク4.1）は主催者による個別の手動登録・修正時に限定的に使われる想定である
+  （人間の運用知識に基づく前提。詳細な使用比率は本specの検証範囲外）。
+
+いずれもサーバログへの記録は引き続き行う（事後追跡性は維持する）。**【第2版】**
+昇格連動・是正バッチでの資格年齢未達も
+同様に「付与見送り」として扱うが、通知経路は各呼び出し元の既存パターンに従う（昇格連動＝
+ログのみ、是正バッチ＝レポート明細）。いずれも昇格処理・是正バッチの実行そのものを失敗させ
+ない（Requirement 8.2, 9.3）。**【第3版】** エントリー側保有カテゴリーとの不一致
+（`SKIPPED_ENTRY_SIDE_MISMATCH`）も同様に「付与見送り」として扱い、Requirement 6の通知経路
+で伝達する（Requirement 11.3）。
 
 ### Monitoring
 既存の`CakeLog`スコープ運用（jcx-lineage-lock-2026-27の`jcx_lineage_lock`スコープ相当）に
 倣い、専用ログスコープ（例: `entry_auto_category`）を用いる。**【第2版】** 昇格連動での見送りも
-同スコープへ記録する。
+同スコープへ記録する。**【2026-09-13追記・レビュー指摘、round 2レビューでの訂正含む】**
+`app/Config/bootstrap.php`に`jcx_lineage_lock`と同様の専用ファイルストリーム
+（`'scopes' => array('entry_auto_category')`）を`CakeLog::config()`で登録する。目的は
+「専用ファイルへの集約」であり「共用ログからの分離」ではない点に注意: 既存の`debug`/`error`
+ストリームは`scopes`を指定していないため常に全スコープの書き込みにマッチし、本設定を追加
+登録しても`SKIPPED_NOT_SINGLE_CATEGORY`（全エントリーの1.8%で発生）等のログは引き続き
+`debug.log`/`error.log`にも出力され続ける（実測で確認済み）。共用ログへの出力量自体を
+抑えたい場合は別途の対応が必要。
 
 ## Testing Strategy
 
@@ -769,7 +835,9 @@ interface CategoryLineageLinkerEntrySupplement {
 
 ### E2E/UI Tests
 - 管理画面での個別エントリー登録 → 対応ペアが補完され、Flashに何も表示されない（正常系）
-- 資格年齢未達の選手のエントリー登録 → 保存は成功するが、見送りのFlashが表示される
+- 資格年齢未達の選手のエントリー登録 → 保存は成功し、Flash/API応答には何も表示されない
+  （2026-09-13決定事項#12によりFlash非表示に変更。サーバログ（`entry_auto_category`
+  スコープ・`LOG_NOTICE`）にのみ記録されることを確認する）
 - **【第2版】** リザルトアップロードで昇格が発生し、対象選手が資格年齢未達 → リザルト取込は
   成功し、対象選手の相手系統は変化しない
 - **【第2版】** 是正バッチ（`cleanup`サブコマンド）実行で資格年齢未達の選手を含む → バッチは
