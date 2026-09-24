@@ -105,6 +105,7 @@ Skills with "Parallel Research" sections list independent work items that benefi
 8. **`main` への直接コミット禁止。** ブランチ→push→PR。詳細は [docs/sdd/rules/branching-policy.md](docs/sdd/rules/branching-policy.md)。
 9. **環境越境（Windows × WSL）の確認。** 実行環境が Windows で、かつ作業対象が WSL パス（`\\wsl.localhost\...` / `\\wsl$\...`）の場合は、**そのセッションで最初の自動操作を行う直前に1回だけ**、差分懸念の警告と「WSL内ターミナルから `claude` を起動して作業する」回避策を提示し、このまま続行してよいか確認する。詳細は [docs/sdd/rules/environment-boundary-policy.md](docs/sdd/rules/environment-boundary-policy.md)。（越境でない／非Windowsでは何もしない）
 10. **【絶対軸】設計・実装などの実作業には、いかなる状況でも人間の許可なしに着手しない。** 標準ルートでも逸脱・例外・緊急・手戻りでも、「壁打ち→承認→設計→承認→実装」の承認ゲートを安全の基本軸として外さない。実装フェーズ（tasks 承認後）でも、承認済み要件・設計の前提崩れや、設計に無い公開インターフェース追加（CLI・API・ファイル形式・契約・依存）が必要になったら実装を止めて再承認を得る。**逸脱ルートからのリカバリーは必ず「人間への状況共有→確認→承認」を経てから修正の設計・実装に入る**（黙って修正しない・事後記録だけで進めない）。前段の誤りが判明したら前段ゲートに戻り `spec.json` の該当 approvals を false に戻して再承認。ただし承認済みスコープ内の実行はその承認で許可済み（些末な実装詳細に新ゲートは不要）。詳細は [docs/sdd/workflow.md](docs/sdd/workflow.md) の「承認ゲートの原則」。
+11. **バグ改修作業では、根本原因と再発防止策が確定した時点で`.kiro/steering/`への反映を義務とする。** spec固有の`agreement-log.md`等への記録だけでは他specへの拘束力がないため不十分。将来の別specでも再発しうる汎用的な原因（外部情報源の誤読パターン、特定データ構造の誤解等）は、既存steeringファイルへの追記または`/kiro-steering-custom`での新規作成で反映する。詳細は [docs/sdd/rules/steering-update-policy.md](docs/sdd/rules/steering-update-policy.md)。
 
 ### ベースルールの所在
 - ワークフロー: [docs/sdd/workflow.md](docs/sdd/workflow.md)
@@ -113,6 +114,7 @@ Skills with "Parallel Research" sections list independent work items that benefi
 - ブランチ方針: [docs/sdd/rules/branching-policy.md](docs/sdd/rules/branching-policy.md)
 - 環境越境ポリシー（Windows×WSL）: [docs/sdd/rules/environment-boundary-policy.md](docs/sdd/rules/environment-boundary-policy.md)
 - 秘密情報ポリシー（ハードコード禁止）: [docs/sdd/rules/security-policy.md](docs/sdd/rules/security-policy.md)
+- 根本原因・再発防止策のsteering反映ポリシー: [docs/sdd/rules/steering-update-policy.md](docs/sdd/rules/steering-update-policy.md)
 - 成果物二層化ポリシー（一次=正本/二次=派生ビュー）: [docs/sdd/deliverables-policy.md](docs/sdd/deliverables-policy.md)
 - 各テンプレート: [docs/sdd/templates/](docs/sdd/templates/)
 
