@@ -1,0 +1,29 @@
+{
+  "feature_name": "lineage-propagation-idempotency-2026-27",
+  "created_at": "2026-09-24T00:00:00Z",
+  "updated_at": "2026-09-25T00:00:00Z",
+  "language": "ja",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true,
+      "revision": 2,
+      "revision_note": "第2版（2026-09-24）。第1版承認後のギャップ分析で、Requirement 3が前提としていた「順位訂正で昇格先カテゴリーが変わる」ケースが実運用では発生しない（昇格先は種目ごとに固定）ことが判明したため、Requirement 3を「後始末の対象範囲の限定」へ再構成。実在が確認された別欠陥（再取込で昇格対象者が変わり前回の昇格が残る。本欠陥とは独立・旧規約時代から存在）はスコープ外として別specへ切り出す。要再承認。",
+      "approved_at": "2026-09-24T00:00:00Z"
+    },
+    "design": {
+      "generated": true,
+      "approved": true,
+      "revision": 2,
+      "revision_note": "第2版（2026-09-25）。実装後の独立レビューで、後始末（前回作成行の削除）を保有判定より前に無条件実行する第1版のKey Decisionが、見送り経路（未来日保有・資格年齢未達）で「行を消して何も作らない」純損失を生むことが実証された（先行大会のリザルトを後続大会の取込後に再取込すると到達）。対象の特定は保有判定前・削除は新規作成の直前へ分離し、対象をcancel_date未設定の行に限定、新規作成失敗時は復元する方式へ改訂。あわせてSKIPPED_FUTURE_DATED_HOLDINGの発生条件の評価（「エントリー補完に限られる・頻度は低い」）が誤りだった点を訂正。要再承認。",
+      "approved_at": "2026-09-25T00:00:00Z"
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true,
+      "approved_at": "2026-09-25T00:00:00Z"
+    }
+  },
+  "ready_for_implementation": true
+}
