@@ -1,0 +1,27 @@
+{
+  "feature_name": "ga4-data-api-integration",
+  "created_at": "2026-08-09T06:45:09Z",
+  "updated_at": "2026-08-15T14:00:00Z",
+  "language": "ja",
+  "phase": "requirements-approved",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true,
+      "approved_at": "2026-08-15T14:00:00Z",
+      "reverted_at": "2026-08-15T00:00:00Z",
+      "revert_note": "issue #41起票時の調査で ga4-automation-handover.md（origin/mainにマージ済み）を確認し、承認済み要件に前提崩れとカバレッジ欠落4件が判明したため承認を差し戻し。詳細はagreement-log.md参照。",
+      "revised_at": "2026-08-15T13:00:00Z",
+      "revision_note": "差し戻し後に要件を改訂（要件数13→14）。reviewerサブエージェントによる独立レビューを3巡実施し、指摘計25件（1巡目Major5+Minor9、2巡目Major1+Minor5、3巡目Minor5）をすべて反映。3巡目でPASS判定を得たうえで2026-08-15に人間が再承認。"
+    },
+    "design": {
+      "generated": false,
+      "approved": false
+    },
+    "tasks": {
+      "generated": false,
+      "approved": false
+    }
+  },
+  "ready_for_implementation": false
+}
