@@ -27,7 +27,7 @@
     ロジックを実装する。既存の有効カテゴリーは対応ペアが正しいか不整合かを問わず一切cancelしない
   - 資格年齢要件を満たさない場合は見送りとして扱い、見送り理由を後続処理が取得できる形で返す
   - 正常付与、相手系統既保有（正しいペア/対応外ペア/重複保有の3パターン）でのスキップ、
-    資格年齢未達でのスキップ、元ME1特例経由でのC1付与のいずれも単体テストがgreenになることを
+    資格年齢未達でのスキップ、元ME1特例経由でのC1付与（**第6版でE1により置換**）のいずれも単体テストがgreenになることを
     観測可能な完了条件とする
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 3.2, 4.2, 7.1_
   - _Boundary: CategoryLineageLinker_
@@ -124,6 +124,22 @@
     完了条件とする
   - _Requirements: 1.1, 6.4, 8.2, 9.2, 10.1, 10.2, 10.3, 10.4_
   - _Depends: 7.1, 6.1, 5.2_
+
+- [x] E1. 第6版: ME1保有者のマスターズ系統エントリーで補完しない（TDD）
+  - **me-mm-linkage-2026-27 tasks.md の第3版タスク（S1〜S7）と同じブランチ・同じPRで実装する。**
+    付与先を`pairedCategory()`で直接求める置き換えは同 S3 で行う
+  - `supplementPairedCategoryOnEntryRegistration()`: 相手系統の保有確認で、エントリー先が
+    マスターズ系統かつ相手系統（エリート側）の有効保有に`C1`が含まれる場合、最初に
+    `noSupplementAlreadyValid('C1')` を返す分岐を追加する
+  - テストを先に書き換える: `testSupplementAppliesFormerElite1SpecialCaseGrantingC1InsteadOfC2` を
+    「過去にC1を持つCM1のみの選手がCM1種目にエントリーするとC2を付与」に反転。design 第6版の
+    判定表のうちC1を含む3行（C1＋CM1、C1のみ、C1＋CM3）で補完不要・行数不変・配信対象外を追加
+  - `EntryAutoCategoryIntegrationTest` に、`/api/add_entry.json` 経路で過去にC1を持つCM1のみの選手を
+    CM1種目に登録するとC2が付与されC1が付与されないこと（本番事象の回帰防止）を追加
+  - Observable: 追加・反転したテストがgreen。`EntryRacer` 経由の警告配信テストが無変更でgreen
+  - _Requirements: 1.5, 2.2_
+  - _Boundary: CategoryLineageLinker（supplement）_
+  - _Depends: me-mm-linkage-2026-27 S3_
 
 ## Implementation Notes
 

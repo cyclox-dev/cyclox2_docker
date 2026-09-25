@@ -5,6 +5,8 @@
 > 判定済みで、submodule 側 PR [cyclox2web#13](https://github.com/cyclox-dev/cyclox2web/pull/13)
 > として発行済み（マージ保留中）。
 >
+> **第3版（2026-09-25）**: 「第3版 改訂タスク」節（S1〜S7）を追加。
+>
 > **本改訂は「ゼロからの作り直し」ではなく、既に存在する実装への差分修正である。**
 > 下記「第1版タスクの第2版における扱い」で流用・修正の別を明示し、
 > 「第2版 改訂タスク」に実際に着手すべき作業を列挙する。
@@ -136,6 +138,127 @@
   - Observable: 5 spec 間で「不整合は拒否されるのか警告されるのか」の記述が一貫している
   - _Requirements: -（spec 間整合。roadmap.md「Requirement 3 方針転換」節に対応）_
   - _Depends: なし（R1〜R6 と並行可能）_
+
+## 第3版 改訂タスク（2026-09-25）
+
+> requirements 第3版・design 第3版（「第3版 設計改訂」節）に基づく差分修正。本番で判明した
+> CM1エントリー契機のC1誤付与3件の再発防止と、連動の非降格原則（Requirement 4.9）の導入。
+> entry-auto-category-2026-27 第6版のタスク E1 と同じブランチ・同じPRで実装する
+> （`resolveLinkedTarget()`の削除がエントリー補完にも及ぶため分離できない）。
+> Tier 2（tester → reviewer）。すべてTDD（テストを先に書き換え・追加し、失敗を確認してから実装）。
+
+- [x] S1. 同じ系統の中での順位判定を追加する（TDD）
+  - `CategoryLineageMap::rankOf()` を新設する（C1=1〜C4=4、CM1=1〜CM3=3、管理対象外はnull）
+  - `CategoryLineageMapTest` に全コードと管理対象外のテストを先に追加する
+  - Observable: `rankOf()` のテストがgreen。既存の `pairedCategory()` のテストが無変更でgreen
+  - _Requirements: 4.9_
+  - _Boundary: CategoryLineageMap_
+  - _Depends: なし_
+
+- [x] S2. ME1保有者の判定を追加し、元ME1判定を削除する（TDD）
+  - `CategoryLineageLinker::holdsElite1AsOf($racerCode, $atDate)` を新設する（基準日時点で有効な
+    C1行があるか。論理削除行は除外）
+  - `isFormerElite1()` のテスト群（`CategoryLineageLinkerTest` 176〜219行目付近）を
+    `holdsElite1AsOf()` のテストへ置き換える: 有効なC1あり／取消済みC1のみ（false）／論理削除のみ
+    （false）／基準日より後に発効するC1のみ（false）／基準日にcancelされるC1（true）
+  - `isFormerElite1()` を削除する（S3・S4で呼び出し元を置き換えた後に削除してもよい）
+  - Observable: 置き換えたテストがgreen。本番コードに `isFormerElite1` の参照が残っていない（grep）
+  - _Requirements: 5.1_
+  - _Boundary: CategoryLineageLinker_
+  - _Depends: なし_
+
+- [x] S3. 連動先の特例を撤廃し、非降格原則を実装する（TDD）
+  - `resolveLinkedTarget()` を削除し、`propagateLinkedPromotion()` と
+    `supplementPairedCategoryOnEntryRegistration()` は `CategoryLineageMap::pairedCategory()` を
+    直接使う（エントリー補完側はこの置き換えのみ。C1保有者の分岐は E1）
+  - `propagateLinkedPromotion()`: 相手系統で基準日時点に有効な行をすべて取得する helper
+    `__findEffectiveCategoryRacersOnSide()` を新設して `__findActiveCategoryRacerOnSide()` と
+    置き換え、最上位の行と連動先を `rankOf()` で比べる。同位→`NO_PROPAGATION_ALREADY_VALID`、
+    上位→`NO_PROPAGATION_HIGHER_HELD`（新設）、下位または無し→資格年齢ガードのうえ、最上位の行
+    だけをcancelして連動先を作成
+  - `CategoryLineagePropagationResult` に `NO_PROPAGATION_HIGHER_HELD`・
+    `noPropagationHigherHeld($heldCategoryCode)`・`getHeldCategoryCode()` を追加する
+  - テストを先に書き換える: `resolveLinkedTarget()` のテスト群を削除、
+    `testPropagateLinkedPromotionAppliesFormerElite1SpecialCaseEndToEnd` を「過去にC1を持つ選手の
+    エリート側はC2のまま」に反転、`...DoesNotDuplicateHoldPointsOnFormerElite1EndToEndUpdate` を
+    連動が起きる別の組み合わせに置き換え、design 第3版の判定表8行と「相手系統に複数の有効行が
+    ある場合は最上位で比較し、cancelは最上位の1行だけ」を追加
+  - Observable: 判定表の全行がテストでgreen。C1＋CM2の選手がCM2→CM1に昇格してもC1が残る
+  - _Requirements: 4.3, 4.4, 4.9, 5.2, 5.3_
+  - _Boundary: CategoryLineageLinker, CategoryLineagePropagationResult_
+  - _Depends: S1_
+
+- [x] S4. 手動でC1を付けたときの警告判定を新しい定義に揃える（TDD）
+  - `CategoryRacer::beforeSave()`: 保存する行がC1のときだけ、保存直前の状態で
+    `holdsElite1AsOf()` を評価して記録する（判定日は送信された`apply_date`→保存済みの
+    `apply_date`→本日の順）
+  - `afterSave()` のME1特例ゲート: 「集合がちょうど`{C1, CM1}`、保存した行がC1、LANKUPでない、
+    保存直前にME1保有者でない」ときだけ警告する。保存した行がC1以外の場合の`isFormerElite1()`による
+    補完は削除する。警告文言を「ME1（C1）を保有していなかった選手に…」へ改める
+  - テストを先に書き換える: `testFormerElite1WithActiveCm1ProducesNoWarning` を「過去にC1を持つが
+    現在は持たない選手に、CM1保有中にC1を手動付与すると警告」と「C1保有中の選手にCM1を手動付与
+    しても警告なし」に分ける。既存のC1行の更新（備考修正）で警告が出ないことを追加する
+  - Observable: `CategoryRacerTest` と `CategoryRacersControllerTest`（change_em）がgreen
+  - _Requirements: 5.4, 5.5, 6.4_
+  - _Boundary: CategoryRacer model_
+  - _Depends: S2_
+
+- [x] S5. 昇格処理側の期待値反転と、非降格で見送ったときのログ（TDD）
+  - `ResultParamCalcComponent` で `propagateLinkedPromotion()` を呼ぶ2か所に、
+    `NO_PROPAGATION_HIGHER_HELD` のときのINFOログ（選手コード・連動先・保有カテゴリー）を追加する
+  - テストを先に書き換える: `testMastersCm2ToCm1PropagatesEliteToC1ForFormerMe1` を「過去にC1を
+    持つC3＋CM2の選手がCM1に昇格するとエリート側はC2」に反転。C1＋CM2の選手のCM2→CM1昇格で
+    C1が残ること、C2＋CM3の選手のCM3→CM2昇格でC2が残ることを追加
+  - Observable: `ResultParamCalcComponentTest` がgreen
+  - _Requirements: 4.3, 4.9, 10.6_
+  - _Boundary: ResultParamCalcComponent_
+  - _Depends: S3_
+
+- [x] S6. 結合検証と回帰確認
+  - `MeMmLinkageIntegrationTest`・`EntryAutoCategoryIntegrationTest` を含む関連スイート全体を
+    実行してgreenを確認する（第2版の実装結果に記録したスイート一式）
+  - S1〜S5・E1で追加したテストについて、判定ロジックを一時的に壊して失敗することを確認する
+    （ミューテーション確認。比較の向き、最上位の選択、C1保有者の分岐、beforeSaveの記録条件）
+  - 結果を `.kiro/specs/me-mm-linkage-2026-27/test-results.md` に記録する
+  - 本番と同じ誤付与が起きないことを、結合試験項目として
+    `.kiro/specs/me-mm-linkage-2026-27/integration-test-checklist.md` に残す
+    （ステージング等で確認する手順: 過去にC1を持つCM1のみの選手をCM1種目へAPI登録しC2が付く等）
+  - Observable: 全スイートgreen、ミューテーションで各追加テストが失敗すること
+  - _Requirements: 4.9, 5.1〜5.5（entry-auto-category 1.5, 2.2）_
+  - _Depends: S1〜S5, E1_
+
+- [ ] S7. 検証とPR
+  - tester → reviewer の順に委譲する（Tier 2。並列にしない）
+  - cyclox2web（submodule）でPRを作成し、マージ後にこのリポジトリでsubmoduleの参照先を更新するPR
+  - コミットは区切りごとに提示し、人間が判断・実行する
+  - _Depends: S6_
+
+**実装メモ（第3版、2026-09-25）**
+- S3: 判定表の各行のテストは、共有フィクスチャに対応外ペアを追加すると是正バッチのテスト
+  （`CatRacerCleanupShellTest`の全件検出）に影響するため、各テスト内で行を作成する方式にした。
+- S3: `...DoesNotDuplicateHoldPointsOnFormerElite1EndToEndUpdate` は、R0017で連動が起きなくなったため
+  「連動しない場合も保持ポイントが変化しない」確認に変えた（連動する場合は既存テスト(f)が担保）。
+- S5: 非降格時のINFOログは、ログ内容をアサーションする既存の前例がないためテストでは検証せず、
+  実行時のログファイルで出力を確認した（test-results.md）。
+- S6: 既存の結合テスト`testPreExistingSameLineageMultipleStillCompletesWithWarning`（C4＋CM1＋CM3の
+  選手のC4→C3昇格）は、Req 4.9によりCM2を作らない期待値へ変更した。第2版は1行だけ取得して
+  cancelしており、CM1が取り消される降格も起こりえた。
+- テストは共有テストDBの競合を避けるため専用スキーマ`cyclox2_test_me1`で実行した（test-results.md）。
+- S3: design・本タスクで`__findEffectiveCategoryRacersOnSide()`（有効行をすべて返す）としていた
+  helperは、`__findTopEffectiveCategoryRacerOnSide()`（最上位の1行を返す）として実装した。挙動は
+  設計どおり（全行を取得して最上位を選ぶ処理をhelper内に閉じた）。同順位の行が複数ある場合
+  （同一カテゴリーの重複保有）はidの小さい行を比較・cancel対象にする（reviewer MINOR-2/3）。
+
+- 2026-09-25: PR #31 作成後に main へマージされた lineage-propagation-idempotency-2026-27（PR #32）と
+  コンフリクトしたため、origin/main をマージして統合した（design.md「lineage-propagation-idempotency-2026-27
+  との統合」参照、人間承認済み）。
+
+**ブランチ（第3版）**: submodule `cyclox2_svr/cyclox2` の最新 main から新しいブランチを切る
+（例: `fix/me1-holder-linkage-2026-27`）。このworktreeではsubmoduleが未初期化のため、実装開始時に
+初期化する。spec文書（本リポジトリ側）は現在のブランチ `claude/cm1-c1-auto-grant-issue-96c683`
+からPRを出す。
+
+**スコープ外**: 誤付与済み3件（category_racers id 268502 / 268546 / 268556）のデータ是正。
 
 ## Implementation Notes
 
