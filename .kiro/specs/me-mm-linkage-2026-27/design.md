@@ -90,6 +90,27 @@
   `CategoryRacer` 経由で新しい判定が効く
 - `CatRacerCleanupJudge`（既にC1を付与しない）、`CatLimitShell`、`OrgUtilController`
 
+### lineage-propagation-idempotency-2026-27 との統合（2026-09-25）
+
+実装中に、同じ `propagateLinkedPromotion()` を書き換える lineage-propagation-idempotency-2026-27
+（cyclox2web PR #32、再取込のたびに連動先の行が増える不具合の修正）が先に main へマージされた。
+両specの要件を満たすよう、次のとおり統合した（人間承認 2026-09-25）。
+- 相手系統の保有の取得は同specの `__findActiveCategoryRacersOnSide()`（`apply_date` の上限なし、
+  未来日で発効予定の行も保有として扱う。同spec Requirement 2.1）を用いる。本書の
+  `__findEffectiveCategoryRacersOnSide()` / 実装時の `__findTopEffectiveCategoryRacerOnSide()` は廃止。
+- 判定順: (1) この取込が前回作成した行を除外（同spec）、(2) 連動先と同じ行があれば何もしない、
+  (3) **保有全体（未来日の行を含む）の最上位が連動先より上位なら何もしない（本spec Requirement 4.9）**、
+  (4) 現在有効な行が無く未来日の行だけなら見送る（同spec `SKIPPED_FUTURE_DATED_HOLDING`）、
+  (5) それ以外は現在有効な行（`apply_date <= $atDate`）のうち最上位の1行を終了し連動先を作成
+  （前回行の作り直し・失敗時の復元は同spec）。
+- (3)で未来日の行も比較対象に含めるのは、同specの「未来日の行も保有とみなす」と揃えるため。
+  例: 現在C3・未来日でC1を保有する選手のCM1昇格で、C3を終了してC2を作ると同系統内の複数保有を
+  新たに生むため、何もしない。同順位の行が複数ある場合は、先に取得した行（`apply_date`昇順・`id`昇順）を採る。
+- 結果クラスの `getHeldCategoryCode()` は両specで共用する（`SKIPPED_FUTURE_DATED_HOLDING` と
+  `NO_PROPAGATION_HIGHER_HELD` のときに保有カテゴリーを返す）。
+- 同specが追加したテストのうち、撤廃された元ME1特例に依存していたもの（過去にC1を持つR0010の
+  CM1昇格で連動先C1を期待）は、連動先をC2へ読み替えた（冪等性という各テストの目的は不変）。
+
 ### 非降格原則の判定表（Requirement 4.9）
 
 | 保有（昇格前） | 昇格 | 連動先 | 相手系統の最上位 | 結果 |

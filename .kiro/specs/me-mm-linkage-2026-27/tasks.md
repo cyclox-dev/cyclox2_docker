@@ -249,6 +249,10 @@
   設計どおり（全行を取得して最上位を選ぶ処理をhelper内に閉じた）。同順位の行が複数ある場合
   （同一カテゴリーの重複保有）はidの小さい行を比較・cancel対象にする（reviewer MINOR-2/3）。
 
+- 2026-09-25: PR #31 作成後に main へマージされた lineage-propagation-idempotency-2026-27（PR #32）と
+  コンフリクトしたため、origin/main をマージして統合した（design.md「lineage-propagation-idempotency-2026-27
+  との統合」参照、人間承認済み）。
+
 **ブランチ（第3版）**: submodule `cyclox2_svr/cyclox2` の最新 main から新しいブランチを切る
 （例: `fix/me1-holder-linkage-2026-27`）。このworktreeではsubmoduleが未初期化のため、実装開始時に
 初期化する。spec文書（本リポジトリ側）は現在のブランチ `claude/cm1-c1-auto-grant-issue-96c683`

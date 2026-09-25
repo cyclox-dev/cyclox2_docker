@@ -102,3 +102,40 @@ Info: 系統間連動（エリート側の追随更新）は、連動先より�
 | MINOR-2 | helper名がdesign/tasksと不一致 | tasks.md実装メモに記録済み |
 | MINOR-3 | 同順位の重複行の選択（idの小さい行）が仕様・テストに無い | tasks.md実装メモに記録済み。有効集合は変わらないため追加対応なし |
 | MINOR-4 | ME1保有者分岐が開催日より後に発効するC1も含める | testerの指摘(B)で受容済み |
+
+## lineage-propagation-idempotency-2026-27（cyclox2web PR #32）との統合後（2026-09-25）
+
+PR #31 作成後に main へマージされた PR #32 とコンフリクトしたため、origin/main をマージして統合した
+（統合方針は design.md「lineage-propagation-idempotency-2026-27 との統合」）。マージコミット `d416a5a`。
+
+| スイート | 統合後 |
+|---|---|
+| `Console/Command/CatRacerCleanupShell` | OK 48 / 267 |
+| `Controller/ApiController` | OK 9 / 37 |
+| `Controller/CategoryRacersController` | OK 11 / 51 |
+| `Controller/Component/ResultParamCalcComponent` | OK 34 / 204 |
+| `Controller/EntryRacersController` | OK 10 / 35 |
+| `Controller/OrgUtilController` | OK 6 / 41 |
+| `Cyclox/Const/CategoryLineageMap` | OK 13 / 71 |
+| `Cyclox/Util/CatRacerCleanupJudge` | OK 31 / 150 |
+| `Cyclox/Util/CategoryLineageLinker` | OK 96 / 327 |
+| `Integration/EntryAutoCategoryIntegration` | OK 6 / 33 |
+| `Integration/MeMmLinkageIntegration` | OK 7 / 68 |
+| `Model/CategoryRacerFixtureData` | OK 8 / 19 |
+| `Model/CategoryRacer` | OK 18 / 86 |
+| `Model/EntryRacer` | OK 19 / 58 |
+| **合計** | **316 テスト、全GREEN** |
+
+統合後のミューテーション確認（Linkerスイート）:
+
+| 壊し方 | 結果 |
+|---|---|
+| 非降格の比較を無効化 | 5件失敗 |
+| 最上位の判定を反転 | 4件失敗 |
+| CM1への昇格連動の連動先をC1に戻す | 16件失敗 |
+| 非降格の比較対象を現在有効な行だけに戻す（統合で決めた判定） | 追加テスト `testPropagateDoesNothingWhenFutureDatedHoldingIsHigherThanTarget` が失敗 |
+
+**実行環境の注記**: 統合の検証中に、ローカルの `cyclox2_mysql` コンテナがメモリ不足で強制終了（OOMKilled）した。
+前回の異常終了で残っていた `mysql.sock` / `mysql.sock.lock` が起動スクリプトの `chown` を失敗させて再起動できなかったため、
+この2ファイルと古い pid ファイルを削除して再起動した（InnoDB のクラッシュリカバリは正常終了、`cyclox2` DB は無事）。
+以降はテスト用コンテナのメモリを `--memory=1g` に制限し、スイートを1つずつ実行した。専用スキーマは `cyclox2_test_me1merge`。
