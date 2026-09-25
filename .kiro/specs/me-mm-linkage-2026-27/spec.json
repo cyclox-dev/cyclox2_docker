@@ -1,32 +1,32 @@
 {
   "feature_name": "me-mm-linkage-2026-27",
   "created_at": "2026-07-14T00:00:00Z",
-  "updated_at": "2026-08-15T00:00:00Z",
+  "updated_at": "2026-09-25T00:00:00Z",
   "language": "ja",
-  "phase": "implementation-complete",
+  "phase": "implementation",
   "approvals": {
     "requirements": {
       "generated": true,
       "approved": true,
-      "revision_note": "第2版（2026-08-15 承認済み）。有識者レビュー（cyclox2web PR #13）を受け、Requirement 3 の根幹方針を「バリデーションエラーで拒否」から「検知して警告するが保存操作は完了させる」へ変更。Requirement 10（外部連携アプリからの処理継続性の保証）を新設。理由: cyclox2app からの選手データ/リザルトアップロードが停止する運用リスク。詳細は agreement-log.md「有識者レビューによる方針転換と requirements 差し戻し（2026-08-15）」参照。",
-      "approved_at": "2026-08-15T00:00:00Z",
-      "revision": 2
+      "revision_note": "第3版（2026-09-25 承認済み）。「元ME1」（過去のC1保有歴）を廃し「ME1保有者」（判定基準日時点でC1を有効保有）に再定義（Requirement 5全面改訂）。CM1の相手は常にC2とし、マスターズ側起点の連動でC1を付与しない（Requirement 1.2・4.3）。連動の非降格原則を新設（Requirement 4.9: 相手系統が連動先と同位以上を保有していれば何もしない）。手動付与時のME1警告（5.4・6.4）は存続し判定基準のみ新定義へ。agreement-log.md「ME1保有者の再定義と連動の非降格原則（2026-09-25）」参照。",
+      "revision": 3,
+      "approved_at": "2026-09-25T00:00:00Z"
     },
     "design": {
       "generated": true,
       "approved": true,
       "amended_at": "2026-07-21T00:00:00Z",
       "amendment_note": "実装フェーズ(タスク3・4.1・5・7・8)で判明した設計前提の食い違い/スコープ拡張5件(保存順序/ME1ゲート適用範囲/連動フック呼び出し位置/change_em既存バグ/uniteRacer非管理カテゴリー重複/マスターズ側戻り値未捕捉)を修正し、人間の承認を得て再承認。詳細はagreement-log.md参照。",
-      "approved_at": "2026-08-15T00:00:00Z",
-      "revision": 2,
-      "revision_note": "第2版（2026-08-15 承認済み）。不整合の検知を CategoryRacer::$validate （保存前・保存を失敗させる）から CategoryRacer::afterSave()（保存後・保存に影響しない）へ移設。ApiController の warnings 付与を新設、ResultParamCalcComponent の中断挙動（RET_FAILED / __applyRankUp2CM() 戻り値チェック）を撤回。CategoryLineageMap / CategoryLineageLinker は無変更で流用。"
+      "revision": 3,
+      "revision_note": "第3版（2026-09-25 承認済み）。「第3版 設計改訂」節を新設: isFormerElite1()・resolveLinkedTarget()を削除しholdsElite1AsOf()・CategoryLineageMap::rankOf()を新設、propagateLinkedPromotion()に非降格原則（相手系統の最上位が連動先と同位以上なら何もしない。新結果NO_PROPAGATION_HIGHER_HELD）を追加、CategoryRacerのME1警告を「保存した行がC1で保存直前にME1保有者でない場合」に変更。",
+      "approved_at": "2026-09-25T00:00:00Z"
     },
     "tasks": {
       "generated": true,
       "approved": true,
-      "revision": 2,
-      "revision_note": "第2版（2026-08-15 承認済み）。第1版の全8タスクは実装完了済みのため、本改訂は差分修正タスク R1〜R7 として構成。実装は submodule の既存ブランチ feat/me-mm-linkage-2026-27 を流用・更新する（人間指示 2026-08-15）。",
-      "approved_at": "2026-08-15T00:00:00Z"
+      "revision": 3,
+      "revision_note": "第3版（2026-09-25 承認済み）。第3版 改訂タスク S1〜S7を追加（rankOf新設、holdsElite1AsOf新設とisFormerElite1削除、resolveLinkedTarget削除と非降格原則、ME1警告判定、昇格処理側の期待値反転とログ、結合検証、tester→reviewer）。entry-auto-category-2026-27 E1と同一PR。",
+      "approved_at": "2026-09-25T00:00:00Z"
     }
   },
   "ready_for_implementation": true

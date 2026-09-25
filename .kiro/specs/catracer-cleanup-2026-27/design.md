@@ -62,7 +62,9 @@ me-mm-linkage-2026-27 が定義する `CategoryLineageMap` / `CategoryLineageLin
 - me-mm-linkage-2026-27 の公開 API のみ: `CategoryLineageMap::pairedCategory() /
   isEliteCategory() / isMastersCategory() / isLineageManagedCategory() / eliteCategories() /
   mastersCategories()`、`CategoryLineageLinker::isValidActiveSet() / validateActiveSet() /
-  isFormerElite1()`（内部実装への直接依存は不可）
+  isFormerElite1()`（内部実装への直接依存は不可）（**2026-09-25 注記**: `isFormerElite1()`は
+  me-mm-linkage-2026-27 第3版で削除され`holdsElite1AsOf()`に置換された。本specの実装は同メソッドを
+  呼んでおらず、「是正時にC1を付与しない」決定〔research.md〕は第3版の方針と一致する）
 - 既存モデル: `CategoryRacer`、`Racer`、`RacerResult`、`EntryRacer`、`EntryCategory`、
   `EntryGroup`、`Meet`、`CategoryRacesCategory`、`TransactionManager`
 - 既存 Const: `CategoryReason`（付与理由 `$BY_RULE`）、`RacerResultStatus`（DNS 判定）

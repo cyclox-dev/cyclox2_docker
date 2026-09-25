@@ -1,5 +1,52 @@
 # Design Document: entry-auto-category-2026-27
 
+## 改訂履歴（第6版・2026-09-25）
+
+requirements 第6版（Requirement 2.2改訂・1.5新設。元ME1特例の撤廃）と、me-mm-linkage-2026-27
+design 第3版（「ME1保有者」への再定義、`isFormerElite1()`・`resolveLinkedTarget()`の削除、
+連動の非降格原則）に追随する改訂。第5版以前の記述のうち第6版で置き換えたものには
+【第6版で置換】の注記を付けている。注記のある記述と本節が食い違う場合は本節を正とする。
+
+### 変更点
+
+- **付与先の決定**: `supplementPairedCategoryOnEntryRegistration()` は付与先を
+  `CategoryLineageMap::pairedCategory($singleCategoryCode)` で直接求める（`resolveLinkedTarget()`は
+  me-mm-linkage-2026-27 第3版で削除）。CM1種目の付与先は常にC2になる（Requirement 2.2）。
+- **ME1保有者の判定（Requirement 1.5）**: エントリー側の整合性確認（Requirement 11）の後、相手系統の
+  保有確認の中で次の分岐を**最初に**評価する。
+  - エントリー先がマスターズ系統（`CategoryLineageMap::isMastersCategory($singleCategoryCode)`）で、
+    相手系統（エリート側）の有効保有集合（既存の`__findCurrentlyActiveCategoryCodesOnSide()`、
+    変更なし）に`C1`が含まれる → `CategoryLineageSupplementResult::noSupplementAlreadyValid('C1')`
+    を返す。新規付与も既存カテゴリーの終了も行わない。
+  - 通知は決定事項#13の`NO_SUPPLEMENT_ALREADY_VALID`と同じ扱い（`entry_auto_category`ログに
+    Debugで記録、画面/API配信の対象外）。新しい結果種別は設けない（Requirement 1.5は「既に正常な
+    状態と同様」と定めており、区別する運用上の必要がないため）。ログの`held_category_code:C1`で
+    ME1保有者による見送りと判別できる。
+  - 以降の分岐（連動先を含む→`NO_SUPPLEMENT_ALREADY_VALID`、含まない→`SKIPPED_ALREADY_OCCUPIED`、
+    空→資格年齢確認・付与）は変更しない。
+- **判定表（Requirement 1.5・2.2）**
+
+  | 選手の保有（大会日時点） | エントリー種目 | 結果 |
+  |---|---|---|
+  | CM1のみ（過去にC1あり） | CM1 | C2を付与（第5版ではC1を付与していた） |
+  | CM1のみ（C1歴なし） | CM1 | C2を付与（変更なし） |
+  | C1＋CM1 | CM1 | 補完不要（`noSupplementAlreadyValid('C1')`） |
+  | C1のみ | CM1 | 補完不要（同上。C1の相手CM1はC1種目へのエントリーで付与される） |
+  | C1＋CM3（既存不整合） | CM3 | 補完不要（同上） |
+  | C2＋CM1 | CM1 | 補完不要（`noSupplementAlreadyValid('C2')`、変更なし） |
+  | C1のみ | C1 | CM1を付与（変更なし） |
+
+- **テスト**:
+  - `CategoryLineageLinkerTest::testSupplementAppliesFormerElite1SpecialCaseGrantingC1InsteadOfC2`
+    → 過去にC1を持つCM1のみの選手がCM1種目にエントリーするとC2が付与されること、に反転する。
+  - 新規: 上の判定表のうちC1を含む3行（C1＋CM1、C1のみ、C1＋CM3）で補完不要になり、
+    `category_racers`の行数が変わらず、画面/API配信の対象にならないこと。
+  - 新規: `EntryAutoCategoryIntegrationTest`で、実運用と同じAPI経路（`/api/add_entry.json`）から
+    過去にC1を持つCM1のみの選手をCM1種目に登録し、C2が付与されC1が付与されないこと（今回の
+    本番事象の回帰防止）。
+- **データ是正**: 誤付与済みの3件（category_racers id 268502 / 268546 / 268556）は本改訂の
+  スコープ外とし、別途是正する（決定事項#15）。
+
 ## 改訂履歴（第5版・2026-09-10）
 
 タスク2.1第4版実装のレビュー（round 3）で、エントリー側保有確認が`apply_date`による絞り込みを
@@ -134,7 +181,8 @@ Requirement 11.4を改訂し、エントリー側の保有確認には`apply_dat
 ### Out of Boundary
 - ME⇔MM対応表そのものの定義（`CategoryLineageMap`）— me-mm-linkage-2026-27が単一の正
 - 元ME1判定・連動先解決ロジック（`CategoryLineageLinker::resolveLinkedTarget()`）— 変更せず
-  そのまま呼び出す
+  そのまま呼び出す（**【第6版で置換】** 同メソッドは削除。対応表`pairedCategory()`を直接参照し、
+  ME1保有者の判定基準はme-mm-linkage-2026-27 Requirement 5が所有する）
 - JCX系統固定チェック（`EntryRacer::beforeSave()`の既存ロジック）— 変更しない
 - レース結果による昇格判定そのもの（誰が昇格対象か）・連動先の解決ロジック
   （`resolveLinkedTarget()`）— me-mm-linkage-2026-27が引き続き所有。本specは
@@ -152,6 +200,8 @@ Requirement 11.4を改訂し、エントリー側の保有確認には`apply_dat
 - `CategoryLineageMap`（Const層、me-mm-linkage-2026-27）: 対応表参照
 - `CategoryLineageLinker`の既存メソッド`resolveLinkedTarget()`・
   `__findActiveCategoryRacerOnSide()`（Util層、me-mm-linkage-2026-27）: 連動先解決・保有確認
+  （**【第6版で置換】** いずれもme-mm-linkage-2026-27 第3版で削除・置換。本specは
+  `CategoryLineageMap::pairedCategory()`・`isMastersCategory()`を参照する）
 - `CategoryRacer`モデル（me-mm-linkage-2026-27）: カテゴリー付与の保存先
 - `CategoryRacesCategory`モデル（既存）: 種目→カテゴリーの多対多解決
 - `categories.age_min`列（既存）: 資格年齢要件の情報源
@@ -315,9 +365,11 @@ sequenceDiagram
         alt 保有集合が非空 かつ 種目の対応カテゴリーを1つも含まない
             Linker-->>ER: SKIPPED_ENTRY_SIDE_MISMATCH【第3版・新規、第4版で判定方式を集合の存在判定へ変更】
         else 保有集合が空、または種目の対応カテゴリーを含む（他の不整合な保有が同席していても可）
-            Linker->>Linker: resolveLinkedTarget() で相手系統の対応カテゴリーを解決
+            Linker->>Linker: pairedCategory() で相手系統の対応カテゴリーを求める【第6版】
             Linker->>CR: 相手系統に有効保有があるか確認
-            alt 相手系統の保有が連動先と一致（正しいペアが既に成立）【2026-09-13決定事項#13】
+            alt マスターズ系統の種目で相手系統にC1を保有（ME1保有者）【第6版】
+                Linker-->>ER: NO_SUPPLEMENT_ALREADY_VALID（C1）
+            else 相手系統の保有が連動先と一致（正しいペアが既に成立）【2026-09-13決定事項#13】
                 Linker-->>ER: NO_SUPPLEMENT_ALREADY_VALID
             else 相手系統の保有が連動先と不一致（対応外ペア）
                 Linker-->>ER: SKIPPED_ALREADY_OCCUPIED
@@ -373,6 +425,7 @@ sequenceDiagram
     RPC->>Linker: propagateLinkedPromotion(racerCode, appliedCategoryCode, sourceResult, atDate)
     Linker->>Linker: resolveLinkedTarget() で連動先を解決（既存・無変更）
     Linker->>CR: 相手系統の現在の保有を確認（既存・無変更）
+    Note over Linker: 【第6版】連動先解決・保有比較はme-mm-linkage-2026-27 design第3版（pairedCategory直接参照・非降格原則）を正とする。資格年齢ガードの位置は変更しない
     alt 保有が対応先と一致（連動不要）
         Linker-->>RPC: noPropagationAlreadyValid（既存・無変更）
     else 連動が必要
@@ -419,7 +472,8 @@ sequenceDiagram
 | Requirement | Summary | Components | Interfaces | Flows |
 |-------------|---------|------------|------------|-------|
 | 1.1–1.4 | エントリー時の対応ペア補完（単一種目・相手系統ゼロ保有のみ・cancel禁止） | CategoryLineageLinker | `supplementPairedCategoryOnEntryRegistration()` | 上記シーケンス図 |
-| 2.1–2.3 | 対応表・元ME1特例の単一定義への準拠 | CategoryLineageLinker | `resolveLinkedTarget()`（既存・無変更） | 上記シーケンス図の「resolveLinkedTarget」ステップ |
+| 1.5 | ME1保有者のマスターズ系統エントリーでは補完しない（第6版） | CategoryLineageLinker | `supplementPairedCategoryOnEntryRegistration()`、`noSupplementAlreadyValid('C1')` | 上記シーケンス図の「ME1保有者」分岐 |
+| 2.1–2.3 | 対応表・ME1特例の単一定義への準拠（第6版） | CategoryLineageLinker, CategoryLineageMap | `pairedCategory()`（第6版、旧`resolveLinkedTarget()`） | 上記シーケンス図の「pairedCategory」ステップ |
 | 3.1–3.2 | 資格年齢要件の保護 | CategoryLineageLinker | `supplementPairedCategoryOnEntryRegistration()`（内部で`categories.age_min`参照） | 上記シーケンス図の「資格年齢要件を確認」ステップ |
 | 4.1–4.2 | プール種目の対象外化 | CategoryLineageLinker | `resolveSingleLineageCategory()` | 上記シーケンス図の分岐 |
 | 5.1–5.3 | 適用経路の網羅性 | EntryRacer | `afterSave()` | 全経路が`EntryRacer::save()`を経由 |
@@ -452,7 +506,7 @@ sequenceDiagram
 | Requirements | 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.2, 7.1, 8.1, 8.4, 9.1, 9.4, 10.1, 10.2, 10.3, 11.1, 11.2, 11.3, 11.4 |
 
 **Responsibilities & Constraints**
-- 本機能で追加する新規メソッドは、既存の`isValidActiveSet()`・`resolveLinkedTarget()`等の契約を
+- 本機能で追加する新規メソッドは、既存の`isValidActiveSet()`・`resolveLinkedTarget()`（第6版で削除）等の契約を
   一切変更しない（純粋な追加）。**【第2版】** ただし`propagateLinkedPromotion()`は例外的に、
   cancel/create実行直前の分岐追加という形で内部ロジックを拡張する（呼び出し元シグネチャ・
   既存の戻り値状態は維持）。
@@ -809,7 +863,7 @@ Requirement 6.2の「失敗内容を記録」に対応）に限る。
   対象外カテゴリーの3パターン
 - `CategoryLineageLinker::supplementPairedCategoryOnEntryRegistration()`: 正常付与、相手系統
   既保有（正しいペア/対応外ペア/重複の3パターン）でのスキップ、資格年齢未達でのスキップ、
-  元ME1特例経由でのC1付与。**【第3版】** エントリー側保有カテゴリーとの不一致でのスキップ
+  元ME1特例経由でのC1付与（**【第6版で置換】** C2付与への反転と、ME1保有者の補完不要。第6版の改訂履歴参照）。**【第3版】** エントリー側保有カテゴリーとの不一致でのスキップ
   （Requirement 11.1）、エントリー側が無保有または種目の対応カテゴリーと一致する場合は
   通常どおり判定が継続すること（Requirement 11.2）。**【第4版】** エントリー側に対応先を
   含む複数カテゴリー（重複保有・不一致カテゴリーとの同席）が存在する場合、挿入順によらず

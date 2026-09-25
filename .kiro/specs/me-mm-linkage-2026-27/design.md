@@ -7,6 +7,136 @@
 > 対応表・判定ロジック（`CategoryLineageMap` / `CategoryLineageLinker`）は無変更で流用できる。
 > 経緯・レビュー指摘の詳細は agreement-log.md「有識者レビューによる方針転換」節を参照。
 
+> **第3版（2026-09-25 改訂）**: requirements 第3版（「元ME1」→「ME1保有者」への再定義、
+> Requirement 4.3・5 改訂、Requirement 4.9「連動の非降格原則」新設）に追随する改訂。変更内容は
+> 本書の「第3版 設計改訂（2026-09-25）」節にまとめた。第2版以前の記述のうち第3版で置き換えた
+> ものには【第3版で置換】の注記を付けている。注記のある記述と第3版の節が食い違う場合は、
+> 第3版の節を正とする。
+
+## 第3版 設計改訂（2026-09-25）
+
+### 改訂の要点
+
+| 項目 | 第2版 | 第3版 |
+|---|---|---|
+| ME1特例の判定基準 | `isFormerElite1()`: 論理削除されていないC1行が過去に1件でもあればtrue（取消済みを含む） | `holdsElite1AsOf($racerCode, $atDate)`: 基準日時点で有効なC1行（`apply_date <= $atDate`、`cancel_date`が未設定または`>= $atDate`、論理削除されていない）があるか |
+| CM1起点の連動先 | 元ME1ならC1、それ以外はC2 | 常にC2（`CategoryLineageMap::pairedCategory()`の結果そのまま） |
+| 相手系統の保有との比較 | 1行だけ取得し、連動先と一致すれば何もしない。一致しなければその行をcancelして連動先を作成 | 有効な行をすべて取得し、最上位のカテゴリーが連動先と**同位以上**なら何もしない。下位なら最上位の行をcancelして連動先を作成（Requirement 4.9 非降格原則） |
+| エントリー補完（entry-auto-category） | `resolveLinkedTarget()`経由で元ME1特例が働く | マスターズ系統の種目で、相手系統にC1があれば補完不要（ログのみ）。付与先は対応表どおり |
+| 手動付与時のME1警告 | 保存したのが何の行でも、`{C1, CM1}`が成立し元ME1でなければ警告 | 保存したのが**C1の行**で、`{C1, CM1}`が成立し、保存直前にME1保有者でなければ警告（LANKUPは従来どおり除外） |
+
+### コンポーネント別の変更
+
+**CategoryLineageMap（Const層）**
+- `rankOf(string $categoryCode): ?int` を新設する。同じ系統の中での順位を返す（1が最上位）。
+  `C1`=1、`C2`=2、`C3`=3、`C4`=4、`CM1`=1、`CM2`=2、`CM3`=3。対応表の管理対象外はnull。
+  系統をまたいだ比較には使わない（呼び出し元が同じ系統のコード同士で比べる）。
+- 対応表（`pairedCategory()`）は変更しない（第2版で既に `CM1 => C2`、`C1 => CM1` の一方向）。
+
+**CategoryLineageLinker（Util層）**
+- `isFormerElite1()` を**削除**し、`holdsElite1AsOf(string $racerCode, string $atDate): bool` を
+  新設する。本番コードでの呼び出し元は `resolveLinkedTarget()` と `CategoryRacer` だけで、
+  いずれも本改訂で置き換えるため、過去の保有歴を見る判定を残すと誤用を招く。
+  catracer-cleanup-2026-27 は design 上の依存APIとして名前を挙げていたが、実装では呼んでいない。
+- `resolveLinkedTarget()` を**削除**し、呼び出し元は `CategoryLineageMap::pairedCategory()` を
+  直接使う。第3版で特例がなくなり対応表の参照だけになるため、`$racerCode`・`$atDate`を受け取る
+  「解決」メソッドを残すと、まだ特例があるかのように読めてしまう。
+- `propagateLinkedPromotion()` の判定を次の順に改める（戻り値の型は変えない）:
+  1. `$target = pairedCategory($appliedCategoryCode)`。nullなら `NO_PROPAGATION_NOT_MANAGED`
+  2. 相手系統で `$atDate` 時点に有効な行をすべて取得する（`apply_date <= $atDate` かつ
+     `cancel_date` が未設定または `>= $atDate`。第2版の B-1 と同じ基準）。
+     private helper `__findEffectiveCategoryRacersOnSide()` を新設し、
+     第2版の `__findActiveCategoryRacerOnSide()`（`find('first')`で1行だけ取得）と置き換える
+  3. 取得した行のうち `rankOf()` が最小（最上位）の行を比較対象にする
+     - 連動先と同じカテゴリー → `NO_PROPAGATION_ALREADY_VALID`（従来どおり）
+     - 連動先より上位のカテゴリー → **`NO_PROPAGATION_HIGHER_HELD`（新設）**。cancelもcreateもしない
+     - 連動先より下位のカテゴリー → 4へ進む
+     - 行がない → 4へ進む（Requirement 4.4、単独保有者への新規付与）
+  4. 資格年齢ガード（entry-auto-category-2026-27 で追加済み、変更なし）
+  5. 比較対象にした最上位の行だけをcancelし、連動先を `$atDate + 1日` で作成する。その他の行
+     （同じ系統内の複数保有という既存不整合）には触れない
+     （`.kiro/steering/existing-data-inconsistency-policy.md` の「不整合行そのものを変更しない」方針）
+- `CategoryLineagePropagationResult` に `NO_PROPAGATION_HIGHER_HELD` と、ファクトリ
+  `noPropagationHigherHeld($heldCategoryCode)`、`getHeldCategoryCode()` を追加する。
+  `isPropagated()` は false、`isFailure()` は false。
+- `supplementPairedCategoryOnEntryRegistration()`（entry-auto-category-2026-27 所有、判定の基準は
+  本spec）: 相手系統の保有確認の直前に、「エントリー先がマスターズ系統で、相手系統（エリート側）の
+  現在の有効保有に `C1` が含まれる」場合は `noSupplementAlreadyValid('C1')` を返す判定を追加する。
+  付与先は `pairedCategory()` の結果をそのまま使う。詳細は entry-auto-category-2026-27 design.md
+  第6版を参照。
+
+**CategoryRacer（Model層）**
+- `beforeSave()`: 保存する行が `C1` の場合だけ、保存直前の状態で
+  `holdsElite1AsOf($racerCode, $判定日)` を評価し、`$__wasElite1HolderBeforeSave` に記録する。
+  判定日は、送信された `apply_date`、なければ保存済みの `apply_date`、それもなければ本日。
+  既存のC1行を更新する保存（備考の修正など）では、その行自身が保存前から有効なので
+  ME1保有者と判定され、警告は出ない（第2版の挙動を維持）。
+- `afterSave()` のME1特例ゲート: 警告を出す条件を「管理対象の集合がちょうど `{C1, CM1}`、
+  かつ**保存した行がC1**（`$__wasElite1HolderBeforeSave` が記録されている）、かつLANKUPでない、
+  かつ保存直前にME1保有者でなかった」に変える。保存した行がC1でない場合（例: C1を持つ選手に
+  CM1を付与）は、C1が既に有効なので警告しない。第2版は保存した行がC1以外のとき
+  `isFormerElite1()` で補っていたが、この補完は不要になるので削除する。
+- 警告の種別（`me1_exception`）と配信経路は変更しない。文言の「元ME1でない選手に」は
+  「ME1（C1）を保有していなかった選手に」へ改める。
+
+**ResultParamCalcComponent（Component層）**
+- `propagateLinkedPromotion()` を呼ぶ2か所（エリート側の追随、マスターズ側の追随）に、
+  `NO_PROPAGATION_HIGHER_HELD` の場合のログ（`LOG_INFO`、選手コード・連動先・保有カテゴリー）を
+  追加する。非降格で見送ったことを後から追えるようにするため。処理の継続・戻り値は変えない。
+
+**変更しないもの**
+- `isValidActiveSet()`（`{C1, CM1}` は双方向どちらかの対応で正当と判定。第2版のまま）
+- `CategoryRacersController`（change_em）: `pairedCategory()` による判定のまま。ME1警告は
+  `CategoryRacer` 経由で新しい判定が効く
+- `CatRacerCleanupJudge`（既にC1を付与しない）、`CatLimitShell`、`OrgUtilController`
+
+### 非降格原則の判定表（Requirement 4.9）
+
+| 保有（昇格前） | 昇格 | 連動先 | 相手系統の最上位 | 結果 |
+|---|---|---|---|---|
+| C1＋CM2 | CM2→CM1 | C2 | C1（上位） | 何もしない（`NO_PROPAGATION_HIGHER_HELD`） |
+| C2＋CM3 | CM3→CM2 | C3 | C2（上位） | 何もしない |
+| C4＋CM1 | C4→C3 | CM2 | CM1（上位） | 何もしない |
+| C2＋CM2 | CM2→CM1 | C2 | C2（同位） | 何もしない（`NO_PROPAGATION_ALREADY_VALID`） |
+| C3＋CM2（過去にC1あり） | CM2→CM1 | C2 | C3（下位） | C3をcancel、C2を作成 |
+| C3＋CM2 | C3→C2 | CM1 | CM2（下位） | CM2をcancel、CM1を作成 |
+| C2＋CM1 | C2→C1 | CM1 | CM1（同位） | 何もしない（Requirement 5.2） |
+| CM2のみ（過去にC1あり） | CM2→CM1 | C2 | なし | C2を作成 |
+
+### 第3版のテスト方針
+
+TDDで、実装より先に次のテストを書き換え・追加する。
+- **期待値を反転・置換するもの**
+  - `CategoryLineageLinkerTest`: `isFormerElite1()` のテスト群（元ME1履歴の有無・論理削除・
+    基準日）→ `holdsElite1AsOf()` のテストに置き換える（有効なC1あり／取消済みC1のみ／論理削除
+    のみ／基準日より後に発効するC1のみ／基準日にcancelされるC1）。`resolveLinkedTarget()` の
+    テスト群 → 削除し、`pairedCategory()` のテスト（`CategoryLineageMapTest`）で担保する。
+    `testPropagateLinkedPromotionAppliesFormerElite1SpecialCaseEndToEnd` → 過去にC1を持つ選手の
+    エリート側がC2のままであること（`NO_PROPAGATION_ALREADY_VALID`）に反転。
+    `testPropagateLinkedPromotionDoesNotDuplicateHoldPointsOnFormerElite1EndToEndUpdate` → 前提が
+    成立しなくなるため、連動が起きる別の組み合わせで保持ポイントが重複しないことの確認に置き換える
+  - `ResultParamCalcComponentTest::testMastersCm2ToCm1PropagatesEliteToC1ForFormerMe1` →
+    過去にC1を持つC3＋CM2の選手がCM1に昇格すると、エリート側はC2になることに反転
+  - `CategoryRacerTest::testFormerElite1WithActiveCm1ProducesNoWarning` → 「過去にC1を持つが
+    現在は持っていない選手に、CM1保有中にC1を手動付与すると警告が出る」と「C1保有中の選手に
+    CM1を手動付与しても警告が出ない」の2本に分ける
+- **新規追加**
+  - `CategoryLineageMapTest`: `rankOf()` の全コードと管理対象外（null）
+  - `CategoryLineageLinkerTest`: 上の判定表の全行（`propagateLinkedPromotion()`）、相手系統に
+    複数の有効行がある場合に最上位で比較し、cancelするのは最上位の行だけであること
+  - `ResultParamCalcComponentTest`: C1＋CM2の選手がCM2→CM1に昇格してもC1が残ること（降格の回帰
+    防止）、`NO_PROPAGATION_HIGHER_HELD` のログが出ること
+- 追加したテストは、判定のロジックを一時的に壊して失敗することを確かめる（ミューテーション確認）。
+
+### 影響範囲とリスク
+- 公開APIの削除（`isFormerElite1()`・`resolveLinkedTarget()`）: 本番コードの呼び出し元は
+  `CategoryLineageLinker` 自身と `CategoryRacer` だけ（`grep` で確認済み）。テストは上記で置き換える。
+- 本番データへの影響: 第3版の適用によって既存の行が変わることはない（判定の変更だけ）。
+  誤付与済みの3件（category_racers id 268502 / 268546 / 268556）は本改訂のスコープ外で別途是正する。
+- リアルタイム昇格の挙動変更は、過去にC1を持つ選手（C1へ引き上げていたのをC2へ）と、
+  対応外ペアを持つ選手（降格していたのを据え置きへ）に限られる。
+
+
 ## Overview
 
 本機能は、cyclox2web（CakePHP 2.x / PHP 7.3 / MySQL 5.7、`cyclox2_svr/cyclox2/`）における選手の
@@ -50,7 +180,7 @@
   （`CategoryRacer` モデルの `afterSave`）と、蓄積された警告の取得API
 - 蓄積された警告の伝達経路（画面 Flash / API レスポンスの `warnings` / サーバログ）
 - レース結果によるリアルタイム昇格時の系統間連動ロジック（`ResultParamCalcComponent`拡張）
-- 元ME1判定ロジック
+- ME1保有者判定ロジック（**【第3版で置換】** 第2版までの「元ME1判定」）
 - `change_em`（系統切替画面）の新ルール下での役割・挙動
 - `CatLimitShell::setupCatLimit()` の両系統出走選手への対応
 - `OrgUtilController::uniteRacer()` の重複防止チェック
@@ -128,7 +258,7 @@ graph TB
 - 既存パターンの継承: `app/Cyclox/Const/*` のenum風パターン、`App::uses()`によるレイヤー読込規約、
   `TransactionManager`によるトランザクション境界を維持する。
 - 新規コンポーネントの理由: `CategoryLineageMap`（対応表の単一ソースが要件で明示的に要求されている）、
-  `CategoryLineageLinker`（対応表単体では表現できない「元ME1判定」「保有集合としての正当性判定」
+  `CategoryLineageLinker`（対応表単体では表現できない「元ME1判定〔第3版でME1保有者判定に置換〕」「保有集合としての正当性判定」
   「連動先カテゴリーの解決」という手続き的ロジックが必要なため、Const層とModel/Component層の間に
   1枚追加する）。
 - Steering準拠: 依存方向は Const → Util → Model → Component/Controller/Console の一方向のみ
@@ -195,6 +325,8 @@ app/
 
 ### Modified Files
 - `app/Cyclox/Util/CategoryLineageLinker.php` — **【2026-08-22/23 有識者レビュー指摘により改訂】**
+  （**【第3版】** `isFormerElite1()`・`resolveLinkedTarget()`は削除、`holdsElite1AsOf()`新設、
+  `propagateLinkedPromotion()`へ非降格原則を追加。以下は第2版の記述）
   `isFormerElite1()`の論理削除行除外・基準日引数追加、`resolveLinkedTarget()`/
   `propagateLinkedPromotion()`の単独保有選手への自動付与化・基準日ベースの相手系統判定への変更。
   `propagateLinkedPromotion()`はさらに、新規apply_dateをcancel_dateの1日後に是正し、
@@ -254,10 +386,11 @@ sequenceDiagram
     Note over RPC,Linker: 新カテゴリー行はまだcreateしない（2026-07-20改訂）
     RPC->>Linker: propagateLinkedPromotion 呼び出し 未保存の新カテゴリーコードを渡す
     Linker->>Map: 昇格先カテゴリーに対応する相手系統カテゴリーを取得
-    Linker->>Linker: 元ME1判定（対象レース日基準・対応先がC1の場合のみ）
-    Linker->>CR: 選手の相手系統の対象レース日時点の有効カテゴリーを取得
-    alt 相手系統が既に対応ペア
+    Linker->>CR: 選手の相手系統の対象レース日時点の有効カテゴリーをすべて取得（第3版）
+    alt 相手系統の最上位が連動先と同位（既に対応ペア）
         Linker-->>RPC: 何もしない 既に整合
+    else 相手系統の最上位が連動先より上位（第3版 Requirement 4.9 非降格原則）
+        Linker-->>RPC: 何もしない 降格させない
     else 相手系統に既存の有効カテゴリーがある（更新が必要）
         Linker->>CR: 相手系統の旧カテゴリーをcancel
         Linker->>CR: 相手系統の新カテゴリーを作成保存
@@ -289,7 +422,7 @@ sequenceDiagram
   レース日（`$atDate`）時点で有効だったカテゴリーを基準にする。レース結果が前後してアップロード
   された場合に、対象レースより後の日付で処理された別レースの結果を誤って参照しないため。
   元ME1判定（`isFormerElite1()`）についても同様に、`$atDate`以前の`apply_date`を持つ履歴のみを
-  判定材料にする。
+  判定材料にする（**【第3版で置換】** 元ME1判定は廃止。連動先の決定に選手の履歴は使わない）。
 - 保存順序（cancel→create）および連動フックの呼び出し位置（create の前）は第1版の確定版を
   維持する。第2版では保存拒否が無くなるため順序は必須ではなくなるが、論理的に自然であり
   既に実装・テスト済みで最終DB状態も同一のため、変更しない方がリスクが低いと判断した。
@@ -338,7 +471,9 @@ flowchart TD
     C1Check -- いいえ --> Ok
     C1Check -- はい --> LankUp{保存理由がLANKUP 正当な昇格か}
     LankUp -- はい --> Ok
-    LankUp -- いいえ --> FormerCheck{元ME1か}
+    LankUp -- いいえ --> SavedC1{保存した行がC1か 第3版}
+    SavedC1 -- いいえ --> Ok
+    SavedC1 -- はい --> FormerCheck{保存直前にME1保有者か 第3版}
     FormerCheck -- はい --> Ok
     FormerCheck -- いいえ --> WarnMe1[警告を蓄積 ME1特例に非該当]
     SetSize -- 3以上 --> WarnMulti[警告を蓄積 同系統内複数保有]
@@ -364,7 +499,8 @@ flowchart TD
 | 3.8-3.9 | API応答への警告付与（後方互換） | ApiController | `success()` の `warnings` フィールド | 検知フロー |
 | 3.10 | サーバログへの記録 | CategoryRacer | `afterSave()` 内の `log()` | 検知フロー |
 | 4.1-4.6 | リアルタイム昇格の系統間連動 | ResultParamCalcComponent, CategoryLineageLinker | `propagateLinkedPromotion()` | 系統間連動フロー |
-| 5.1-5.5 | ME1特例（元ME1判定） | CategoryLineageLinker | `isFormerElite1()`, `resolveLinkedTarget()` | 系統間連動フロー・検知フロー |
+| 4.9 | 連動の非降格原則（第3版） | CategoryLineageLinker, CategoryLineageMap, ResultParamCalcComponent | `propagateLinkedPromotion()`, `rankOf()`, `NO_PROPAGATION_HIGHER_HELD` | 系統間連動フロー・第3版 判定表 |
+| 5.1-5.5 | ME1特例（ME1保有者判定、第3版） | CategoryLineageLinker, CategoryRacer | `holdsElite1AsOf()`, `beforeSave()`/`afterSave()` | 検知フロー |
 | 6.1-6.4 | change_emの役割再定義 | CategoryRacersController, CategoryLineageMap | `__check_category_to()`（改修） | - |
 | 7.1-7.2 | CatLimitShellの両系統対応 | CatLimitShell, EntryCatLimit | `setupCatLimit()`（改修） | - |
 | 8.1-8.2 | 選手統合時の不整合検知 | OrgUtilController, CategoryLineageLinker | `validateActiveSet()`, `validateNoDuplicateAnyCategory()` | - |
@@ -399,6 +535,8 @@ flowchart TD
 **Responsibilities & Constraints**
 - `C1〜C4`・`CM1〜CM3` のみを対応表の対象とし、それ以外（`CL1〜CL3`, `WM`等）は対象外として
   `null` を返す（Requirement 9.1）
+- **【第3版で置換】** 対応関係: `C4⇔CM3`, `C3⇔CM2`, `C2⇔CM1` は双方向、`C1→CM1` は一方向。
+  CM1の相手は常にC2で、C1への引き上げは行わない。以下は第2版の記述:
 - 対応関係: `C4⇔CM3`, `C3⇔CM2`, `C2⇔CM1`, `C1⇔CM1`（`C1⇔CM1`はUtil層の元ME1判定と組み合わせて
   初めて成立を判定できるため、本ConstクラスはC1↔CM1の対応関係自体は返すが、成立条件の判定は
   持たない）
@@ -437,13 +575,15 @@ flowchart TD
 
 | Field | Detail |
 |-------|--------|
-| Intent | 対応表を用いた「保有集合の正当性判定」「元ME1判定」「連動先カテゴリーの解決」「連動保存の実行」を提供する |
+| Intent | 対応表を用いた「保有集合の正当性判定」「ME1保有者判定（第3版、旧・元ME1判定）」「連動先カテゴリーの解決」「連動保存の実行」を提供する |
 | Requirements | 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 8.1, 8.2, 9.1, 9.2 |
 
 **Responsibilities & Constraints**
 - `CategoryRacer` モデルの保存後検知（`afterSave`）、`ResultParamCalcComponent` の連動フック、
   `CategoryRacersController` の`change_em`系処理、`OrgUtilController::uniteRacer()`、
   `CatLimitShell` のいずれからも同一のロジックを呼び出す単一の判定エンジンとする
+- **【第3版で置換】** 元ME1判定（下記）と `isFormerElite1()`・`resolveLinkedTarget()` は廃止し、
+  `holdsElite1AsOf()` と `pairedCategory()` の直接参照に置き換えた（「第3版 設計改訂」節参照）。
 - **【2026-08-22 有識者レビュー指摘により改訂】** 元ME1判定はSoftDelete適用済み（`deleted=0`の
   行のみ）の履歴を参照する。`cancel_date` の有無は問わず、過去に一度でも`C1`を有効保有していた
   記録があれば元ME1とするが、論理削除済み（`deleted=1`）の行は判定対象から除外する
@@ -472,6 +612,8 @@ interface CategoryLineageLinker {
     public function isValidActiveSet(string $racerCode, array $prospectiveActiveCodes);
 
     /**
+     * 【第3版で置換】削除。代わりに holdsElite1AsOf(string $racerCode, string $atDate): bool
+     * （基準日時点でC1を有効保有しているか）を新設する。以下は第2版の記述。
      * 選手が過去に C1（ME1）を有効保有していたことがあるか。論理削除済み（deleted=1）の行は
      * 判定対象から除外する（2026-08-22改訂）。$atDate を指定した場合、apply_date <= $atDate の
      * 行のみを対象とする（2026-08-22改訂・B-1、レース結果の前後アップロード対策）。
@@ -479,6 +621,8 @@ interface CategoryLineageLinker {
     public function isFormerElite1(string $racerCode, ?string $atDate = null): bool;
 
     /**
+     * 【第3版で置換】削除。呼び出し元は CategoryLineageMap::pairedCategory() を直接使う。
+     * 以下は第2版の記述。
      * 起点カテゴリーへの新規適用に対し、相手系統の連動先カテゴリーを解決する。
      * 【2026-08-22改訂・Requirement 4.4】相手系統を保有していない場合でも null は返さず、
      * 常に解決した連動先カテゴリーコードを返す（単独保有選手にも自動付与する）。
@@ -593,6 +737,8 @@ interface CategoryLineageLinker {
   6. 抽出結果がちょうど `{C1, CM1}` の場合のみ、後述のME1特例ゲートを追加適用する
   7. 蓄積したそれぞれの警告を `$this->log(..., LOG_WARNING)` でサーバログにも記録する
      （選手コード・カテゴリーコード・検知種別を含め、事後に特定できる形式。Requirement 3.10）
+- **【第3版で置換】** ME1特例ゲートの条件は「第3版 設計改訂」節の CategoryRacer の項を正とする
+  （保存した行がC1で、保存直前にME1保有者でない場合のみ警告）。以下は第2版の記述:
 - **元ME1特例ゲート**（第1版 2026-07-20 改訂の判定内容をそのまま踏襲。結果が「拒否」から
   「警告」に変わるのみ）: 保存対象行の `reason_id` が `CategoryReason::reasonAt($id)->flag()` で
   `CategoryChangeFlag::$LANKUP`（昇格）に分類される場合は**警告を出さない**。
@@ -845,7 +991,8 @@ interface CategoryLineageLinker {
 - Integration: View（`change_em.ctp`, `check_change_em.ctp`）の説明文言を「系統切替」から
   「対応ペア補完・特例対応」に更新する（挙動変更ではなく利用者への説明の正確化）
 - Validation: **【第2版で改訂】** ME1特例に該当しない`C1`への切替は、`CategoryRacer::afterSave()`が
-  `CategoryLineageLinker::isFormerElite1()`を通じて検知し警告を蓄積する。切替操作自体は成功する
+  `CategoryLineageLinker::isFormerElite1()`を通じて検知し警告を蓄積する（**【第3版で置換】**
+  `holdsElite1AsOf()` による保存直前のME1保有判定）。切替操作自体は成功する
   （Requirement 6.4はモデル層の検知結果をControllerが正しく利用者に伝えることで満たす）
 - Risks: 既存の`change_em`利用者（主催者）が「系統を完全に切り替える」という旧来の操作感を期待して
   いる可能性があるため、View文言の変更と合わせて運用周知が必要（実装外のフォロー事項として
@@ -986,7 +1133,7 @@ interface CategoryLineageLinker {
 | `duplicate_category` | 同一カテゴリーコードを複数行で有効保有 | 「同じカテゴリー（C3）を重複して保有しています」 |
 | `invalid_pair` | ME/MM 2件の組合せが対応表上のペアでない | 「対応関係にないカテゴリーの組み合わせです（C4 と CM1）」 |
 | `multiple_in_lineage` | ME/MM が3件以上（同系統内複数保有） | 「同一系統内で複数のカテゴリーを保有しています（C2, C3, CM1）」 |
-| `me1_exception` | 元ME1でない選手に `{C1, CM1}` が成立（LANKUP以外の理由） | 「元ME1でない選手にME1（C1）が付与されています」 |
+| `me1_exception` | 【第3版】ME1（C1）を保有していなかった選手へのC1付与で `{C1, CM1}` が成立（LANKUP以外の理由） | 「ME1（C1）を保有していなかった選手にME1（C1）が付与されています（第3版で文言変更）」 |
 
 **伝達経路**（Requirement 3.7〜3.10）:
 - **画面（Flash）**: `exec_change_em()` / `do_unite_racer()` が成功メッセージと併記して表示する。
@@ -1026,6 +1173,7 @@ interface CategoryLineageLinker {
 - `CategoryLineageLinkerTest`: (1) 空集合・単独保有・正当ペア・対応外ペア・同系統内重複の
   各パターンでの`isValidActiveSet()`判定、(2) 元ME1履歴あり/なしでの`isFormerElite1()`、
   (3) `C1⇔CM1`特例を含む`resolveLinkedTarget()`の分岐（Requirement 5.2/5.3）
+  **【第3版で置換】** (2)(3)は「第3版 設計改訂」節の「第3版のテスト方針」に置き換える
 - `CategoryRacerTest`: **【第2版で改訂】** (1) 対応外ペア・重複・同系統内複数保有・ME1特例
   非該当の各ケースで**保存が成功し**、かつ対応する種別の警告が蓄積されること、
   (2) cancel専用の保存は検知対象外であること、(3) `$skipsLineageInspection = true` のとき
