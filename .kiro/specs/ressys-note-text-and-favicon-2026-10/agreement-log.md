@@ -20,3 +20,11 @@ data.cyclocross.jp（cyclox2res_sys）について、以下2件の要望に対�
 ## マージ
 - cyclox2res-sys PR #23 を 2026-10-11 にマージ（スカッシュ、`af333f8`）。cyclox2_docker のサブモジュール参照を `af333f8` に更新。
 - 本番に出すのは res-sys のみ。cyclox2（CakePHP）はリリース不要。
+
+## 追加修正（2026-10-16 人間指示）
+1. favicon.png の link を www に合わせて `sizes="512x512"` に修正（www側で正しいpngが配置され、HTMLも修正されたため）。
+2. パートナーバナーに Tannus（`ptnr_logo_tannus.svg`）を diatec と J SPORTS の間に追加。
+   2026-10-03 の合意（ヘッダーとフッターを同一にする）に従い、header.php・footer.php の両方に入れる。
+- 変更（cyclox2res_sys、ブランチ fix/favicon-png-and-tannus-2026-10）: `application/views/templates/header.php` / `footer.php`。
+- res-sys PR #24 を 2026-10-16 にマージ（スカッシュ、`c5ad656`）。cyclox2_docker のサブモジュール参照を `c5ad656` に更新。本番に出すのは res-sys のみ。
+- 注: `.kiro/specs/partner-banners-2026-10/check_banners.py` のスナップショットは 2026-10-03 時点の10件のため、今回の11件では NG になる（想定どおり）。今回は www 本番を直接取得して比較した。
