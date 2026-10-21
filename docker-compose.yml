@@ -19,7 +19,13 @@ services:
       - ./cyclox2_svr/httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
       - ./cyclox2_svr/httpd/conf/magic:/etc/httpd/conf/magic
       - ./cyclox2_svr/httpd/conf.d/ssl.conf:/etc/httpd/conf.d/ssl.conf
+      # 注: イメージ(rh-php73)は /etc/opt/rh/rh-php73/php.ini を読むため、このマウントは効いていない
       - ./cyclox2_svr/php/php.ini:/usr/local/etc/php/php.ini
+      # PHP2Shell 暫定対策 2026-10
+      - ./cyclox2_svr/php/99-php2shell.ini:/etc/opt/rh/rh-php73/php.d/99-php2shell.ini
+      - ./cyclox2_svr/httpd/conf.d/rh-php73-php.conf:/etc/httpd/conf.d/rh-php73-php.conf
+      - ./cyclox2_svr/httpd/conf.d/php2shell-rules.inc:/etc/httpd/conf.d/php2shell-rules.inc
+      - ./cyclox2_svr/httpd/conf.d/zz-php2shell-mpm.conf:/etc/httpd/conf.d/zz-php2shell-mpm.conf
       - ./cyclox2_svr/pki/tls/certs/server.key:/etc/pki/tls/certs/server.key
       - ./cyclox2_svr/pki/tls/certs/server.csr:/etc/pki/tls/certs/server.csr
       - ./cyclox2_svr/pki/tls/certs/server.crt:/etc/pki/tls/certs/server.crt
@@ -81,6 +87,12 @@ services:
       - ./cyclox2ressys_svr/conf/database.php:/var/www/html/ajocc_xsys/application/config/database.php
       - ./cyclox2ressys_svr/conf/config.php:/var/www/html/ajocc_xsys/application/config/config.php
       - ./cyclox2ressys_svr/conf/index.php:/var/www/html/ajocc_xsys/public/index.php
+      # PHP2Shell 暫定対策 2026-10
+      - ./cyclox2ressys_svr/php/99-php2shell.ini:/etc/opt/rh/rh-php73/php.d/99-php2shell.ini
+      - ./cyclox2ressys_svr/httpd/conf.d/rh-php73-php.conf:/etc/httpd/conf.d/rh-php73-php.conf
+      - ./cyclox2ressys_svr/httpd/conf.d/php2shell-rules.inc:/etc/httpd/conf.d/php2shell-rules.inc
+      - ./cyclox2ressys_svr/httpd/conf.d/zz-php2shell-mpm.conf:/etc/httpd/conf.d/zz-php2shell-mpm.conf
+      - ./cyclox2ressys_svr/httpd/conf.d/ssl-image.conf:/etc/httpd/conf.d/ssl.conf
     environment:
       DB_HOSTNAME: cyclox2_mysql
       DB_USERNAME: ${RESSYS_DB_USERNAME}
