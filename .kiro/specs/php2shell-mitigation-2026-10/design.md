@@ -18,6 +18,7 @@ php.ini 本体は触らず、最後に読まれる追加ファイルで上書き
 ```ini
 ; PHP2Shell (CVE-2026-109618/109619) 暫定対策 2026-10
 ; 恒久対応(PHP更新)後に memory_limit を有限値へ戻すこと
+; 適用前の memory_limit = 128M （/etc/php.ini の値。戻すときはこの値）
 memory_limit = -1
 post_max_size = 8M
 upload_max_filesize = 2M
@@ -39,7 +40,7 @@ always_populate_raw_post_data = -1
 
 | 設定 | 値 | 根拠・注意 |
 |---|---|---|
-| memory_limit | -1 | 公式が「更新できない場合の主な設定」とする。1リクエストがメモリを使い切れるようになるため、手順書で監視する |
+| memory_limit | -1 | 公式が「更新できない場合の主な設定」とする。1リクエストがメモリを使い切れるようになるため、手順書で監視する。**適用前の値は `128M`**（本番 `/etc/php.ini`、2026-10-22 ユーザー確認）。php.ini 本体は書き換えないので値はそこにも残るが、恒久対応後に戻す値として追加ファイルのコメントと本 spec に記録する |
 | post_max_size | 8M | 公式推奨（アップロード有りでも 8M で足りる: CSV 上限 2M） |
 | upload_max_filesize | 2M | 現行ローカル値と同じ。post_max_size 未満を保つ。本番の現行値が 2M を超える場合は事前確認で止めて相談 |
 | session.upload_progress.enabled | 0 | 両バージョンとも既定で有効。アプリは使っていない |

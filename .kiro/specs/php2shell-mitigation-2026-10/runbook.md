@@ -29,6 +29,7 @@ php -r 'foreach (array("memory_limit","post_max_size","upload_max_filesize","ses
 ```
 
 - 現在の値を控える（切り戻し時の参考）。
+- `memory_limit` は `128M` のはず（2026-10-22 にユーザーが本番 `/etc/php.ini` で確認）。**違う値だった場合は、2. の追加ファイルの「適用前の memory_limit」行をその値に書き換え、agreement-log.md にも記録する。**
 - **中止条件**: `upload_max_filesize` が 2M を超えている → CSV のサイズ要件を確認してから値を決めるため、中止して相談。
 
 ```bash
@@ -81,6 +82,7 @@ sudo cp -p <VirtualHostの設定ファイル> <VirtualHostの設定ファイル>
 sudo tee /etc/php.d/99-php2shell.ini > /dev/null <<'EOF'
 ; PHP2Shell (CVE-2026-109618/109619) 暫定対策 2026-10
 ; 恒久対応(PHP更新)後に memory_limit を有限値へ戻すこと
+; 適用前の memory_limit = 128M （/etc/php.ini の値。戻すときはこの値）
 memory_limit = -1
 post_max_size = 8M
 upload_max_filesize = 2M
@@ -98,6 +100,7 @@ EOF
 sudo tee /etc/php.d/99-php2shell.ini > /dev/null <<'EOF'
 ; PHP2Shell (CVE-2026-109618/109619) 暫定対策 2026-10
 ; 恒久対応(PHP更新)後に memory_limit を有限値へ戻すこと
+; 適用前の memory_limit = 128M （/etc/php.ini の値。戻すときはこの値）
 memory_limit = -1
 post_max_size = 8M
 upload_max_filesize = 2M
@@ -337,6 +340,6 @@ free -m; ps -C httpd -o pid,rss,cmd --sort=-rss | head -5
 
 PHP を修正版（または LTS ベンダーのバックポート）へ更新したら:
 
-- `memory_limit` を有限値（元の値）に戻す。
+- `memory_limit` を元の値 `128M`（`99-php2shell.ini` の「適用前の memory_limit」行に記録）に戻す。追加ファイルの `memory_limit = -1` 行を消せば php.ini 本体の値に戻る。
 - `session.upload_progress.enabled = 0` は機能を使っていないため維持する（公式も推奨）。
 - 遮断ルール・ワーカー使い捨ての継続要否を判断する。
