@@ -31,18 +31,36 @@ php -r 'foreach (array("memory_limit","post_max_size","upload_max_filesize","ses
 - 現在の値を控える（切り戻し時の参考）。
 - `memory_limit` は `128M` のはず（2026-10-22 にユーザーが本番 `/etc/php.ini` で確認）。**違う値だった場合は、2. の追加ファイルの「適用前の memory_limit」行をその値に書き換え、agreement-log.md にも記録する。**
 - **中止条件**: `upload_max_filesize` が 2M を超えている → CSV のサイズ要件を確認してから値を決めるため、中止して相談。
+- **中止条件**【web】: `post_max_size` が 10M を超えている → 計測アプリなどが 10MB 近い本文を送っている可能性がある。5. のルールは 9,999,999 バイトを超える本文を拒否するため、中止して相談。
+- 【web】ブラウザで「エントリー・リザルト読込」画面を開き、ページのソースでフォームの `action` を確認する。`/entry_categories/check_result_file/<数字>` で始まっていること。前に別のパス（例: `/cyclox2/`）が付く場合は、5. のルールの `^/entry_categories/` を `^/<そのパス>/entry_categories/` に直す。
 
 ```bash
 sudo httpd -S
 ```
 
-- アプリを提供している VirtualHost（http と https）の設定ファイルと行番号を控える。VirtualHost が無い構成なら、5. の Include 先は `/etc/httpd/conf/httpd.conf` になる。
+- 一覧に出る **すべての VirtualHost**（`_default_` を含む）のうち、DocumentRoot がこのアプリ（PHP）に届くものの設定ファイルと行番号を控える。5. の Include はそのすべてに入れる。
+- **VirtualHost で受けていないポートがある場合**（例: 80番はメインサーバー、443番だけ ssl.conf の `<VirtualHost _default_:443>`）、メインサーバー（`/etc/httpd/conf/httpd.conf`）にも Include を入れる。Rewrite のルールはメインサーバーと VirtualHost の間で引き継がれないため、どちらか一方だけでは片方のポートが素通しになる。
+- certbot などが名前付きの VirtualHost を足している場合も、IP アドレスや未知の Host 名で来たリクエストは `_default_` が受けるので、`_default_` にも入れる。
 
 ```bash
-grep -rnE 'RewriteEngine|DocumentRoot|KeepAlive |MaxRequestsPerChild|MaxConnectionsPerChild|MaxClients|MaxRequestWorkers' /etc/httpd/conf /etc/httpd/conf.d /etc/httpd/conf.modules.d 2>/dev/null
+grep -rnE 'RewriteEngine|DocumentRoot|KeepAlive |MaxRequestsPerChild|MaxConnectionsPerChild|MaxClients|MaxRequestWorkers|LogLevel' /etc/httpd/conf /etc/httpd/conf.d /etc/httpd/conf.modules.d 2>/dev/null
 ```
 
 - DocumentRoot（7. の確認用ファイルの置き場所）と、既存の Rewrite 設定・KeepAlive・子プロセス数を控える。
+
+```bash
+sudo grep -rnE '^[[:space:]]*(php_(admin_)?(value|flag)|LimitRequestBody)' /etc/httpd <DocumentRoot> --include='*.conf' --include='.htaccess'
+```
+
+- `php_value` / `php_flag` は、php.conf の3行（session.save_handler・session.save_path・soap.wsdl_cache_dir）の**実際の値をそのまま控える**。2. の追加ファイルにはこの値を書く（手順書の `/var/lib/php/session` などは例で、違っていれば控えた値に置き換える）。
+- **中止条件**: この3行以外に `php_value` / `php_flag` / `php_admin_*` が見つかった（VirtualHost や本番の `.htaccess` を含む）→ リクエスト単位の設定が残るため、中止して相談。
+- **中止条件**: `<Directory>`・`.htaccess`・VirtualHost のどこかに `LimitRequestBody` がある → 5. で設定する値より優先され（VirtualHost 内でも Include より後に書かれた値が勝つ）、chunked の本文の上限が外れるため、中止して相談。
+
+```bash
+sudo grep -c 'Allowed memory size' /var/log/httpd/error_log*
+```
+
+- memory_limit に達していたリクエストの件数を控える。0 でなければ、memory_limit=-1 にすると、そのリクエストが上限なしにメモリを使うようになる。8. の監視で特に注意する。
 
 ```bash
 free -m; ps -C httpd -o pid,rss,cmd --sort=-rss | head -5
@@ -94,7 +112,7 @@ soap.wsdl_cache_dir = "/var/lib/php/wsdlcache"
 EOF
 ```
 
-【web】上と同じ内容に、末尾の1行を加える。
+【web】`post_max_size` を `10M` にし、末尾の1行を加える（10M にする理由は design.md 2. と 4.）。
 
 ```bash
 sudo tee /etc/php.d/99-php2shell.ini > /dev/null <<'EOF'
@@ -102,7 +120,7 @@ sudo tee /etc/php.d/99-php2shell.ini > /dev/null <<'EOF'
 ; 恒久対応(PHP更新)後に memory_limit を有限値へ戻すこと
 ; 適用前の memory_limit = 128M （/etc/php.ini の値。戻すときはこの値）
 memory_limit = -1
-post_max_size = 8M
+post_max_size = 10M
 upload_max_filesize = 2M
 session.upload_progress.enabled = 0
 ; /etc/httpd/conf.d/php.conf の php_value から移設（値は同一）
@@ -113,6 +131,8 @@ soap.wsdl_cache_dir = "/var/lib/php/wsdlcache"
 always_populate_raw_post_data = -1
 EOF
 ```
+
+**session.save_handler / session.save_path / soap.wsdl_cache_dir の値は、0. で php.conf から控えた実際の値に合わせる**（上は CentOS の標準値の例）。
 
 CLI で読み込みと警告の有無を確認する（警告が出たら中止）。
 
@@ -140,6 +160,7 @@ grep -n 'php_value' /etc/httpd/conf.d/php.conf
 
 - **中止条件**: 0. の MPM が `prefork` でない → 中止して相談。
 - 0. の検索で VirtualHost 内に `KeepAlive On` があった場合は、その行もコメントアウトする（VirtualHost の設定が conf.d より優先されるため）。
+- **処理能力の上限を承知のうえで適用する**（2026-10-22 ユーザー判断、agreement-log 決定17）。prefork は子プロセスの補充を1秒に最大32個しか行わないため、1接続ごとに作り直すと**サーバーごとに毎秒約32接続**が上限になる（静的ファイルも1接続）。ローカル計測では静的ファイルで毎秒約25リクエスト（使い捨てなしでは約7,000）。混雑時の兆候は 8. で監視する。
 
 ```bash
 sudo tee /etc/httpd/conf.d/zz-php2shell-mpm.conf > /dev/null <<'EOF'
@@ -171,17 +192,28 @@ EOF
 
 ```bash
 sudo tee /etc/httpd/conf.d/php2shell-rules.inc > /dev/null <<'EOF'
-# PHP2Shell 暫定対策 2026-10: multipart は CSV 読込と API(.json) のみ許可
+# PHP2Shell 暫定対策 2026-10: multipart は CSV 読込のみ許可（計測アプリの API は application/json で送るため multipart を使わない）
 RewriteEngine On
+# 最初のリクエストだけで判定する（CakePHP の .htaccess が index.php へ内部リダイレクトすると
+# REQUEST_URI が /index.php に変わり、許可した URL まで拒否してしまうため）
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond %{HTTP:Content-Type} multipart/ [NC]
-RewriteCond %{REQUEST_URI} !/entry_categories/check_result_file/
-RewriteCond %{REQUEST_URI} !\.json$
+# 許可 URL は先頭から完全一致で判定する（部分一致だと任意の URL の後ろに付けてすり抜けられる）
+RewriteCond %{REQUEST_URI} !^/entry_categories/check_result_file/[0-9]+/?$
 RewriteRule ^ - [F]
+# Content-Length が「数字だけで7桁以内」（9,999,999 バイト以下）でない本文は PHP に渡さない。
+# post_max_size(10M) を超える本文を受け取ると、PHP は本文を読む前（リクエスト開始時）に警告を出すため。
+# LimitRequestBody は PHP の手前では効かない。`+11000000` のような表記も Apache は受け付けるので、
+# 「8桁以上を拒否」ではなく「7桁以内の数字だけを許可」で書く
+RewriteCond %{HTTP:Content-Length} !^$
+RewriteCond %{HTTP:Content-Length} !^[0-9]{1,7}$
+RewriteRule ^ - [F]
+# Content-Length の無い（chunked の）本文を post_max_size で止める
 LimitRequestBody 10485760
 EOF
 ```
 
-アプリを提供する **各 VirtualHost（http / https の両方）** の `<VirtualHost ...>` の直後（既存の Rewrite ルールより前）に、エディタで次の1行を追加する。
+0. で控えた **すべての Include 先**（アプリに届くすべての VirtualHost。VirtualHost で受けていないポートがあればメインサーバーも）に、エディタで次の1行を追加する。VirtualHost では `<VirtualHost ...>` の直後（既存の Rewrite ルールより前）、メインサーバーでは httpd.conf の `Include conf.d/*.conf`（または `IncludeOptional`）の行の前に入れる。
 
 ```apache
 Include conf.d/php2shell-rules.inc
@@ -195,7 +227,7 @@ Include conf.d/php2shell-rules.inc
 sudo apachectl configtest
 ```
 
-`Syntax OK` 以外なら再起動せず、5. → 3. → 2. の順に戻す（9. 参照）。
+`Syntax OK` 以外なら再起動せず、5. → 4. → 3. → 2. の順に戻す（9. 参照）。
 
 CentOS 7:
 
@@ -249,10 +281,12 @@ sudo rm -f <置き場所>/php2shell_check_<rand>.php
 |---|---|
 | SAPI | `apache2handler` |
 | memory_limit | `'-1'` |
-| post_max_size / upload_max_filesize | `'8M'` / `'2M'` |
+| post_max_size / upload_max_filesize | web `'10M'` / `'2M'`、ressys `'8M'` / `'2M'` |
 | session.upload_progress.enabled | `'0'` または `''` |
-| session.save_handler / save_path | `'files'` / `'/var/lib/php/session'` |
+| session.save_handler / save_path | 0. で php.conf から控えた値 |
 | always_populate_raw_post_data（web） | `'-1'` |
+
+**どれか1つでも期待値と違ったら**、9. の手順ですべての層を戻して完全再起動し、相談する（CLI と mod_php で読む設定ファイルが違う、値の控え違いなどが考えられる）。
 
 ### 7-2. 遮断が効くこと
 
@@ -278,15 +312,47 @@ curl -s -o /dev/null -w '%{http_code}\n' -F x=1 https://<web-domain>/
 
 期待値 `403`。
 
-許可した URL には届くこと（403 以外。未ログインなのでログイン画面へのリダイレクトや 401 になる）:
+1000万バイト以上の本文は PHP に届く前に拒否されること（403 または 413）:
+
+```bash
+head -c 10000000 /dev/zero > /tmp/php2shell_big.bin; curl -s -o /dev/null -w '%{http_code}\n' -H 'Content-Type: application/x-www-form-urlencoded' --data-binary @/tmp/php2shell_big.bin https://<web-domain>/users/login; rm -f /tmp/php2shell_big.bin
+```
+
+期待値 `403` または `413`。このあと 7-4 で error_log に `exceeds the limit` の警告が出ていないことを確認する。
+
+API（`.json`）への multipart も拒否されること:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -F x=1 https://<web-domain>/api/updated_meet_codes.json
+```
+
+期待値 `403`。
+
+許可した URL と、計測アプリと同じ形式（`application/json`）の API には届くこと（403 以外。未ログインなのでログイン画面へのリダイレクトや 401 になる）:
 
 ```bash
 curl -s -o /dev/null -w '%{http_code}\n' -F x=1 https://<web-domain>/entry_categories/check_result_file/1
 ```
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' -F x=1 https://<web-domain>/api/updated_meet_codes.json
+curl -s -o /dev/null -w '%{http_code}\n' -H 'Content-Type: application/json' -d '{}' https://<web-domain>/api/add_entry.json
 ```
+
+【両方】Include 漏れが無いこと。http と https、および IP アドレス直指定（未知の Host 名）でも拒否されることを確かめる（`<server-ip>` はそのサーバーの IP。web は `-F x=1 -X POST`、ressys は `-X POST`）:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -X POST http://<ドメイン>/
+```
+
+```bash
+curl -sk -o /dev/null -w '%{http_code}\n' -X POST -H 'Host: unknown.invalid' https://<server-ip>/
+```
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Host: unknown.invalid' http://<server-ip>/
+```
+
+ressys はいずれも `403`。web は `-F x=1` を付けて `403`。403 以外が返ったら、その経路を受けている VirtualHost（またはメインサーバー）に Include が入っていない。ただし、http が https への転送（301 / 302）だけを行い、その VirtualHost が PHP に届かない構成なら、301 / 302 で問題ない。
 
 ### 7-3. 機能の回帰（ブラウザ・アプリで確認）
 
@@ -305,7 +371,7 @@ sudo tail -50 /var/log/httpd/error_log
 ```
 
 - PHP の警告、`Unknown`、`Segmentation fault`、`child pid ... exit signal` が増えていないこと。
-- 【web】7-3 の 4・5 で 403 が出たら、`/var/log/httpd/*access_log` の該当行の URL を控えて相談（許可 URL の追加が必要）。
+- 【web】7-3 の 4・5 で 403 が出たら、`/var/log/httpd/*access_log` の該当行の URL を控えて相談（計測アプリは `application/json` で送ることを jar で確認済みだが、想定外の送信がある可能性）。
 
 ---
 
@@ -317,7 +383,27 @@ sudo tail -50 /var/log/httpd/error_log
 free -m; ps -C httpd -o pid,rss,cmd --sort=-rss | head -5
 ```
 
-- 応答速度: ワーカー使い捨てで1接続ごとにプロセスを作るため、大会の結果公開直後など混雑時に ressys の表示が極端に遅くならないかを見る。遅い場合は相談（4. だけを切り戻せる）。
+- 応答速度と処理能力の上限: 大会の結果公開直後など混雑時に、ressys の表示が極端に遅くならないかを見る。
+  - 子プロセスの補充が追いつかないときの `server seems busy` は info レベルのログで、標準の `LogLevel warn` では error_log に出ない。そのため、ログの検索ではなく、次の2つで判断する。
+  - 混雑していた時間帯の、1秒あたりのリクエスト数の多い順（毎秒25〜32 前後に張り付いている秒が多ければ、上限に達している）:
+
+```bash
+sudo awk '{print $4}' /var/log/httpd/*access_log | sort | uniq -c | sort -rn | head
+```
+
+  - 応答時間（混雑時に数秒かかるなら上限に達している）:
+
+```bash
+curl -o /dev/null -s -w '%{time_total}\n' https://<ドメイン>/
+```
+
+  - `MaxClients` / `MaxRequestWorkers` の上限到達は error レベルで出るので、こちらは検索で確認できる（ただし補充速度による上限では出ない）:
+
+```bash
+sudo grep -cE 'reached MaxClients|MaxRequestWorkers' /var/log/httpd/error_log
+```
+
+- 兆候が多い・表示が遅いときは相談する。**4. の切り戻しは CVE-2026-109619 への主な防御を外すことになる**（ini 設定では、GET パラメータを `max_input_vars` 超えで送るなど、リクエスト開始時の警告を完全には防げないため）。切り戻すかどうかは人間が判断する。
 - 判断基準: 0. の値と比べて httpd の最大 RSS が大きく増えた、または available が総メモリの 10% を切った場合は相談（memory_limit を有限値に戻すかどうかは、主対策を外すことになるため人間判断）。
 - error_log に `Out of memory`、`Cannot allocate memory`、OOM killer（`dmesg | grep -i oom`）が出ていないこと。
 
@@ -332,7 +418,7 @@ free -m; ps -C httpd -o pid,rss,cmd --sort=-rss | head -5
 | 遮断ルール | 各 VirtualHost の `Include conf.d/php2shell-rules.inc` 行を削除（または `cp -p <file>.bak-20261022 <file>`） |
 | php_value のコメントアウト | `sudo cp -p /etc/httpd/conf.d/php.conf.bak-20261022 /etc/httpd/conf.d/php.conf` |
 | PHP 設定 | `sudo mv /etc/php.d/99-php2shell.ini /etc/php.d/99-php2shell.ini.disabled`（`.ini` 以外にすれば読まれない）。**php.conf の php_value も同時に戻す**（session.save_path の設定元が無くなるため） |
-| ワーカー使い捨て | `sudo mv /etc/httpd/conf.d/zz-php2shell-mpm.conf /etc/httpd/conf.d/zz-php2shell-mpm.conf.disabled`（VirtualHost の `KeepAlive On` をコメントアウトした場合はそれも戻す） |
+| ワーカー使い捨て | `sudo mv /etc/httpd/conf.d/zz-php2shell-mpm.conf /etc/httpd/conf.d/zz-php2shell-mpm.conf.disabled`（VirtualHost の `KeepAlive On` をコメントアウトした場合はそれも戻す）。**109619 への主な防御を外すことになるため、戻す前に人間が判断する**（8. 参照） |
 
 ---
 

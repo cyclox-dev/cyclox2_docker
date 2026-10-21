@@ -22,14 +22,14 @@ mod_php は公式勧告で完全なRCEが実証された最も危険な構成で
 
 1. 両本番サーバーに、公式勧告の暫定対策（設定）を適用する。
    - `memory_limit = -1`
-   - `post_max_size = 8M`、`upload_max_filesize` はそれ未満
+   - `post_max_size = 8M`（web は 10M。Content-Length が「7桁以内の数字」でない本文を Apache で拒否するのと対で、PHP に届く本文を必ず上限内に収める）、`upload_max_filesize` はそれ未満
    - `session.upload_progress.enabled = 0`
    - `fatal_error_backtraces` は PHP 8.5 専用のため対象外
 2. 設定は php.ini 系（起動時に読まれる場所）に置き、`.htaccess` の `php_value`・`ini_set()`・`.user.ini` は使わない。
 3. php.conf の `php_value` 3行（リクエスト単位の ini 設定＝109619 の経路③）を php.ini 系へ移し、php.conf 側は無効化する。動作（セッション保存先など）は変えない。
 4. Web サーバー層で PHP に届く前に攻撃の入口を絞る。
    - ressys: GET / HEAD 以外を拒否（ressys は POST を使わない）。
-   - cyclox-web: multipart はエントリー・リザルトCSV読込と API（`.json`）のみ許可し、それ以外は拒否。
+   - cyclox-web: multipart はエントリー・リザルトCSV読込のみ許可し、それ以外は拒否（計測アプリの API は application/json で送る）。
 5. 反映は httpd の完全再起動で行い、値は CLI ではなく Web（mod_php）経由で確認する。
 6. 既存機能を壊さない: ログイン・セッション維持、CSV読込、計測アプリの API 同期、ressys の閲覧。
 7. 切り戻し手順を用意する（設定ファイルの無効化＋再起動のみで戻せること）。
