@@ -320,6 +320,22 @@ head -c 10000000 /dev/zero > /tmp/php2shell_big.bin; curl -s -o /dev/null -w '%{
 
 期待値 `403` または `413`。このあと 7-4 で error_log に `exceeds the limit` の警告が出ていないことを確認する。
 
+Content-Length に `+` を付けても拒否されること（8桁ルールのすり抜け対策。tester 指摘）:
+
+```bash
+head -c 11000000 /dev/zero > /tmp/php2shell_big.bin; curl -s -o /dev/null -w '%{http_code}\n' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Content-Length: +11000000' --data-binary @/tmp/php2shell_big.bin https://<web-domain>/users/login; rm -f /tmp/php2shell_big.bin
+```
+
+期待値 `403` または `413`。こちらも 7-4 で `exceeds the limit` が出ていないことを確認する。
+
+許可 URL をほかの URL の後ろに付けても multipart が拒否されること（部分一致のすり抜け対策。tester 指摘）:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -F x=1 https://<web-domain>/racers/index/entry_categories/check_result_file/1
+```
+
+期待値 `403`。
+
 API（`.json`）への multipart も拒否されること:
 
 ```bash
