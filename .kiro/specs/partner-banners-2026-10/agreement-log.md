@@ -23,3 +23,13 @@ data.cyclocross.jp（cyclox2res_sys）のパートナーバナーを、www.cyclo
 
 ## 検証
 `check_banners.py <cyclox2res_sys path>` で header/footer をスナップショットと正規化比較（件数・順序・相対パス画像の有無）。
+
+## 追補: check_banners.py を www 直接比較に改修（2026-11-14 人間指示）
+- 背景: スナップショット（2026-10-03 の10件）固定のため、Tannus（11件）・GALFER/RDCX（13件）追加のたびに必ず NG になり、毎回 www を手で取得して比較していた。
+- 変更: 既定で www 本番トップをその場で取得し、header ↔ `#ptnr_logo_list01`、footer ↔ `#ptnr_ftr` をそれぞれ比較する。
+  - www 側の相対パス画像は比較時に絶対URL化（data 側は絶対URLが正）。data 側に相対パス画像があれば NG。
+  - NG 時は data 側に貼るべき www の `<li>` 全行（絶対URL化済み）を表示する。欠落・余分に加え、重複・不足も原因行を表示する。
+  - data 側テンプレートが無い場合は Traceback ではなく NG として表示する（サブモジュール未初期化に気付けるように）。
+  - 終了コード 0=一致 / 1=不一致 / 2=取得失敗・ブロック未検出。`--url` で保存HTMLと比較可、`--snapshot` で旧方式。
+- 回帰テスト: `tests/test_check_banners.sh <cyclox2res_sys のパス>`（res-sys の過去コミット 94ab475 / c5ad656 / da7abc9 と `tests/fixtures/www-13.html` を使用）。
+- 関連 spec: Tannus 追加は `ressys-note-text-and-favicon-2026-10`（追加修正）、GALFER/RDCX 追加は `partner-banners-galfer-rdcx-2026-11`。

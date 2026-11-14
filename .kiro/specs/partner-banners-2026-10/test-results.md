@@ -13,3 +13,14 @@
 - 常駐 `cyclox2ressys_svr` はイメージ内にコードを焼き込み、テンプレートはマウントされない（docker-compose.yml）ため、worktree 変更は反映されない。
 - 使い捨てコンテナ（同一イメージ・同一ネットワーク・ポート8082）に、compose と同じ conf 4点＋worktree の `header.php`/`footer.php` を `:ro` マウントして起動。常駐コンテナ・メインチェックアウトは無変更。
 - 後片付け: `docker rm -f ressys_banner_check`
+
+## 2026-11-14 check_banners.py 改修の実行結果
+| 検証 | 結果 |
+|---|---|
+| `tests/test_check_banners.sh`（改修前＝RED） | 7件中5件 FAIL（13件一致でも NG、順序違い・取得失敗の判定なし 等） |
+| `tests/test_check_banners.sh`（改修後＝GREEN） | 7件すべて PASS |
+| www 本番に対する実行（res-sys `da7abc9`） | OK: header 13件 / footer 13件、rc=0 |
+| tester（独立検証） | PASS。敵対ケース（www/data のブロック欠落、空・非UTF-8・接続拒否・404、`&amp;`、CRLF、`//cdn`、header/footer 相違 等）とミューテーションで確認。軽微な指摘4件 |
+| 指摘1（重複の原因行が出ない）・指摘2（テンプレート無しで Traceback）の修正: 追加テスト3件（RED→GREEN） | 修正後 10件すべて PASS、www 本番に対しても OK（rc=0） |
+
+未対応（記録のみ）: 指摘3（`&amp;`・`//cdn`・www 側ブロック欠落・`--snapshot` 13件 NG のテスト未整備）、指摘4（相対パス検出は `src="/..."` のみ。www が絶対URLなら通常の不一致として NG になる）。
