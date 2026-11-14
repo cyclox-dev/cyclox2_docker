@@ -1,0 +1,933 @@
+<!--
+  系統連動カテゴリーの多重付与 — 根本原因の解説（図解）
+
+  spec        : lineage-propagation-idempotency-2026-27
+  出所        : Claude Artifact https://claude.ai/artifact/KAyLh6hb8kXxUkToMgeLpK (v3)
+  アーカイブ日: 2026-11-14
+
+  これは二次成果物（派生ビュー）のアーカイブコピーである。
+  正本は同ディレクトリの research.md / design.md / agreement-log.md（一次成果物）。
+  内容の修正は正本側で行い、本ファイルは手編集しない。
+  docs/sdd/deliverables-policy.md 第2節「保管が必要な二次成果物は…意図的に明示コミットする」に基づき
+  git 管理下に置いている（claude.ai 側が参照不能になった場合に備えるため）。
+
+  単独のローカルファイルとして開ける。Web フォント（Google Fonts）はオフラインでは
+  読み込まれないが、代替フォントスタックで読める状態を保つ。
+-->
+<!doctype html>
+<html lang="ja">
+<head>
+<title>系統連動カテゴリーの多重付与</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho:wght@400;600&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#e8ebea;
+    --surface:#fbfcfc;
+    --surface-2:#f1f4f3;
+    --ink:#14201f;
+    --ink-soft:#50605e;
+    --ink-faint:#7d8c8a;
+    --rule:#ccd4d2;
+    --rule-strong:#a8b4b2;
+    --accent:#0f6b62;
+    --accent-wash:#0f6b6216;
+    --alarm:#a32b3c;
+    --alarm-wash:#a32b3c14;
+    --amber:#9a6410;
+    --amber-wash:#9a641020;
+
+    --sans:"IBM Plex Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    --serif:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#0f1514;
+      --surface:#18211f;
+      --surface-2:#1e2826;
+      --ink:#e4eae8;
+      --ink-soft:#a3b2af;
+      --ink-faint:#7c8b89;
+      --rule:#2c3937;
+      --rule-strong:#44534f;
+      --accent:#54cfbe;
+      --accent-wash:#54cfbe1f;
+      --alarm:#f0808f;
+      --alarm-wash:#f0808f1c;
+      --amber:#dda54a;
+      --amber-wash:#dda54a26;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0f1514;
+    --surface:#18211f;
+    --surface-2:#1e2826;
+    --ink:#e4eae8;
+    --ink-soft:#a3b2af;
+    --ink-faint:#7c8b89;
+    --rule:#2c3937;
+    --rule-strong:#44534f;
+    --accent:#54cfbe;
+    --accent-wash:#54cfbe1f;
+    --alarm:#f0808f;
+    --alarm-wash:#f0808f1c;
+    --amber:#dda54a;
+    --amber-wash:#dda54a26;
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:1000px;
+    margin:0 auto;
+    padding-block:0 72px;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .col{max-width:660px;}
+
+  /* ---------- masthead ---------- */
+  header.mast{
+    border-bottom:2px solid var(--ink);
+    padding-block:40px 18px;
+    margin-bottom:8px;
+  }
+  .kicker{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 18px;
+  }
+  h1{
+    font-family:var(--sans);
+    font-weight:700;
+    font-size:clamp(28px,5.4vw,42px);
+    line-height:1.18;
+    letter-spacing:-.02em;
+    margin:16px 0 0;
+    text-wrap:balance;
+  }
+  .standfirst{
+    font-family:var(--serif);
+    font-size:clamp(15px,2.2vw,17px);
+    line-height:1.85;
+    color:var(--ink-soft);
+    margin:16px 0 0;
+    max-width:60ch;
+  }
+
+  /* ---------- verdict block ---------- */
+  .verdict{
+    margin-top:28px;
+    background:var(--surface);
+    border-left:4px solid var(--alarm);
+    padding:20px 22px;
+    max-width:720px;
+  }
+  .verdict .lbl{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--alarm);
+    font-weight:600;
+  }
+  .verdict p{
+    font-family:var(--serif);
+    font-size:16px;
+    line-height:1.9;
+    margin:10px 0 0;
+  }
+
+  /* ---------- sections ---------- */
+  section{margin-top:56px;}
+  h2{
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    margin:0 0 4px;
+    display:flex;
+    gap:14px;
+    align-items:baseline;
+    text-wrap:balance;
+  }
+  h2 .num{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:600;
+    color:var(--accent);
+    letter-spacing:.06em;
+    flex:none;
+    padding-top:2px;
+  }
+  h2 + .sub{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--ink-faint);
+    margin:0 0 20px 34px;
+    letter-spacing:.03em;
+  }
+  h3{
+    font-size:15px;
+    font-weight:600;
+    margin:32px 0 8px;
+    color:var(--ink);
+  }
+  p{
+    font-family:var(--serif);
+    font-size:15.5px;
+    line-height:1.95;
+    margin:0 0 15px;
+  }
+  .col p{max-width:62ch;}
+  strong{font-weight:600;color:var(--ink);}
+  code{
+    font-family:var(--mono);
+    font-size:.88em;
+    background:var(--surface-2);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    padding:1px 5px;
+    white-space:nowrap;
+  }
+  ul{margin:0 0 16px;padding-left:0;list-style:none;max-width:62ch;}
+  ul li{
+    font-family:var(--serif);
+    line-height:1.9;
+    padding-left:20px;
+    position:relative;
+    margin-bottom:8px;
+  }
+  ul li::before{
+    content:"";
+    position:absolute;
+    left:2px;top:.82em;
+    width:6px;height:1.5px;
+    background:var(--rule-strong);
+  }
+
+  /* ---------- figures ---------- */
+  figure{
+    margin:28px 0 8px;
+    background:var(--surface);
+    border:1px solid var(--rule);
+  }
+  .scroller{overflow-x:auto;}
+  figure svg{display:block;min-width:600px;width:100%;height:auto;}
+  figcaption{
+    font-family:var(--mono);
+    font-size:11px;
+    line-height:1.7;
+    color:var(--ink-faint);
+    padding:10px 14px;
+    border-top:1px solid var(--rule);
+    letter-spacing:.02em;
+  }
+  /* svg text tokens */
+  .t{font-family:"IBM Plex Sans JP",system-ui,sans-serif;fill:var(--ink);}
+  .tm{font-family:"IBM Plex Mono",monospace;fill:var(--ink-soft);}
+  .tf{fill:var(--ink-faint);}
+  .ta{fill:var(--accent);}
+  .tx{fill:var(--alarm);}
+  .tw{fill:var(--amber);}
+
+  /* ---------- table ---------- */
+  .tablewrap{overflow-x:auto;margin:22px 0 10px;border:1px solid var(--rule);background:var(--surface);}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px;}
+  th,td{
+    text-align:left;
+    padding:9px 12px;
+    border-bottom:1px solid var(--rule);
+    vertical-align:top;
+  }
+  th{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:600;
+    background:var(--surface-2);
+    white-space:nowrap;
+  }
+  td.loc{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);line-height:1.55;}
+  td.loc b{color:var(--ink);font-weight:600;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.v{white-space:nowrap;font-family:var(--mono);font-size:11.5px;font-weight:600;}
+  .tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.08em;
+    padding:2px 7px;
+    border-radius:2px;
+  }
+  .tag.a{color:var(--accent);background:var(--accent-wash);border:1px solid var(--accent);}
+  .tag.b{color:var(--alarm);background:var(--alarm-wash);border:1px solid var(--alarm);}
+  tr.hot td{background:var(--alarm-wash);}
+  .num-td{font-variant-numeric:tabular-nums;}
+
+  /* ---------- code block ---------- */
+  pre{
+    font-family:var(--mono);
+    font-size:12px;
+    line-height:1.72;
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--rule-strong);
+    padding:14px 16px;
+    overflow-x:auto;
+    margin:18px 0;
+    color:var(--ink-soft);
+  }
+  pre .k{color:var(--alarm);font-weight:600;}
+  pre .g{color:var(--accent);font-weight:600;}
+  pre .c{color:var(--ink-faint);}
+
+  /* ---------- callouts ---------- */
+  .note{
+    border:1px solid var(--rule);
+    border-top:3px solid var(--amber);
+    background:var(--surface);
+    padding:16px 18px;
+    margin:24px 0;
+    max-width:720px;
+  }
+  .note .lbl{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .note p:last-child,.note ul:last-child{margin-bottom:0;}
+  .note p{font-size:14.5px;line-height:1.85;}
+  .note ul li{font-size:14.5px;}
+
+  /* ---------- two-up ---------- */
+  .twoup{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:24px 0;}
+  .panel{background:var(--surface);border:1px solid var(--rule);padding:16px 18px;}
+  .panel h4{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  .panel.ok h4{color:var(--accent);}
+  .panel.bad h4{color:var(--alarm);}
+  .panel p{font-size:14px;line-height:1.8;margin-bottom:0;}
+
+  footer{
+    margin-top:64px;
+    border-top:1px solid var(--rule);
+    padding-top:18px;
+    font-family:var(--mono);
+    font-size:11px;
+    line-height:1.85;
+    color:var(--ink-faint);
+    letter-spacing:.02em;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    html{scroll-behavior:smooth;}
+  }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">
+    <span>cyclox2web / CakePHP 2.x</span>
+    <span>category_racers</span>
+    <span>2026-09-24 調査メモ</span>
+  </div>
+  <h1>リザルトを取り込むたびに、<br>C2 が1行ずつ増えていった</h1>
+  <p class="standfirst">系統連動（ME⇔MM）で付与されるカテゴリーが、同じリザルトを再取込するたびに重複して作られた。原因は単純で、<strong>重複防止のガードが「自分がこれから書く行」を絶対に見つけられない条件で検索していた</strong>ことにある。日付の1日のずれが、そのまま行数の増加になった。</p>
+</header>
+
+<div class="verdict">
+  <div class="lbl">ひとことで言うと</div>
+  <p>ガードは <code>apply_date &lt;= レース当日</code> で「もう書いたか？」を探す。<br>
+  しかしガードを通過して作られる行の <code>apply_date</code> は <strong>レース当日の翌日</strong>。<br>
+  探す窓の外に自分で書き込んでいるので、何度取り込んでも毎回「まだ無い」と判定される。</p>
+</div>
+
+<div class="col">
+
+<!-- ============ 1 ============ -->
+<section>
+  <h2><span class="num">01</span>まず、所属をどう表現しているか</h2>
+  <div class="sub">category_racers / apply_date・cancel_date・deleted</div>
+
+  <p><code>category_racers</code> は「この選手はいつからいつまでこのカテゴリーだったか」を1行で表す台帳です。時点を持たない現在値のテーブルではなく、<strong>期間の履歴</strong>を積み上げていく構造になっています。</p>
+
+  <ul>
+    <li><code>apply_date</code> — その所属が発効する日（NOT NULL）</li>
+    <li><code>cancel_date</code> — その所属が終わる日。<code>NULL</code> なら「今も継続中」</li>
+    <li><code>deleted</code> — ソフト削除。<strong>「所属が終わった」ではなく「この行は最初から無かったことにする」</strong>という意味</li>
+  </ul>
+
+  <p>ここは混同しやすいところです。<code>cancel_date</code> は業務上の事実（昇格して CM2 をやめた）を記録するのに対し、<code>deleted</code> は記録そのものの取り消し（誤登録だった、取込をやり直すので前回の書き込みを消す）です。<strong>履歴として残すなら cancel_date、無かったことにするなら deleted</strong>。両者は排他ではなく、有効な行を引くときは常に両方を見ます。</p>
+
+  <h3>「ある日時点で有効な所属」の標準形</h3>
+
+  <p>コード中に何度も現れる、この台帳への標準的な問い合わせはこの形です。</p>
+
+<pre>deleted = 0
+AND apply_date &lt;= $atDate                     <span class="c">← その日までに発効している</span>
+AND (cancel_date IS NULL OR cancel_date &gt;= $atDate)  <span class="c">← その日にまだ終わっていない</span></pre>
+
+  <p>実データで見ると、選手 <code>MMJ-234-3001</code> のマスターズ側はこうなっています。</p>
+
+  <figure>
+    <div class="scroller">
+      <svg viewBox="0 0 760 246" role="img" aria-label="CM3・CM2・CM1 の有効期間を並べた帯グラフ。2026-09-23 を基準日とした縦線が CM2 の帯を通る。">
+        <!-- axis -->
+        <line x1="60" y1="196" x2="726" y2="196" stroke="var(--rule-strong)" stroke-width="1"/>
+        <g class="tm" font-size="10.5">
+          <text x="90" y="212" text-anchor="middle">2023-11-12</text>
+          <text x="268" y="212" text-anchor="middle">2024-04-01</text>
+          <text x="536" y="212" text-anchor="middle">2026-09-23</text>
+          <text x="626" y="212" text-anchor="middle">2026-09-24</text>
+        </g>
+        <g stroke="var(--rule)" stroke-width="1">
+          <line x1="90" y1="192" x2="90" y2="200"/>
+          <line x1="268" y1="192" x2="268" y2="200"/>
+          <line x1="536" y1="192" x2="536" y2="200"/>
+          <line x1="626" y1="192" x2="626" y2="200"/>
+        </g>
+
+        <!-- probe line -->
+        <line x1="536" y1="26" x2="536" y2="196" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text class="tm tw" x="530" y="22" text-anchor="end" font-size="11" font-weight="600">基準日 $atDate = 2026-09-23（レース当日）</text>
+
+        <!-- CM3 -->
+        <rect x="90" y="44" width="178" height="26" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+        <text class="t" x="100" y="61" font-size="12" font-weight="600">CM3</text>
+        <text class="tm tf" x="278" y="61" font-size="10.5">終了済み（cancel_date 2024-03-31）</text>
+
+        <!-- CM2 -->
+        <rect x="268" y="84" width="268" height="26" fill="var(--amber-wash)" stroke="var(--amber)" stroke-width="1.5"/>
+        <text class="t" x="278" y="101" font-size="12" font-weight="600">CM2</text>
+        <text class="tm tw" x="546" y="101" font-size="10.5" font-weight="600">← 基準日に有効なのはこの1行</text>
+
+        <!-- CM1 -->
+        <rect x="626" y="124" width="92" height="26" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text class="t" x="636" y="141" font-size="12" font-weight="600">CM1</text>
+        <path d="M718 137 L730 137" stroke="var(--accent)" stroke-width="1.5"/>
+        <path d="M726 133 L732 137 L726 141 Z" fill="var(--accent)"/>
+        <text class="tm ta" x="626" y="166" font-size="10.5">cancel_date IS NULL（継続中）</text>
+
+        <!-- gap marker -->
+        <line x1="536" y1="124" x2="536" y2="150" stroke="var(--rule-strong)" stroke-dasharray="2 3"/>
+        <line x1="536" y1="137" x2="620" y2="137" stroke="var(--rule-strong)" stroke-width="1"/>
+        <text class="tm tf" x="578" y="132" text-anchor="middle" font-size="9.5">1日</text>
+      </svg>
+    </div>
+    <figcaption>実データ（id 90588 / 94092 / 268615）。日付軸は模式的で等間隔ではない。CM2 の cancel_date と CM1 の apply_date が同日ではなく1日空いている点が、次節の主題。</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+  <h2><span class="num">02</span>「翌日から」という規約は、なぜ必要だったのか</h2>
+  <div class="sub">2026-08-23 / commit c18d056</div>
+
+  <p>昇格すると、旧カテゴリーを終了して新カテゴリーを開始します。このとき<strong>旧の <code>cancel_date</code> と新の <code>apply_date</code> を同じ日にしてはいけない</strong>、という規約があります。理由は前節の標準形を見れば分かります。</p>
+
+  <p>基準日 D で検索したとき、条件は「<code>apply_date &lt;= D</code> かつ <code>cancel_date &gt;= D</code>」です。<strong>両端とも等号を含む</strong>ので、旧行（cancel_date = D）も新行（apply_date = D）も<strong>両方とも条件を満たしてしまう</strong>。1人の選手が同じ系統で2つのカテゴリーを同時に持っているように見え、整合性検知が誤発火します。</p>
+
+  <p>そこで新カテゴリーは翌日から発効させます。昇格元系統側（<code>ResultParamCalcComponent</code>）は以前からこの規約でした。系統連動側（<code>CategoryLineageLinker::propagateLinkedPromotion()</code>）だけが、呼び出し元から渡された単一の日付を <code>cancel_date</code> と <code>apply_date</code> の両方にそのまま使っていたため、<strong>2026-08-23 に昇格元側へ揃える改訂が入りました</strong>。</p>
+
+<pre><span class="c">// CategoryLineageLinker::propagateLinkedPromotion() — 2026-08-23 改訂で追加</span>
+$newApplyDate = date('Y/m/d', strtotime($atDate . <span class="g">' +1 day'</span>));</pre>
+
+  <div class="note">
+    <div class="lbl">ここが分岐点</div>
+    <p>この改訂自体は正しい。同日衝突という実在の不具合を直しています。問題は、<strong>+1日 の計算を呼び出し元から Linker の内部へ移したとき、その日付を読みに行く側の一部に付け直さなかった</strong>ことです。詳細は 07 で追います。</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section>
+  <h2><span class="num">03</span>同じ検索窓が、2つの別々の目的に使われている</h2>
+  <div class="sub">grep -rn "apply_date &lt;=" app | grep -v /Test/</div>
+
+  <p>ここが本件の核心です。<code>apply_date &lt;= $atDate</code> という窓は、コード中で意味の違う2つの問いに使われています。</p>
+
+  <div class="twoup">
+    <div class="panel ok">
+      <h4>目的 A — 過去を問う</h4>
+      <p>「レース当日、この選手は何を名乗っていたか」<br>過去の一時点の状態を再現する問い。<strong>この窓で正しい。</strong>未来日で登録された行（来季の先行付与、後から入った別大会の結果）を巻き込まないために、上限は必須。</p>
+    </div>
+    <div class="panel bad">
+      <h4>目的 B — 自分の書き込みを問う</h4>
+      <p>「この処理は、もう結果を書いていないか」<br>冪等性を守るための重複防止。<strong>この窓を使ってはいけない。</strong>問うべきは「自分が書いた行が在るか」であって、それが何日発効かは関係がない。</p>
+    </div>
+  </div>
+
+  <p>目的 B に日付の窓を使うと、<strong>書く日付を変えた瞬間にガードが効かなくなる</strong>という壊れ方をします。ガードの正しさが、無関係なはずの日付規約に依存してしまうからです。</p>
+
+  <h3>全12箇所の分類</h3>
+
+  <p>grep は19行ヒットしますが、うち7行はコメントです。実際のコード上の出現は<strong>12箇所</strong>で、目的 B は2箇所しかありません。</p>
+</section>
+</div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>箇所</th><th>何を問うているか</th><th>目的</th><th>窓</th></tr>
+      </thead>
+      <tbody>
+        <tr class="hot">
+          <td class="num-td">1</td>
+          <td class="loc"><b>CategoryLineageLinker::__findActiveCategoryRacerOnSide()</b><br>L454</td>
+          <td>連動先を既に書いたか（重複防止ガード）</td>
+          <td><span class="tag b">B</span></td>
+          <td class="v" style="color:var(--alarm)">誤 ★主原因</td>
+        </tr>
+        <tr class="hot">
+          <td class="num-td">2</td>
+          <td class="loc"><b>ResultParamCalcComponent::__applyRankUp2CM()</b><br>L1171</td>
+          <td>$hasNewCat / $hasCM1（重複付与の防止）</td>
+          <td><span class="tag b">B</span></td>
+          <td class="v" style="color:var(--alarm)">誤</td>
+        </tr>
+        <tr>
+          <td class="num-td">3</td>
+          <td class="loc">CategoryLineageLinker::isFormerElite1() L152</td>
+          <td>レース当日までに C1 を持ったことがあるか</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">4</td>
+          <td class="loc">CategoryLineageLinker::__findCategoryCodesEffectiveAsOfDateOnSide() L796</td>
+          <td>大会日にエントリー側系統で名乗っていたもの</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">5</td>
+          <td class="loc">ResultParamCalcComponent::__getCatCodes() L1007</td>
+          <td>レース当日の所属一覧</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">6</td>
+          <td class="loc">ResultParamCalcComponent::__setupCatRacerCancel() L1493</td>
+          <td>当日有効な旧カテゴリー（cancel 対象）</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">7</td>
+          <td class="loc">ResultParamCalcComponent::__checkCatRacer() L1686</td>
+          <td>指定日にそのカテゴリーに属していたか</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">8</td>
+          <td class="loc">ResultParamCalcComponent::__asCategory() L1807</td>
+          <td>どのカテゴリーの選手として出走したか</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">9</td>
+          <td class="loc">CategoryRacer::__activeCategoryCodes() L366</td>
+          <td>整合性検知の基準日時点の有効保有</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正<span class="tf"> ※08-23に是正</span></td>
+        </tr>
+        <tr>
+          <td class="num-td">10</td>
+          <td class="loc">CatRacerCleanupShell::__detectIllegalHoldingRacers() L668</td>
+          <td>実行日時点の有効保有（検出バッチ）</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">11</td>
+          <td class="loc">OrgUtilController L297</td>
+          <td>シーズン最終日時点のカテゴリー保有</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+        <tr>
+          <td class="num-td">12</td>
+          <td class="loc">OrgUtilController L394</td>
+          <td>大会日時点のカテゴリー保有</td>
+          <td><span class="tag a">A</span></td><td class="v" style="color:var(--accent)">正</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+<div class="col">
+  <div class="note">
+    <div class="lbl">初版の調査報告（research.md 1.2）との差分 — 3件とも採択済み</div>
+    <p>初版は「本体7箇所」として3箇所を修正対象に挙げていました。独立に数え直した結果を spec 側へ差し戻したところ、<strong>3件とも再検証のうえ採択され、修正対象は最終的に1箇所に絞られました</strong>。</p>
+    <ul>
+      <li><strong>件数は7箇所ではなく12箇所。</strong> 初版の表は7件、脚注で3件（L366 / L668 / L796）に触れて計10件で、<code>OrgUtilController</code> の L297・L394 がどこにも現れませんでした。いずれも目的 A で正しいため結論は変わりませんが、用途で切り分けて修正対象を決める以上、母集団の正確さが設計の前提になります。</li>
+      <li><strong>L1493（__setupCatRacerCancel）は「誤」ではなく A で正しい。</strong> 前回取込で cancel された旧行は <code>cancel_date = レース当日</code> なので <code>cancel_date &gt;= $atDate</code> に等号で該当し、取りこぼしません（実データ CM2 / id 94092 でも cancel_date は1回だけ）。spec 側の再検証でさらに強い根拠が出ました ——<strong>このメソッドの呼び出し6箇所の第2引数は、常に昇格<em>元</em>の下位カテゴリー</strong>（<code>__rankUpMap[…]['needs']</code>、<code>array('CL2')</code>、<code>$oldCats[…]</code>、<code>array('C3','C4')</code> 等）で、今回作成する連動先・昇格先を含みません。「前回作った行」はそもそもこのメソッドの対象外で、窓の有無とは無関係でした。</li>
+      <li><strong>L1171 は「誤」で同意。ただし露呈条件は同日別大会。</strong> 冪等化削除が <code>meet_code</code> をキーに含むため、同一大会の再取込では前回行が先に消え、重複しません。露呈するのは同日開催の2大会目で、前回の昇格行（apply_date = 当日+1）が窓の外に落ちる場合です。<strong>同じ盲点は L1493 にも同じ形で存在します。</strong></li>
+    </ul>
+    <p>この「同日別大会」の盲点は、<strong>本件とは別系統の問題として spec のスコープ外</strong>と判断されました。昇格元側の +1日 規約は c18d056 の差分では変更されていないコンテキスト行であり、この盲点は今回の回帰より前から存在するためです。結果として修正対象は <code>__findActiveCategoryRacerOnSide()</code> の<strong>1箇所のみ</strong>になりました。</p>
+  </div>
+</div>
+
+<div class="col">
+<!-- ============ 4 ============ -->
+<section>
+  <h2><span class="num">04</span>すれ違いが起きる瞬間</h2>
+  <div class="sub">propagateLinkedPromotion() / レース当日 2026-09-23</div>
+
+  <p>ガードと書き込みを同じ数直線に並べると、何が起きているか一目で分かります。</p>
+
+  <figure>
+    <div class="scroller">
+      <svg viewBox="0 0 760 286" role="img" aria-label="数直線。ガードの検索窓は 2026-09-23 で右端が切れ、作られる行の apply_date 2026-09-24 はその外側にある。">
+        <defs>
+          <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="var(--amber)" stroke-width="2.5" opacity="0.28"/>
+          </pattern>
+        </defs>
+
+        <!-- window band -->
+        <rect x="40" y="52" width="450" height="46" fill="url(#hatch)"/>
+        <rect x="40" y="52" width="450" height="46" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="0"/>
+        <text class="t tw" x="56" y="44" font-size="12" font-weight="700">ガードの検索窓</text>
+        <text class="tm tw" x="180" y="44" font-size="11">apply_date &lt;= 2026-09-23</text>
+        <text class="tm tf" x="56" y="80" font-size="10.5">この範囲に「連動先の行」があれば、既に処理済みと判断して何もしない</text>
+
+        <!-- hard edge -->
+        <line x1="490" y1="40" x2="490" y2="198" stroke="var(--amber)" stroke-width="2.5"/>
+        <text class="tm tw" x="496" y="48" font-size="10.5" font-weight="600">窓の右端</text>
+
+        <!-- axis -->
+        <line x1="40" y1="166" x2="720" y2="166" stroke="var(--rule-strong)" stroke-width="1.5"/>
+        <g stroke="var(--rule-strong)" stroke-width="1.5">
+          <line x1="490" y1="160" x2="490" y2="172"/>
+          <line x1="592" y1="160" x2="592" y2="172"/>
+        </g>
+        <g class="tm" font-size="11">
+          <text x="490" y="188" text-anchor="middle">2026-09-23</text>
+          <text x="592" y="188" text-anchor="middle">2026-09-24</text>
+        </g>
+        <g class="tm tf" font-size="9.5">
+          <text x="490" y="202" text-anchor="middle">レース当日 $atDate</text>
+          <text x="592" y="202" text-anchor="middle">$atDate + 1日</text>
+        </g>
+
+        <!-- created row pin -->
+        <line x1="592" y1="166" x2="592" y2="118" stroke="var(--alarm)" stroke-width="2"/>
+        <circle cx="592" cy="118" r="5" fill="var(--alarm)"/>
+        <rect x="508" y="88" width="212" height="24" fill="var(--alarm-wash)" stroke="var(--alarm)" stroke-width="1.5"/>
+        <text class="t tx" x="518" y="105" font-size="11.5" font-weight="700">作られる C2 行の apply_date</text>
+
+        <!-- miss arrow -->
+        <path d="M490 232 L586 232" stroke="var(--alarm)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <path d="M580 227 L590 232 L580 237 Z" fill="var(--alarm)"/>
+        <text class="t tx" x="596" y="236" font-size="12" font-weight="700">窓の外</text>
+        <text class="t" x="40" y="236" font-size="12" font-weight="600">自分が書いた行は、絶対に見つからない</text>
+        <text class="tm tf" x="40" y="256" font-size="10.5">→ 次の取込でも「相手系統は空」と判定され、もう1行作られる</text>
+      </svg>
+    </div>
+    <figcaption>ガードが探す最新の日は 2026-09-23。書き込む日は 2026-09-24。両者は1日ぶん、構造的に決して交わらない。</figcaption>
+  </figure>
+
+  <p>実際に開発DB（本番相当）で、ガードが投げるのと同じ条件を流すとこうなります。</p>
+
+<pre><span class="c">-- ガードが探す条件（$atDate = 2026-09-23）</span>
+SELECT id, category_code, apply_date, cancel_date FROM category_racers
+WHERE racer_code='MMJ-234-3001' AND deleted=0 <span class="k">AND apply_date &lt;= '2026-09-23'</span>
+  AND category_code IN ('C1','C2','C3','C4')
+  AND (cancel_date IS NULL OR cancel_date &gt;= '2026-09-23');
+
+<span class="k">→ Empty set   ← ガードから見ると「エリート側は空」</span>
+
+<span class="c">-- 実際に存在する有効行</span>
+SELECT id, category_code, apply_date, cancel_date FROM category_racers
+WHERE racer_code='MMJ-234-3001' AND deleted=0
+  AND category_code IN ('C1','C2','C3','C4') AND cancel_date IS NULL;
+
+<span class="g">→ 268593 C2 2026-09-24
+  268597 C2 2026-09-24
+  268605 C2 2026-09-24
+  268609 C2 2026-09-24
+  268614 C2 2026-09-24      ← 5行すべて有効</span></pre>
+
+  <p>ガードは <strong>0行</strong>と答え、台帳には <strong>5行</strong>ある。この落差がそのまま被害です。</p>
+
+  <h3>取込5回ぶんの推移</h3>
+
+  <p>同じ大会（もみじシクロクロス第2戦 / 2026-09-23）のリザルトが5回取り込まれました。<code>ApiController::execAddResult()</code> は再取込のたびに既存の <code>racer_results</code> を削除して作り直すため、<strong>リザルトidは毎回変わります</strong>。増えた5行が異なる <code>racer_result_id</code> を持っているのは、そのためです。</p>
+
+  <figure>
+    <div class="scroller">
+      <svg viewBox="0 0 760 392" role="img" aria-label="5回の取込ごとに、昇格元 CM1 は常に1行、連動先 C2 は1行ずつ増えて5行になる様子を示した図。">
+        <!-- headers -->
+        <text class="tm tf" x="40" y="30" font-size="10.5" letter-spacing="1">取込</text>
+        <text class="tm tf" x="118" y="30" font-size="10.5" letter-spacing="1">created</text>
+        <text class="tm tf" x="262" y="30" font-size="10.5" letter-spacing="1">racer_result_id</text>
+        <text class="t ta" x="392" y="30" font-size="11" font-weight="700">昇格元 CM1</text>
+        <text class="tm tf" x="392" y="44" font-size="9.5">冪等化削除あり</text>
+        <text class="t tx" x="540" y="30" font-size="11" font-weight="700">連動先 C2</text>
+        <text class="tm tf" x="540" y="44" font-size="9.5">ガードが効かない</text>
+        <line x1="40" y1="54" x2="720" y2="54" stroke="var(--rule-strong)" stroke-width="1"/>
+
+        <!-- rows -->
+        <g class="tm" font-size="11">
+          <text x="40" y="86">#1</text><text x="118" y="86">09-23 17:21:45</text><text x="262" y="86">352705</text>
+          <text x="40" y="140">#2</text><text x="118" y="140">09-23 21:15:41</text><text x="262" y="140">352735</text>
+          <text x="40" y="194">#3</text><text x="118" y="194">09-23 22:31:27</text><text x="262" y="194">352883</text>
+          <text x="40" y="248">#4</text><text x="118" y="248">09-23 22:37:16</text><text x="262" y="248">352913</text>
+          <text x="40" y="302">#5</text><text x="118" y="302">09-24 07:37:31</text><text x="262" y="302">353025</text>
+        </g>
+        <g stroke="var(--rule)" stroke-width="1">
+          <line x1="40" y1="106" x2="720" y2="106"/>
+          <line x1="40" y1="160" x2="720" y2="160"/>
+          <line x1="40" y1="214" x2="720" y2="214"/>
+          <line x1="40" y1="268" x2="720" y2="268"/>
+        </g>
+
+        <!-- CM1 column: always one box -->
+        <g>
+          <rect x="392" y="72" width="22" height="18" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+          <rect x="392" y="126" width="22" height="18" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+          <rect x="392" y="180" width="22" height="18" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+          <rect x="392" y="234" width="22" height="18" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+          <rect x="392" y="288" width="22" height="18" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        </g>
+        <g class="tm ta" font-size="10.5">
+          <text x="422" y="86">1行</text><text x="422" y="140">1行</text><text x="422" y="194">1行</text>
+          <text x="422" y="248">1行</text><text x="422" y="302">1行</text>
+        </g>
+        <g class="tm tf" font-size="9">
+          <text x="456" y="140">前回行を削除→再作成</text>
+          <text x="456" y="194">前回行を削除→再作成</text>
+          <text x="456" y="248">前回行を削除→再作成</text>
+          <text x="456" y="302">前回行を削除→再作成</text>
+        </g>
+
+        <!-- C2 column: accumulating -->
+        <g fill="var(--alarm-wash)" stroke="var(--alarm)" stroke-width="1.5">
+          <rect x="540" y="72" width="22" height="18"/>
+
+          <rect x="540" y="126" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="568" y="126" width="22" height="18"/>
+
+          <rect x="540" y="180" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="568" y="180" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="596" y="180" width="22" height="18"/>
+
+          <rect x="540" y="234" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="568" y="234" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="596" y="234" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="624" y="234" width="22" height="18"/>
+
+          <rect x="540" y="288" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="568" y="288" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="596" y="288" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="624" y="288" width="22" height="18" fill="var(--surface-2)" stroke="var(--rule-strong)"/>
+          <rect x="652" y="288" width="22" height="18"/>
+        </g>
+        <g class="tm tx" font-size="10.5" font-weight="600">
+          <text x="572" y="86">1行</text><text x="600" y="140">2行</text><text x="628" y="194">3行</text>
+          <text x="656" y="248">4行</text><text x="684" y="302">5行</text>
+        </g>
+
+        <line x1="40" y1="322" x2="720" y2="322" stroke="var(--rule-strong)" stroke-width="1"/>
+        <text class="t tx" x="40" y="346" font-size="12" font-weight="700">取込回数 = 連動先の行数</text>
+        <text class="tm tf" x="40" y="366" font-size="10.5">濃い枠＝その回に新規作成された行 / 薄い枠＝前回までに残っている行。5行すべて apply_date=2026-09-24・cancel_date=NULL で有効。</text>
+      </svg>
+    </div>
+    <figcaption>選手 MMJ-234-3001（id 268593 / 268597 / 268605 / 268609 / 268614）。昇格元 CM1 は常に1行（id 268615）。created の時刻が取込5回に1対1で対応している。</figcaption>
+  </figure>
+
+  <div class="note">
+    <div class="lbl">もう1人の選手で起きたこと</div>
+    <p>同じ大会の <code>KNS-000-2879</code> も同様に5行できましたが、<strong>先頭4行は 2026-09-24 07:31〜07:32 に手動でソフト削除されています</strong>（<code>deleted_date</code>）。その約5分後、07:37:31 の5回目の取込で<strong>また1行作られました</strong>（id 268616）。手で消しても、取り込み直せば復活する — ガードが日付窓に依存している限り、データ是正だけでは止まりません。<strong>是正はコード修正のデプロイ後に行う必要があります。</strong></p>
+    <p style="margin-top:12px">被害はこの2名だけではありません。現時点で有効な重複行を持つのは、ほかに <code>CHB-178-0029</code>(CM1) と <code>TYM-190-0004</code>(CM2) ＝ 大会 <code>CXK-267-002</code> 由来、<code>KNS-167-0340</code>(C2) と <code>KNS-245-0133</code>(C2) ＝ 大会 <code>MMJ-267-001</code> 由来の計4名です（いずれも2行ずつ）。</p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section>
+  <h2><span class="num">05</span>なぜ昇格元側は1行で済んでいたのか</h2>
+  <div class="sub">ResultParamCalcComponent::__execApplyRankUp() / __applyRankUp2CM()</div>
+
+  <p>同じ取込で、昇格元系統（CM1）は5回とも1行のままでした。こちら側は<strong>日付窓で「もう書いたか」を判定していない</strong>からです。判定する代わりに、書く前に同じ行を消しています。</p>
+
+<pre><span class="c">// __execApplyRankUp() / __applyRankUp2CM() 共通のパターン</span>
+$applyDate = date('Y/m/d', strtotime($this-&gt;__atDate . ' +1 day'));
+
+<span class="c">// 「同じ大会で同じ昇格をしているデータがあるなら削除する」</span>
+$conditions = array(
+    'racer_code'    =&gt; $racerCode,
+    'meet_code'     =&gt; $this-&gt;__meetCode,
+    'category_code' =&gt; $categoryTo,
+    <span class="g">'apply_date'    =&gt; $applyDate,      // ← 等値。自分が書くのと同じ値</span>
+    'reason_id'     =&gt; CategoryReason::$RESULT_UP-&gt;ID(),
+);
+<span class="c">// → 見つかった行を delete してから、あらためて create する</span></pre>
+
+  <p>ポイントは <code>apply_date</code> を<strong>不等号ではなく等値</strong>で指定していることです。これから書く行と完全に同じキーで前回の行を探すので、日付規約を1日ずらしても両者は一緒に動き、ずれません。<strong>「探す条件」と「書く値」が同じ式から作られている</strong>のが、この側が壊れなかった理由です。</p>
+
+  <p>もう一点、削除条件に <code>racer_result_id</code> が<strong>含まれていない</strong>ことも重要です。再取込のたびにリザルトidは変わるので、これを冪等キーに入れると前回の行が見つからなくなり、削除が空振りします。</p>
+
+  <p>この削除が実際に働いている様子は、2018年のデータにも残っています。<code>CCM-189-9004</code> の C3 昇格行 id 25460 は <code>deleted=1</code> で、その <code>deleted_date</code>（2018-11-28 01:16:30）が、作り直された id 25676 の <code>created</code> と秒まで一致します。再取込で前回行を消し、同じ内容を作り直した痕跡です。<strong>8年前から今日まで、昇格元側はこの方式で一貫して1行を保っています。</strong></p>
+
+  <p>連動先側（<code>propagateLinkedPromotion()</code>）には、この削除がありません。あるのは日付窓のガードだけです。</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section>
+  <h2><span class="num">06</span>なぜエントリー補完は無傷なのか</h2>
+  <div class="sub">supplementPairedCategoryOnEntryRegistration()</div>
+
+  <p>同じ <code>CategoryLineageLinker</code> の中に、似た処理がもう一つあります。エントリー登録時に対応ペアを補完する <code>supplementPairedCategoryOnEntryRegistration()</code> です。こちらは再実行しても増えません。理由は2つあり、どちらも「自分が書いた行を、自分で観測できる」という一点に帰着します。</p>
+
+  <ul>
+    <li><strong>相手系統の保有確認に、上限のない別ヘルパーを使っている</strong> — <code>__findCurrentlyActiveCategoryCodesOnSide()</code> には <code>apply_date &lt;=</code> 条件がなく、<code>cancel_date</code> だけで絞ります。未来日で付与済みの行も見えます。</li>
+    <li><strong>作る行の apply_date が大会当日そのまま</strong> — cancel を伴わないので +1日の回避が不要。書いた日付と探す範囲がずれません。</li>
+  </ul>
+
+  <p>興味深いのは、このヘルパーが<strong>意図して分けられた</strong>という経緯です。docblock には、エントリー補完の <code>$atDate</code> は未来の大会開催日なので <code>apply_date &lt;=</code> で絞ると未来日の既存行を見落として重複を作る、と明記されています（第3版・実装バグ修正）。<strong>まったく同じ形の不具合が、エントリー補完側では一度発見されて直されていた</strong>わけです。</p>
+
+  <p>一方で、エントリー<em>元</em>系統側の確認（<code>__findCategoryCodesEffectiveAsOfDateOnSide()</code>, L796）には <code>apply_date &lt;=</code> があります。これは「大会当日に選手が実際に何を名乗っていたか」を問う目的 A なので、あって正しい。<strong>同じファイルの中で、目的ごとに窓の有無が正しく作り分けられている</strong>箇所です。</p>
+
+  <div class="note">
+    <div class="lbl">つまり</div>
+    <p>目的 A と目的 B を切り分ける設計判断は、このコードベースに既に存在していました。<code>propagateLinkedPromotion()</code> のガードだけが、その切り分けの適用から漏れています。</p>
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section>
+  <h2><span class="num">07</span>混入の経緯 — 1つのコミットの中で読み手が分かれた</h2>
+  <div class="sub">c18d056 / 2026-08-23 21:57 / PR#13 有識者レビュー第2ラウンド対応</div>
+
+  <p>この不具合は、最初からあったものではありません。<strong>2026-08-23 の改訂で新しく入りました</strong>。それ以前、連動先の書き込みは<strong>冪等でした</strong>。ただし「窓も書き込みも当日だったから」ではありません。実際はその逆で、<strong>窓も書き込みも当日+1日</strong>だったのです。</p>
+
+  <p>改訂前は、+1日の計算を<strong>呼び出し元が</strong>行っていました。<code>ResultParamCalcComponent</code> が既に手元に持っていた <code>$applyDate</code>（= 当日+1日）をそのまま Linker に渡し、Linker はその1つの値を<strong>ガードの窓にも、旧行の cancel_date にも、新行の apply_date にも</strong>使っていました。1つの値が全経路を通るので、ガードは必ず自分の書き込みを観測できます。</p>
+
+<pre><span class="c">// c18d056 の差分（ResultParamCalcComponent、2箇所とも）</span>
+<span class="k">- propagateLinkedPromotion($racerCode, $categoryTo, $result + ..., $applyDate);      // = 当日+1日</span>
+<span class="g">+ propagateLinkedPromotion($racerCode, $categoryTo, $result + ..., $this-&gt;__atDate); // = 当日</span></pre>
+
+  <p>改訂は、この <strong>+1日 の計算を呼び出し元から Linker の内部へ移しました</strong>。呼び出し元は生のレース日を渡すだけでよくなり、規約への準拠は Linker が受け持つ ── 設計としては筋が通っています。問題は、内部で付け直した +1日 が<strong>新行の apply_date にだけ適用され、ガードの窓と cancel_date は渡された生の当日のまま</strong>だったことです。</p>
+
+  <p>つまりガードは、それまで引数経由で +1日 を<strong>タダで受け取っていた</strong>。計算の置き場所が移ったとき、書き込み経路には明示的に付け直され、読み取り経路では静かに失われました。</p>
+
+  <figure>
+    <div class="scroller">
+      <svg viewBox="0 0 760 286" role="img" aria-label="2026-08-23 の改訂前後の比較。改訂前は窓も書き込みも当日+1日で一致していたが、改訂後は窓だけが当日に戻り、書き込みは当日+1日のまま残ってすれ違う。">
+        <!-- BEFORE -->
+        <text class="tm tf" x="40" y="26" font-size="10.5" letter-spacing=".12em">改訂前（〜2026-08-22）　呼び出し元が $applyDate（当日+1日）を渡す</text>
+        <rect x="40" y="38" width="364" height="34" fill="var(--amber-wash)" stroke="var(--amber)" stroke-width="1.5"/>
+        <text class="tm tw" x="52" y="59" font-size="10.5">ガードの窓  apply_date &lt;= 当日+1日</text>
+        <line x1="40" y1="96" x2="430" y2="96" stroke="var(--rule-strong)" stroke-width="1.5"/>
+        <line x1="340" y1="90" x2="340" y2="102" stroke="var(--rule-strong)" stroke-width="1.5"/>
+        <line x1="404" y1="90" x2="404" y2="102" stroke="var(--rule-strong)" stroke-width="1.5"/>
+        <text class="tm tf" x="340" y="116" text-anchor="middle" font-size="10">当日</text>
+        <text class="tm" x="404" y="116" text-anchor="middle" font-size="10.5">当日+1日</text>
+        <circle cx="404" cy="96" r="5.5" fill="var(--accent)"/>
+        <line x1="404" y1="96" x2="404" y2="72" stroke="var(--accent)" stroke-width="2"/>
+        <text class="t ta" x="416" y="80" font-size="11" font-weight="700">作る行の apply_date（窓の内側）</text>
+        <text class="t ta" x="40" y="142" font-size="12" font-weight="700">✓ 同じ1つの値が窓にも書き込みにも使われる → 自己観測が成立</text>
+        <text class="tm tf" x="40" y="160" font-size="10">ただし cancel_date も同じ当日+1日になり、新旧2行が同時に該当した（これが直された不具合）</text>
+
+        <line x1="40" y1="182" x2="720" y2="182" stroke="var(--rule)" stroke-width="1" stroke-dasharray="4 4"/>
+
+        <!-- AFTER -->
+        <text class="tm tf" x="40" y="206" font-size="10.5" letter-spacing=".12em">改訂後（2026-08-23〜）　呼び出し元は生の当日を渡し、+1日は Linker 内部で</text>
+        <rect x="40" y="218" width="300" height="34" fill="var(--amber-wash)" stroke="var(--amber)" stroke-width="1.5"/>
+        <text class="tm tw" x="52" y="239" font-size="10.5">ガードの窓  apply_date &lt;= 当日</text>
+        <text class="tm tx" x="240" y="212" font-size="9.5" font-weight="600">← 1日ぶん後退した</text>
+        <circle cx="404" cy="235" r="5.5" fill="var(--alarm)"/>
+        <text class="t tx" x="416" y="239" font-size="11" font-weight="700">作る行の apply_date ＝ 当日+1日（窓の外）</text>
+        <path d="M348 235 L396 235" stroke="var(--alarm)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text class="tm tf" x="40" y="270" font-size="10">書き込みの日付は変わっていない。動いたのは窓のほう。</text>
+
+        <!-- right column -->
+        <g>
+          <rect x="452" y="30" width="268" height="136" fill="var(--surface-2)" stroke="var(--rule)"/>
+          <text class="tm tf" x="464" y="50" font-size="10" letter-spacing=".1em">c18d056 で +1日 を付け直した経路</text>
+          <text class="t ta" x="464" y="72" font-size="11" font-weight="600">✓ 書き込み側</text>
+          <text class="tm tf" x="476" y="87" font-size="9.5">Linker 内で $newApplyDate を算出</text>
+          <text class="t ta" x="464" y="110" font-size="11" font-weight="600">✓ 検知側</text>
+          <text class="tm tf" x="476" y="125" font-size="9.5">__setLineageInspectionAtDate($applyDate)</text>
+          <text class="tm tf" x="476" y="138" font-size="9.5">で __activeCategoryCodes() の基準日を追随</text>
+          <text class="tm tf" x="476" y="155" font-size="9.5">（CategoryRacer::$lineageInspectionAtDate を新設）</text>
+        </g>
+        <rect x="452" y="206" width="268" height="52" fill="var(--alarm-wash)" stroke="var(--alarm)" stroke-width="1.5"/>
+        <text class="t tx" x="464" y="228" font-size="11" font-weight="700">✗ ガード側だけ付け直されず</text>
+        <text class="tm tf" x="464" y="245" font-size="9.5">__findActiveCategoryRacerOnSide() は無変更</text>
+      </svg>
+    </div>
+    <figcaption>commit c18d056「PR#13 有識者レビュー第2ラウンド指摘への対応」。+1日 の計算を呼び出し元から呼び出し先へ移す際、書き込み側と検知側には付け直したが、ガードは引数経由で受け取っていたぶんを失った。</figcaption>
+  </figure>
+
+  <p>コミットメッセージには <code>lineageInspectionAtDate</code> の新設と <code>ResultParamCalcComponent</code> の2箇所での設定が明記されています。<strong>「書く日付を変えたら、その日付を読む側も揃える」という作業は実際に行われていた</strong>のです。ただしその対象は整合性検知（<code>CategoryRacer::afterSave()</code>）に限られ、同じファイル内のガードには及びませんでした。</p>
+
+  <p>見落としが起きやすかった理由は、<strong>ガードが日付に依存していることが、ガード自身のコードから見えない</strong>点にあると考えます。検知側は <code>$lineageInspectionAtDate</code> という明示的な受け皿を持ち、そこに何を入れるかを考える必要があった。一方ガードは、呼び出し元が渡す <code>$atDate</code> をただ使うだけで、その値が「+1日 済みかどうか」に自分の正しさが懸かっていることをどこにも表明していません。<code>propagateLinkedPromotion()</code> の docblock は「+1日にする」理由を丁寧に説明していますが、<strong>「+1日にしたことで、当日以前しか見ないガードは自分の書き込みを観測できなくなる」</strong>とは書かれていません。</p>
+</section>
+
+<!-- ============ 8 ============ -->
+<section>
+  <h2><span class="num">08</span>まとめ</h2>
+  <div class="sub">読み替えのポイント</div>
+
+  <ul>
+    <li><code>apply_date &lt;= $atDate</code> は<strong>過去の一時点を再現する</strong>ための窓であって、<strong>自分の書き込みの有無を確かめる</strong>ための道具ではない。</li>
+    <li>冪等性を守る側は、<strong>書く値と同じキーで探す</strong>（昇格元側の等値削除）か、<strong>そもそも日付で絞らない</strong>（エントリー補完側）かのどちらかを取るべきで、両者ともコードベースに実例がある。</li>
+    <li>日付規約の変更は、<strong>その日付を読むすべての箇所の棚卸し</strong>を伴う。今回はそのうち検知側だけが更新された。</li>
+    <li>データ是正だけでは止まらない。<strong>取り込み直せば同じ行がまた作られる</strong>（KNS-000-2879 で実際に起きた）。</li>
+  </ul>
+
+  <div class="note">
+    <div class="lbl">本件と切り離された、別系統の論点2つ</div>
+    <p><strong>(1) 再取込で昇格そのものが取り消される場合の後始末。</strong> 順位や出走人数が訂正され、前回昇格した選手が今回は昇格しない場合、そのメソッド自体が呼ばれないため昇格行も連動行も残ります。本件とは独立した以前からある問題で、こちらでは検証していません。</p>
+    <p><strong>(2) 同日別大会の盲点。</strong> 03 で触れた L1171 / L1493 の盲点は、spec 側で「+1日 規約は c18d056 より前から変わっておらず、原因系統が違う」として明確にスコープ外とされました。妥当な線引きだと思います。</p>
+    <p>(2) の根拠は当初「同一(選手・カテゴリー・apply_date)で meet_code が異なる有効な重複は全期間で1件のみ」という件数で書かれていましたが、<strong>meet_code の異同だけでは「同日開催の別大会」を判定できません</strong>。2デーレース（day1 と day2 で meet_code が違い、開催日も違う）やエントリーCSV由来の行が混ざるためです。実際 <code>CCM-189-9004</code> / C3 / 2018-11-18 がこの形で拾われます —— Rapha Super Cross Nobeyama の day1 由来の昇格行と day2 のエントリー由来の行で、同日開催ではありません。</p>
+    <p>そこで判定を <code>meets</code> と結合し、<strong>開催日で突き合わせる</strong>形に差し替えました。</p>
+<pre>SELECT c.racer_code, c.category_code, c.apply_date,
+       COUNT(DISTINCT c.meet_code) nmeet, COUNT(DISTINCT m.at_date) ndate
+FROM category_racers c JOIN meets m ON m.code = c.meet_code
+WHERE c.deleted=0 AND c.reason_id IN (2,12) AND c.cancel_date IS NULL
+GROUP BY c.racer_code, c.category_code, c.apply_date
+HAVING nmeet &gt; 1 AND ndate = 1;
+
+<span class="g">→ Empty set</span></pre>
+    <p><strong>昇格・連動由来で「同日開催の別大会」にまたがる有効な重複は、全期間で0件。</strong> 件数を数えるより強い形の根拠になりました。本欠陥由来の5選手8行は、いずれも <code>nmeet = 1</code>（同一大会の再取込）です。</p>
+  </div>
+</section>
+</div>
+
+<footer>
+  検証環境: 開発DB（本番相当, cyclox2_mysql）/ submodule cyclox2 @ a3ca583<br>
+  参照: .kiro/specs/lineage-propagation-idempotency-2026-27/ (requirements.md, research.md) — 本文書は独自にコードとデータを確認し、相違点を 03 節に明記した<br>
+  解説目的の文書。コード・データ・spec ファイルへの変更は行っていない。
+</footer>
+
+</div>
+</body>
+</html>
