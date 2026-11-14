@@ -1,0 +1,1 @@
+SELECT hp.racer_result_id, hp.point, hp.category_code FROM hold_points hp INNER JOIN racer_results rr ON hp.racer_result_id=rr.id INNER JOIN entry_racers er ON rr.entry_racer_id=er.id WHERE er.entry_category_id=24693 AND er.deleted=0 AND rr.deleted=0;

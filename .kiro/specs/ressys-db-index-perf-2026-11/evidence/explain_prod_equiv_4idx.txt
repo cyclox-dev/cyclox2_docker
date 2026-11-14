@@ -1,0 +1,60 @@
+## q1_results
+    SIMPLE   ec   const   PRIMARY,id   PRIMARY   const   1 
+    SIMPLE   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   const   96 
+    SIMPLE   rr   ref   index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+   time: 0.10s
+## q2_holdpoints
+    SIMPLE   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   const   96 
+    SIMPLE   rr   ref   PRIMARY,id,index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+    SIMPLE   hp   ALL   NULL   NULL   NULL   39202 
+   time: 0.30s
+## q3_laps
+    SIMPLE   ec   const   PRIMARY,id   PRIMARY   const   1 
+    SIMPLE   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   const   96 
+    SIMPLE   rr   ref   PRIMARY,id,index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+    SIMPLE   tr   ref   in_result_id   in_result_id   cyclox2.rr.id   4 
+   time: 0.11s
+## q4_psr
+    SIMPLE   ec   const   PRIMARY,id   PRIMARY   const   1 
+    SIMPLE   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   const   96 
+    SIMPLE   rr   ref   PRIMARY,id,index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+    SIMPLE   psr   ref   index_racer_result_id   index_racer_result_id   cyclox2.rr.id   1 
+    SIMPLE   ps   eq_ref   PRIMARY,id   PRIMARY   cyclox2.psr.point_series_id   1 
+   time: 0.10s
+## q5_rrids
+    SIMPLE   ec   const   PRIMARY,id   PRIMARY   const   1 
+    SIMPLE   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   const   96 
+    SIMPLE   rr   ref   index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+   time: 0.11s
+## q6_rankup_meet
+    PRIMARY   ec   ALL   PRIMARY,id   NULL   NULL   28513 
+    PRIMARY   eg   eq_ref   PRIMARY,id   PRIMARY   cyclox2.ec.entry_group_id   1 
+    PRIMARY   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   cyclox2.ec.id   20 
+    PRIMARY   rr   ref   PRIMARY,id,index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+    PRIMARY   cr   ref   index_racer_code,index_racer_result_id   index_racer_result_id   cyclox2.rr.id   29 
+    PRIMARY   r   eq_ref   PRIMARY,code   PRIMARY   cyclox2.cr.racer_code   1 
+    SUBQUERY   e2   const   PRIMARY,id   PRIMARY   const   1 
+    SUBQUERY   eg2   const   PRIMARY,id   PRIMARY   const   1 
+   time: 0.21s
+## q7_meet_ecats
+    PRIMARY   ec   index   PRIMARY,id   PRIMARY   NULL   28513 
+    PRIMARY   rc   eq_ref   PRIMARY,code   PRIMARY   cyclox2.ec.races_category_code   1 
+    PRIMARY   eg   eq_ref   PRIMARY,id   PRIMARY   cyclox2.ec.entry_group_id   1 
+    SUBQUERY   e2   const   PRIMARY,id   PRIMARY   const   1 
+    SUBQUERY   eg2   const   PRIMARY,id   PRIMARY   const   1 
+   time: 0.11s
+## q8_tops
+    PRIMARY   ec   ALL   PRIMARY,id   NULL   NULL   28513 
+    PRIMARY   eg   eq_ref   PRIMARY,id   PRIMARY   cyclox2.ec.entry_group_id   1 
+    PRIMARY   er   ref   PRIMARY,id,index_entry_cat_id   index_entry_cat_id   cyclox2.ec.id   20 
+    PRIMARY   rr   ref   index_entry_racer_id   index_entry_racer_id   cyclox2.er.id   1 
+    SUBQUERY   e2   const   PRIMARY,id   PRIMARY   const   1 
+    SUBQUERY   eg2   const   PRIMARY,id   PRIMARY   const   1 
+   time: 0.10s
+## q9_total
+    PRIMARY   ec   ALL   PRIMARY,id   NULL   NULL   28513 
+    PRIMARY   eg   eq_ref   PRIMARY,id   PRIMARY   cyclox2.ec.entry_group_id   1 
+    PRIMARY   er   ref   index_entry_cat_id   index_entry_cat_id   cyclox2.ec.id   20 
+    SUBQUERY   e2   const   PRIMARY,id   PRIMARY   const   1 
+    SUBQUERY   eg2   const   PRIMARY,id   PRIMARY   const   1 
+   time: 0.12s
