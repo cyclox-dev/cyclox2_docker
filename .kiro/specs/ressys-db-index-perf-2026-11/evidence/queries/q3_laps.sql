@@ -1,0 +1,1 @@
+SELECT * FROM racer_results rr INNER JOIN entry_racers er ON rr.entry_racer_id=er.id INNER JOIN entry_categories ec ON er.entry_category_id=ec.id INNER JOIN time_records tr ON tr.racer_result_id=rr.id WHERE ec.deleted=0 AND er.deleted=0 AND rr.deleted=0 AND ec.id=24693 ORDER BY tr.lap ASC;

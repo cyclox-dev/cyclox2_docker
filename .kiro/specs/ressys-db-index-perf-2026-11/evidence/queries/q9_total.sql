@@ -1,0 +1,1 @@
+SELECT count(*) FROM entry_groups eg INNER JOIN entry_categories ec ON ec.entry_group_id=eg.id INNER JOIN entry_racers er ON er.entry_category_id=ec.id WHERE eg.meet_code=(SELECT eg2.meet_code FROM entry_categories e2 JOIN entry_groups eg2 ON eg2.id=e2.entry_group_id WHERE e2.id=24693) AND eg.deleted=0 AND ec.deleted=0 AND er.deleted=0;

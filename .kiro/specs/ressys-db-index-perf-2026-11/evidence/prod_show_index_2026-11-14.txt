@@ -1,0 +1,73 @@
+mysql> SELECT TABLE_NAME, INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX, COLUMN_NAME, CARDINALITY
+    -> FROM information_schema.STATISTICS
+    -> WHERE TABLE_SCHEMA = DATABASE()
+    ->   AND TABLE_NAME IN ('time_records','entry_racers','racer_results','point_series_racers',
+    ->                      'category_racers','hold_points','entry_categories','entry_groups',
+    ->                      'category_races_categories','races_categories','meets','point_series')
+    -> ORDER BY TABLE_NAME, INDEX_NAME, SEQ_IN_INDEX;
++---------------------------+-----------------------+------------+--------------+-------------------+-------------+
+| TABLE_NAME                | INDEX_NAME            | NON_UNIQUE | SEQ_IN_INDEX | COLUMN_NAME       | CARDINALITY |
++---------------------------+-----------------------+------------+--------------+-------------------+-------------+
+| category_racers           | id                    |          0 |            1 | id                |      258623 |
+| category_racers           | index_racer_code      |          1 |            1 | racer_code        |       16425 |
+| category_racers           | index_racer_result_id |          1 |            1 | racer_result_id   |        8521 |
+| category_racers           | PRIMARY               |          0 |            1 | id                |      259053 |
+| category_races_categories | id                    |          0 |            1 | id                |          64 |
+| category_races_categories | PRIMARY               |          0 |            1 | id                |          64 |
+| entry_categories          | id                    |          0 |            1 | id                |       28459 |
+| entry_categories          | PRIMARY               |          0 |            1 | id                |       28161 |
+| entry_groups              | id                    |          0 |            1 | id                |       11903 |
+| entry_groups              | PRIMARY               |          0 |            1 | id                |       11997 |
+| entry_racers              | id                    |          0 |            1 | id                |      536349 |
+| entry_racers              | index_entry_cat_id    |          1 |            1 | entry_category_id |       23572 |
+| entry_racers              | PRIMARY               |          0 |            1 | id                |      532490 |
+| hold_points               | id                    |          0 |            1 | id                |       39237 |
+| hold_points               | PRIMARY               |          0 |            1 | id                |       39237 |
+| meets                     | code                  |          0 |            1 | code              |         800 |
+| meets                     | PRIMARY               |          0 |            1 | code              |         800 |
+| point_series              | id                    |          0 |            1 | id                |         482 |
+| point_series              | PRIMARY               |          0 |            1 | id                |         482 |
+| point_series_racers       | id                    |          0 |            1 | id                |       76447 |
+| point_series_racers       | index_racer_result_id |          1 |            1 | racer_result_id   |       58701 |
+| point_series_racers       | PRIMARY               |          0 |            1 | id                |       74833 |
+| racer_results             | id                    |          0 |            1 | id                |      337799 |
+| racer_results             | index_entry_racer_id  |          1 |            1 | entry_racer_id    |      225122 |
+| racer_results             | PRIMARY               |          0 |            1 | id                |      336966 |
+| races_categories          | code                  |          0 |            1 | code              |          64 |
+| races_categories          | PRIMARY               |          0 |            1 | code              |          64 |
+| time_records              | id                    |          0 |            1 | id                |      797400 |
+| time_records              | in_result_id          |          1 |            1 | racer_result_id   |      170941 |
+| time_records              | PRIMARY               |          0 |            1 | id                |      793106 |
++---------------------------+-----------------------+------------+--------------+-------------------+-------------+
+30 rows in set (0.01 sec)
+
+mysql> SELECT TABLE_NAME, ENGINE, TABLE_ROWS,
+    ->        ROUND(DATA_LENGTH/1024/1024) AS data_mb,
+    ->        ROUND(INDEX_LENGTH/1024/1024) AS index_mb
+    -> FROM information_schema.TABLES
+    -> WHERE TABLE_SCHEMA = DATABASE()
+    ->   AND TABLE_NAME IN ('time_records','entry_racers','racer_results','point_series_racers',
+    ->                      'category_racers','hold_points','entry_categories','entry_groups');
++---------------------+--------+------------+---------+----------+
+| TABLE_NAME          | ENGINE | TABLE_ROWS | data_mb | index_mb |
++---------------------+--------+------------+---------+----------+
+| category_racers     | InnoDB |     273790 |      28 |       18 |
+| entry_categories    | InnoDB |      28461 |       3 |        0 |
+| entry_groups        | InnoDB |      12908 |       2 |        0 |
+| entry_racers        | InnoDB |     570549 |      70 |       13 |
+| hold_points         | InnoDB |      39237 |       3 |        0 |
+| point_series_racers | InnoDB |      77024 |       6 |        3 |
+| racer_results       | InnoDB |     349216 |      30 |       14 |
+| time_records        | InnoDB |     801551 |      45 |       26 |
++---------------------+--------+------------+---------+----------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT VERSION() AS ver, @@innodb_buffer_pool_size/1024/1024 AS bp_mb;
++--------+--------------+
+| ver    | bp_mb        |
++--------+--------------+
+| 5.7.20 | 128.00000000 |
++--------+--------------+
+1 row in set (0.00 sec)
+
+mysql> notee
